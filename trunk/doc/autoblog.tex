@@ -52,8 +52,8 @@ O procedimento para criação de um novo perfil a partir do formulário para um 
 \begin{itemize}
 \item Informar um endereço de e-mail, senha e confirmação de senha;
 \item Se o endereço de e-mail não estiver cadastrado em um perfil de acesso, o cliente deverá receber uma mensagem de e-mail contendo uma \emph{URL} de confirmação de cadastro;
-\item Após a confirmação de cadastro, o cliente deverá reber uma mensagem de e-mail contendo uma notificação de cadastro confirmado e instruções para o primeiro acesso.
-\item Se o endereço de e-mail informado já estiver cadastrado, o cliente deverá receber uma mensagem de e-mail contendo uma notificação da existência do perfil já existente com instruções para acesso e alteração de senha (se for necessário).
+\item Após a confirmação de cadastro, o cliente deverá reber uma mensagem de e-mail contendo uma notificação de cadastro confirmado, boas vindas e instruções para o primeiro acesso.
+\item Se o endereço de e-mail informado já estiver cadastrado, o cliente deverá receber uma mensagem de e-mail contendo uma notificação da existência do perfil com instruções para acesso e alteração de senha (se necessário).
 \end{itemize}
 \paragraph{}
 Em uma situação onde o cliente afirme já possuir um perfil de acesso mas não lembra-se da senha, o software deve permitir a recuperação do acesso, através da seguinte forma:
@@ -79,18 +79,26 @@ Após efetuar o acesso, o cliente poderá alterar sua senha e preencher as infor
 \subsection{Cadastro de \cms{}}
 
 \paragraph{}
-O cadastro de um \cms{} deve conter as seguintes informações:
+Após efetuar acesso, o cliente poderá realizar o cadastro de um novo \cms{} através das seguintes etapas:
 
 \begin{itemize}
-\item Endereço \emph{WEB} do \cms{};
-\item Tipo de \cms{} (\emph{Wordpress}, \emph{Joomla}, \emph{Drupal}, etc.);
-\item Endereço do gerenciador de publicações do \cms{};
-\item Usuário e Senha do gerenciador de publicações do \cms{};
+\item Informar a \emph{URL} raiz do \cms{}. O software deverá detectar o tipo de \cms{} (\emph{Wordpress}, \emph{Joomla}, \emph{Drupal}, etc.) a partir da \emph{URL} informada;
+\item Se for possível a detecção do tipo de \cms{}, o software deverá verificar a existência do gerenciador de publicações do \cms{} em um endereço padrão, de acordo com o tipo de \cms{} e da \emph{URL} raiz;
+\item Se o gerenciador de publicações do \cms{} não estiver disponível no endereço padrão, permitir que o cliente informe seu endereço através de uma \emph{URL}. O software deverá verificar se o endereço informado é válido como gerenciador de publicações para o tipo de \cms{} escolhido;
+\item Se a detecção do tipo de \cms{} não for bem sucedida, verificar a causa e informar o erro mais provável (endereço ou página não encontrados, erro no servidor, etc.);
+\item Se o endereço estiver correto mas o tipo não for suportado, exibir notificação ao cliente e informar os tipos suportados. Permitir também que o cliente digite o tipo utilizado. Neste caso, o cadastro de \cms{} não poderá prosseguir;
+\item Após a determinação precisa do tipo de \cms{} e endereço do gerenciador de publicações, solicitar ao cliente que informe o usuário e senha do gerenciador. O software deverá verificar se o usuário e senha permitem acesso ao gerenciador, caso contrário, notificar que o usuário e senha não são válidos;
+\item O software deve verificar de forma não invasiva (sem publicar conteúdo em produção) se o acesso ao gerenciador de publicações possui permissão para escrita de conteúdo (ex. \emph{drafts} do \emph{Wordpress}). Se não for possível tal verificação, o software poderá solicitar ao cliente se deseja realizar um teste de publicação em produção.
+%\item Tipo de \cms{} (\emph{Wordpress}, \emph{Joomla}, \emph{Drupal}, etc.);
+% \item Endereço do gerenciador de publicações do \cms{};
+% \item Usuário e Senha do gerenciador de publicações do \cms{};
 \item Recursos a serem utilizados;
 \item Método de publicação;
 \end{itemize}
 
 \subsubsection{Tipo de \cms{}}
+
+...o plugin deve gerenciar diferenças de versão...
 
 \paragraph{}
 Os tipos de \cms{} disponíveis para o cliente serão adicionados ao software no formato de \emph{plugins}, e devem seguir um protocolo de comunicação com o software.
@@ -174,6 +182,8 @@ Outros recursos podem estar disponíveis conforme o \cms{} utilizado.
 
 \section{Notas}
 
+\paragraph{}
+Quando um tipo de \cms{} não for suportado, e o cliente informar o tipo de \cms{} utilizado, o \emph{backend} poderá verificar se houve falha na detecção e solicitar ajuste no desenvolvimento, e informar ao cliente sobre a resolução do problema. Se o tipo não for suportado, informar ao cliente que o software não é suportado. É possível também verificar quais são as tendências para implementações de novos tipos.
 \paragraph{}
 O software deverá servir como guia para padronização da publicação de conteúdo externo, com a virtude de previnir ao cliente problemas com \emph{copyright}, por exemplo.
 
