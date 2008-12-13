@@ -1,3 +1,4 @@
+% please generate pdf with the pdflatex command
 \documentclass[a4paper,12pt]{article}
 
 \usepackage{graphicx}
@@ -176,19 +177,6 @@ possível tal verificação, o software poderá solicitar ao cliente se deseja
 realizar um teste de publicação em produção.
 \end{enumerate}
 
-\subsubsection{Tipo de \cms{}}
-
-\paragraph{}
-O tipo de \cms{} define qual software é utilizado pelo cliente. Os tipos
-disponíveis serão adicionados ao software na forma de \emph{plugins}, e devem
-implementar uma interface determinada pelo software.
-
-% TODO: definir os métodos da interface de plugins
-
-\paragraph{}
-Um \emph{plugin} de \cms{} deve ser capaz de gerenciar as diferentes versões de
-um tipo de \cms{}.
-
 \subsubsection{Recursos}
 
 \paragraph{}
@@ -204,7 +192,7 @@ para qualquer tipo, dos quais:
 \begin{itemize}
 \item Título;
 \item Descrição;
-\item Comentários;
+\item Comentário;
 \item Fonte (endereço de origem do conteúdo);
 \end{itemize}
 
@@ -215,47 +203,11 @@ exemplo:
 \begin{itemize}
 \item Categoria;
 \item Data de publicação;
-\item \emph{Tags};
 \item etc.;
 \end{itemize}
 
 \paragraph{}
-Os recursos que forem dependentes da entrada de informações pelo cliente (ex. Comentários, Categoria, etc.), só poderão ser utilizados através do método manual de publicação de conteúdo.
-
-\subsubsection{Método de publicação}
-
-\paragraph{}
-O cliente poderá definir para cada \cms{} cadastrado a forma como este deverá
-gerenciar a publicação dos itens de conteúdo disponíveis.
-
-\paragraph{}
-Por padrão, a publicação de conteúdo deve ser feita manualmente. No entanto é
-possível automatizar este processo, a partir das seguintes configurações:
-
-\begin{itemize}
-
-% TODO: talvez aqui sejam duas coisas distintas: alimentacao/ordenacao de acordo com o queue, e frequencia, palavras-chave, com estrela (metodo de publicacao < este nome está legal?)
-
-% \item Alimentação: Define a lista de canais a serem utilizados. Padrão: Todos
-% os cadastrados;
-% \item Ordenação: Define a ordem de publicação a partir da data de publicação,
-% popularidade ou randômico. Padrão: Data de publicação;
-\item Frequência: Define o intervalo de tempo entre as publicações (5min 15min,
-30min, 1hora, 2hrs, 3hrs, 6hrs, 12hrs, 24hrs, etc.);
-\item Palavras-chave: A escolha de itens é feita com base em uma ou mais
-palavras-chave;
-\item Com estrela: Somente itens de conteúdo marcados com estrela serão
-utilizados para publicação;
-\end{itemize}
-
-\paragraph{}
-Independentemente da configuração estabelecida para a publicação automática, a
-opção manual deverá sempre estar disponível.
-
-
-% \paragraph{}
-% A popularidade pode ser medida através da quantidade de publicações feitas por
-% outros clientees para um mesmo item.
+Os recursos que forem dependentes da entrada de informações pelo cliente (ex. Comentário, Categoria, etc.), não serão incluídos durante a publicação automática de conteúdo.
 
 %%% < TODO
 
@@ -274,7 +226,7 @@ alimentador ou um arquivo de importação \emph{OPML}.
 \subsection{\emph{Dashboard}}
 
 O \emph{dashboard} é a visualização padrão após a autenticação, composto por
-painéis que permitem o gerenciamento das informações. 
+painéis que permitem o gerenciamento das informações e tomada de decisões. 
 
 \begin{center}
 \includegraphics[scale=0.5]{dashboard.png}
@@ -317,6 +269,43 @@ Um item de conteúdo poderá ser "arrastado" para um item do painel de \cms{}. E
 seguida, uma janela de publicação será exibida, onde o cliente deverá acionar o
 botão "enviar" para publicar o conteúdo no \cms{}.
 
+\subsubsection{Método de publicação}
+
+\paragraph{}
+O cliente poderá definir para cada \cms{} cadastrado a forma como este deverá
+gerenciar a publicação dos itens de conteúdo disponíveis.
+
+\paragraph{}
+Por padrão, a publicação de conteúdo deve ser feita manualmente. No entanto é
+possível automatizar este processo, a partir das seguintes configurações:
+
+\begin{itemize}
+
+% TODO: talvez aqui sejam duas coisas distintas: alimentacao/ordenacao de acordo com o queue, e frequencia, palavras-chave, com estrela (metodo de publicacao < este nome está legal?)
+
+% \item Alimentação: Define a lista de canais a serem utilizados. Padrão: Todos
+% os cadastrados;
+% \item Ordenação: Define a ordem de publicação a partir da data de publicação,
+% popularidade ou randômico. Padrão: Data de publicação;
+\item Frequência: Define o intervalo de tempo entre as publicações (5min 15min,
+30min, 1hora, 2hrs, 3hrs, 6hrs, 12hrs, 24hrs, etc.);
+\item Palavras-chave: A escolha de itens é feita com base em uma ou mais
+palavras-chave;
+\item Com estrela: Somente itens de conteúdo marcados com estrela serão
+utilizados para publicação;
+\end{itemize}
+
+\paragraph{}
+Independentemente da configuração estabelecida para a publicação automática, a
+opção manual deverá sempre estar disponível.
+
+
+% \paragraph{}
+% A popularidade pode ser medida através da quantidade de publicações feitas por
+% outros clientees para um mesmo item.
+
+
+
 \subsubsection{Janela de publicação}
 
 \paragraph{}
@@ -327,7 +316,22 @@ dos valores iniciais.
 \paragraph{}
 Outros recursos podem estar disponíveis conforme o \cms{} utilizado.
 
-\subsection{Gerenciador interno de conteúdo}
+\subsection{\emph{Back-end}}
+
+\subsubsection{Tipo de \cms{}}
+
+\paragraph{}
+O tipo de \cms{} define qual software é utilizado pelo cliente. Os tipos
+disponíveis serão adicionados ao software na forma de \emph{plugins}, e devem
+implementar uma interface determinada pelo software.
+
+% TODO: definir os métodos da interface de plugins
+
+\paragraph{}
+Um \emph{plugin} de \cms{} deve ser capaz de gerenciar as diferentes versões de
+um tipo de \cms{}.
+
+\subsubsection{Gerenciador de conteúdo}
 
 \paragraph{}
 Os itens de conteúdo de um canal podem ser globais, ou seja, podem ser
