@@ -207,17 +207,14 @@ exemplo:
 \end{itemize}
 
 \paragraph{}
-Os recursos que forem dependentes da entrada de informações pelo cliente (ex. Comentário, Categoria, etc.), não serão incluídos durante a publicação automática de conteúdo.
-
-%%% < TODO
+Os recursos que forem dependentes da entrada de informações pelo cliente (ex.
+Comentário, Categoria, etc.), não serão incluídos durante a publicação
+automática de conteúdo.
 
 \subsection{Cadastro de \rss{}}
 
 \paragraph{}
 O cadastro de canais \rss{} deverá ser particular a um \cms{} cadastrado.
-
-
-\subsubsection{Novo \rss{}}
 
 \paragraph{}
 Para incluir um novo canal \rss{}, o cliente deve informar a \url{} do
@@ -225,8 +222,9 @@ alimentador ou um arquivo de importação \emph{OPML}.
 
 \subsection{\emph{Dashboard}}
 
+\paragraph{}
 O \emph{dashboard} é a visualização padrão após a autenticação, composto por
-painéis que permitem o gerenciamento das informações e tomada de decisões. 
+diversos painéis que permitem o gerenciamento das informações. 
 
 \begin{center}
 \includegraphics[scale=0.5]{dashboard.png}
@@ -234,40 +232,77 @@ painéis que permitem o gerenciamento das informações e tomada de decisões.
 
 \subsubsection{Painel de \cms{}}
 
-O painel de \cms{} 
+\paragraph{}
+O painel de \cms{} contém a lista de \cms{}s cadastrados. A exibição das informações nos demais painéis depende do \cms{} selecionado.
 
-\subsubsection{Painel de \rss{}}
-
-% TODO: A barra de canais \rss deve permitir ordenação através de drag'n'drop. A ordem do canal determina a importancia de um item de conteudo (sugestão do marcelo). Não seria melhor talvez colocar nota de 1-5 no canal e isto determinaria a importancia?
+\subsubsection{Painel de canais \rss{}}
 
 \paragraph{}
-Durante a sessão de um perfil, o software deverá exibir a área de trabalho,
-contendo painéis com a listagem de canais \rss{} e \cms{} cadastrados.
+O painel de \rss{} contém a lista de canais \rss{}s cadastrados para o \cms{}
+selecionado.
 
 \paragraph{}
-Em um painel central, serão exibidos os itens disponíveis de todos os canais
-\rss{} cadastrados no perfil. Ao selecionar um canal, o painel deverá exibir
-apenas os itens do canal selecionado.
-
-\subsubsection{Área de \emph{Queue}}
+A ordem de um canal em relação aos demais determina a sua relevância. Quanto
+mais no topo, maior relevância.
 
 \paragraph{}
-O cliente poderá determinar a quantidade de itens de conteúdo que devem
-aparecer no painel central, de acordo com as suas preferências.
+Deve ser possível determinar a ordem dos canais através de \emph{drag and
+drop}.
+
+\subsubsection{Painel de itens \rss{}}
 
 \paragraph{}
-A ordem de visualização dos itens é por padrão em ordem decrescente da data de
-publicação, mas também poderá ser ordenado pela popularidade ou de forma
-randômica.
+O painel de itens de \rss{} exibe a lista de itens de todos os canais ativos.
+Quando um canal é selecionado, exibe apenas os itens do respectivo canal.
 
 \paragraph{}
-Um item poderá ser marcado com uma estrela, permitindo que seja facilmente
-encontrado posteriormente.
+O cliente poderá determinar a quantidade de itens que aparecem na lista por
+vez, de acordo com as suas preferências.
 
 \paragraph{}
+Para visualizar um item, o cliente deve acionar o comando "visualizar", que
+exibirá o \textbf{diálogo de visualização}.
+
+\paragraph{}
+Os itens disponíveis neste painel podem ser adicionados ao \queue{} através de
+\emph{drag and drop}. Ao serem adicionados, devem 
+
+\paragraph{}
+Um item disponível neste painel pode ser adicionado ao \queue{} através de
+\emph{drag and drop}. Após ser adicionado, torna-se translúcido. Quando este
+mesmo item é publicado no \cms{}, torna-se opaco novamente e recebe um
+indicador de que já foi publicado.
+
+\paragraph{}
+A adição de itens ao \queue{} pode ser automatizada através do \textbf{método
+de alimentação}.
+
+\subsubsection{Painel de \queue{}}
+
+\paragraph{}
+O painel de \queue{} contém a lista de itens de \rss{} que serão publicados. Um
+item de conteúdo só poderá ser publicado se estiver na lista do \queue{}.
+
+\paragraph{}
+Quando o \textbf{método de publicação} está no modo "automático", a ordem dos
+itens determina a ordem de publicação. Os itens do início da lista são
+publicados primeiro.
+
+\paragraph{}
+A publicação manual de itens pode ser feita a qualquer momento, através da seleção de um dos itens do \queue{} e do comando "publicar". O diálogo 
+
+Quando um item 
 Um item de conteúdo poderá ser "arrastado" para um item do painel de \cms{}. Em
 seguida, uma janela de publicação será exibida, onde o cliente deverá acionar o
 botão "enviar" para publicar o conteúdo no \cms{}.
+
+\subsubsection{Diálogo de visualização}
+
+**TODO**
+
+\subsubsection{Método de alimentação}
+
+**TODO**
 
 \subsubsection{Método de publicação}
 
@@ -352,6 +387,15 @@ de conteúdo neste canal.
 \appendix
 
 \section{Notas}
+
+\paragraph{}
+É possível unificar (\emph{merge}) dois ou mais itens do \queue{}. Para isto, é
+necessário selecionar os itens correspondentes e acionar o "comando de
+unificação de itens", gerando um novo item unificado. Um diálogo deverá ser
+exibido solicitando o título deste novo item unificado. Por padrão o título
+sugerido é o primeiro item selecionado. O novo item deve conter uma marcação de
+unificado. Deve ser possível desfazer a ação através do comando "separar itens
+unificados".
 
 \paragraph{}
 Quando um tipo de \cms{} não for suportado, e o cliente informar o tipo de
