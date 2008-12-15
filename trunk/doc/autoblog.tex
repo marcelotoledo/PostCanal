@@ -13,13 +13,23 @@
 \renewcommand{\headrulewidth}{0.0pt}
 \renewcommand{\footrulewidth}{0.0pt}
 \fancyhead{}
-\fancyhead[C]{versão 0.15}
+\fancyhead[C]{versão 0.2}
 
 \def\cms{\emph{CMS}}
 \def\rss{\emph{RSS}}
 \def\plugin{\emph{plugin}}
 \def\queue{\emph{Queue}}
 \def\url{\emph{URL}}
+\def\dragndrop{\emph{drag and drop}}
+
+% links
+\def\gerenciadorconteudo{\hyperref[gerenciadorconteudo]{gerenciador de conteúdo}}
+\def\tipocms{\hyperref[tipocms]{tipo de \cms{}}}
+\def\dialogovisualizacao{\hyperref[dialogovisualizacao]{diálogo de visualização}}
+\def\metodoalimentacao{\hyperref[metodoalimentacao]{método de alimentação}}
+\def\metodopublicacao{\hyperref[metodopublicacao]{método de publicação}}
+\def\dialogopublicacao{\hyperref[dialogopublicacao]{diálogo de publicação}}
+\def\gerenciadorpublicacao{\hyperref[gerenciadorpublicacao]{gerenciador de publicação}}
 
 \begin{document}
 
@@ -58,6 +68,10 @@ forma ágil, padronizada, e com base em suas preferências.
 
 \section{Especificação funcional}
 
+\paragraph{}
+Esta especificação funcional tem como objetivo detalhar o funcionamento da
+aplicação, sem detalhar questões de usabilidade.
+
 \subsection{Cadastro de perfil de acesso}
 
 \paragraph{}
@@ -95,29 +109,25 @@ com instruções para acesso e alteração de senha (se necessário).
 \subsubsection{Atualização de perfil}
 
 \paragraph{}
-Após efetuar o acesso, o cliente poderá alterar suas informações de acesso e
-preencher os seguintes dados pessoais:
+Após efetuar o acesso, o cliente poderá alterar suas informações de acesso,
+preencher seus dados pessoais (nome, país, região, cidade, distrito, endereço,
+código postal, etc.), informar seu idioma, etc.
 
-\begin{itemize}
-\item Nome;
-\item País;
-\item Região;
-\item Cidade;
-\item Distrito;
-\item Endereço;
-\item Código postal
-\end{itemize}
-
+\paragraph{}
 Para alteração do endereço de e-mail, o cliente deverá efetuar o seguinte
 procedimento:
 
 \begin{enumerate}
+
 \item Acionar o comando de alteração de endereço de e-mail, que enviará uma
 mensagem ao endereço atual com instruções para alteração.
+
 \item A mensagem deve conter uma \url{} que permite acesso ao formulário de
 alteração de endereço de e-mail, onde o cliente deve informar o novo endereço.
+
 \item Uma mensagem deve ser enviada ao antigo e novo endereços notificando a
 alteração.
+
 \end{enumerate}
 
 \subsubsection{Recuperação de acesso}
@@ -127,16 +137,21 @@ O software deve permitir ao cliente recuperar o acesso quando não recordar sua
 senha, através do seguinte procedimento:
 
 \begin{enumerate}
+
 \item Informar o endereço de e-mail do perfil de acesso;
+
 \item Se o endereço de e-mail estiver cadastrado em um perfil de acesso, o
 cliente receberá uma mensagem de e-mail com uma \url{} para o formulário de
 alteração de senha;
+
 \item O formulário de alteração de senha deve permitir ao cliente digitar uma
 nova senha. Após a alteração, o software deverá enviar uma mensagem de e-mail
 ao cliente com a notificação de alteração.
+
 \item Se o endereço de e-mail informado não estiver associado a um perfil de
 acesso, o cliente deverá receber uma mensagem de e-mail com a notificação da
 não existência do perfil de acesso e instruções para a criação de um novo.
+
 \end{enumerate}
 
 \subsection{Cadastro de \cms{}}
@@ -148,77 +163,60 @@ Após efetuar acesso, o cliente poderá realizar o cadastro de um novo \cms{}
 através das seguintes etapas:
 
 \begin{enumerate}
-\item Informar a \url{} raiz do \cms{}. O software deverá detectar o tipo de
-\cms{} (\emph{Wordpress}, \emph{Joomla}, \emph{Drupal}, etc.) a partir da
-\url{} informada;
+
+\item Informar o nome do \cms{};
+
+\item Informar a \url{} raiz do \cms{}. O software deverá detectar o \tipocms{}
+(\emph{Wordpress}, \emph{Joomla}, \emph{Drupal}, etc.) a partir da \url{}
+informada;
+
 \item Se for possível a detecção do tipo de \cms{}, o software deverá verificar
 a existência do gerenciador de publicações do \cms{} em um endereço padrão, de
 acordo com o tipo de \cms{} e da \url{} raiz;
+
 \item Se o gerenciador de publicações do \cms{} não estiver disponível no
 endereço padrão, permitir que o cliente informe seu endereço através de uma
 \url{}. O software deverá verificar se o endereço informado é válido como
 gerenciador de publicações para o tipo de \cms{} escolhido;
+
 \item Se a detecção do tipo de \cms{} não for bem sucedida, verificar a causa e
 informar o erro mais provável (endereço ou página não encontrados, erro no
 servidor, etc.);
+
 \item Se o endereço estiver correto mas o tipo não for suportado, exibir
 notificação ao cliente e informar os tipos suportados. Permitir também que o
-cliente digite o tipo utilizado. Neste caso, o cadastro de \cms{} não poderá
-ser efetivado;
+cliente digite o tipo utilizado. Neste caso, o cadastro de \cms{} é descontinuado;
+
 \item Após a determinação correta do tipo de \cms{} e endereço do gerenciador
 de publicações, solicitar ao cliente que informe o usuário e senha do
 gerenciador. O software deverá verificar se o usuário e senha permitem
-autenticação no gerenciador, caso contrário, notificar que o usuário e senha
-não são válidos;
+autenticação no gerenciador, caso contrário, notificar ao cliente que o usuário
+e senha não são válidos;
+
 \item O software deve verificar de forma não invasiva (sem publicar conteúdo em
 produção) se o acesso ao gerenciador de publicações possui permissão para
 escrita de conteúdo (ex. \emph{drafts} do \emph{Wordpress}). Se não for
 possível tal verificação, o software poderá solicitar ao cliente se deseja
 realizar um teste de publicação em produção.
+
 \end{enumerate}
 
-\subsubsection{Recursos}
+\subsection{Cadastro de canal \rss{}}
 
 \paragraph{}
-O cliente poderá definir para cada \cms{} cadastrado, quais recursos serão
-utilizados. Os recursos caracterizam o tipo de informação utilizada na
-publicação de conteúdo em um \cms{}.
+O cadastro de canais \rss{} deverá pertencer a um \cms{} já cadastrado.
 
 \paragraph{}
-A disponibilidade de recursos depende do tipo de \cms{}. O software deve
-estabelecer os recursos mínimos e obrigatórios e que devem ser implementados
-para qualquer tipo, dos quais:
-
-\begin{itemize}
-\item Título;
-\item Descrição;
-\item Comentário;
-\item Fonte (endereço de origem do conteúdo);
-\end{itemize}
+Para adicionar um novo canal, o cliente deve informar a \url{} do alimentador
+ou um arquivo de importação \emph{OPML}.
 
 \paragraph{}
-Outros recursos poderão ser utilizados conforme a disponibilidade, como por
-exemplo:
-
-\begin{itemize}
-\item Categoria;
-\item Data de publicação;
-\item etc.;
-\end{itemize}
+O título de um novo canal é definido pelo \gerenciadorconteudo{}.
+Posteriormente o cliente poderá informar o título de sua preferência.
 
 \paragraph{}
-Os recursos que forem dependentes da entrada de informações pelo cliente (ex.
-Comentário, Categoria, etc.), não serão incluídos durante a publicação
-automática de conteúdo.
-
-\subsection{Cadastro de \rss{}}
-
-\paragraph{}
-O cadastro de canais \rss{} deverá ser particular a um \cms{} cadastrado.
-
-\paragraph{}
-Para incluir um novo canal \rss{}, o cliente deve informar a \url{} do
-alimentador ou um arquivo de importação \emph{OPML}.
+Durante a importação de canais em um arquivo \emph{OPML}, o título do canal
+será o mesmo definido no arquivo de importação.
 
 \subsection{\emph{Dashboard}}
 
@@ -241,119 +239,179 @@ O painel de \cms{} contém a lista de \cms{}s cadastrados. A exibição das info
 O painel de \rss{} contém a lista de canais \rss{}s cadastrados para o \cms{}
 selecionado.
 
-\paragraph{}
-A ordem de um canal em relação aos demais determina a sua relevância. Quanto
-mais no topo, maior relevância.
+% definir a relevância do conteúdo através da ordem dos canais. isto é
+% realmente necessário?
+% \paragraph{}
+% A ordem de um canal em relação aos demais determina a sua relevância. Quanto
+% mais no topo, maior relevância.
 
 \paragraph{}
-Deve ser possível determinar a ordem dos canais através de \emph{drag and
-drop}.
-
-\subsubsection{Painel de itens \rss{}}
+Novos canais são adicionados ao final da lista. Deve ser possível determinar a
+ordem dos canais através de \dragndrop{} ou por ordem alfabética.
 
 \paragraph{}
-O painel de itens de \rss{} exibe a lista de itens de todos os canais ativos.
+Um canal deve poder ser desativado ou removido. 
+
+\subsubsection{Painel de itens de conteúdo}
+
+\paragraph{}
+O painel de itens de conteúdo exibe a lista de itens de todos os canais ativos.
 Quando um canal é selecionado, exibe apenas os itens do respectivo canal.
 
 \paragraph{}
-O cliente poderá determinar a quantidade de itens que aparecem na lista por
-vez, de acordo com as suas preferências.
+O cliente poderá determinar a quantidade $n$ de itens que devem aparecer na
+lista por vez. Serão carregados os últimos $n$ itens a partir da data de
+publicação em ordem decrescente.
+
+\paragraph{}
+A relevância de um item de conteúdo é obtida através do número de vezes em que
+o item é publicado, envolvendo a estatística de todos os clientes que utilizam
+o software. Deve ser exibido na forma de um indicador no item.
+
+\paragraph{}
+Um item poderá ser marcado com uma estrela, para que possa ser filtrado
+posteriormente pelo \metodoalimentacao{}.
 
 \paragraph{}
 Para visualizar um item, o cliente deve acionar o comando "visualizar", que
-exibirá o \textbf{diálogo de visualização}.
+exibirá o \dialogovisualizacao{}.
 
 \paragraph{}
-Os itens disponíveis neste painel podem ser adicionados ao \queue{} através de
-\emph{drag and drop}. Ao serem adicionados, devem 
+Um item pode ser adicionado ao \queue{} através de \dragndrop{} ou através do
+comando "adicionar ao \queue{}". Um marcador deve indicar quando um item deste
+painel encontra-se disponível no painel de \queue{}.
 
 \paragraph{}
-Um item disponível neste painel pode ser adicionado ao \queue{} através de
-\emph{drag and drop}. Após ser adicionado, torna-se translúcido. Quando este
-mesmo item é publicado no \cms{}, torna-se opaco novamente e recebe um
-indicador de que já foi publicado.
-
-\paragraph{}
-A adição de itens ao \queue{} pode ser automatizada através do \textbf{método
-de alimentação}.
+O método de alimentação define as regras de automação na adição de itens deste
+painel ao painel de \queue{}.
 
 \subsubsection{Painel de \queue{}}
 
 \paragraph{}
-O painel de \queue{} contém a lista de itens de \rss{} que serão publicados. Um
-item de conteúdo só poderá ser publicado se estiver na lista do \queue{}.
+O painel de \queue{} contém a lista de itens de conteúdo selecionados para
+publicação.
 
 \paragraph{}
-Quando o \textbf{método de publicação} está no modo "automático", a ordem dos
-itens determina a ordem de publicação. Os itens do início da lista são
-publicados primeiro.
+A publicação de itens manualmente é feita através do \dialogopublicacao{},
+acionado pelo cliente através da seleção de um item do \queue{} e do comando
+"abrir diálogo de publicação".
 
 \paragraph{}
-A publicação manual de itens pode ser feita a qualquer momento, através da seleção de um dos itens do \queue{} e do comando "publicar". O diálogo 
-
-Quando um item 
-Um item de conteúdo poderá ser "arrastado" para um item do painel de \cms{}. Em
-seguida, uma janela de publicação será exibida, onde o cliente deverá acionar o
-botão "enviar" para publicar o conteúdo no \cms{}.
-
-\subsubsection{Diálogo de visualização}
-
-**TODO**
-
-\subsubsection{Método de alimentação}
-
-**TODO**
-
-\subsubsection{Método de publicação}
+Novos itens são adicionados ao final da lista. A ordem dos itens pode ser
+alterada através de \dragndrop{}.
 
 \paragraph{}
-O cliente poderá definir para cada \cms{} cadastrado a forma como este deverá
-gerenciar a publicação dos itens de conteúdo disponíveis.
+O \metodopublicacao{} define as regras de automação na publicação de conteúdo
+no \cms{}.
+
+\subsubsection{Diálogo de visualização} \label{dialogovisualizacao}
 
 \paragraph{}
-Por padrão, a publicação de conteúdo deve ser feita manualmente. No entanto é
-possível automatizar este processo, a partir das seguintes configurações:
+O diálogo de visualização exibe todas as informações disponíveis para um item
+de conteúdo (título, data de publicação, fonte, etc.), além de um \emph{link}
+para visualização do conteúdo no endereço de origem.
+
+\subsubsection{Método de alimentação} \label{metodoalimentacao}
+
+\paragraph{}
+O método de alimentação é um conjunto de configurações que determinam a forma
+como um item da lista de itens de conteúdo é adicionado ao painel de \queue{}.
+
+\paragraph{}
+A primeira configuração define o estado de alimentação, que pode assumir os
+valores "manual" ou "automático". No estado manual, os itens de conteúdo são
+adicionados ao \queue{} somente através da ação do cliente.
+
+\paragraph{}
+O estado automático atribui ao software a responsabilidade na adição de itens
+ao \queue{}, e para isso, solicita ao cliente as seguintes configurações:
 
 \begin{itemize}
 
-% TODO: talvez aqui sejam duas coisas distintas: alimentacao/ordenacao de acordo com o queue, e frequencia, palavras-chave, com estrela (metodo de publicacao < este nome está legal?)
+\item Com estrela: Somente itens marcados com estrela no painel de itens de
+conteúdo serão utilizados para adição. Padrão: Todos;
 
-% \item Alimentação: Define a lista de canais a serem utilizados. Padrão: Todos
-% os cadastrados;
-% \item Ordenação: Define a ordem de publicação a partir da data de publicação,
-% popularidade ou randômico. Padrão: Data de publicação;
-\item Frequência: Define o intervalo de tempo entre as publicações (5min 15min,
-30min, 1hora, 2hrs, 3hrs, 6hrs, 12hrs, 24hrs, etc.);
 \item Palavras-chave: A escolha de itens é feita com base em uma ou mais
-palavras-chave;
-\item Com estrela: Somente itens de conteúdo marcados com estrela serão
-utilizados para publicação;
+palavras-chave. Padrão: Em branco;
+
+\item Ordenação: Define a ordem de adição de itens a partir da data de
+publicação, relevância ou randômico. Padrão: Data de publicação;
+
+\item Máximo: Quantidade máxima de itens que podem ser adicionados ao \queue{}.
+Enquanto o número de itens do \queue{} não for menor ou igual ao número de
+itens definido por esta configuração, novos itens não poderão ser adicionados
+ao \queue{}. Padrão: 5 itens. Máximo: 25 itens;
+
 \end{itemize}
 
 \paragraph{}
-Independentemente da configuração estabelecida para a publicação automática, a
-opção manual deverá sempre estar disponível.
+A adição de itens ao \queue{} manualmente sempre deve estar disponível, sem
+considerar as configurações de estado.
 
-
-% \paragraph{}
-% A popularidade pode ser medida através da quantidade de publicações feitas por
-% outros clientees para um mesmo item.
-
-
-
-\subsubsection{Janela de publicação}
+\subsubsection{Método de publicação} \label{metodopublicacao}
 
 \paragraph{}
-A janela de publicação deve conter o título e descrição do item de conteúdo,
-além de um campo para adicionar comentários. A janela deve permitira a edição
-dos valores iniciais.
+O método de publicação é um conjunto de configurações que determinam a forma
+como um item de conteúdo do painel de \queue{} é publicado no \cms{}.
 
 \paragraph{}
-Outros recursos podem estar disponíveis conforme o \cms{} utilizado.
+De forma análoga ao método de alimentação, o método de publicação pode assumir
+os valores de estado "manual" ou "automático". No estado manual, um item
+somente é publicado através da ação do cliente.
+
+\paragraph{}
+O estado automático atribui ao software a responsabilidade na publicação de
+itens no \cms{}, e para isso, solicita ao cliente as seguintes configurações:
+
+\begin{itemize}
+
+\item Frequência: Define o intervalo de tempo entre as publicações (ex: 5min
+15min, 30min, 1hora, 2hrs, 3hrs, 6hrs, 12hrs, 24hrs). Padrão: 30min;
+
+\end{itemize}
+
+\paragraph{}
+No estado automático, a ordem dos itens no \queue{} determina a ordem de
+publicação. Os itens do início da lista são publicados em primeiro.
+
+\paragraph{}
+A publicação de itens no estado automático é gerenciada pelo \gerenciadorpublicacao{}.
+
+\paragraph{}
+A publicação de itens ao \queue{} manualmente sempre deve estar disponível, sem
+considerar as configurações de estado.
+
+\subsubsection{Diálogo de publicação} \label{dialogopublicacao}
+
+\paragraph{}
+O diálogo de publicação exibe as informações de um item de conteúdo (título,
+data de publicação, fonte, etc.) e permite a alteração dos valores, além de um
+campo para comentários adicionais.
+
+\paragraph{}
+Deve estar disponível uma opção para indicar a fonte do conteúdo, que quando
+selecionada, inclui no final do conteúdo un \emph{link} para a notícia no
+endereço de origem.
+
+\paragraph{}
+A publicação do conteúdo é feita através do comando "publicar".
+
+\paragraph{}
+É possível armazenar as alterações feitas em um item através do comando
+"salvar", sem necessariamente publicá-lo.
+
+\paragraph{}
+Informações adicionais podem ser incluídas na publicação de conteúdo
+(Categorias, \emph{Tags}, etc.), dependendo somente da implementação
+dos recursos necessários no \plugin{} do tipo de \cms{} utilizado. 
 
 \subsection{\emph{Back-end}}
 
-\subsubsection{Tipo de \cms{}}
+\paragraph{}
+O \emph{back-end} é o conjunto de ferramentas do software responsável por
+gerenciar os recursos de forma independente ao cliente.
+
+\subsubsection{Tipo de \cms{}} \label{tipocms}
 
 \paragraph{}
 O tipo de \cms{} define qual software é utilizado pelo cliente. Os tipos
@@ -366,27 +424,39 @@ implementar uma interface determinada pelo software.
 Um \emph{plugin} de \cms{} deve ser capaz de gerenciar as diferentes versões de
 um tipo de \cms{}.
 
-\subsubsection{Gerenciador de conteúdo}
+\subsubsection{Gerenciador de conteúdo} \label{gerenciadorconteudo}
 
 \paragraph{}
-Os itens de conteúdo de um canal podem ser globais, ou seja, podem ser
-compartilhados por todos os clientees do software, afim de eliminar redundância
-desnecessária de dados.
+Os itens de conteúdo de um canal podem ser compartilhados por todos os
+clientees do software, afim de eliminar redundância desnecessária de
+informações.
 
 \paragraph{}
-Quando um novo canal é adicionado, o sistema se preocupa em obter os itens mais
-recentes deste canal imediatamente.
+Quando um novo canal é adicionado, o sistema obtém as informações sobre o canal
+(título, descrição, etc.) e os itens de conteúdo disponíveis.
 
 \paragraph{}
-Para um canal já existente, o sistema deverá executar em \emph{background} e
-obter novos itens, com uma freqüência que depende da freqüencia de publicação
-de conteúdo neste canal.
+Um \emph{daemon} deverá obter novos itens de conteúdo para um canal cadastrado,
+com uma freqüência em função da periodicidade de atualização do conteúdo no
+alimentador deste canal.
 
+\subsubsection{Gerenciador de publicação} \label{gerenciadorpublicacao}
 
+\paragraph{}
+O gerenciador de publicação possui um \emph{daemon} responsável pela publicação
+de conteúdo de um \queue{} em um \cms{} quando o estado do método de publicação
+está definido como automático. 
 
 \appendix
 
 \section{Notas}
+
+\subsection{\emph{Add-ons}}
+
+\paragraph{}
+\emph{Add-ons} são recursos adicionais que podem ser incluídos em versões
+futuras, incluídos neste documento apenas como idéias gerais sem a preocupação
+de incluir detalhes de implementação.
 
 \paragraph{}
 É possível unificar (\emph{merge}) dois ou mais itens do \queue{}. Para isto, é
@@ -404,11 +474,6 @@ e solicitar ajuste no desenvolvimento, e informar ao cliente sobre a resolução
 do problema. Se o tipo não for suportado, informar ao cliente que o software
 não é suportado. É possível também verificar quais são as tendências para
 implementações de novos tipos.
-
-\paragraph{}
-O software deverá servir como guia para padronização da publicação de conteúdo
-externo, com a virtude de previnir ao cliente problemas com \emph{copyright},
-por exemplo.
 
 \subsection{Segurança}
 
