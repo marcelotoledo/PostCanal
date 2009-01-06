@@ -4,21 +4,18 @@
 
 class AB_Request
 {
-    public $controller = "Index";
-    public $action = "index";
-    public $parameters = array();
+    private $path = "/";
+    private $controller = "Index";
+    private $action = "index";
+    private $parameters = array();
 
 
     public function __construct()
     {
-        $request = isset($_GET['ab_request']) ? $_GET['ab_request'] : "";
-        $request = trim ($request, "/");
+        $this->path = self::getPath();
 
-        $arguments = explode ("/", $request);
+        $arguments = explode ("/", trim($this->path, "/"));
         $total_arguments = count($arguments);
-
-
-        /* controller and action */
 
         if(empty($arguments[0]) == false)
         {
@@ -32,9 +29,6 @@ class AB_Request
                 $this->action = $arguments[1];
             }
         }
-
-
-        /* parameters */
 
         if ($total_arguments == 3)
         {
@@ -58,5 +52,47 @@ class AB_Request
 
             $this->parameters = array_combine($k, $v);
         }
+    }
+
+    public function getController()
+    {
+        return $this->controller;
+    }
+
+    public function getAction()
+    {
+        return $this->action;
+    }
+
+    public function getParameters()
+    {
+        return $this->parameters;
+    }
+
+    public static function getPath()
+    {
+        $request_uri = $_SERVER['REQUEST_URI'];
+
+        if(empty($request_uri) == true)
+        {
+            throw new Exception("request uri is empty");
+        }
+
+        $path = $request_uri;
+
+        $script_name = $_SERVER['SCRIPT_NAME'];
+        $query_string = $_SERVER['QUERY_STRING'];
+ 
+        if(strstr($path, $script_name))
+        {
+            $path = str_replace($script_name, "", $path);
+        }
+
+        if(strstr($path, "?" . $query_string))
+        {
+            $path = str_replace("?" . $query_string, "", $path);
+        }
+
+        return $path;
     }
 }

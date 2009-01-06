@@ -48,8 +48,8 @@ class AB_View
 
     private function renderAction()
     {
-        $file_name = $this->request->controller . "/";
-        $file_name.= $this->request->action . ".php";
+        $file_name = $this->request->getController() . "/";
+        $file_name.= $this->request->getAction() . ".php";
         $file_path = APPLICATION_PATH . "/view/" . $file_name;
 
         if(file_exists($file_path) == true)

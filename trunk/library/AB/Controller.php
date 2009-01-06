@@ -16,7 +16,7 @@ abstract class AB_Controller
 
     public function render()
     {
-        $action_name = $this->request->action . "Action";
+        $action_name = $this->request->getAction() . "Action";
 
         if(is_callable(array($this, $action_name)) == true)
         {
@@ -24,11 +24,11 @@ abstract class AB_Controller
 
             ob_start();
             $view->render();
-            $this->response->body = ob_get_clean();
+            $this->response->setBody(ob_get_clean());
         }
         else
         {
-            throw new Exception("action " . $this->request->action . " not found");
+            throw new Exception("action " . $this->request->getAction() . " not found");
         }
     }
 }
