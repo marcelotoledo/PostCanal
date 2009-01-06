@@ -23,4 +23,4 @@ AB_Loader::register();
 
 /* dispatch */
 
-AB_Dispatcher::dispatch();
+AB_Dispatcher::singleton()->dispatch();
