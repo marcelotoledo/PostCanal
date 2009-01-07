@@ -8,7 +8,7 @@ class AB_Response
     private $body = "";
 
     
-    public function setHeader($header)
+    public function addHeader($header)
     {
         $this->headers[] = $header;
     }

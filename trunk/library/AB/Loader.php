@@ -8,12 +8,12 @@ class AB_Loader
     {
         $file_path = null;
 
-        if(substr($class_name, 0, 3) == "AB_")
+        if(strpos($class_name, "AB_") === 0)
         {
             $file_name = substr($class_name, 3) . ".php";
             $file_path = LIBRARY_PATH . "/AB/" . $file_name; 
         }
-        elseif(strstr($class_name, "Model"))
+        else
         {
             $file_name = $class_name . ".php";
             $file_path = APPLICATION_PATH . "/model/" . $file_name;

@@ -2,18 +2,18 @@
 
 /* AUTOBLOG BOOTSTRAP */
 
-/* configuration setup */
-
-require_once realpath(dirname(__FILE__)) . "/../config/environment.php";
-
-
 /* autoloader setup */
 
-require_once "AB/Loader.php";
+require "../library/AB/Loader.php";
 AB_Loader::register();
 
-// require_once "Zend/Loader.php";
+// require "Zend/Loader.php";
 // Zend_Loader::registerAutoload();
+
+
+/* configuration setup */
+
+require "../config/environment.php";
 
 
 /* application setup */

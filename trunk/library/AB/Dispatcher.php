@@ -12,7 +12,7 @@ class AB_Dispatcher
 
     public static function singleton()
     {
-        if(is_null(self::$instance))
+        if(is_null(self::$instance) == true)
         {
             self::$instance = new self();
         }
