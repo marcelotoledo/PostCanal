@@ -8,14 +8,12 @@ class IndexController extends AB_Controller
     {
         $user_profile = new UserProfile();
 
-        $first = UserProfile::selectModelWhere(array('id' => 1));
-
-        print_r($first);
+        $profile = current(UserProfile::find(array('user_profile_id' => 1)));
 
         return array
         (
-            'hello' => 'world',
-            'my' => 'test'
+            'login_email' => $profile->login_email,
+            'created_at' => $profile->created_at
         );
     }
 }

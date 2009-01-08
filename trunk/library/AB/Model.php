@@ -7,11 +7,11 @@ abstract class AB_Model
 {
     protected $data = array();
 
-    protected static $table_name;
-    protected static $primary_key;
+    protected $table_name;
+    protected $primary_key;
 
 
-    public function __get($name)
+    public function __get ($name)
     {
         $value = null;
 
@@ -23,23 +23,81 @@ abstract class AB_Model
         return $value;
     }
 
-    public function __set($name, $value)
+    public function __set ($name, $value)
     {
         $this->data[$name] = $value;
     }
 
+    protected function _find (
+        $conditions=array(), $order=array(), $limit=0, $offset=0)
+    {
+        $prepared = array();
+
+        $columns = array_keys($conditions);
+
+        foreach($columns as $column)
+        {
+            $prepared[] = $column . " = :" . $column;
+        }
+
+        $sql = "SELECT * FROM " . $this->table_name;
+
+        if(count($conditions) > 0)
+        {
+            $sql.= " WHERE " . implode(" AND ", $prepared);
+        }
+
+        if(count($order) > 0)
+        {
+            $sql.= " ORDER BY " . implode(", ", $order);
+        }
+
+        if(($limit = intval($limit)) > 0)
+        {
+            $sql.= " LIMIT " . $limit;
+
+            if(($offset = intval($offset)) > 0)
+            {
+                $sql.= ", " . $offset;
+            }
+        }
+
+        return $this->_selectModel($sql, $conditions);
+    }
+
+    public static function find (/* VOID */)
+    {
+        /* TODO get_class($this) can be replaced by get_called_class() in php >= 5.3 */
+    }
+
+    public function _selectModel ($sql, $data=array())
+    {
+        $statement = self::_statement($sql, $data);
+
+        $statement->setFetchMode(PDO::FETCH_CLASS, get_class($this));
+        $statement->execute();
+
+        return $statement->fetchAll();
+    }
+
+    public static function selectModel (/* VOID */)
+    {
+        /* TODO get_class($this) can be replaced by get_called_class() in php >= 5.3 */
+    }
+
     public function save()
     {
+        $connection = self::getConnection();
+
         if($this->isNew())
         {
-            $data_keys = array_keys($this->data);
-            $data_values = array_values($this->data);
+            $columns = array_keys($this->data);
 
-            $sql = "INSERT INTO " . self::$table_name . 
-                   "(" . implode(", ", $data_keys) .   ") VALUES " .
-                   "(" . implode(", ", $data_values) . ")";
+            $sql = "INSERT INTO " . $this->table_name .
+                   "(" . implode(", ", $columns) . ") VALUES " .
+                   "(:" . implode(", :", $columns) . ")";
 
-            $this->data[self::$primary_key] = self::insert($sql);
+            $this->data[$this->primary_key] = self::insert($sql, $this->data);
         }
         else
         {
@@ -47,101 +105,94 @@ abstract class AB_Model
 
             foreach($data as $key => $value)
             {
-                if($key != self::$primary_key)
+                if($key != $this->primary_key)
                 {
-                    $arguments = $key . " = " . $value;
+                    $arguments = $key . " = :" . $key;
                 }
             }
 
-            $id = $this->data[self::$primary_key];
-
-            $sql = "UPDATE " . self::$table_name . 
+            $sql = "UPDATE " . $this->table_name . 
                    "   SET " . implode(", ", $arguments) . 
-                   " WHERE " . self::$primary_key . " = " . $id;
+                   " WHERE " . $this->primary_key . " = :" . $this->primary_key;
             
-            self::execute($sql);
+            self::execute($sql, $this->data);
         }
     }
 
     public function delete()
     {
-        $id = $this->data[self::$primary_key];
+        $sql = "DELETE FROM " . $this->table_name . 
+               "      WHERE " . $this->primary_key . " = :" . $this->primary_key;
 
-        $sql = "DELETE FROM " . self::$table_name . 
-               "      WHERE " . self::$primary_key . " = " . $id;
+        return self::execute($sql, 
+            array($this->primary_key => $this->data[$this->primary_key]));
     }
 
     public function isNew()
     {
-        isset($this->data[self::$primary_key]);
+        return is_null($this->data[$this->primary_key]);
     }
 
-    public static function execute($sql)
+    public static function _statement($sql, $data=array())
     {
-        return self::getConnection()->exec($sql);
+        $statement = self::getConnection()->prepare($sql);
+
+        foreach($data as $column => $value)
+        {
+            $statement->bindParam(':' . $column, $value);
+        }
+
+        return $statement;
     }
 
-    public static function insert($sql)
+    public static function execute($sql, $data=array())
     {
-        self::execute($sql);
+        return self::_statement($sql, $data)->execute();
+    }
+
+    public static function insert($sql, $data=array())
+    {
+        self::execute($sql, $data);
+
         return self::getConnection()->lastInsertId();
     }
 
-    public static function select($sql)
+    public static function select($sql, $data=array())
     {
-        $statement = self::getConnection()->query($sql);
-        return $statement->fetch(PDO::FETCH_OBJ);
+        $statement = self::_statement($sql, $data);
+
+        $statement->setFetchMode(PDO::FETCH_OBJ);
+
+        return $statement->fetchAll();
     }
 
-    public static function selectRow($sql)
+    public static function selectRow($sql, $data=array())
     {
-        $result = self::select($sql);
-        return $result ? current($result) : array();
-    }
-
-    public static function selectColumn($sql)
-    {
-        $result = self::selectOne($sql);
-        return $result ? current($result) : null;
-    }
-
-    public static function selectModel($sql)
-    {
-        $statement = self::getConnection()->query($sql);
-        return $statement->fetchAll(PDO::FETCH_CLASS, self);
-    }
-
-    public static function selectModelWhere($parameters)
-    {
-        $arguments = array();
-
-        foreach($parameters as $key => $value)
-        {
-            $arguments[] = $key . " = " . $value;
-        }
-
-        $sql = "SELECT * FROM " . self::$table_name . 
-               "        WHERE " . implode(" AND ", $arguments);
-
-        $results = self::selectModel($sql);
-
-        return count($results) == 1 ? current($results) : $results;
+        return current(self::select($sql, $data));
     }
 
     public static function getConnection()
     {
         $registry = AB_Registry::singleton();
         
-        if(is_null($registry->connection) == true)
+        if($registry->connection == null)
         {
-            $registry->connection = new PDO
-            (
-                $registry->database_driver . ":dbname=" . 
-                $registry->database_db . ";host=" . 
-                $registry->database_host, 
-                $registry->database_username,
-                $registry->database_password
-            );
+            try
+            {
+                $registry->connection = new PDO
+                (
+                    $registry->database_driver . ":host=" . 
+                    $registry->database_host . ";dbname=" . 
+                    $registry->database_db, 
+                    $registry->database_username,
+                    $registry->database_password
+                );
+            }
+            catch(PDOException $exception)
+            {
+                $message = "database connection failed; PDOException: " . $exception;
+                throw new Exception($message);
+            }
         }
 
         return $registry->connection;
