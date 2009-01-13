@@ -10,42 +10,41 @@ DROP TABLE IF EXISTS channel_status;
 DROP TABLE IF EXISTS user_cms;
 DROP SEQUENCE IF EXISTS user_cms_seq;
 DROP TABLE IF EXISTS cms_status;
-DROP TABLE IF EXISTS error_level;
 DROP TABLE IF EXISTS user_information;
 DROP TABLE IF EXISTS user_profile;
 DROP SEQUENCE IF EXISTS user_profile_seq;
 DROP TABLE IF EXISTS cms_type;
+DROP TABLE IF EXISTS application_log;
+DROP SEQUENCE IF EXISTS application_log_seq;
 
 /* base */
 
-CREATE TABLE error_level
+CREATE SEQUENCE application_log_seq;
+CREATE TABLE application_log
 (
-    error_level_id integer NOT NULL,
-    label character varying(50) NOT NULL,
-    CONSTRAINT error_level_pk PRIMARY KEY (error_level_id),
-    CONSTRAINT error_level_id_unique UNIQUE (error_level_id)
+    application_log_id integer NOT NULL DEFAULT nextval('application_log_seq'),
+    priority integer NOT NULL DEFAULT 0,
+    message text NOT NULL DEFAULT '',
+    created_at timestamp without time zone NOT NULL DEFAULT NOW(),
+    CONSTRAINT application_log_pk PRIMARY KEY (application_log_id)
 );
- 
+
 CREATE TABLE channel_status
 (
     channel_status_id integer NOT NULL,
-    error_level_id integer NOT NULL,
+    error_level integer NOT NULL DEFAULT 0,
     label character varying(50) NOT NULL,
     CONSTRAINT channel_status_pk PRIMARY KEY (channel_status_id),
-    CONSTRAINT channel_status_id_unique UNIQUE (channel_status_id),
-    CONSTRAINT error_level_fk FOREIGN KEY (error_level_id) 
-        REFERENCES error_level (error_level_id) ON DELETE RESTRICT
+    CONSTRAINT channel_status_id_unique UNIQUE (channel_status_id)
 );
 
 CREATE TABLE cms_status
 (
     cms_status_id integer NOT NULL,
-    error_level_id integer NOT NULL,
+    error_level integer NOT NULL DEFAULT 0,
     label character varying(50) NOT NULL,
     CONSTRAINT cms_status_pk PRIMARY KEY (cms_status_id),
-    CONSTRAINT cms_status_id_unique UNIQUE (cms_status_id),
-    CONSTRAINT error_level_fk FOREIGN KEY (error_level_id) 
-        REFERENCES error_level (error_level_id) ON DELETE RESTRICT
+    CONSTRAINT cms_status_id_unique UNIQUE (cms_status_id)
 );
 
 CREATE TABLE cms_type

@@ -1,15 +1,53 @@
 <?php
 
-/* AUTOBLOG DISPATCHER */
-
+/**
+ * Application dispatcher
+ * 
+ * @category    Autoblog
+ * @package     AB
+ */
 class AB_Dispatcher
 {
+    /**
+     * Singleton instance
+     * 
+     * @var AB_Dispatcher
+     */
     private static $instance;
 
+    /**
+     * Request
+     *
+     * @var AB_Request
+     */
+    private $request;
 
-    private function __construct() { }
+    /**
+     * Response
+     *
+     * @var AB_Response
+     */
+    private $response;
+
+
+    /**
+     * Dispatcher constructor
+     *
+     * @return  void
+     */
+    private function __construct() 
+    { 
+        $this->request = new AB_Request();
+        $this->response = new AB_Response();
+    }
+
     private function __clone() { }
 
+    /**
+     * Singleton constructor
+     * 
+     * @return AB_Dispatcher
+     */
     public static function singleton()
     {
         if(is_null(self::$instance) == true)
@@ -20,50 +58,92 @@ class AB_Dispatcher
         return self::$instance;
     }
 
-    public static function dispatch()
+    /**
+     * Current request
+     *
+     * @return  AB_Request
+     */
+    public function getRequest()
     {
-        $request = new AB_Request();
-        $response = new AB_Response();
+        return $this->request;
+    }
 
-        $controller = null;
+    /**
+     * Current response
+     *
+     * @return  AB_Response
+     */
+    public function getResponse()
+    {
+        return $this->response;
+    }
 
+    /**
+     * Dispatch request and response to controller
+     *
+     * @return void
+     */
+    public function dispatch()
+    {
         try
         {
-            $controller = self::controllerFactory($request, $response);
+            $this->controllerFactory()->runAction();
+            $this->response->send();
         }
         catch(Exception $exception)
         {
-            $response->setBody($exception);
-        }
+            if ($this->response->getStatus() == AB_Response::STATUS_NOT_FOUND)
+            {
+                AB_Log::write($exception, AB_Log::PRIORITY_WARNING);
+            }
+            else
+            {
+                $this->response->setStatus(AB_Response::STATUS_ERROR);
+                AB_Log::write($exception, AB_Log::PRIORITY_ERROR);
+            }
 
-        if(is_object($controller))
-        {
-            try
+            if(empty(AB_Registry::singleton()->debug) == false &&
+                     AB_Registry::singleton()->debug  == true)
             {
-                $controller->render();
+                $this->response->setBody("<pre>" . $exception . "</pre>");
             }
-            catch(Exception $exception)
+            else
             {
-                $response->setBody($exception);
+                $this->controllerFactory('Error')->runAction('status' . 
+                    $this->response->getStatus());
             }
+
+            $this->response->send();
         }
-       
-        $response->send();
     }
 
-    public static function controllerFactory($request, $response)
+    /**
+     * Initialize controller class
+     *
+     * @param   string          $name   Controller name
+     * @throws  Exception
+     * @return  AB_Controller
+     */
+    private function controllerFactory($name=null)
     {
-        $controller_name = $request->getController() . "Controller";
-        $controller_path = APPLICATION_PATH . "/controller/" . $controller_name . ".php";
-
-        if(file_exists($controller_path) == true)
+        if(empty($name))
         {
-            include_once $controller_path;
-            return new $controller_name($request, $response);
+            $name = $this->request->getController();
+        }
+
+        $class_name = $name . "Controller";
+        $controller = null;
+
+        if(class_exists($class_name))
+        {
+            $controller = new $class_name($this->request, $this->response);
         }
         else
         {
-            throw new Exception ("controller " . $request->getController() . " not found");
+            $this->response->setStatus(AB_Response::STATUS_NOT_FOUND);
+            throw new Exception ("controller " . $name . " not found");
         }
+
+        return $controller;
     }
 }

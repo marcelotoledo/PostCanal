@@ -1,6 +1,8 @@
 <?php
 
-/* AUTOBLOG CONFIGURATION */
+/**
+ * Environment configuration
+ */
 
 /* php */
 
@@ -20,10 +22,27 @@ set_include_path (LIBRARY_PATH . PATH_SEPARATOR . get_include_path());
 $registry = AB_Registry::singleton();
 
 
+/* debug (show exceptions) */
+
+$registry->debug = true;
+
+
 /* database */
 
-$registry->database_driver   = "pgsql";
-$registry->database_host     = "localhost";
-$registry->database_username = "autoblog";
-$registry->database_password = "autoblog";
-$registry->database_db       = "autoblog";
+$registry->database->driver   = "pgsql";
+$registry->database->host     = "localhost";
+$registry->database->username = "autoblog";
+$registry->database->password = "autoblog";
+$registry->database->db       = "autoblog";
+
+
+/* response headers */
+
+$registry->response->headers = array
+(
+    200 => array
+    (
+        'Last-Modified' => gmdate("D, d M Y H:i:s") . " GMT",
+        'Cache-Control' => "no-store, no-cache, must-revalidate"
+    )
+);

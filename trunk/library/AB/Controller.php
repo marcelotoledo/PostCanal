@@ -1,34 +1,103 @@
 <?php
 
-/* AUTOBLOG CONTROLLER */
-
+/**
+ * Abstract controller
+ * 
+ * @category    Autoblog
+ * @package     AB
+ */
 abstract class AB_Controller
 {
+    /**
+     * Request
+     *
+     * @var AB_Request
+     */
     private $request;
+
+    /**
+     * Response
+     *
+     * @var AB_Response
+     */
     private $response;
 
+    /**
+     * View
+     * 
+     * @var AB_View
+     */
+    private $view;
 
+
+    /**
+     * Controller constructor
+     *
+     * @param   AB_Request  $request
+     * @param   AB_Response $response
+     * @return  void
+     */
     public function __construct($request, $response)
     {
         $this->request = $request;
         $this->response = $response;
+        $this->view = new AB_View($request);
     }
 
-    public function render()
+    /**
+     * Current request
+     *
+     * @return  AB_Request
+     */
+    public function getRequest()
     {
-        $action_name = $this->request->getAction() . "Action";
+        return $this->request;
+    }
 
-        if(is_callable(array($this, $action_name)) == true)
+    /**
+     * Current response
+     *
+     * @return  AB_Response
+     */
+    public function getResponse()
+    {
+        return $this->response;
+    }
+
+    /**
+     * Current view
+     *
+     * @return  AB_View
+     */
+    public function getView()
+    {
+        return $this->view;
+    }
+
+    /**
+     * Run controller action
+     *
+     * @param   string      $name   Action name
+     * @throws  Exception
+     * @return  void
+     */
+    public function runAction($name=null)
+    {
+        $action = $name ? $name : $this->request->getAction();
+        $action_method = $action . "Action";
+
+        if(is_callable(array($this, $action_method)) == true)
         {
-            $view = new AB_View($this->request, $this->{$action_name}());
+            $this->view->setData($this->{$action_method}());
 
             ob_start();
-            $view->render();
+            $this->view->render();
             $this->response->setBody(ob_get_clean());
         }
         else
         {
-            throw new Exception("action " . $this->request->getAction() . " not found");
+            $this->response->setStatus(404);
+            throw new Exception ("action " . $action . " not found");
         }
     }
 }

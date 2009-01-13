@@ -1,17 +1,53 @@
 <?php
 
-/* AUTOBLOG REGISTRY */
-
+/**
+ * Data registry
+ *
+ * @category    Autoblog
+ * @package     AB
+ */
 class AB_Registry
 {
+    /**
+     * Singleton instance
+     * 
+     * @var AB_Registry
+     */
     private static $instance;
 
-    private $data = array();
+    /**
+     * Registry data
+     *
+     * @var array
+     */
+    protected $data = array();
+
+    /**
+     * Registry level
+     *
+     * @var integer
+     */
+    protected $level;
 
 
-    private function __construct() { }
+    /**
+     * Registry constructor
+     *
+     * @param   integer $level
+     * @return  void
+     */
+    private function __construct($level=0)
+    {
+        $this->level = $level;
+    }
+
     private function __clone() { }
 
+    /**
+     * Singleton constructor
+     * 
+     * @return AB_Dispatcher
+     */
     public static function singleton()
     {
         if(is_null(self::$instance) == true)
@@ -22,20 +58,71 @@ class AB_Registry
         return self::$instance;
     }
 
-    public function __get($name)
+    /**
+     * Get overloading
+     *
+     * @param   string  $name
+     * @return  mixed
+     */
+    public function __get ($name)
     {
-        $value = null;
-
-        if(array_key_exists($name, $this->data))
+        if(array_key_exists($name, $this->data) == false)
         {
-            $value = $this->data[$name];
+            $this->data[$name] = new self($this->level + 1);
         }
 
-        return $value;
+        return $this->data[$name];
     }
 
-    public function __set($name, $value)
+    /**
+     * Set overloading
+     *
+     * @param   string  $name
+     * @param   mixed   $value
+     * @return  void
+     */
+    public function __set ($name, $value)
     {
         $this->data[$name] = $value;
+    }
+
+    /**
+     * To String
+     *
+     * @return  string
+     */
+    public function __toString()
+    {
+        $output = "\n";
+
+        foreach($this->data as $name => $value)
+        {
+            $output.= str_repeat(" ", $this->level);
+            $output.= $name . ": " . $value . "\n";
+        }
+
+        return $output;
+    }
+
+    /**
+     * Is set
+     *
+     * @param   string  $name
+     * @return  boolean
+     */
+    public function __isset($name)
+    {
+        return empty($this->data[$name]) ^ true;
+    }
+
+    /**
+     * Unset
+     *
+     * @param   string  $name
+     * @return  void
+     */
+    public function __unset($name)
+    {
+        unset($this->data[$name]);
     }
 }
