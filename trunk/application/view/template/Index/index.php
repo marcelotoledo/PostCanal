@@ -9,7 +9,8 @@
                     <td colspan="2"><b>Autenticação</b></td>
                 </tr>
                 <tr id="regtitlerow" style="display:none;height:50px;vertical-align:top">
-                    <td colspan="2"><b>Novo Cadastro</b></td>
+                    <td colspan="2"><b>Novo Cadastro</b>
+                    [<a href="#" id="canlnk">cancelar</a>]</td>
                 </tr>
                 <tr>
                     <td style="width:150px;text-align:right">E-mail:</td>

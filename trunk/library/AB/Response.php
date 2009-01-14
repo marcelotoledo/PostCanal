@@ -9,13 +9,14 @@
 class AB_Response
 {
     /**
-     * Response status constants
+     * Response status codes
      * http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html
      */
-    const STATUS_OK        = 200;
-    const STATUS_REDIRECT  = 302;
-    const STATUS_NOT_FOUND = 404;
-    const STATUS_ERROR     = 500;
+    const STATUS_OK           = 200;
+    const STATUS_REDIRECT     = 302;
+    const STATUS_UNAUTHORIZED = 401;
+    const STATUS_NOT_FOUND    = 404;
+    const STATUS_ERROR        = 500;
 
     /**
      * Response headers
@@ -173,6 +174,7 @@ class AB_Response
                 header($name . ": " . $header, true);
             }
         }
+        /*
         else
         {
             throw new Exception(
@@ -180,6 +182,7 @@ class AB_Response
                 $headers_file . ":" . 
                 $headers_line);
         }
+        */
     }
 
     /**

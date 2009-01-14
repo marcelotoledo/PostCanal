@@ -98,4 +98,19 @@ class UserProfile extends AB_Model
             'login_email' => $email,
             'enabled'     => true)));
     }
+
+    /**
+     * Get UserProfile from login
+     *
+     * @param   string  $email
+     * @param   string  $password_md5   md5($password)
+     * @return  UserProfile|null
+     */
+    public static function checkLogin($email, $password_md5)
+    {
+        return current(self::find(array(
+            'login_email'        => $email,
+            'login_password_md5' => $password_md5,
+            'enabled'            => true)));
+    }
 }

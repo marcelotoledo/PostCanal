@@ -13,6 +13,11 @@ AB_Loader::register();
 require "../config/environment.php";
 
 
+/* session */
+
+Zend_Session::start();
+
+
 /* dispatch */
 
 AB_Dispatcher::singleton()->dispatch();

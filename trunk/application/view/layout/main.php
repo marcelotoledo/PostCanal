@@ -1,4 +1,4 @@
-<?php $helper = new FrontHelper($this) ?>
+<?php $helper = new DefaultHelper($this) ?>
 <html>
 <head>
 <title>Autoblog</title>

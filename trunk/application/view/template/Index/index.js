@@ -21,28 +21,57 @@ $(document).ready(function()
     {
         toggleAuthForm();
     });
+
+    $("#canlnk").click(function()
+    {
+        toggleAuthForm();
+    });
     
     /* submit form */
 
-    function showSubmitResponse(response)
+    function showSubmitResponse(response, status)
     {
-        if(response == "reg_ok") alert("Cadastro OK. Verifique o e-mail");
-        else if(response == "reg_err") alert("Erro ao cadastrar");
-        else if(response == "chk_ok") alert("Autenticação OK");
-        else if(response == "chk_err") alert("Erro ao autenticar");
-        else alert("Erro desconhecido");
+        if(status == "success")
+        {
+            if(response == "login_ok") 
+                window.location = "<?php echo BASE_URL ?>dashboard";
+            else if(response == "login_incomplete") 
+                alert("Autenticação INCOMPLETA");
+            else if(response == "login_register_unconfirmed") 
+                alert("Cadastro NÃO CONFIRMADO");
+            else if(response == "login_invalid") 
+                alert("Autenticação INVALIDA");
+
+            else if(response == "register_ok") 
+                alert("Cadastro OK");
+            else if(response == "register_incomplete") 
+                alert("Cadastro INCOMPLETO");
+            else if(response == "register_password_unconfirmed") 
+                alert("Senha NÃO CONFIRMADA");
+            else if(response == "register_error") 
+                alert("Cadastro ERRO!");
+        }
+        else
+        {
+            alert("ERRO INESPERADO");
+        }
     }
 
     $("input[@name='authsubmit']").click(function() 
     {
-        parameters = { register: $("input[@name='register']").val(),
-                       email: $("input[@name='email']").val(),
+        register = $("input[@name='register']").val();
+
+        action = (register == "yes") ? "register" : "login";
+
+        parameters = { email: $("input[@name='email']").val(),
                        password: $("input[@name='password']").val(),
                        confirm: $("input[@name='confirm']").val() };
 
-        $.getJSON("/index/authentication", parameters, function(data, status)
+        $.getJSON("<?php echo BASE_URL ?>profile/" + action, 
+                  parameters, 
+                  function(data, status)
         {
-            if(status == "success") showSubmitResponse(data.response);
+            showSubmitResponse(data.response, status);
         });
     });
 });

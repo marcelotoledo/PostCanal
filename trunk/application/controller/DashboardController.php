@@ -1,24 +1,24 @@
 <?php
 
 /**
- * Index controller class
+ * Dashboard controller class
  * 
  * @category    Autoblog
  * @package     Controller
  */
-class IndexController extends AB_Controller
+class DashboardController extends AB_Controller
 {
     /**
-     * Index controller constructor
+     * Dashboard controller constructor
      *
      * @param   AB_Request  $request
      * @param   AB_Response $response
-     * @return void
+     * @return  void
      */
     public function __construct($request, $response)
     {
         parent::__construct($request, $response);
-        $this->getView()->setLayout('main');
+        $this->sessionCheck();
     }
 
     /**
