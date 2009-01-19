@@ -13,7 +13,10 @@
 \renewcommand{\headrulewidth}{0.0pt}
 \renewcommand{\footrulewidth}{0.0pt}
 \fancyhead{}
-\fancyhead[C]{versão 0.2}
+\fancyhead[C]{versão 0.3}
+
+% \setlength{\parindent}{0pt}
+% \setlength{\parskip}{\baselineskip}
 
 \def\cms{\emph{CMS}}
 \def\rss{\emph{RSS}}
@@ -447,9 +450,95 @@ O gerenciador de publicação possui um \emph{daemon} responsável pela publica�
 de conteúdo de um \queue{} em um \cms{} quando o estado do método de publicação
 está definido como automático. 
 
+\section{Notas de Implementação}
+
+\paragraph{}
+A linguagem escolhida para o desenvolvimento da aplicação foi o \textbf{PHP}. O \emph{core} foi inspirado no \emph{Zend Framework}, que segue uma estrutura no padrão \textbf{MVC}, confirme a seguir:
+
+\begin{itemize}
+\item \textbf{application}: arquivos da aplicação no padrão \textbf{MVC};
+\subitem \textbf{controller}: controle de ações;
+\subitem \textbf{model}: classes de \textbf{ORM};
+\subitem \textbf{view}: visualização;
+\subsubitem \textbf{helper}: \emph{scripts} auxiliares de visualização;
+\subsubitem \textbf{layout}: diagramação geral (\emph{layout});
+\subsubitem \textbf{template}: diagramação de ações;
+\item \textbf{config}: arquivos de configuração;
+\item \textbf{db}: arquivos de base de dados (\textbf{SQL});
+\item \textbf{library}: arquivos de bibliotecas;
+\subitem \textbf{AB}: \emph{core} \textbf{MVC};
+\subitem \textbf{Zend}: \emph{Zend Framework};
+\item \textbf{log}: arquivos de histórico;
+\item \textbf{public}: \emph{bootstrap}, deve ser visível para \emph{WEB};
+\end{itemize}
+
+
+\section{Instalação}
+
+\subsection{Ambiente}
+O sistema operacional deve ser compatível com \emph{LINUX} ou \emph{UNIX}, deve ter instalado o servidor de \emph{HTTP} \emph{Apache 2} com \emph{mod\_php} e servidor de base de dados não mandatório, porém recomendável, \emph{PostgreSQL}.
+
+\paragraph{}
+A configuração do apache deve ser feita de forma semelhante ao exemplo à seguir:
+
+\begin{verbatim}
+Listen 127.0.0.1:80
+ServerName 127.0.0.1
+<VirtualHost 127.0.0.1:80>
+    DocumentRoot /var/www/autoblog/public
+    <Directory /var/www/autoblog/public>
+        AllowOverride All
+        allow from all
+    </Directory>
+    ErrorLog /var/log/apache2/autoblog.error.log
+    LogLevel warn
+</VirtualHost>
+\end{verbatim}
+
+\paragraph{}
+Neste caso, a raiz da aplicação encontra-se no diretório \texttt{/var/www/autoblog} e somente a pasta (\emph{DocumentRoot}) \texttt{./public} estará visível para a \emph{WEB}.
+
+\subsection{Configuração}
+
+\paragraph{}
+A configuração da aplicação é feita a partir do arquivo \texttt{./config/environment.php}, onde os seguintes parâmetros deverão ser ajustados:
+
+\begin{itemize}
+\item \textbf{BASE\_PATH}: Localização da raiz da aplicação no disco. Ex: \texttt{/var/www/autoblog};
+\item \textbf{BASE\_URL}: Localização da raiz da aplicação na \emph{WEB}. Ex: \texttt{http://www.autoblog.com/} ou \texttt{/};
+\item \textbf{database-$>$driver}: \emph{Driver PDO} da base de dados. Padrão: \texttt{pgsql} (\emph{PostgreSQL}). Para outros drivers, verifique em \emph{http://br2.php.net/pdo};
+\item \textbf{database-$>$host}: Endereço \emph{IP} ou \emph{hostname} do servidor de base de dados. Ex: \texttt{localhost};
+\item \textbf{database-$>$username}: Nome de usuário. Ex: \texttt{postgres};
+\item \textbf{database-$>$password}: Senha. (Quando não houver senha, deve conter o valor do tipo \emph{string} e vazio);
+\item \textbf{database-$>$db}: Nome da base de dados. Ex: \texttt{autoblog};
+\end{itemize}
+
+\subsection{Base de dados}
+
+\paragraph{}
+A base de dados deverá estar de acordo com o definido na configuração. Em seguida, deve-se carregá-la com as definições de estrutura e informações padrão:
+
+\begin{verbatim}
+$ cd ./db
+$ php configure.php schema.sql
+$ php configure.php data.sql
+\end{verbatim}
+
+\paragraph{}
+Caso a utilização do \emph{script} \texttt{configure} acima retorne algum erro, o processo de carga deve ser feita manualmente, respeitando a ordem dos arquivos acima.
+
+\subsection{Permissões}
+
+\paragraph{}
+Deve-se ajustar a permissão dos arquivos abaixo, conforme segue:
+
+\begin{verbatim}
+$ chmod a+x ./log/error_log
+\end{verbatim}
+
 \appendix
 
-\section{Notas}
+\section{Observações}
 
 \subsection{\emph{Add-ons}}
 
