@@ -23,6 +23,13 @@ abstract class AB_Model
     protected $table_name;
 
     /**
+     * Sequence name
+     *
+     * @var string
+     */
+    protected $sequence_name = null;
+
+    /**
      * Table primary key
      *
      * @var string
@@ -57,6 +64,9 @@ abstract class AB_Model
      */
     public function __set ($name, $value)
     {
+        /* fix boolean */
+        if(is_bool($value)) $value = ($value == true) ? 1 : 0;
+
         $this->data[$name] = $value;
     }
 
@@ -121,21 +131,39 @@ abstract class AB_Model
      * @param   array   $data   values array
      * @return  array
      */
-    public function _selectModel ($sql, $data=array())
+    protected function _selectModel ($sql, $data=array())
     {
         $statement = null;
 
         if(count($data) > 0)
         {
-            $statement = self::getConnection()->prepare($sql);
-            $statement->setFetchMode(PDO::FETCH_CLASS, get_class($this));
-            $statement->execute($data);
+            try
+            {
+                $statement = self::getConnection()->prepare($sql);
+                $statement->setFetchMode(PDO::FETCH_CLASS, get_class($this));
+                $statement->execute($data);
+            }
+            catch(PDOException $exception)
+            {
+                $message = $exception->getMessage() . "; ";
+                $message.= $exception->getTraceAsString();
+                throw new Exception($message);
+            }
         }
         else
         {
-            $statement = self::getConnection()->query($sql, 
-                                                      PDO::FETCH_CLASS, 
-                                                      get_class($this));
+            try
+            {
+                $statement = self::getConnection()->query($sql, 
+                                                          PDO::FETCH_CLASS, 
+                                                          get_class($this));
+            }
+            catch(PDOException $exception)
+            {
+                $message = $exception->getMessage() . "; ";
+                $message.= $exception->getTraceAsString();
+                throw new Exception($message);
+            }
         }
  
         return $statement->fetchAll();
@@ -165,17 +193,20 @@ abstract class AB_Model
                    "(" . implode(", ", $columns) . ") VALUES " .
                    "(?" . str_repeat(", ?", count($columns) - 1) . ")";
 
-            $id = self::insert($sql, array_values($this->data));
+            $id = $this->_insert($sql, array_values($this->data));
             $this->setPrimaryKey($id);
             $saved = ($id > 0);
         }
         else
         {
+            $values = array();
+
             foreach($this->data as $key => $value)
             {
                 if($key != $this->primary_key)
                 {
                     $arguments[] = $key . " = ?";
+                    $values[] = $value;
                 }
             }
 
@@ -183,8 +214,8 @@ abstract class AB_Model
                    "   SET " . implode(", ", $arguments) . 
                    " WHERE " . $this->primary_key . " = ?";
             
-            $values = array_values($this->data);
             array_push($values, $this->getPrimaryKey());
+
             $affected = self::execute($sql, $values);
             $saved = ($affected > 0);
         }
@@ -223,20 +254,21 @@ abstract class AB_Model
      */
     public function setPrimaryKey($value)
     {
-        $s = $this->primary_key;
-        $this->data[$s] = $value;
+        $k = $this->primary_key;
+        $this->data[$k] = $value;
     }
 
     /**
      * Get primary key value
      *
-     * @return array
+     * @return  array
      */
     public function getPrimaryKey()
     {
         $s = $this->primary_key;
         return array_key_exists($s, $this->data) ? $this->data[$s] : null;
     }
+
 
     /**
      * Execute a SQL query and returns affected rows
@@ -251,13 +283,31 @@ abstract class AB_Model
 
         if(count($data) > 0)
         {
-            $statement = self::getConnection()->prepare($sql);
-            $statement->execute($data);
-            $affected = $statement->rowCount();
+            try
+            {
+                $statement = self::getConnection()->prepare($sql);
+                $statement->execute($data);
+                $affected = $statement->rowCount();
+            }
+            catch(PDOException $exception)
+            {
+                $message = $exception->getMessage() . "; ";
+                $message.= $exception->getTraceAsString();
+                throw new Exception($message);
+            }
         }
         else
         {
-            $affected = (int) self::getConnection()->exec($sql);
+            try
+            {
+                $affected = (int) self::getConnection()->exec($sql);
+            }
+            catch(PDOException $exception)
+            {
+                $message = $exception->getMessage() . "; ";
+                $message.= $exception->getTraceAsString();
+                throw new Exception($message);
+            }
         }
 
         return $affected;
@@ -266,20 +316,26 @@ abstract class AB_Model
     /**
      * Execute a SQL insert query and returns last insert id
      *
-     * @param   string  $sql    SQL query
-     * @param   array   $data   values array
+     * @param   string  $sql        SQL query
+     * @param   array   $data       values array
      * @return  integer
      */
-    public static function insert($sql, $data=array())
+    protected function _insert($sql, $data=array())
     {
         $id = null;
 
         if(self::execute($sql, $data) > 0)
         {
-            $id = self::getConnection()->lastInsertId();
+            $id = self::getConnection()->lastInsertId($this->sequence_name);
         }
 
         return $id;
+    }
+
+    public static function insert (/* void */)
+    {
+        /* TODO get_class($this) can be replaced by 
+         * get_called_class() in php >= 5.3 */
     }
 
     /**
@@ -295,17 +351,31 @@ abstract class AB_Model
 
         if(count($data) > 0)
         {
-            $statement = self::getConnection()->prepare($sql);
-            $statement->setFetchMode(PDO::FETCH_OBJ);
-            $statement->execute($data);
-
-            if($statement->errorInfo())
+            try
             {
+                $statement = self::getConnection()->prepare($sql);
+                $statement->setFetchMode(PDO::FETCH_OBJ);
+                $statement->execute($data);
+            }
+            catch(PDOException $exception)
+            {
+                $message = $exception->getMessage() . "; ";
+                $message.= $exception->getTraceAsString();
+                throw new Exception($message);
             }
         }
         else
         {
-            $statement = self::getConnection()->query($sql, PDO::FETCH_OBJ);
+            try
+            {
+                $statement = self::getConnection()->query($sql, PDO::FETCH_OBJ);
+            }
+            catch(PDOException $exception)
+            {
+                $message = $exception->getMessage() . "; ";
+                $message.= $exception->getTraceAsString();
+                throw new Exception($message);
+            }
         }
 
         return $statement->fetchAll();
@@ -350,8 +420,10 @@ abstract class AB_Model
             }
             catch(PDOException $exception)
             {
-                throw new Exception("database connection failed;" .  
-                                    "PDOException: " . $exception);
+                $message = "database connection failed; ";
+                $message.= $exception->getMessage() . "; ";
+                $message.= $exception->getTraceAsString();
+                throw new Exception($message);
             }
         }
 

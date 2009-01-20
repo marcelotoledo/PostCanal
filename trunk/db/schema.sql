@@ -16,6 +16,8 @@ DROP SEQUENCE IF EXISTS user_profile_seq;
 DROP TABLE IF EXISTS cms_type;
 DROP TABLE IF EXISTS application_log;
 DROP SEQUENCE IF EXISTS application_log_seq;
+DROP TABLE IF EXISTS application_dummy_message_relay;
+DROP SEQUENCE IF EXISTS application_dummy_message_relay_seq;
 
 /* base */
 
@@ -27,6 +29,17 @@ CREATE TABLE application_log
     message text NOT NULL DEFAULT '',
     created_at timestamp without time zone NOT NULL DEFAULT NOW(),
     CONSTRAINT application_log_pk PRIMARY KEY (application_log_id)
+);
+
+CREATE SEQUENCE application_dummy_message_relay_seq;
+CREATE TABLE application_dummy_message_relay
+(
+    application_dummy_message_relay_id integer NOT NULL
+        DEFAULT nextval('application_dummy_message_relay_seq'),
+    recipient character varying(100) NOT NULL,
+    created_at timestamp without time zone NOT NULL DEFAULT NOW(),
+    CONSTRAINT application_dummy_message_relay_pk 
+        PRIMARY KEY (application_dummy_message_relay_id)
 );
 
 CREATE TABLE channel_status
@@ -67,7 +80,7 @@ CREATE TABLE aggregator_channel
     link character varying(200) NOT NULL,
     description text NOT NULL DEFAULT '',
     created_at timestamp without time zone NOT NULL DEFAULT NOW(),
-    updated_at timestamp without time zone NOT NULL DEFAULT NOW(),
+    updated_at timestamp without time zone DEFAULT NULL,
     enabled boolean NOT NULL DEFAULT true,
     CONSTRAINT aggregator_channel_pk PRIMARY KEY (aggregator_channel_id),
     CONSTRAINT channel_status_fk FOREIGN KEY (channel_status_id) 
@@ -96,17 +109,14 @@ CREATE TABLE user_profile
     user_profile_id integer NOT NULL DEFAULT nextval('user_profile_seq'),
     login_email character varying(100) NOT NULL,
     login_password_md5 character varying(32) NOT NULL,
-    /* register confirmation: true when user confirm registration */
+    register_message_time timestamp without time zone DEFAULT NULL,
     register_confirmation boolean NOT NULL DEFAULT false,
-    /* register last message: last register confirmation message d&t */
-    register_last_message timestamp without time zone DEFAULT NULL,
-    /* recovery last message: last profile recovery message d&t */
-    recovery_last_message timestamp without time zone DEFAULT NULL,
+    register_confirmation_time timestamp without time zone DEFAULT NULL,
+    recovery_message_time timestamp without time zone DEFAULT NULL,
     created_at timestamp without time zone NOT NULL DEFAULT NOW(),
-    updated_at timestamp without time zone NOT NULL DEFAULT NOW(),
+    updated_at timestamp without time zone DEFAULT NULL,
     enabled boolean NOT NULL DEFAULT true,
-    CONSTRAINT user_profile_pk PRIMARY KEY (user_profile_id),
-    CONSTRAINT login_email_unique UNIQUE (login_email)
+    CONSTRAINT user_profile_pk PRIMARY KEY (user_profile_id)
 );
 
 CREATE TABLE user_information
@@ -131,7 +141,7 @@ CREATE TABLE user_cms
     admin_username character varying(100) NOT NULL,
     admin_password character varying(100) NOT NULL,
     created_at timestamp without time zone NOT NULL DEFAULT NOW(),
-    updated_at timestamp without time zone NOT NULL DEFAULT NOW(),
+    updated_at timestamp without time zone DEFAULT NULL,
     enabled boolean NOT NULL DEFAULT true,
     CONSTRAINT user_cms_pk PRIMARY KEY (user_cms_id),
     CONSTRAINT user_profile_fk FOREIGN KEY (user_profile_id) 
@@ -151,7 +161,7 @@ CREATE TABLE user_cms_channel
     title character varying(100) NOT NULL,
     description text NOT NULL DEFAULT '',
     created_at timestamp without time zone NOT NULL DEFAULT NOW(),
-    updated_at timestamp without time zone NOT NULL DEFAULT NOW(),
+    updated_at timestamp without time zone DEFAULT NULL,
     enabled boolean NOT NULL DEFAULT true,
     CONSTRAINT user_cms_channel_pk PRIMARY KEY (user_cms_channel_id),
     CONSTRAINT user_cms_fk FOREIGN KEY (user_cms_id) 

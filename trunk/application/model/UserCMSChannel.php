@@ -16,6 +16,13 @@ class UserCMSChannel extends AB_Model
     protected $table_name = 'user_cms_channel';
 
     /**
+     * Sequence name
+     *
+     * @var string
+     */
+    protected $sequence_name = 'user_cms_channel_seq';
+
+    /**
      * Primary key column name
      *
      * @var string
@@ -56,5 +63,20 @@ class UserCMSChannel extends AB_Model
         $class_object = new $class_name();
 
         return $class_object->_selectModel($sql, $data);
+    }
+
+    /**
+     * Execute a SQL insert query and returns last insert id
+     *
+     * @param   string  $sql        SQL query
+     * @param   array   $data       values array
+     * @return  integer
+     */
+    public static function insert($sql, $data=array())
+    {
+        $class_name = get_class();
+        $class_object = new $class_name();
+
+        return $class_object->_insert($sql, $data);
     }
 }

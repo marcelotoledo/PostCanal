@@ -45,7 +45,8 @@ class AB_Log
             }
             catch(Exception $exception)
             {
-                self::writeErrorLog($exception . "; " . $message);
+                $message = $exception->getMessage() . "; " . $message;
+                self::writeErrorLog($message);
             }
         }
     }
@@ -66,7 +67,8 @@ class AB_Log
         }
         catch(Exception $exception)
         {
-            self::writeStdout($exception . "; " . $message);
+            $message = $exception->getMessage() . "; " . $message;
+            self::writeStdout($message);
         }
     }
 
@@ -78,6 +80,6 @@ class AB_Log
      */
     private static function writeStdout ($message)
     {
-        echo $message . "\n";
+        fwrite(STDOUT, $message);
     }
 }

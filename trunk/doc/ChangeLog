@@ -169,3 +169,28 @@ HORAS TRABALHADAS: 7h
 - Tela de Autenticação / Cadastro / Sessao de Usuario
 
 HORAS TRABALHADAS: 6h
+
+==========
+15/01/2008
+==========
+
+- Inclusão das seções: Notas de implementação e Instalação na documentação
+
+HORAS TRABALHADAS: 3h
+
+==========
+16/01/2008
+==========
+
+- Inclusão da função de confirmação de cadastro
+- Inclusão da função de recuperação de senha
+
+HORAS TRABALHADAS: 11h
+
+==========
+19/01/2008
+==========
+
+- Correção de bugs e melhorias no sistema de autenticação / cadastro
+
+HORAS TRABALHADAS: 5h

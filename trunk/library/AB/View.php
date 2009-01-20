@@ -138,21 +138,21 @@ class AB_View
      */
     public function render()
     {
-        /* render text */
-
-        if(is_string($this->data) && 
-           empty($this->layout))
+        if(empty($this->layout))
         {
-            echo $this->data;
-        }
+            /* render text */
 
-        /* render view template */
+            if(is_string($this->data))
+            {
+                echo $this->data;
+            }
 
-        elseif((is_null($this->data) || 
-                is_array($this->data)) && 
-                empty($this->layout))
-        {
-            $this->renderTemplate();
+            /* render view template */
+
+            else
+            {
+                $this->renderTemplate();
+            }
         }
 
         /* render layout */

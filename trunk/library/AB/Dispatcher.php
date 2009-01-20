@@ -85,6 +85,8 @@ class AB_Dispatcher
      */
     public function dispatch()
     {
+        $controller = null;
+
         try
         {
             $this->controllerFactory()->runAction();
@@ -92,19 +94,21 @@ class AB_Dispatcher
         }
         catch(Exception $exception)
         {
+            $message = $exception->getMessage();
+
             /* not found exception */
 
             if ($this->response->getStatus() == AB_Response::STATUS_NOT_FOUND)
             {
-                AB_Log::write($exception, AB_Log::PRIORITY_WARNING);
+                AB_Log::write($message, AB_Log::PRIORITY_WARNING);
             }
 
-            /* other errors exception */
+            /* error exception */
 
             else
             {
                 $this->response->setStatus(AB_Response::STATUS_ERROR);
-                AB_Log::write($exception, AB_Log::PRIORITY_ERROR);
+                AB_Log::write($message, AB_Log::PRIORITY_ERROR);
             }
 
             /* show exception in browser */
@@ -112,7 +116,7 @@ class AB_Dispatcher
             if(empty(AB_Registry::singleton()->debug) == false &&
                      AB_Registry::singleton()->debug  == true)
             {
-                $this->response->setBody("<pre>" . $exception . "</pre>");
+                $this->response->setBody($message);
             }
 
             /* run error controller actions */

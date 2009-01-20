@@ -9,13 +9,6 @@
 abstract class AB_Controller
 {
     /**
-     * Session check mode
-     */
-    const SESSION_CHECK_SIMPLE     = 1;
-    const SESSION_CHECK_PERSISTENT = 2;
-
-
-    /**
      * Request
      *
      * @var AB_Request
@@ -106,92 +99,5 @@ abstract class AB_Controller
             $this->response->setStatus(404);
             throw new Exception ("action " . $action . " not found");
         }
-    }
-
-    /**
-     * Create login session
-     *
-     * @param   string  $username
-     * @param   string  $password
-     * @return  void
-     */
-    public function sessionCreate ($username, $password)
-    {
-        $registry = AB_Registry::singleton();
-        $namespace = $registry->session->namespace;
-        $expiration = $registry->session->expiration;
-
-        $login = new Zend_Session_Namespace($namespace, true);
-        $login->username = $username;
-        $login->password = $password;
-        $login->setExpirationSeconds($expiration);
-        $login->lock();
-    }
-
-    /**
-     * Check login session
-     *
-     * @return  void
-     */
-    public function sessionCheck ()
-    {
-        $registry = AB_Registry::singleton();
-        $namespace = $registry->session->namespace;
-        $check = $registry->session->check;
-        $result = null;
-
-        $login = new Zend_Session_Namespace($namespace, true);
-
-        if(is_object($login))
-        {
-            $username = $login->username;
-            $password = $login->password;
-        }
-
-        if($check->mode == self::SESSION_CHECK_PERSISTENT)
-        {
-            if(!empty($login->username) && !empty($login->password))
-            {
-                if(method_exists($check->class, $check->method))
-                {
-                    $result = call_user_func(array($check->class, 
-                                                   $check->method,
-                                                   $login->username,
-                                                   $login->password));
-                #$check = $classname::$methodname($login->username, 
-                #                                 $login->password);
-                }
-            }
-        }
-        else
-        {
-            if(!empty($login->username))
-            {
-                $result = true;
-            }
-        }
-
-        if(empty($result))
-        {
-            $this->response->setRedirect(
-                $check->redirect, AB_Response::STATUS_UNAUTHORIZED);
-        }
-    }
-
-    /**
-     * Destroy login session
-     *
-     * @param   string  $login
-     * @param   string  $password
-     * @return  void
-     */
-    function sessionDestroy ()
-    {
-        $registry = AB_Registry::singleton();
-        $namespace = $registry->session->namespace;
-
-        $login = new Zend_Session_Namespace($namespace, true);
-        $login->unLock();
-        $login->unsetAll();
     }
 }

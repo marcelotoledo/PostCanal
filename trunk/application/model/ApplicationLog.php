@@ -16,6 +16,13 @@ class ApplicationLog extends AB_Model
     protected $table_name = 'application_log';
 
     /**
+     * Sequence name
+     *
+     * @var string
+     */
+    protected $sequence_name = 'application_log_seq';
+
+    /**
      * Primary key column name
      *
      * @var string
@@ -26,10 +33,10 @@ class ApplicationLog extends AB_Model
     /**
      * Find ApplicationLog with an encapsulated SELECT command
      *
-     * @param   array   $conditions WHERE parameters
-     * @param   array   $order      ORDER parameters
-     * @param   integer $limit      LIMIT parameter
-     * @param   integer $offset     OFFSET parameter
+     * @param   array    WHERE parameters
+     * @param   array         ORDER parameters
+     * @param   integer       LIMIT parameter
+     * @param   integer      OFFSET parameter
      * @return  array
      */
     public static function find ($conditions=array(), 
@@ -46,8 +53,8 @@ class ApplicationLog extends AB_Model
     /**
      * Get ApplicationLog with SQL
      *
-     * @param   string  $sql    SQL query
-     * @param   array   $data   values array
+     * @param   string      SQL query
+     * @param   array      values array
      * @return  array
      */
     public static function selectModel ($sql, $data=array())
@@ -56,5 +63,20 @@ class ApplicationLog extends AB_Model
         $class_object = new $class_name();
 
         return $class_object->_selectModel($sql, $data);
+    }
+
+    /**
+     * Execute a SQL insert query and returns last insert id
+     *
+     * @param   string  $sql        SQL query
+     * @param   array   $data       values array
+     * @return  integer
+     */
+    public static function insert($sql, $data=array())
+    {
+        $class_name = get_class();
+        $class_object = new $class_name();
+
+        return $class_object->_insert($sql, $data);
     }
 }

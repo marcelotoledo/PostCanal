@@ -1,0 +1,33 @@
+*
+{
+    font-size: small;
+    font-family: sans-serif;
+}
+
+body 
+{
+    margin: 0;
+    padding: 0;
+}
+
+td.formtitle 
+{ 
+    padding-bottom: 25px;
+}
+
+span.formtitle 
+{ 
+    font-size: x-large; 
+}
+
+td.fieldlabel
+{
+    width: 150px;
+    text-align: right;
+    font-weight: bold;
+}
+
+div#maincontent
+{
+    padding: 50px;
+}

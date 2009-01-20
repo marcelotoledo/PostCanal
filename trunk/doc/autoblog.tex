@@ -505,13 +505,16 @@ A configuração da aplicação é feita a partir do arquivo \texttt{./config/en
 
 \begin{itemize}
 \item \textbf{BASE\_PATH}: Localização da raiz da aplicação no disco. Ex: \texttt{/var/www/autoblog};
-\item \textbf{BASE\_URL}: Localização da raiz da aplicação na \emph{WEB}. Ex: \texttt{http://www.autoblog.com/} ou \texttt{/};
+\item \textbf{BASE\_URL}: Localização da raiz da aplicação na \emph{WEB}. Ex: \texttt{http://www.autoblog.com};
 \item \textbf{database-$>$driver}: \emph{Driver PDO} da base de dados. Padrão: \texttt{pgsql} (\emph{PostgreSQL}). Para outros drivers, verifique em \emph{http://br2.php.net/pdo};
 \item \textbf{database-$>$host}: Endereço \emph{IP} ou \emph{hostname} do servidor de base de dados. Ex: \texttt{localhost};
 \item \textbf{database-$>$username}: Nome de usuário. Ex: \texttt{postgres};
 \item \textbf{database-$>$password}: Senha. (Quando não houver senha, deve conter o valor do tipo \emph{string} e vazio);
 \item \textbf{database-$>$db}: Nome da base de dados. Ex: \texttt{autoblog};
 \end{itemize}
+
+\paragraph{}
+Todos os caminhos acima devem suprimir o separador "/" no final.
 
 \subsection{Base de dados}
 
@@ -533,7 +536,7 @@ Caso a utilização do \emph{script} \texttt{configure} acima retorne algum erro
 Deve-se ajustar a permissão dos arquivos abaixo, conforme segue:
 
 \begin{verbatim}
-$ chmod a+x ./log/error_log
+$ chmod a+w ./log/error_log
 \end{verbatim}
 
 \appendix

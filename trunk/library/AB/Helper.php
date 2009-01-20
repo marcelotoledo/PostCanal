@@ -40,9 +40,29 @@ class AB_Helper
 
         if(file_exists($path) == true)
         {
-            echo "<script type=\"text/javascript\">\n";
+            echo "<script>\n";
             include $path;
             echo "</script>\n";
+        }
+    }
+
+    /**
+     * Style sheet including
+     *
+     * @return  void
+     */
+    public function includeStyleSheet()
+    {
+        $template = $this->view->getRequest()->getController() . "/" . 
+                    $this->view->getRequest()->getAction();
+
+        $path = APPLICATION_PATH . "/view/template/" . $template . ".css";
+
+        if(file_exists($path) == true)
+        {
+            echo "<style>\n";
+            include $path;
+            echo "</style>\n";
         }
     }
 

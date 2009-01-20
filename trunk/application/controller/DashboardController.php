@@ -6,7 +6,7 @@
  * @category    Autoblog
  * @package     Controller
  */
-class DashboardController extends AB_Controller
+class DashboardController extends SessionController
 {
     /**
      * Dashboard controller constructor

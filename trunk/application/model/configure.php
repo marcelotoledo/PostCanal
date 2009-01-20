@@ -5,27 +5,31 @@
  * Model configuration tool
  */
 
-$_class = $argv[1];
-$_table = $argv[2];
-$_pk    = $argv[3];
+$_class    = $argv[1];
+$_table    = $argv[2];
+$_pk       = $argv[3];
+$_sequence = $argv[4];
 
 
 if(empty($_class) ||
    empty($_table) ||
    empty($_pk))
 {
-    echo "usage: ./configure.php class table pk\n";
-    echo "example: ./configure.php UserProfile user_profile user_profile_id\n";
+    echo "usage: ./configure.php class table pk [sequence]\n";
+    echo "example: ./configure.php User user user_id [user_seq]\n";
 
     exit(1);
 }
 
 if(file_exists($_class . ".php"))
 {
-    echo "file \"" . $_class . ".php\" already exists\n";
-    echo "remove this file before generating a new\n";
+    $suffix = date("ymd") . "_";
+    $suffix.= dechex(substr(number_format(microtime(true), 2, '', ''), -9));
 
-    exit(1);
+    rename($_class . ".php", $_class . ".php-" . $suffix);
+
+    echo "file \"" . $_class . ".php\" has been renamed to ";
+    echo "\"" . $_class . ".php-" . $suffix . "\"\n";
 }
 
 
@@ -46,6 +50,13 @@ class <class> extends AB_Model
      * @var string
      */
     protected \$table_name = '<table>';
+
+    /**
+     * Sequence name
+     *
+     * @var string
+     */
+    protected \$sequence_name = <sequence>;
 
     /**
      * Primary key column name
@@ -89,13 +100,32 @@ class <class> extends AB_Model
 
         return \$class_object->_selectModel(\$sql, \$data);
     }
+
+    /**
+     * Execute a SQL insert query and returns last insert id
+     *
+     * @param   string  \$sql        SQL query
+     * @param   array   \$data       values array
+     * @return  integer
+     */
+    protected function insert(\$sql, \$data=array())
+    {
+        \$class_name = get_class();
+        \$class_object = new \$class_name();
+
+        return \$class_object->_insert(\$sql, \$data);
+    }
 }
 EOS;
 
 
-$output = str_replace ("<class>", $_class, $output);
-$output = str_replace ("<table>", $_table, $output);
-$output = str_replace ("<pk>",    $_pk,    $output);
+$_sequence = empty($_sequence) ? "null" : "'" . $_sequence . "'";
+
+$output = str_replace ("<class>",    $_class,    $output);
+$output = str_replace ("<table>",    $_table,    $output);
+$output = str_replace ("<sequence>", $_sequence, $output);
+$output = str_replace ("<pk>",       $_pk,       $output);
+
 
 try
 {

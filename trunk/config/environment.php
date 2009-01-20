@@ -12,8 +12,8 @@ error_reporting (E_ALL);
 
 /* path */
 
-define('BASE_PATH', realpath(dirname(__FILE__) . "/../"));
-define('BASE_URL', "/");
+define('BASE_PATH', "/var/www/autoblog");
+define('BASE_URL', "http://localhost:8001");
 define('APPLICATION_PATH', BASE_PATH . "/application");
 define('LIBRARY_PATH', BASE_PATH . "/library");
 
@@ -23,6 +23,8 @@ set_include_path (LIBRARY_PATH . PATH_SEPARATOR . get_include_path());
 $registry = AB_Registry::singleton();
 
 
+/* FRAMEWORK */
+
 /* debug */
 
 $registry->debug = true; /* show exceptions in browser */
@@ -30,11 +32,11 @@ $registry->debug = true; /* show exceptions in browser */
 
 /* database */
 
-$registry->database->driver   = "pgsql";
-$registry->database->host     = "localhost";
+$registry->database->driver = "pgsql";
+$registry->database->host = "localhost";
 $registry->database->username = "autoblog";
 $registry->database->password = "autoblog";
-$registry->database->db       = "autoblog";
+$registry->database->db = "autoblog";
 
 
 /* response headers */
@@ -49,11 +51,28 @@ $registry->response->headers = array
 );
 
 
+/* APPLICATION */
+
 /* login session */
 
-$registry->session->namespace       = "login";
-$registry->session->expiration      = 57600; /* time in seconds */
-$registry->session->check->mode     = AB_Controller::SESSION_CHECK_PERSISTENT;
-$registry->session->check->class    = "UserProfile";
-$registry->session->check->method   = "checkLogin";
-$registry->session->check->redirect = BASE_URL;
+$registry->session->namespace = "login";
+$registry->session->expiration = 43200;
+$registry->session->unauthorized->redirect = BASE_URL;
+
+
+/* mailer */
+
+function new_Zend_Mail() { return new Zend_Mail("UTF-8"); }
+
+$server = "smtp.gmail.com";
+
+$config = array('auth'     => "login",
+                'username' => "cdz0vfk61y@gmail.com",
+                'password' => "fdm0juk2gn",
+                'ssl'      => "ssl",
+                'port'     => 465);
+
+$registry->mailer->transport = new Zend_Mail_Transport_Smtp($server, $config);
+$registry->mailer->sender->interval->minimum = 86400;
+$registry->mailer->sender->from->name = "Autoblog";
+$registry->mailer->sender->from->email = "cdz0vfk61y@gmail.com";

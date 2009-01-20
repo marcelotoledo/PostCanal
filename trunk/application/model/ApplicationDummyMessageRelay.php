@@ -1,37 +1,37 @@
 <?php
 
 /**
- * AggregatorItem model class
+ * ApplicationDummyMessageRelay model class
  * 
  * @category    Autoblog
  * @package     Model
  */
-class AggregatorItem extends AB_Model
+class ApplicationDummyMessageRelay extends AB_Model
 {
     /**
      * Table name
      *
      * @var string
      */
-    protected $table_name = 'aggregator_item';
+    protected $table_name = 'application_dummy_message_relay';
 
     /**
      * Sequence name
      *
      * @var string
      */
-    protected $sequence_name = 'aggregator_item_seq';
+    protected $sequence_name = 'application_dummy_message_relay_seq';
 
     /**
      * Primary key column name
      *
      * @var string
      */
-    protected $primary_key = 'aggregator_item_id';
+    protected $primary_key = 'application_dummy_message_relay_id';
 
 
     /**
-     * Find AggregatorItem with an encapsulated SELECT command
+     * Find ApplicationDummyMessageRelay with an encapsulated SELECT command
      *
      * @param   array    WHERE parameters
      * @param   array         ORDER parameters
@@ -51,7 +51,7 @@ class AggregatorItem extends AB_Model
     }
 
     /**
-     * Get AggregatorItem with SQL
+     * Get ApplicationDummyMessageRelay with SQL
      *
      * @param   string      SQL query
      * @param   array      values array
@@ -78,5 +78,16 @@ class AggregatorItem extends AB_Model
         $class_object = new $class_name();
 
         return $class_object->_insert($sql, $data);
+    }
+
+    /**
+     * Get ApplicationDummyMessageRelay from recipient
+     *
+     * @param   string  $recipient
+     * @return  ApplicationDummyMessageRelay|null
+     */
+    public static function getFromRecipient($recipient)
+    {
+        return current(self::find(array('recipient' => $recipient)));
     }
 }

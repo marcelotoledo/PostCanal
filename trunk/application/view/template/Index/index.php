@@ -1,31 +1,38 @@
 <table style="padding:25px">
     <tr>
-        <td><span style="font-size:64pt;margin-right:50px;">Autoblog</span></td>
+        <td><span style="font-size:48;padding:50px;">Autoblog</span></td>
         <td>
             <!-- { login / register form -->
             <input type="hidden" name="register" value="no">
             <table>
-                <tr id="authtitlerow" style="height:50px;vertical-align:top">
-                    <td colspan="2"><b>Autenticação</b></td>
+                <tr id="authtitlerow">
+                    <td colspan="2" class="formtitle">
+                        <span class="formtitle">Autenticação</span>
+                    </td>
                 </tr>
-                <tr id="regtitlerow" style="display:none;height:50px;vertical-align:top">
-                    <td colspan="2"><b>Novo Cadastro</b>
-                    [<a href="#" id="canlnk">cancelar</a>]</td>
+                <tr id="regtitlerow" style="display:none">
+                    <td colspan="2" class="formtitle">
+                        <span class="formtitle">Novo Cadastro</span>
+                        [<a href="#" id="canlnk">cancelar</a>]
+                    </td>
                 </tr>
                 <tr>
-                    <td style="width:150px;text-align:right">E-mail:</td>
+                    <td class="fieldlabel">E-mail:</td>
                     <td><input type="text" name="email"></td>
                 </tr>
                 <tr>
-                    <td style="width:150px;text-align:right">Senha:</td>
+                    <td class="fieldlabel">Senha:</td>
                     <td><input type="password" name="password"></td>
                 </tr>
                 <tr id="regrow">
                     <td>&nbsp;</td>
-                    <td><a href="#" id="reglnk">não cadastrado</a></td>
+                    <td>
+                        <a href="#" id="reglnk">não cadastrado</a> | 
+                        <a href="#" id="pwdlnk">senha?</a>
+                    </td>
                 </tr>
                 <tr id="pwdconfrow" style="display:none">
-                    <td style="width:150px;text-align:right">Confirmar Senha:</td>
+                    <td class="fieldlabel">Confirmar Senha:</td>
                     <td><input type="password" name="confirm"></td>
                 </tr>
                 <tr style="height:50px;vertical-align:bottom">

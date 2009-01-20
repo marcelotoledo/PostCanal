@@ -16,11 +16,18 @@ class UserInformation extends AB_Model
     protected $table_name = 'user_information';
 
     /**
+     * Sequence name
+     *
+     * @var string
+     */
+    protected $sequence_name = null;
+
+    /**
      * Primary key column name
      *
      * @var string
      */
-    protected $primary_key = 'user_information_id';
+    protected $primary_key = 'user_profile_id';
 
 
     /**
@@ -56,5 +63,20 @@ class UserInformation extends AB_Model
         $class_object = new $class_name();
 
         return $class_object->_selectModel($sql, $data);
+    }
+
+    /**
+     * Execute a SQL insert query and returns last insert id
+     *
+     * @param   string  $sql        SQL query
+     * @param   array   $data       values array
+     * @return  integer
+     */
+    public static function insert($sql, $data=array())
+    {
+        $class_name = get_class();
+        $class_object = new $class_name();
+
+        return $class_object->_insert($sql, $data);
     }
 }
