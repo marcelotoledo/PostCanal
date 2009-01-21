@@ -1,0 +1,11 @@
+div#topbar
+{
+    padding: 10px;
+    height: 15px;
+    background-color: bisque;
+}
+
+div#dashboardcontent
+{
+    padding: 10px;
+}
