@@ -39,6 +39,27 @@ class SessionController extends AB_Controller
     }
 
     /**
+     * Get session status
+     *
+     * @return boolean
+     */
+    public static function sessionStatus()
+    {
+        $registry = AB_Registry::singleton();
+        $namespace = $registry->session->namespace;
+
+        $login = new Zend_Session_Namespace($namespace, true);
+        $status = false;
+
+        if(is_object($login))
+        {
+            if(!empty($login->identification)) $status = true;
+        }
+
+        return $status;
+    }
+
+    /**
      * Check login session
      *
      * @return  void
@@ -46,18 +67,9 @@ class SessionController extends AB_Controller
     public function sessionCheck()
     {
         $registry = AB_Registry::singleton();
-        $namespace = $registry->session->namespace;
         $redirect = $registry->session->unauthorized->redirect;
 
-        $login = new Zend_Session_Namespace($namespace, true);
-        $check = false;
-
-        if(is_object($login))
-        {
-            if(!empty($login->identification)) $check = true;
-        }
-
-        if($check == false)
+        if(self::sessionStatus() == false)
         {
             $this->getResponse()->setRedirect(
                 $redirect, AB_Response::STATUS_UNAUTHORIZED);

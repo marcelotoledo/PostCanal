@@ -9,32 +9,3 @@ body
     margin: 0;
     padding: 0;
 }
-
-td.formtitle 
-{ 
-    padding-bottom: 25px;
-}
-
-span.formtitle 
-{ 
-    font-size: x-large; 
-}
-
-td.fieldlabel
-{
-    width: 150px;
-    text-align: right;
-    font-weight: bold;
-}
-
-div#topbar
-{
-    padding: 10px;
-    height: 15px;
-    background-color: bisque;
-}
-
-div#defaultcontent
-{
-    padding: 10px;
-}

@@ -55,7 +55,6 @@ class ProfileController extends SessionController
     public function __construct($request, $response)
     {
         parent::__construct($request, $response);
-        $this->getView()->setLayout(null);
     }
 
     /**
@@ -95,6 +94,7 @@ class ProfileController extends SessionController
             }
         }
 
+        $this->getView()->setLayout(null);
         return Zend_Json::encode(array('response' => $response));
     }
 
@@ -162,6 +162,7 @@ class ProfileController extends SessionController
             }
         }
 
+        $this->getView()->setLayout(null);
         return Zend_Json::encode(array('response' => $response));
     }
 
@@ -220,6 +221,7 @@ class ProfileController extends SessionController
             }
         }
 
+        $this->getView()->setLayout(null);
         return Zend_Json::encode(array('response' => $response));
     }
 
@@ -255,7 +257,7 @@ class ProfileController extends SessionController
             }
         }
 
-        $this->getView()->setLayout('main');
+        $this->getView()->setLayout('index');
         return array('response' => $response);
     }
 
@@ -296,10 +298,11 @@ class ProfileController extends SessionController
 
         if($response == self::PASSWORD_SHOW_FORM)
         {
-            $this->getView()->setLayout('main');
+            $this->getView()->setLayout('index');
             return array('response' => $response, 'profile' => $profile);
         }
         
+        $this->getView()->setLayout(null);
         return Zend_Json::encode(array('response' => $response));
     }
 
@@ -489,7 +492,7 @@ class ProfileController extends SessionController
      */
     private static function messageRelay($time)
     {
-        $message_time = is_integer($time) ? $time : (int)strtotime($time);
+        $message_time = is_integer($time) ? $time : (int) strtotime($time);
 
         $registry = AB_Registry::singleton();
 

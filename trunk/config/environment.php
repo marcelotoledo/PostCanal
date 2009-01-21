@@ -12,7 +12,7 @@ error_reporting (E_ALL);
 
 /* path */
 
-define('BASE_PATH', "/var/www/autoblog");
+define('BASE_PATH', "/var/www/autoblog/trunk");
 define('BASE_URL', "http://localhost:8001");
 define('APPLICATION_PATH', BASE_PATH . "/application");
 define('LIBRARY_PATH', BASE_PATH . "/library");

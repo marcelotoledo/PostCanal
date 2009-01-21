@@ -18,6 +18,7 @@ class DashboardController extends SessionController
     public function __construct($request, $response)
     {
         parent::__construct($request, $response);
+        $this->getView()->setLayout('dashboard');
         $this->sessionCheck();
     }
 
