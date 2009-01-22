@@ -46,7 +46,7 @@ function read_and_run_sql ($filename)
 }
 
 
-if ($argc == 0)
+if ($argc == 1)
 {
     echo "usage: ./configure.php file1.sql file2.sql ...\n";
 

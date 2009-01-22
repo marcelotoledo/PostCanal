@@ -12,7 +12,7 @@ error_reporting (E_ALL);
 
 /* path */
 
-define('BASE_PATH', "/var/www/autoblog/trunk");
+define('BASE_PATH', "/var/www/autoblog");
 define('BASE_URL', "http://localhost:8001");
 define('APPLICATION_PATH', BASE_PATH . "/application");
 define('LIBRARY_PATH', BASE_PATH . "/library");
@@ -62,17 +62,12 @@ $registry->session->unauthorized->redirect = BASE_URL;
 
 /* mailer */
 
-function new_Zend_Mail() { return new Zend_Mail("UTF-8"); }
-
-$server = "smtp.gmail.com";
-
-$config = array('auth'     => "login",
-                'username' => "cdz0vfk61y@gmail.com",
-                'password' => "fdm0juk2gn",
-                'ssl'      => "ssl",
-                'port'     => 465);
-
-$registry->mailer->transport = new Zend_Mail_Transport_Smtp($server, $config);
-$registry->mailer->sender->interval->minimum = 86400;
-$registry->mailer->sender->from->name = "Autoblog";
-$registry->mailer->sender->from->email = "cdz0vfk61y@gmail.com";
+$registry->mailer->server = "smtp.gmail.com";
+$registry->mailer->auth = "login";
+$registry->mailer->ssl = "ssl";
+$registry->mailer->port = 465;
+$registry->mailer->sender->username = "cdz0vfk61y@gmail.com";
+$registry->mailer->sender->password = "fdm0juk2gn";
+$registry->mailer->sender->email = "cdz0vfk61y@gmail.com";
+$registry->mailer->relay->time = 3600;
+$registry->mailer->relay->count = 2;

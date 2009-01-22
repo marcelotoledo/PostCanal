@@ -16,8 +16,8 @@ DROP SEQUENCE IF EXISTS user_profile_seq;
 DROP TABLE IF EXISTS cms_type;
 DROP TABLE IF EXISTS application_log;
 DROP SEQUENCE IF EXISTS application_log_seq;
-DROP TABLE IF EXISTS application_dummy_message_relay;
-DROP SEQUENCE IF EXISTS application_dummy_message_relay_seq;
+DROP TABLE IF EXISTS application_mailer_relay;
+DROP SEQUENCE IF EXISTS application_mailer_relay_seq;
 
 /* base */
 
@@ -27,19 +27,20 @@ CREATE TABLE application_log
     application_log_id integer NOT NULL DEFAULT nextval('application_log_seq'),
     priority integer NOT NULL DEFAULT 0,
     message text NOT NULL DEFAULT '',
-    created_at timestamp without time zone NOT NULL DEFAULT NOW(),
+    created_at timestamp without time zone NOT NULL,
     CONSTRAINT application_log_pk PRIMARY KEY (application_log_id)
 );
 
-CREATE SEQUENCE application_dummy_message_relay_seq;
-CREATE TABLE application_dummy_message_relay
+CREATE SEQUENCE application_mailer_relay_seq;
+CREATE TABLE application_mailer_relay
 (
-    application_dummy_message_relay_id integer NOT NULL
-        DEFAULT nextval('application_dummy_message_relay_seq'),
+    application_mailer_relay_id integer NOT NULL
+        DEFAULT nextval('application_mailer_relay_seq'),
+    message_type character varying DEFAULT NULL,
+    session_id character varying DEFAULT NULL,
+    remote_ip_address cidr DEFAULT NULL,
     recipient character varying(100) NOT NULL,
-    created_at timestamp without time zone NOT NULL DEFAULT NOW(),
-    CONSTRAINT application_dummy_message_relay_pk 
-        PRIMARY KEY (application_dummy_message_relay_id)
+    created_at timestamp without time zone NOT NULL
 );
 
 CREATE TABLE channel_status
@@ -79,7 +80,7 @@ CREATE TABLE aggregator_channel
     title character varying(100) NOT NULL,
     link character varying(200) NOT NULL,
     description text NOT NULL DEFAULT '',
-    created_at timestamp without time zone NOT NULL DEFAULT NOW(),
+    created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone DEFAULT NULL,
     enabled boolean NOT NULL DEFAULT true,
     CONSTRAINT aggregator_channel_pk PRIMARY KEY (aggregator_channel_id),
@@ -95,7 +96,7 @@ CREATE TABLE aggregator_item
     title text NOT NULL, 
     link text NOT NULL,
     description text NOT NULL DEFAULT '',
-    created_at timestamp without time zone NOT NULL DEFAULT NOW(), 
+    created_at timestamp without time zone NOT NULL, 
     CONSTRAINT aggregator_item_pk PRIMARY KEY (aggregator_item_id),
     CONSTRAINT aggregator_channel_fk FOREIGN KEY (aggregator_channel_id) 
         REFERENCES aggregator_channel (aggregator_channel_id) ON DELETE CASCADE
@@ -103,7 +104,7 @@ CREATE TABLE aggregator_item
 
 /* user */
 
-CREATE SEQUENCE user_profile_seq;
+CREATE SEQUENCE user_profile_seq; 
 CREATE TABLE user_profile
 (
     user_profile_id integer NOT NULL DEFAULT nextval('user_profile_seq'),
@@ -113,7 +114,7 @@ CREATE TABLE user_profile
     register_confirmation boolean NOT NULL DEFAULT false,
     register_confirmation_time timestamp without time zone DEFAULT NULL,
     recovery_message_time timestamp without time zone DEFAULT NULL,
-    created_at timestamp without time zone NOT NULL DEFAULT NOW(),
+    created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone DEFAULT NULL,
     enabled boolean NOT NULL DEFAULT true,
     CONSTRAINT user_profile_pk PRIMARY KEY (user_profile_id)
@@ -140,7 +141,7 @@ CREATE TABLE user_cms
     url_admin character varying(200) NOT NULL,
     admin_username character varying(100) NOT NULL,
     admin_password character varying(100) NOT NULL,
-    created_at timestamp without time zone NOT NULL DEFAULT NOW(),
+    created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone DEFAULT NULL,
     enabled boolean NOT NULL DEFAULT true,
     CONSTRAINT user_cms_pk PRIMARY KEY (user_cms_id),
@@ -160,7 +161,7 @@ CREATE TABLE user_cms_channel
     aggregator_channel_id integer NOT NULL,
     title character varying(100) NOT NULL,
     description text NOT NULL DEFAULT '',
-    created_at timestamp without time zone NOT NULL DEFAULT NOW(),
+    created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone DEFAULT NULL,
     enabled boolean NOT NULL DEFAULT true,
     CONSTRAINT user_cms_channel_pk PRIMARY KEY (user_cms_channel_id),

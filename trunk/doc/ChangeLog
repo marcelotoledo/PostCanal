@@ -194,3 +194,20 @@ HORAS TRABALHADAS: 11h
 - Correção de bugs e melhorias no sistema de autenticação / cadastro
 
 HORAS TRABALHADAS: 5h
+
+==========
+20/01/2008
+==========
+
+- Correção de bugs e melhorias no sistema de autenticação / cadastro
+
+HORAS TRABALHADAS: 3h
+
+==========
+21/01/2008
+==========
+
+- Criação de biblioteca para envio de mensagens e relay (ApplicationMailer)
+- Correção de bug com UTC (UTC PHP <> UTC PGSQL)
+
+HORAS TRABALHADAS: 7h

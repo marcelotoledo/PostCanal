@@ -1,37 +1,37 @@
 <?php
 
 /**
- * ApplicationDummyMessageRelay model class
+ * ApplicationMailerRelay model class
  * 
  * @category    Autoblog
  * @package     Model
  */
-class ApplicationDummyMessageRelay extends AB_Model
+class ApplicationMailerRelay extends AB_Model
 {
     /**
      * Table name
      *
      * @var string
      */
-    protected $table_name = 'application_dummy_message_relay';
+    protected $table_name = 'application_mailer_relay';
 
     /**
      * Sequence name
      *
      * @var string
      */
-    protected $sequence_name = 'application_dummy_message_relay_seq';
+    protected $sequence_name = 'application_mailer_relay_seq';
 
     /**
      * Primary key column name
      *
      * @var string
      */
-    protected $primary_key = 'application_dummy_message_relay_id';
+    protected $primary_key = 'application_mailer_relay_id';
 
 
     /**
-     * Find ApplicationDummyMessageRelay with an encapsulated SELECT command
+     * Find ApplicationMailerRelay with an encapsulated SELECT command
      *
      * @param   array    WHERE parameters
      * @param   array         ORDER parameters
@@ -51,7 +51,7 @@ class ApplicationDummyMessageRelay extends AB_Model
     }
 
     /**
-     * Get ApplicationDummyMessageRelay with SQL
+     * Get ApplicationMailerRelay with SQL
      *
      * @param   string      SQL query
      * @param   array      values array
@@ -81,13 +81,14 @@ class ApplicationDummyMessageRelay extends AB_Model
     }
 
     /**
-     * Get ApplicationDummyMessageRelay from recipient
+     * Save model
      *
-     * @param   string  $recipient
-     * @return  ApplicationDummyMessageRelay|null
+     * @return  boolean
      */
-    public static function getFromRecipient($recipient)
+    public function save()
     {
-        return current(self::find(array('recipient' => $recipient)));
+        if($this->isNew()) $this->created_at = date("Y/m/d H:i:s");
+
+        return parent::save();
     }
 }

@@ -40,13 +40,13 @@ $(document).ready(function()
                     alert("Senha alterada com sucesso!");
                     window.location = "<?php echo BASE_URL ?>";
                 }
+                else if(response == "password_change_failed") 
+                {
+                    alert("Não foi possível alterar a senha de acesso");
+                }
                 else if(response == "password_change_not_matched") 
                 {
                     alert("Senha e Confirmação NÃO CORRESPONDEM");
-                }
-                else if(response == "password_invalid_uid") 
-                {
-                    alert("Perfil Inválido");
                 }
             }, 
             error: function (data) 

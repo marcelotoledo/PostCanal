@@ -79,4 +79,16 @@ class ApplicationLog extends AB_Model
 
         return $class_object->_insert($sql, $data);
     }
+
+    /**
+     * Save model
+     *
+     * @return  boolean
+     */
+    public function save()
+    {
+        if($this->isNew()) $this->created_at = date("Y/m/d H:i:s");
+
+        return parent::save();
+    }
 }

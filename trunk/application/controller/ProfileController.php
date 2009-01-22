@@ -25,12 +25,12 @@ class ProfileController extends SessionController
     const RECOVERY_INSTRUCTION_FAILED = "recovery_instruction_failed";
 
     const CONFIRM_OK = "confirm_ok";
-    const CONFIRM_DONE_BEFORE = "confirm_done_before";
     const CONFIRM_FAILED = "confirm_failed";
+    const CONFIRM_DONE_BEFORE = "confirm_done_before";
 
-    const PASSWORD_SHOW_FORM = "password_show_form";
-    const PASSWORD_CHANGE_NOT_MATCHED = "password_change_not_matched";
     const PASSWORD_CHANGE_OK = "password_change_ok";
+    const PASSWORD_CHANGE_FAILED = "password_change_failed";
+    const PASSWORD_CHANGE_NOT_MATCHED = "password_change_not_matched";
 
     /**
      * Mailer constants
@@ -41,6 +41,8 @@ class ProfileController extends SessionController
     const MAIL_EXISTING_PROFILE_TEMPLATE = "mail_register_existing.html";
     const MAIL_RECOVERY_SUBJECT = "[autoblog] recuperar senha";
     const MAIL_RECOVERY_TEMPLATE = "mail_recovery.html";
+    const MAIL_PASSWORD_SUBJECT = "[autoblog] recuperar senha";
+    const MAIL_PASSWORD_TEMPLATE = "mail_recovery.html";
     const MAIL_DUMMY_SUBJECT = "[autoblog] perfil inexistente";
     const MAIL_DUMMY_TEMPLATE = "mail_dummy.html";
 
@@ -142,21 +144,32 @@ class ProfileController extends SessionController
         {
             try
             {
-                self::sendRegisterInstruction($profile);
-
-                $profile->register_message_time = date("Y-m-d H:i:s");
-                $profile->save();
+                if($profile->register_confirmation)
+                {
+                    self::sendExistingInstruction($profile);
+                }
+                else
+                {
+                    self::sendNewInstruction($profile);
+                    $profile->register_message_time = date("Y-m-d H:i:s");
+                    $profile->save();
+                }
 
                 $response = self::REGISTER_OK;
             }
             catch(Exception $exception)
             {
-                AB_Log::write($exception, AB_Log::PRIORITY_WARNING);
+                $message = $exception->getMessage();
+                AB_Log::write($message, AB_Log::PRIORITY_WARNING);
 
-                /* disable when unable to send instructions */
+                /* disable unconfirmed profile 
+                   when unable to send instructions */
 
-                $profile->enabled = false;
-                $profile->save();
+                if(!$profile->register_confirmation)
+                {
+                    $profile->enabled = false;
+                    $profile->save();
+                }
 
                 $response = self::REGISTER_INSTRUCTION_FAILED;
             }
@@ -195,13 +208,13 @@ class ProfileController extends SessionController
             try
             {
                 self::sendRecoveryInstruction($profile);
-
                 $profile->recovery_message_time = date("Y-m-d H:i:s");
                 $profile->save();
             }
             catch(Exception $exception)
             {
-                AB_Log::write($exception, AB_Log::PRIORITY_ERROR);
+                $message = $exception->getMessage();
+                AB_Log::write($message, AB_Log::PRIORITY_ERROR);
                 $response = self::RECOVERY_INSTRUCTION_FAILED;
             }
         }
@@ -216,7 +229,8 @@ class ProfileController extends SessionController
             }
             catch(Exception $exception)
             {
-                AB_Log::write($exception, AB_Log::PRIORITY_WARNING);
+                $message = $exception->getMessage();
+                AB_Log::write($message, AB_Log::PRIORITY_WARNING);
                 $response = self::RECOVERY_INSTRUCTION_FAILED;
             }
         }
@@ -262,17 +276,38 @@ class ProfileController extends SessionController
     }
 
     /**
-     * Change password
+     * Password change form
      * 
      * @return  array
      */
-    public function passwordAction()
+    public function passwordFormAction()
     {
         $uid = $this->getRequest()->uid;
         $password = $this->getRequest()->password;
         $confirm = $this->getRequest()->confirm;
         $profile = null;
-        $response = self::PASSWORD_SHOW_FORM;
+
+        if(!empty($uid))
+        {
+            $profile = UserProfile::getFromUID($uid);
+        }
+
+        $this->getView()->setLayout('index');
+        return array('profile' => $profile);
+    }
+
+    /**
+     * Password change action
+     * 
+     * @return  string
+     */
+    public function passwordChangeAction()
+    {
+        $uid = $this->getRequest()->uid;
+        $password = $this->getRequest()->password;
+        $confirm = $this->getRequest()->confirm;
+        $profile = null;
+        $response = self::PASSWORD_CHANGE_FAILED;
 
         if(!empty($uid))
         {
@@ -288,6 +323,7 @@ class ProfileController extends SessionController
                     $profile->login_password_md5 = md5($password);
                     $profile->save();
                     $response = self::PASSWORD_CHANGE_OK;
+                    self::sendPasswordNotice($profile);
                 }
                 else
                 {
@@ -296,86 +332,84 @@ class ProfileController extends SessionController
             }
         } 
 
-        if($response == self::PASSWORD_SHOW_FORM)
-        {
-            $this->getView()->setLayout('index');
-            return array('response' => $response, 'profile' => $profile);
-        }
-        
         $this->getView()->setLayout(null);
         return Zend_Json::encode(array('response' => $response));
     }
 
+    /**
+     * Send email
+     *
+     * @param   string  $email
+     * @param   string  $type
+     * @param   string  $subject
+     * @param   string  $body
+     * @throws  Exception
+     * @return  void
+     */
+    private static function sendEmail($email, $type, $subject, $body)
+    {
+        include APPLICATION_PATH . "/library/ApplicationMailer.php";
+
+        $mailer = new ApplicationMailer();
+        $mailer->setSubject($subject);
+        $mailer->setBody($body);
+        $mailer->send($email, $type);
+    }
 
     /**
-     * Send register instruction
+     * Send new profile instruction
      *
      * @param   UserProfile $profile
      * @throws  Exception
      * return   boolean
      */
-    public static function sendRegisterInstruction($profile)
+    public static function sendNewInstruction($profile)
     {
         if(!is_object($profile))
         {
             return false;
         }
 
-        /* check message relay for last message time */
+        $subject = self::MAIL_NEW_PROFILE_SUBJECT;
+        $body = self::readInstruction(self::MAIL_NEW_PROFILE_TEMPLATE);
 
-        if(!self::messageRelay($profile->register_message_time))
+        $confirm_url = BASE_URL;
+        $confirm_url.= "/profile/confirm?uid=" . $profile->getUID();
+        $body = str_replace("{CONFIRM_URL}", $confirm_url, $body);
+
+        self::sendEmail($profile->login_email, __METHOD__, $subject, $body);
+
+        return true;
+    }
+
+    /**
+     * Send existing profile instruction
+     *
+     * @param   UserProfile $profile
+     * @throws  Exception
+     * return   boolean
+     */
+    public static function sendExistingInstruction($profile)
+    {
+        if(!is_object($profile))
         {
             return false;
         }
 
-        $registry = AB_Registry::singleton();
-
-        $from_name = $registry->mailer->sender->from->name;
-        $from_email = $registry->mailer->sender->from->email;
-
-        $mail = new_Zend_Mail();
-        $mail->setFrom($from_email, $from_name);
-        $mail->addTo($profile->login_email);
-
-        $subject = "";
-        $body = "";
-
-        /* existing profile instruction */
-        
-        if($profile->register_confirmation)
-        {
-            $subject = self::MAIL_EXISTING_PROFILE_SUBJECT;
-            $body = self::readInstruction(self::MAIL_EXISTING_PROFILE_TEMPLATE);
+        $subject = self::MAIL_EXISTING_PROFILE_SUBJECT;
+        $body = self::readInstruction(self::MAIL_EXISTING_PROFILE_TEMPLATE);
             
-            $body = str_replace("{BASE_URL}", BASE_URL, $body);
+        $body = str_replace("{BASE_URL}", BASE_URL, $body);
 
-            $password_url = BASE_URL;
-            $password_url.= "/profile/password?uid=" . $profile->getUID();
-            $body = str_replace("{PASSWORD_URL}", $password_url, $body);
-        }
+        $password_url = BASE_URL;
+        $password_url.= "/profile/passwordForm?uid=" . $profile->getUID();
+        $body = str_replace("{PASSWORD_URL}", $password_url, $body);
 
-        /* new profile instruction */
-
-        else
-        {
-            $subject = self::MAIL_NEW_PROFILE_SUBJECT;
-            $body = self::readInstruction(self::MAIL_NEW_PROFILE_TEMPLATE);
-
-            $confirm_url = BASE_URL;
-            $confirm_url.= "/profile/confirm?uid=" . $profile->getUID();
-            $body = str_replace("{CONFIRM_URL}", $confirm_url, $body);
-        }
-
-        $mail->setSubject($subject);
-        $mail->setBodyHtml($body);
-
-        if(!empty($registry->mailer->transport))
-        {
-            $mail->send($registry->mailer->transport);
-        }   
-
+        self::sendEmail($profile->login_email, __METHOD__, $subject, $body);
+ 
         return true;
     }
+
 
     /**
      * Send recovery instruction
@@ -391,36 +425,38 @@ class ProfileController extends SessionController
             return false;
         }
 
-        /* check message relay for last message time */
-
-        if(!self::messageRelay($profile->recovery_message_time))
-        {
-            return false;
-        }
-
-        $registry = AB_Registry::singleton();
-
-        $from_name = $registry->mailer->sender->from->name;
-        $from_email = $registry->mailer->sender->from->email;
-
-        $mail = new_Zend_Mail();
-        $mail->setFrom($from_email, $from_name);
-        $mail->addTo($profile->login_email);
-
         $subject = self::MAIL_RECOVERY_SUBJECT;
         $body = self::readInstruction(self::MAIL_RECOVERY_TEMPLATE);
 
         $password_url = BASE_URL;
-        $password_url.= "/profile/password?uid=" . $profile->getUID();
+        $password_url.= "/profile/passwordForm?uid=" . $profile->getUID();
         $body = str_replace("{PASSWORD_URL}", $password_url, $body);
 
-        $mail->setSubject($subject);
-        $mail->setBodyHtml($body);
+        self::sendEmail($profile->login_email, __METHOD__, $subject, $body);
 
-        if(!empty($registry->mailer->transport))
+        return true;
+    }
+
+    /**
+     * Send recovery notice
+     *
+     * @param   UserProfile $profile
+     * @throws  Exception
+     * return   boolean
+     */
+    public static function sendPasswordNotice($profile)
+    {
+        if(!is_object($profile))
         {
-            $mail->send($registry->mailer->transport);
-        }   
+            return false;
+        }
+
+        $subject = self::MAIL_PASSWORD_SUBJECT;
+        $body = self::readInstruction(self::MAIL_PASSWORD_TEMPLATE);
+
+        $body = str_replace("{BASE_URL}", BASE_URL, $body);
+
+        self::sendEmail($profile->login_email, __METHOD__, $subject, $body);
 
         return true;
     }
@@ -428,32 +464,16 @@ class ProfileController extends SessionController
     /**
      * Send dummy instruction
      *
-     * @param   string|null  $email
+     * @param   string      $email
      * @throws  Exception
      * return   boolean
      */
-    public static function sendDummyInstruction($email=null)
+    public static function sendDummyInstruction($email)
     {
         if(empty($email))
         {
             return false;
         }
-
-        /* check message relay for last message recipient */
-
-        if(is_object(ApplicationDummyMessageRelay::getFromRecipient($email)))
-        {
-            return false;
-        }
-
-        $registry = AB_Registry::singleton();
-
-        $from_name = $registry->mailer->sender->from->name;
-        $from_email = $registry->mailer->sender->from->email;
-
-        $mail = new_Zend_Mail();
-        $mail->setFrom($from_email, $from_name);
-        $mail->addTo($email);
 
         $subject = self::MAIL_DUMMY_SUBJECT;
         $body = self::readInstruction(self::MAIL_DUMMY_TEMPLATE);
@@ -461,46 +481,9 @@ class ProfileController extends SessionController
         $body = str_replace("{EMAIL}", $email, $body);
         $body = str_replace("{BASE_URL}", BASE_URL, $body);
 
-        $mail->setSubject($subject);
-        $mail->setBodyHtml($body);
-
-        if(!empty($registry->mailer->transport))
-        {
-            try
-            {
-                $mail->send($registry->mailer->transport);
-
-                $relay = new ApplicationDummyMessageRelay();
-                $relay->recipient = $email;
-                $relay->save();
-            }
-            catch(Exception $exception)
-            {
-                throw new Exception($exception);
-            }
-        }   
+        self::sendEmail($email, __METHOD__, $subject, $body);
 
         return true;
-    }
-
-
-    /**
-     * Message time relay
-     *
-     * @param   integer $time   Last message timestamp
-     * @return  boolean
-     */
-    private static function messageRelay($time)
-    {
-        $message_time = is_integer($time) ? $time : (int) strtotime($time);
-
-        $registry = AB_Registry::singleton();
-
-        $interval = $registry->mailer->sender->interval->minimum;
-
-        if(empty($interval)) $interval = 0;
-
-        return ((time() - $message_time) > $interval);
     }
 
     /**

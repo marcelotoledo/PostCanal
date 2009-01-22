@@ -1,5 +1,4 @@
-<?php if($this->response = ProfileController::PASSWORD_SHOW_FORM &&
-         is_object($this->profile)) : ?>
+<?php if(is_object($this->profile)) : ?>
 <!-- { password change form -->
 <input type="hidden" name="uid" value="<?php echo $this->profile->getUID() ?>">
 <table>

@@ -99,7 +99,7 @@ class UserProfile extends AB_Model
         $this->isNew() ? $this->created_at = $current_date : 
                          $this->updated_at = $current_date;
 
-        parent::save();
+        return parent::save();
     }
 
     /**
@@ -113,7 +113,9 @@ class UserProfile extends AB_Model
 
         if(!$this->isNew())
         {
-            $_md5 = md5($this->user_profile_id . ":" . $this->login_email);
+            $_md5 = md5($this->user_profile_id . ":" .
+                        $this->login_email . ":" .
+                        $this->login_password_md5);
             $uid = self::encodeUID($_md5);
         }   
 
@@ -166,7 +168,9 @@ class UserProfile extends AB_Model
         $class_object = new $class_name();
 
         $sql = "SELECT * FROM " . $class_object->table_name . " " . 
-               "WHERE MD5(user_profile_id || ':' || login_email) = ?";
+               "WHERE MD5(user_profile_id || ':' ||
+                          login_email || ':' ||
+                          login_password_md5) = ?";
         
         return current(self::selectModel($sql, array($_md5)));
     }

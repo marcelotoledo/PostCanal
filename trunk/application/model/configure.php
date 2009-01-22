@@ -108,7 +108,7 @@ class <class> extends AB_Model
      * @param   array   \$data       values array
      * @return  integer
      */
-    protected function insert(\$sql, \$data=array())
+    public static function insert(\$sql, \$data=array())
     {
         \$class_name = get_class();
         \$class_object = new \$class_name();

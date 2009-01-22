@@ -79,4 +79,19 @@ class UserCMS extends AB_Model
 
         return $class_object->_insert($sql, $data);
     }
+
+    /**
+     * Save model
+     *
+     * @return  boolean
+     */
+    public function save()
+    {
+        $current_date = date("Y/m/d H:i:s");
+
+        $this->isNew() ? $this->created_at = $current_date : 
+                         $this->updated_at = $current_date;
+
+        return parent::save();
+    }
 }
