@@ -27,7 +27,7 @@ $(document).ready(function()
         $.ajax
         ({
             type: "POST",
-            url: "<?php echo BASE_URL ?>/profile/password",
+            url: "<?php echo BASE_URL ?>/profile/passwordChange",
             dataType: "json",
             data: parameters,
             success: function (data) 

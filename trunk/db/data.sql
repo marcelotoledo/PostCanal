@@ -15,9 +15,9 @@ INSERT INTO cms_status (cms_status_id, error_level, label) VALUES (41, 1, 'ADMIN
 
 /* aggregator */
 
-INSERT INTO aggregator_channel (channel_status_id, title, link, description) VALUES (11, 'Slashdot', 'http://rss.slashdot.org/Slashdot/slashdot', 'News for nerds, stuff that matters');
+INSERT INTO aggregator_channel (channel_status_id, title, link, description, created_at) VALUES (11, 'Slashdot', 'http://rss.slashdot.org/Slashdot/slashdot', 'News for nerds, stuff that matters', NOW());
 
 /* user */
 
-INSERT INTO user_profile (login_email, login_password_md5, register_confirmation) VALUES ('rafael@castilho.biz', MD5('castilho'), true);
+INSERT INTO user_profile (login_email, login_password_md5, register_confirmation, created_at) VALUES ('rafael@castilho.biz', MD5('castilho'), true, NOW());
 INSERT INTO user_information (user_profile_id) VALUES (CURRVAL('user_profile_seq'));

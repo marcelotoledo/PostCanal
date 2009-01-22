@@ -69,5 +69,5 @@ $registry->mailer->port = 465;
 $registry->mailer->sender->username = "cdz0vfk61y@gmail.com";
 $registry->mailer->sender->password = "fdm0juk2gn";
 $registry->mailer->sender->email = "cdz0vfk61y@gmail.com";
-$registry->mailer->relay->time = 3600;
+$registry->mailer->relay->time = 43200;
 $registry->mailer->relay->count = 2;

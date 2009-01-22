@@ -41,8 +41,8 @@ class ProfileController extends SessionController
     const MAIL_EXISTING_PROFILE_TEMPLATE = "mail_register_existing.html";
     const MAIL_RECOVERY_SUBJECT = "[autoblog] recuperar senha";
     const MAIL_RECOVERY_TEMPLATE = "mail_recovery.html";
-    const MAIL_PASSWORD_SUBJECT = "[autoblog] recuperar senha";
-    const MAIL_PASSWORD_TEMPLATE = "mail_recovery.html";
+    const MAIL_PASSWORD_SUBJECT = "[autoblog] senha alterada";
+    const MAIL_PASSWORD_TEMPLATE = "mail_password.html";
     const MAIL_DUMMY_SUBJECT = "[autoblog] perfil inexistente";
     const MAIL_DUMMY_TEMPLATE = "mail_dummy.html";
 
@@ -340,20 +340,20 @@ class ProfileController extends SessionController
      * Send email
      *
      * @param   string  $email
-     * @param   string  $type
+     * @param   string  $identifier
      * @param   string  $subject
      * @param   string  $body
      * @throws  Exception
      * @return  void
      */
-    private static function sendEmail($email, $type, $subject, $body)
+    private static function sendEmail($email, $identifier, $subject, $body)
     {
         include APPLICATION_PATH . "/library/ApplicationMailer.php";
 
         $mailer = new ApplicationMailer();
         $mailer->setSubject($subject);
         $mailer->setBody($body);
-        $mailer->send($email, $type);
+        $mailer->send($email, $identifier);
     }
 
     /**

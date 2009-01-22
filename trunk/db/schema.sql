@@ -36,10 +36,8 @@ CREATE TABLE application_mailer_relay
 (
     application_mailer_relay_id integer NOT NULL
         DEFAULT nextval('application_mailer_relay_seq'),
-    message_type character varying DEFAULT NULL,
-    session_id character varying DEFAULT NULL,
-    remote_ip_address cidr DEFAULT NULL,
     recipient character varying(100) NOT NULL,
+    identifier_md5 character varying(32) DEFAULT NULL,
     created_at timestamp without time zone NOT NULL
 );
 

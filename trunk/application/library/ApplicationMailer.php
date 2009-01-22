@@ -103,19 +103,19 @@ class ApplicationMailer
     /**
      * Send email
      *
-     * @param   string      $recipient  Email address
-     * @param   string      $type       Message type
+     * @param   string      $recipient      Email address
+     * @param   string      $identifier     Message identifier
      * @throws  Exception
      * @return  boolean
      */
-    public function send($recipient, $type=null)
+    public function send($recipient, $identifier=null)
     {
         $mail = new Zend_Mail($this->charset);
         $mail->setFrom($this->from);
         $sent = false;
 
         if(self::allowRelay($recipient, 
-                            $type,
+                            $identifier,
                             $this->relay_time, 
                             $this->relay_count))
         {
@@ -126,7 +126,7 @@ class ApplicationMailer
             try
             {
                 $mail->send($this->transport);
-                self::setRelay($recipient, $type);
+                self::setRelay($recipient, $identifier);
                 $sent = true;
             }
             catch(Exception $exception)
@@ -143,32 +143,15 @@ class ApplicationMailer
     /**
      * Set relay
      *
-     * @param   string  $recipient
+     * @param   string      $recipient      Email address
+     * @param   string      $identifier     Message identifier
      * @return  boolean
      */
-    private static function setRelay($recipient, $type=null)
+    private static function setRelay($recipient, $identifier)
     {
-        $session_id = session_id();
-        $remote_ip_address = $_SERVER['REMOTE_ADDR'];
-        
         $relay = new ApplicationMailerRelay();
-
-        if(!empty($session_id))
-        {
-            $relay->session_id = $session_id;
-        }
-
-        if(!empty($remote_ip_address))
-        {
-            $relay->remote_ip_address = $remote_ip_address;
-        }
-
-        if(!empty($type))
-        {
-            $relay->message_type = $type;
-        }
-
         $relay->recipient = $recipient;
+        $relay->identifier_md5 = md5($identifier);
         $relay->save();
     }
 
@@ -179,33 +162,29 @@ class ApplicationMailer
      * return true/false when allowed to send email
      *
      * @param   string  $recipient  Email address
-     * @param   string  $type       Message type
+     * @param   string  $identifier Message identifier
      * @param   integer $delay      Time in seconds
      * @return  boolean
      */
     private static function allowRelay($recipient, 
-                                       $type, 
+                                       $identifier, 
                                        $time=3600,
                                        $count=2)
     {
-        $session_id = session_id();
-        $remote_ip_address = $_SERVER['REMOTE_ADDR'];
         $data = array();
 
         $sql = "SELECT COUNT(*) AS total ";
         $sql.= "FROM application_mailer_relay ";
-        $sql.= "WHERE created_at > ? AND (recipient = ? ";
 
-        $data[] = date("Y-m-d H:i:s", 
-                       mktime(date('H'), date('i'), ($time * -1)));
+        $sql.= "WHERE recipient = ? ";
         $data[] = $recipient;
 
-        $sql.= "OR (session_id = ? AND remote_ip_address = ?)) ";
-        $data[] = $session_id;
-        $data[] = $remote_ip_address;
+        $sql.= "AND identifier_md5 = ? ";
+        $data[] = md5($identifier);
 
-        $sql.= "AND message_type = ?";
-        $data[] = $type;
+        $sql.= "AND created_at > ? ";
+        $time = mktime(date('H'), date('i'), ($time * -1));
+        $data[] = date("Y-m-d H:i:s", $time);
 
         $deny = false;
 
@@ -216,22 +195,9 @@ class ApplicationMailer
 
         if($deny)
         {
-            $message = "mailer relay denied ";
-
-            if(!empty($type))
-            {
-                $message.= "message type (" . $type . "), "; 
-            }
-            if(!empty($session_id))
-            {
-                $message.= "session id (" . $session_id. "), ";
-            }
-            if(!empty($remote_ip_address))
-            {
-                $message.= "remote ip address (" . $remote_ip_address . "), ";
-            }
-
-            $message.= " recipient (" . $recipient . ")";
+            $message = "mailer relay denied to " . 
+                       "recipient (" . $recipient . ") and " . 
+                       "identifier (" . $identifier . ")";
 
             AB_Log::write($message, AB_Log::PRIORITY_WARNING);
         }
