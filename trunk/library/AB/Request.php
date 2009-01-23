@@ -29,14 +29,6 @@ class AB_Request
      */
     private $action = "index";
 
-    /**
-     * Path parameters 
-     * controller/action/:key1/:value1/:key2/:value2/...
-     *
-     * @var array
-     */
-    private $parameters = array();
-
 
     /**
      * Request constructor
@@ -96,31 +88,6 @@ class AB_Request
                 $this->action = $arguments[1];
             }
         }
-
-        /* initialize parameters */
-
-        if ($total_arguments == 3)
-        {
-            if (empty($arguments[2]) == false)
-            {
-                $this->parameters += array('id' => $arguments[2]);
-            }
-        }
-
-        if ($total_arguments > 3 && $total_arguments % 2 == 0)
-        {
-            $k = array();
-            $v = array();
-
-            for($i = 2; $i < $total_arguments; $i++)
-            {
-                $i % 2 == 0 ? 
-                    array_push($k, $arguments[$i]) : 
-                    array_push($v, $arguments[$i]);
-            }
-
-            $this->parameters = array_combine($k, $v);
-        }
     }
 
     /**
@@ -151,16 +118,6 @@ class AB_Request
     public function getAction()
     {
         return $this->action;
-    }
-
-    /**
-     * Path parameters
-     *
-     * @return  array
-     */
-    public function getParameters()
-    {
-        return $this->parameters;
     }
 
     /**

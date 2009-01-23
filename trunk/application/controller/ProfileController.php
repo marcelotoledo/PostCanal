@@ -32,6 +32,9 @@ class ProfileController extends SessionController
     const PASSWORD_CHANGE_FAILED = "password_change_failed";
     const PASSWORD_CHANGE_NOT_MATCHED = "password_change_not_matched";
 
+    const EDIT_SAVE_OK = "edit_save_ok";
+    const EDIT_SAVE_FAILED = "edit_save_failed";
+
     /**
      * Mailer constants
      */
@@ -83,7 +86,12 @@ class ProfileController extends SessionController
 
                 if($profile->register_confirmation)
                 {
-                    $this->sessionCreate($profile->getUID());
+                    $identification = array
+                    (
+                        'uid' => $profile->getUID(),
+                        'label' => $profile->login_email,
+                    );
+                    $this->sessionCreate($identification);
                     $response = self::LOGIN_OK;
                 }
 
@@ -333,6 +341,54 @@ class ProfileController extends SessionController
         } 
 
         $this->getView()->setLayout(null);
+        return Zend_Json::encode(array('response' => $response));
+    }
+
+    /**
+     * Profile editing form action (TODO)
+     *
+     * @return array
+     */
+    public function editFormAction()
+    {
+        $id = SessionController::getSessionIdentification();
+        $uid = null;
+
+        if(!empty($id))
+        {
+            if(is_array($id))
+            {
+                if(array_key_exists('uid', $id))
+                {
+                    $uid = $id['uid'];
+                }
+            }
+        }
+
+        $profile = null;
+
+        if(!empty($uid))
+        {
+            $profile = UserProfile::getFromUID($uid);
+        }
+
+        if(empty($profile))
+        {
+            $this->getResponse()->setRedirect(BASE_URL);
+        }
+
+        return array('profile' => $profile);
+    }
+
+    /**
+     * Profile editing save action (TODO)
+     *
+     * @return string
+     */
+    public function editSaveAction()
+    {
+        $response = self::EDIT_SAVE_FAILED;
+
         return Zend_Json::encode(array('response' => $response));
     }
 

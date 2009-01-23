@@ -90,9 +90,12 @@ abstract class AB_Controller
         {
             $this->view->setData($this->{$action_method}());
 
-            ob_start();
-            $this->view->render();
-            $this->response->setBody(ob_get_clean());
+            if($this->response->getStatus() != AB_Response::STATUS_REDIRECT)
+            {
+                ob_start();
+                $this->view->render();
+                $this->response->setBody(ob_get_clean());
+            }
         }
         else
         {

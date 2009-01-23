@@ -11,8 +11,14 @@
 </head>
 <body>
 <div id="topbar">
-    <div style="float:left">[<a href="<?php echo BASE_URL ?>">principal</a>]</div>
-    <div style="float:right">[<a href="<?php echo BASE_URL ?>/profile/logout">sair</a>]</div>
+    <div style="float:left">
+        [<a href="<?php echo BASE_URL ?>">principal</a>]
+        [<a href="<?php echo BASE_URL ?>/profile/editForm">perfil</a>]
+    </div>
+    <div style="float:right">
+        <?php echo $helper->getSessionLabel() ?>
+        [<a href="<?php echo BASE_URL ?>/profile/logout">sair</a>]
+    </div>
 </div>
 <div id="dashboardcontent"><?php $this->renderTemplate() ?></div>
 </body>

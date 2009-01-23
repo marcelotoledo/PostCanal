@@ -1,5 +1,22 @@
 $(document).ready(function()
 {
+    /* spinner */
+
+    function showSpinner()
+    {
+        $("#spinner").spinner
+        ({
+            height: 32, width: 32, speed: 50,
+            image: '/image/spinner/linux_spinner.png'
+        });
+    }
+
+    function hideSpinner()
+    {
+        $.spinnerStop();
+        $("#spinner").attr("style", "");
+    }
+
     /* password change */
 
     $("input[@name='pwdchangesubmit']").click(function() 
@@ -10,19 +27,20 @@ $(document).ready(function()
 
         if(password == "" || confirm_ == "")
         {
-            alert("Preencha o formulário corretamente");
+            simple_popup("Preencha o formulário corretamente");
             return null;
         }
 
         if(password != confirm_)
         {
-            alert("Senha e confirmação NÃO CORRESPONDEM");
+            simple_popup("Senha e confirmação NÃO CORRESPONDEM");
             return null;
         }
 
         parameters = { uid: uid, password: password, confirm: confirm_ }
 
-        document.body.style.cursor='wait';
+        showSpinner();
+        $("input[@name='pwdchangesubmit']").attr("disabled", true);
 
         $.ajax
         ({
@@ -32,27 +50,31 @@ $(document).ready(function()
             data: parameters,
             success: function (data) 
             { 
-                document.body.style.cursor='auto';
+
+                $("input[@name='pwdchangesubmit']").attr("disabled", false);
+                hideSpinner();
+
                 response = data ? data.response : null;
 
                 if(response == "password_change_ok") 
                 {
-                    alert("Senha alterada com sucesso!");
+                    simple_popup("Senha alterada com sucesso!");
                     window.location = "<?php echo BASE_URL ?>";
                 }
                 else if(response == "password_change_failed") 
                 {
-                    alert("Não foi possível alterar a senha de acesso");
+                    simple_popup("Não foi possível alterar a senha de acesso");
                 }
                 else if(response == "password_change_not_matched") 
                 {
-                    alert("Senha e Confirmação NÃO CORRESPONDEM");
+                    simple_popup("Senha e Confirmação NÃO CORRESPONDEM");
                 }
             }, 
             error: function (data) 
             { 
-                document.body.style.cursor='auto';
-                alert("ERRO NO SERVIDOR");
+                $("input[@name='pwdchangesubmit']").attr("disabled", false);
+                hideSpinner();
+                simple_popup("ERRO NO SERVIDOR");
             }
         });
     });

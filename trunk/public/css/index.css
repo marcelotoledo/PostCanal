@@ -1,21 +1,79 @@
-td.formtitle 
-{ 
-    padding-bottom: 25px;
+div#indexcontent
+{
+    padding: 50px;
 }
 
-span.formtitle 
-{ 
-    font-size: x-large; 
+.simple-popup-div
+{
+    position: absolute;
+    top: 0;
+    left: 0;
+    background: white;
 }
 
-td.fieldlabel
+.simple-popup-div-inner
+{
+    padding: 50px 20px 50px 20px;
+    border: gray 2px solid;
+    width: 320px;
+
+    display: table-cell;
+    vertical-align: middle;
+    text-align: left;
+}
+
+.simple-popup-close
+{
+    /* void */
+}
+
+
+table#container
+{
+    padding: 25px;
+}
+
+td#bigtitle
+{
+    vertical-align: top;
+    padding: 50px;
+    padding-right: 100px;
+}
+
+td#bigtitle span
+{
+    font-size: xx-large;
+}
+
+td.formlabel
 {
     width: 150px;
     text-align: right;
     font-weight: bold;
 }
 
-div#indexcontent
+td.formtitle 
+{ 
+    padding-bottom: 25px;
+}
+
+td.formtitle span
+{ 
+    font-size: large; 
+}
+
+td.formloading
 {
-    padding: 50px;
+    vertical-align: top;
+}
+
+tr.formbutton
+{
+    height: 50px;
+    vertical-align: bottom;
+}
+
+tr.formbutton td
+{
+    text-align: right;
 }

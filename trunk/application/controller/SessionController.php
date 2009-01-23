@@ -21,6 +21,21 @@ class SessionController extends AB_Controller
     }
 
     /**
+     * Action magic method
+     *
+     * @param   string  $method
+     * @param   array   $arguments
+     * @return  void
+     */
+    public function __call($method, $arguments)
+    {
+        if(strstr($method, 'Action'))
+        {
+            $this->getResponse()->setRedirect(BASE_URL);
+        }
+    }
+
+    /**
      * Create login session
      *
      * @param   string  $identification
@@ -32,14 +47,28 @@ class SessionController extends AB_Controller
         $namespace = $registry->session->namespace;
         $expiration = $registry->session->expiration;
 
-        $login = new Zend_Session_Namespace($namespace, true);
+        $login = new Zend_Session_Namespace($namespace);
         $login->identification = $identification;
         $login->setExpirationSeconds($expiration);
         $login->lock();
     }
 
     /**
-     * Get session status
+     * Get session identification
+     *
+     * @return  mixed
+     */
+    public static function getSessionIdentification()
+    {
+        $registry = AB_Registry::singleton();
+        $namespace = $registry->session->namespace;
+        $login = new Zend_Session_Namespace($namespace);
+
+        return $login->identification;
+    }
+
+    /**
+     * Check session status
      *
      * @return boolean
      */
@@ -48,7 +77,7 @@ class SessionController extends AB_Controller
         $registry = AB_Registry::singleton();
         $namespace = $registry->session->namespace;
 
-        $login = new Zend_Session_Namespace($namespace, true);
+        $login = new Zend_Session_Namespace($namespace);
         $status = false;
 
         if(is_object($login))
@@ -88,7 +117,7 @@ class SessionController extends AB_Controller
         $registry = AB_Registry::singleton();
         $namespace = $registry->session->namespace;
 
-        $login = new Zend_Session_Namespace($namespace, true);
+        $login = new Zend_Session_Namespace($namespace);
         $login->unLock();
         $login->unsetAll();
     }

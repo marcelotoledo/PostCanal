@@ -1,30 +1,35 @@
 <?php if(is_object($this->profile)) : ?>
-<!-- { password change form -->
+
 <input type="hidden" name="uid" value="<?php echo $this->profile->getUID() ?>">
-<table>
-    <tr id="pwdchangetitlerow">
-        <td colspan="2" class="formtitle">
+<table id="container">
+    <tr>
+        <td class="formtitle">
             <span class="formtitle">Mudança de Senha de Acesso</span>
+        </td>
+        <td class="formloading">
+            <div id="spinner">&nbsp;</div>
         </td>
     </tr>
     <tr>
-        <td class="fieldlabel">E-mail:</td>
+        <td class="formlabel">E-mail:</td>
         <td><?php echo $this->profile->login_email ?></td>
     </tr>
     <tr>
-        <td class="fieldlabel">Senha:</td>
+        <td class="formlabel">Senha:</td>
         <td><input type="password" name="password"></td>
     </tr>
     <tr id="pwdconfrow">
-        <td class="fieldlabel">Confirmar Senha:</td>
+        <td class="formlabel">Confirmar Senha:</td>
         <td><input type="password" name="confirm"></td>
     </tr>
-    <tr style="height:50px;vertical-align:bottom">
+    <tr class="formbutton">
         <td>&nbsp;</td>
-        <td style="text-align:right"><input name="pwdchangesubmit" type="button" value="Alterar"></td>
+        <td><input name="pwdchangesubmit" type="button" value="Alterar"></td>
     </tr>
 </table>
-<!-- password change form } -->
+
 <?php else : ?>
+
 <p>Perfil inválido.</p>
+
 <?php endif ?>
