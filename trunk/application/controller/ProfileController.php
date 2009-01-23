@@ -332,6 +332,7 @@ class ProfileController extends SessionController
                     $profile->save();
                     $response = self::PASSWORD_CHANGE_OK;
                     self::sendPasswordNotice($profile);
+                    $this->sessionDestroy();
                 }
                 else
                 {
@@ -377,6 +378,7 @@ class ProfileController extends SessionController
             $this->getResponse()->setRedirect(BASE_URL);
         }
 
+        $this->getView()->setLayout('dashboard');
         return array('profile' => $profile);
     }
 

@@ -208,6 +208,20 @@ HORAS TRABALHADAS: 3h
 ==========
 
 - Criação de biblioteca para envio de mensagens e relay (ApplicationMailer)
-- Correção de bug com UTC (UTC PHP <> UTC PGSQL)
+- Correção de bug com UTC (time() PHP <> now() PGSQL)
 
 HORAS TRABALHADAS: 7h
+
+==========
+22/01/2008
+==========
+
+- Edição de perfil
+
+HORAS TRABALHADAS: 6h
+
+==========
+23/01/2008
+==========
+
+- Melhorias na UI (loading, popup)

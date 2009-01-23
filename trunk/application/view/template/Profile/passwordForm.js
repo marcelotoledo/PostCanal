@@ -58,8 +58,9 @@ $(document).ready(function()
 
                 if(response == "password_change_ok") 
                 {
-                    simple_popup("Senha alterada com sucesso!");
-                    window.location = "<?php echo BASE_URL ?>";
+                    simple_popup("Senha alterada com sucesso!<br>" + 
+                                 "<a href=\"<?php echo BASE_URL ?>\">Clique aqui</a> " + 
+                                 "para acessar a página de autenticação");
                 }
                 else if(response == "password_change_failed") 
                 {
