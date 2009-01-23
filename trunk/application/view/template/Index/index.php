@@ -1,6 +1,6 @@
 <table id="container">
     <tr>
-        <td id="bigtitle"><span>Autoblog</span></td>
+        <td id="bigtitle"><span>Blotomate</span></td>
         <td>
             <input type="hidden" name="register" value="no">
             <table>

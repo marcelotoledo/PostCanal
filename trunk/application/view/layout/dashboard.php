@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
-<title>Autoblog</title>
+<title>Blotomate</title>
 <script type="text/javascript" src="/js/jquery-1.2.6.min.js"></script> 
 <script type="text/javascript" src="/js/jquery.spinner.js"></script>
 <script type="text/javascript" src="/js/simple_popup.js"></script>
@@ -15,7 +15,7 @@
 <div id="topbar">
     <div style="float:left">
         [<a href="<?php echo BASE_URL ?>">principal</a>]
-        [<a href="<?php echo BASE_URL ?>/profile/editForm">perfil</a>]
+        [<a href="<?php echo BASE_URL ?>/profile/edit">perfil</a>]
     </div>
     <div style="float:right">
         <?php echo $helper->getSessionLabel() ?>

@@ -288,7 +288,7 @@ class ProfileController extends SessionController
      * 
      * @return  array
      */
-    public function passwordFormAction()
+    public function passwordAction()
     {
         $uid = $this->getRequest()->uid;
         $password = $this->getRequest()->password;
@@ -350,7 +350,7 @@ class ProfileController extends SessionController
      *
      * @return array
      */
-    public function editFormAction()
+    public function editAction()
     {
         $id = SessionController::getSessionIdentification();
         $uid = null;
@@ -460,7 +460,7 @@ class ProfileController extends SessionController
         $body = str_replace("{BASE_URL}", BASE_URL, $body);
 
         $password_url = BASE_URL;
-        $password_url.= "/profile/passwordForm?uid=" . $profile->getUID();
+        $password_url.= "/profile/password?uid=" . $profile->getUID();
         $body = str_replace("{PASSWORD_URL}", $password_url, $body);
 
         self::sendEmail($profile->login_email, __METHOD__, $subject, $body);
@@ -487,7 +487,7 @@ class ProfileController extends SessionController
         $body = self::readInstruction(self::MAIL_RECOVERY_TEMPLATE);
 
         $password_url = BASE_URL;
-        $password_url.= "/profile/passwordForm?uid=" . $profile->getUID();
+        $password_url.= "/profile/password?uid=" . $profile->getUID();
         $body = str_replace("{PASSWORD_URL}", $password_url, $body);
 
         self::sendEmail($profile->login_email, __METHOD__, $subject, $body);

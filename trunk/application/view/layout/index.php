@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
-<title>Autoblog</title>
+<title>Blotomate</title>
 <script type="text/javascript" src="/js/jquery-1.2.6.min.js"></script>
 <script type="text/javascript" src="/js/jquery.spinner.js"></script>
 <script type="text/javascript" src="/js/simple_popup.js"></script>

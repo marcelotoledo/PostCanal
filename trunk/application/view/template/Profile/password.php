@@ -30,6 +30,7 @@
 
 <?php else : ?>
 
-<p>Perfil inválido.</p>
+<p>Este link expirou. Utilize a <a href="<?php echo BASE_URL ?>">página
+principal</a> para solicitar um novo pedido de recuperação de senha.</p>
 
 <?php endif ?>

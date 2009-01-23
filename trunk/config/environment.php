@@ -12,7 +12,7 @@ error_reporting (E_ALL);
 
 /* path */
 
-define('BASE_PATH', "/var/www/autoblog");
+define('BASE_PATH', "/var/www/blotomate");
 define('BASE_URL', "http://localhost:8001");
 define('APPLICATION_PATH', BASE_PATH . "/application");
 define('LIBRARY_PATH', BASE_PATH . "/library");
@@ -34,9 +34,9 @@ $registry->debug = true; /* show exceptions in browser */
 
 $registry->database->driver = "pgsql";
 $registry->database->host = "localhost";
-$registry->database->username = "autoblog";
-$registry->database->password = "autoblog";
-$registry->database->db = "autoblog";
+$registry->database->username = "blotomate";
+$registry->database->password = "blotomate";
+$registry->database->db = "blotomate";
 
 
 /* response headers */

@@ -33,5 +33,11 @@
         <td class="formlabel">Confirmar senha:</td>
         <td><input type="text" name="name"></td>
     </tr>
+    <tr class="formbutton">
+        <td>&nbsp;</td>
+        <td>
+        <input name="editcancel" type="button" value="Cancelar">
+        <input name="editsubmit" type="button" value="Alterar">
+        </td>
+    </tr>
 </table>
-
