@@ -174,23 +174,34 @@ class AB_Request
         $path = $request_uri;
 
         $script_name = $_SERVER['SCRIPT_NAME'];
-        $query_string = $_SERVER['QUERY_STRING'];
  
-        if(strstr($path, $script_name))
+        if(!empty($script_name))
         {
-            $path = str_replace($script_name, "", $path);
+            if(strpos($path, $script_name) === 0)
+            {
+                $path = str_replace($script_name, "", $path);
+            }
         }
 
-        if(strstr($path, "?" . $query_string))
+        $script_dir = str_replace("/index.php", "", $script_name);
+
+        if(!empty($script_dir))
         {
-            $path = str_replace("?" . $query_string, "", $path);
+            if(strpos($path, $script_dir) === 0)
+            {
+                $path = str_replace($script_dir, "", $path);
+            }
         }
 
-        /* remove relative url */
+        $query_string = $_SERVER['QUERY_STRING'];
 
-        $r = substr(BASE_URL, strpos(BASE_URL, "//") + 2);
-        $r = (($i = strpos($r , "/")) > 0) ? substr($r, $i) : "";
-        $path = (($i = strlen($r)) > 0) ? substr($path, $i) : $path;
+        if(!empty($query_string))
+        {
+            if(strpos($path, $query_string) > 0)
+            {
+                $path = str_replace("?" . $query_string, "", $path);
+            }
+        }
 
         return $path;
     }
