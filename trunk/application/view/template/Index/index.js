@@ -7,7 +7,8 @@ $(document).ready(function()
         $("#spinner").spinner
         ({
             height: 32, width: 32, speed: 50,
-            image: '/image/spinner/linux_spinner.png'
+            image: "<?php echo BASE_URL ?>" + 
+                   "/image/spinner/linux_spinner.png"
         });
     }
 
@@ -21,7 +22,7 @@ $(document).ready(function()
 
     $("input[@name='register']").val("no");
 
-    /* toggle between authentication and register forms */
+    /* toggle between authentication and register form */
 
     function toggleAuthForm()
     {
@@ -61,17 +62,17 @@ $(document).ready(function()
         $.ajax
         ({
             type: "POST",
-            url: "<?php echo BASE_URL ?>/profile/recovery",
+            url: "<?php echo AB_Request::url('profile', 'recovery') ?>",
             dataType: "json",
             data: parameters,
             success: function (message) 
             { 
                 hideSpinner();
-                response = message ? message.response : null;
-                if(response == "recovery_ok") 
+                result = message ? message.result : null;
+                if(result == "recovery_ok") 
                     simple_popup("Um EMAIL foi enviado " + 
                                  "para o endereço informado");
-                else if(response == "recovery_instruction_failed") 
+                else if(result == "recovery_instruction_failed") 
                     simple_popup("Não foi possível enviar instruções " + 
                                  "para o endereço de e-mail especificado!");
             }, 
@@ -114,7 +115,7 @@ $(document).ready(function()
         $.ajax
         ({
             type: "POST",
-            url: "<?php echo BASE_URL ?>/profile/" + action,
+            url: "<?php echo AB_Request::url('profile') ?>/" + action,
             dataType: "json",
             data: parameters,
             success: function (data) 
@@ -122,19 +123,19 @@ $(document).ready(function()
                 $("input[@name='authsubmit']").attr("disabled", false);
                 hideSpinner();
 
-                response = data ? data.response : null;
+                result = data ? data.result : null;
 
                 /* login */
 
-                if(response == "login_ok") 
+                if(result == "login_ok") 
                 {
-                    window.location = "<?php echo BASE_URL ?>/dashboard";
+                    window.location = "<?php echo AB_Request::url('dashboard') ?>";
                 }
-                else if(response == "login_invalid") 
+                else if(result == "login_invalid") 
                 {
                     simple_popup("Autenticação INVÁLIDA");
                 }
-                else if(response == "login_register_unconfirmed") 
+                else if(result == "login_register_unconfirmed") 
                 {
                     simple_popup("Cadastro NÃO CONFIRMADO.<br>" + 
                           "Verifique o pedido de confirmação " + 
@@ -143,25 +144,25 @@ $(document).ready(function()
 
                 /* register */
 
-                else if(response == "register_ok") 
+                else if(result == "register_ok") 
                 {
                     simple_popup("Cadastro realizado com sucesso.\n" + 
                           "Um EMAIL foi enviado para o endereço informado");
                     toggleAuthForm();
                 }
-                else if(response == "register_failed") 
+                else if(result == "register_failed") 
                 {
                     simple_popup("Não foi possível efetuar um novo cadastro");
                 }
-                else if(response == "register_incomplete") 
+                else if(result == "register_incomplete") 
                 {
                     simple_popup("Cadastro INCOMPLETO");
                 }
-                else if(response == "register_password_not_matched") 
+                else if(result == "register_password_not_matched") 
                 {
                     simple_popup("Senha e Confirmação NÃO CORRESPONDEM");
                 }
-                else if(response == "register_instruction_failed") 
+                else if(result == "register_instruction_failed") 
                 {
                     simple_popup("Não foi possível enviar instruções " + 
                           "para o endereço de e-mail especificado!");

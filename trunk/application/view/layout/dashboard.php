@@ -1,25 +1,24 @@
-<?php $helper = new DefaultHelper($this) ?>
 <html>
 <head>
 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
 <title>Blotomate</title>
-<script type="text/javascript" src="/js/jquery-1.2.6.min.js"></script> 
-<script type="text/javascript" src="/js/jquery.spinner.js"></script>
-<script type="text/javascript" src="/js/simple_popup.js"></script>
-<?php $helper->includeJavascript() ?>
-<?php $helper->includeStyleSheet() ?>
-<style type="text/css" media="screen">@import url("/css/default.css");</style>
-<style type="text/css" media="screen">@import url("/css/dashboard.css");</style>
+<?php $this->DefaultHelper()->script("jquery-1.2.6.min.js") ?>
+<?php $this->DefaultHelper()->script("jquery.spinner.js") ?>
+<?php $this->DefaultHelper()->script("simple_popup.js") ?>
+<?php $this->DefaultHelper()->includeJavascript() ?>
+<?php $this->DefaultHelper()->includeStyleSheet() ?>
+<?php $this->DefaultHelper()->style("default.css") ?>
+<?php $this->DefaultHelper()->style("dashboard.css") ?>
 </head>
 <body>
 <div id="topbar">
     <div style="float:left">
-        [<a href="<?php echo BASE_URL ?>">principal</a>]
-        [<a href="<?php echo BASE_URL ?>/profile/edit">perfil</a>]
+        [<?php $this->DefaultHelper()->href("principal", "dashboard") ?>]
+        [<?php $this->DefaultHelper()->href("perfil", "profile", "edit") ?>]
     </div>
     <div style="float:right">
-        <?php echo $helper->getSessionLabel() ?>
-        [<a href="<?php echo BASE_URL ?>/profile/logout">sair</a>]
+        <?php echo $this->DefaultHelper()->getSessionLabel() ?>
+        [<?php $this->DefaultHelper()->href("sair", "profile", "logout") ?>]
     </div>
 </div>
 <div id="dashboardcontent"><?php $this->renderTemplate() ?></div>

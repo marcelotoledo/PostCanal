@@ -29,7 +29,7 @@ class IndexController extends AB_Controller
     {
         if(SessionController::sessionStatus())
         {
-            $this->getResponse()->setRedirect("/dashboard");
+            $this->getResponse()->setRedirect(AB_Request::url("dashboard"));
         }
 
         $this->getView()->setLayout('index');

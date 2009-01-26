@@ -1,12 +1,12 @@
 <?php
 
 /**
- * Abstract controller
+ * Controller
  * 
  * @category    Autoblog
  * @package     AB
  */
-abstract class AB_Controller
+class AB_Controller
 {
     /**
      * Request

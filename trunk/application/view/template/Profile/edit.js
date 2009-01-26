@@ -59,8 +59,6 @@ $(document).ready(function()
 
                 if(result == "password_change_ok") 
                 {
-                    $("#pwdform").toggle();
-                    $("#changenotice").toggle();
                 }
                 else if(result == "password_change_failed") 
                 {

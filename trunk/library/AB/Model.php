@@ -1,12 +1,12 @@
 <?php
 
 /**
- * Abstract model
+ * Model
  * 
  * @category    Autoblog
  * @package     AB
  */
-abstract class AB_Model
+class AB_Model
 {
     /**
      * Model data

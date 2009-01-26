@@ -225,3 +225,4 @@ HORAS TRABALHADAS: 6h
 ==========
 
 - Melhorias na UI (loading, popup)
+- Correção de bugs no BASE_URL

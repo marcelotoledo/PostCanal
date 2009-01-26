@@ -67,7 +67,7 @@ class AB_Request
     {
         /* initialize path */
 
-        $this->path = self::_pathFromServer();
+        $this->path = self::pathFromServer();
 
         /* initialize controller */
 
@@ -121,11 +121,48 @@ class AB_Request
     }
 
     /**
+     * URL for controller / action
+     *
+     * @param   string  $controller
+     * @param   string  $action
+     * @param   array   $parameters
+     * @param   array   $base           Base URL (when <> BASE_URL)
+     * @return  string
+     */
+    public static function url ($controller=null, $action=null, 
+                                $parameters=array(), $base=null)
+    {
+        $url = $base ? $base : BASE_URL;
+
+        if(!empty($controller))
+        {
+            $url .= "/" . $controller;
+
+            if(!empty($action))
+            {
+                $url .= "/" . $action;
+            }
+        }
+
+        if(count($parameters) > 0)
+        {
+            $url .= "?";
+
+            foreach($parameters as $name => $value)
+            {
+                $url .= $name . "=" . urlencode($value);
+            }
+        }
+
+        return $url;
+    }
+
+    /**
      * Path from server (tested only with Apache web server)
      *
      * @return  string
      */
-    public static function _pathFromServer()
+    public static function pathFromServer()
     {
         $request_uri = $_SERVER['REQUEST_URI'];
 
@@ -148,6 +185,12 @@ class AB_Request
         {
             $path = str_replace("?" . $query_string, "", $path);
         }
+
+        /* remove relative url */
+
+        $r = substr(BASE_URL, strpos(BASE_URL, "//") + 2);
+        $r = (($i = strpos($r , "/")) > 0) ? substr($r, $i) : "";
+        $path = (($i = strlen($r)) > 0) ? substr($path, $i) : $path;
 
         return $path;
     }

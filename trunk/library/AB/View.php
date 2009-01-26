@@ -16,6 +16,13 @@ class AB_View
     private $request;
 
     /**
+     * View helpers
+     *
+     * @var array
+     */
+    private $helpers = array();
+
+    /**
      * View data
      *
      * @var mixed
@@ -76,6 +83,23 @@ class AB_View
         }
 
         $this->data[$name] = $value;
+    }
+
+    /**
+     * Call helper class 
+     *
+     * @param   string  $name
+     * @param   array   $arguments
+     * @return  string
+     */
+    public function __call($name, $args)
+    {
+        if(!array_key_exists($name, $this->helpers))
+        {
+            $this->helpers[$name] = new $name($this);
+        }
+
+        return $this->helpers[$name];
     }
 
     /**

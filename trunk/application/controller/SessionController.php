@@ -29,7 +29,7 @@ class SessionController extends AB_Controller
      */
     public function __call($method, $arguments)
     {
-        if(strstr($method, 'Action'))
+        if(strpos($method, 'Action') > 0)
         {
             $this->getResponse()->setRedirect(BASE_URL);
         }
