@@ -14,24 +14,23 @@
     </tr>
 </table>
 <br>
+<input type="hidden" name="pwdchange" value="no">
 <table>
     <tr>
         <td class="formlabel">&nbsp;</td>
-        <td><a href="#">trocar senha</a></td>
+        <td><a id="pwdchangelnk">trocar senha</a></td>
     </tr>
-</table>    
-<table id="passwordform">
     <tr>
         <td class="formlabel">Senha atual:</td>
-        <td><input type="text" name="name"></td>
+        <td><input type="password" name="current_password" disabled></td>
     </tr>
     <tr>
         <td class="formlabel">Nova senha:</td>
-        <td><input type="text" name="name"></td>
+        <td><input type="password" name="new_password" disabled></td>
     </tr>
     <tr>
         <td class="formlabel">Confirmar senha:</td>
-        <td><input type="text" name="name"></td>
+        <td><input type="password" name="new_password_confirm" disabled></td>
     </tr>
     <tr class="formbutton">
         <td>&nbsp;</td>

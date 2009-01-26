@@ -24,8 +24,8 @@
                 <tr id="regrow">
                     <td>&nbsp;</td>
                     <td>
-                        <a href="#" id="reglnk">não cadastrado</a> | 
-                        <a href="#" id="pwdlnk">senha?</a>
+                        <a id="reglnk">não cadastrado</a> | 
+                        <a id="pwdlnk">senha?</a>
                     </td>
                 </tr>
                 <tr id="pwdconfrow" style="display:none">

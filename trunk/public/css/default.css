@@ -12,6 +12,19 @@ body
     padding: 0;
 }
 
+a
+{
+    color: navy;
+    text-decoration: underline;
+}
+
+a:hover
+{
+    color: blue;
+    cursor: pointer; 
+    cursor: hand;
+}
+
 /* simple popup */
 
 .simple-popup-div
