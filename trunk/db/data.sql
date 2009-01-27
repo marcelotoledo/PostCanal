@@ -20,4 +20,4 @@ INSERT INTO aggregator_channel (channel_status_id, title, link, description, cre
 /* user */
 
 INSERT INTO user_profile (login_email, login_password_md5, register_confirmation, created_at) VALUES ('rafael@castilho.biz', MD5('castilho'), true, NOW());
-INSERT INTO user_information (user_profile_id) VALUES (CURRVAL('user_profile_seq'));
+INSERT INTO user_information (user_profile_id, created_at) VALUES (CURRVAL('user_profile_seq'), NOW());

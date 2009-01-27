@@ -123,6 +123,8 @@ CREATE TABLE user_information
     user_profile_id integer NOT NULL,
     name character varying(100) NOT NULL DEFAULT '',
     /* TODO: location, language, etc. */
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone DEFAULT NULL,
     CONSTRAINT user_profile_fk FOREIGN KEY (user_profile_id) 
         REFERENCES user_profile (user_profile_id) ON DELETE CASCADE
 );

@@ -9,7 +9,8 @@
     </tr>
     <tr>
         <td class="formlabel">Nome:</td>
-        <td><input type="text" name="name"></td>
+        <td><input type="text" name="name" 
+            value="<?php echo $this->information->name ?>"></td>
     </tr>
 </table>
 <br>

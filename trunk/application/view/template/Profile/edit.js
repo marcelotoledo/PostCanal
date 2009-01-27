@@ -20,20 +20,33 @@ $(document).ready(function()
 
     /* password change */
 
-    $("input[@name='pwdchange']").val("no");
-
-    function enablePasswordChange()
+    function setPasswordChange(pwdchange)
     {
-        $("input[@name='current_password']").attr("disabled", false);
-        $("input[@name='new_password']").attr("disabled", false);
-        $("input[@name='new_password_confirm']").attr("disabled", false);
-        $("input[@name='current_password']").focus();
-        $("input[@name='pwdchange']").val("yes");
+        if(pwdchange)
+        {
+            $("input[@name='current_password']").attr("disabled", false);
+            $("input[@name='new_password']").attr("disabled", false);
+            $("input[@name='new_password_confirm']").attr("disabled", false);
+            $("input[@name='current_password']").focus();
+            $("input[@name='pwdchange']").val("yes");
+        }
+        else
+        {
+            $("input[@name='current_password']").attr("disabled", true);
+            $("input[@name='current_password']").val("");
+            $("input[@name='new_password']").attr("disabled", true);
+            $("input[@name='new_password']").val("");
+            $("input[@name='new_password_confirm']").attr("disabled", true);
+            $("input[@name='new_password_confirm']").val("");
+            $("input[@name='pwdchange']").val("no");
+        }
     }
+
+    setPasswordChange(false);
 
     $("#pwdchangelnk").click(function() 
     {
-        enablePasswordChange();
+        setPasswordChange(true);
     });
 
     /* cancel */
@@ -85,13 +98,26 @@ $(document).ready(function()
             success: function (data) 
             { 
                 $("input[@name='editsubmit']").attr("disabled", false);
+                setPasswordChange(false);
                 hideSpinner();
 
                 result = data ? data.result : null;
 
-                if(result == "edit_ok") 
+                if(result == "edit_save_ok") 
                 {
-                    simple_popup("OK");
+                    simple_popup("Perfil alterado com sucesso");
+                }
+                else if(result == "edit_save_failed")
+                {
+                    simple_popup("Alteração do perfil FALHOU!");
+                }
+                else if(result == "edit_save_password_not_matched")
+                {
+                    simple_popup("Senha e confirmação NÃO CORRESPONDEM");
+                }
+                else if(result == "edit_save_wrong_password")
+                {
+                    simple_popup("Senha incorreta!");
                 }
             }, 
             error: function (data) 

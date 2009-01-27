@@ -20,14 +20,14 @@ class UserInformation extends AB_Model
      *
      * @var string
      */
-    protected static $sequence_name = 'user_information_seq';
+    protected static $sequence_name = null;
 
     /**
      * Primary key name
      *
      * @var string
      */
-    protected static $primary_key_name = 'user_information_id';
+    protected static $primary_key_name = 'user_profile_id';
 
 
     /**
@@ -67,7 +67,22 @@ class UserInformation extends AB_Model
      */
     public function save()
     {
+        $current_date = date("Y/m/d H:i:s");
+
+        $this->isNew() ? $this->created_at = $current_date : 
+                         $this->updated_at = $current_date;
+
         return parent::_save(self::$sequence_name);
+    }
+
+    /**
+     * Check if model is new
+     *
+     * @return  boolean
+     */
+    public function isNew()
+    {
+        return is_null($this->created_at);
     }
 
     /**

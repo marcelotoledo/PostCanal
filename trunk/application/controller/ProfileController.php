@@ -34,6 +34,8 @@ class ProfileController extends SessionController
 
     const EDIT_SAVE_OK = "edit_save_ok";
     const EDIT_SAVE_FAILED = "edit_save_failed";
+    const EDIT_SAVE_PASSWORD_NOT_MATCHED = "edit_save_password_not_matched";
+    const EDIT_SAVE_WRONG_PASSWORD = "edit_save_wrong_password";
 
     /**
      * Mailer constants
@@ -346,28 +348,14 @@ class ProfileController extends SessionController
     }
 
     /**
-     * Profile editing form action (TODO)
+     * Profile editing form action
      *
-     * @return array
+     * @return array|null
      */
     public function editAction()
     {
-        $id = SessionController::getSessionIdentification();
-        $uid = null;
-
-        if(!empty($id))
-        {
-            if(is_array($id))
-            {
-                if(array_key_exists('uid', $id))
-                {
-                    $uid = $id['uid'];
-                }
-            }
-        }
-
+        $uid = self::getUIDFromSession();
         $profile = null;
-        $information = null;
 
         if(!empty($uid))
         {
@@ -377,10 +365,15 @@ class ProfileController extends SessionController
         if(empty($profile))
         {
             $this->getResponse()->setRedirect(BASE_URL);
+            return null;
         }
-        else
+
+        $id = $profile->user_profile_id;
+        $information = UserInformation::getFromPrimaryKey($id);
+
+        if(empty($information))
         {
-            $information = $profile->getUserInformation();
+            $information = new UserInformation();
         }
 
         $this->getView()->setLayout('dashboard');
@@ -388,14 +381,95 @@ class ProfileController extends SessionController
     }
 
     /**
-     * Profile editing save action (TODO)
+     * Profile editing save action
      *
      * @return string
      */
     public function editSaveAction()
     {
-        $id = SessionController::getSessionIdentification();
+        $pwdchange = $this->getRequest()->pwdchange;
+        $name = $this->getRequest()->name;
+        $current_password = $this->getRequest()->current_password;
+        $new_password = $this->getRequest()->new_password;
+        $new_password_confirm = $this->getRequest()->new_password_confirm;
+
+        $uid = self::getUIDFromSession();
+        $profile = null;
         $result = self::EDIT_SAVE_FAILED;
+
+        $this->getView()->setLayout(null);
+
+        if(!empty($uid))
+        {
+            $profile = UserProfile::getFromUID($uid);
+        }
+
+        if(empty($profile))
+        {
+            $this->getResponse()->setRedirect(BASE_URL);
+            return Zend_Json::encode(array('result' => $result));
+        }
+
+        /* password change */
+
+        if($pwdchange == "yes")
+        {
+            if($profile->login_password_md5 != md5($current_password))
+            {
+                $result = self::EDIT_SAVE_WRONG_PASSWORD;
+                return Zend_Json::encode(array('result' => $result));
+            }
+
+            if($new_password != $new_password_confirm)
+            {
+                $result = self::EDIT_SAVE_PASSWORD_NOT_MATCHED;
+                return Zend_Json::encode(array('result' => $result));
+            }
+
+            $profile->login_password_md5 = md5($new_password);
+
+            $identification = array
+            (
+                'uid' => $profile->getUID(),
+                'label' => $profile->login_email,
+            );
+            $this->sessionCreate($identification);
+
+            try
+            {
+                $profile->save();
+                $result = self::EDIT_SAVE_OK;
+            }
+            catch(Exception $exception)
+            {
+                $message = $exception->getMessage();
+                AB_Log::write($message, AB_Log::PRIORITY_ERROR);
+            }
+        }
+
+        /* information change */
+
+        $id = $profile->user_profile_id;
+        $information = UserInformation::getFromPrimaryKey($id);
+
+        if(empty($information))
+        {
+            $information = new UserInformation();
+            $information->user_profile_id = $id;
+        }
+
+        $information->name = $name;
+
+        try
+        {
+            $information->save();
+            $result = self::EDIT_SAVE_OK;
+        }
+        catch(Exception $exception)
+        {
+            $message = $exception->getMessage();
+            AB_Log::write($message, AB_Log::PRIORITY_ERROR);
+        }
 
         return Zend_Json::encode(array('result' => $result));
     }
@@ -554,6 +628,30 @@ class ProfileController extends SessionController
         self::sendEmail($email, __METHOD__, $subject, $body);
 
         return true;
+    }
+
+    /**
+     * Get UID from session
+     *
+     * @return  string|null
+     */
+    private static function getUIDFromSession()
+    {
+        $id = SessionController::getSessionIdentification();
+        $uid = null;
+
+        if(!empty($id))
+        {
+            if(is_array($id))
+            {
+                if(array_key_exists('uid', $id))
+                {
+                    $uid = $id['uid'];
+                }
+            }
+        }
+
+        return $uid;
     }
 
     /**
