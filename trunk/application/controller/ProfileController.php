@@ -367,6 +367,7 @@ class ProfileController extends SessionController
         }
 
         $profile = null;
+        $information = null;
 
         if(!empty($uid))
         {
@@ -377,9 +378,13 @@ class ProfileController extends SessionController
         {
             $this->getResponse()->setRedirect(BASE_URL);
         }
+        else
+        {
+            $information = $profile->getUserInformation();
+        }
 
         $this->getView()->setLayout('dashboard');
-        return array('profile' => $profile);
+        return array('information' => $information);
     }
 
     /**
@@ -389,6 +394,7 @@ class ProfileController extends SessionController
      */
     public function editSaveAction()
     {
+        $id = SessionController::getSessionIdentification();
         $result = self::EDIT_SAVE_FAILED;
 
         return Zend_Json::encode(array('result' => $result));

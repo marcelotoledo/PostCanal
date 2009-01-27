@@ -13,30 +13,70 @@ class CMSStatus extends AB_Model
      *
      * @var string
      */
-    protected $table_name = 'cms_status';
+    protected static $table_name = 'cms_status';
 
     /**
      * Sequence name
      *
      * @var string
      */
-    protected $sequence_name = 'cms_status_seq';
+    protected static $sequence_name = 'cms_status_seq';
 
     /**
-     * Primary key column name
+     * Primary key name
      *
      * @var string
      */
-    protected $primary_key = 'cms_status_id';
+    protected static $primary_key_name = 'cms_status_id';
 
+
+    /**
+     * Get table name
+     *
+     * @return  string
+     */
+    public function getTableName()
+    {
+        return self::$table_name;
+    }
+
+    /**
+     * Get sequence name
+     *
+     * @return  string
+     */
+    public function getSequenceName()
+    {
+        return self::$sequence_name;
+    }
+
+    /**
+     * Get primary key name
+     *
+     * @return  string
+     */
+    public function getPrimaryKeyName()
+    {
+        return self::$primary_key_name;
+    }
+
+    /**
+     * Save model
+     *
+     * @return  boolean
+     */
+    public function save()
+    {
+        return parent::_save(self::$sequence_name);
+    }
 
     /**
      * Find CMSStatus with an encapsulated SELECT command
      *
-     * @param   array    WHERE parameters
-     * @param   array         ORDER parameters
-     * @param   integer       LIMIT parameter
-     * @param   integer      OFFSET parameter
+     * @param   array   $conditions WHERE parameters
+     * @param   array   $order      ORDER parameters
+     * @param   integer $limit      LIMIT parameter
+     * @param   integer $offset     OFFSET parameter
      * @return  array
      */
     public static function find ($conditions=array(), 
@@ -44,25 +84,24 @@ class CMSStatus extends AB_Model
                                  $limit=0, 
                                  $offset=0)
     {
-        $class_name = get_class();
-        $class_object = new $class_name();
-
-        return $class_object->_find($conditions, $order, $limit, $offset);
+        return parent::_find($conditions, 
+                             $order, 
+                             $limit, 
+                             $offset, 
+                             self::$table_name,
+                             get_class());
     }
 
     /**
      * Get CMSStatus with SQL
      *
-     * @param   string      SQL query
-     * @param   array      values array
+     * @param   string  $sql    SQL query
+     * @param   array   $data   values array
      * @return  array
      */
     public static function selectModel ($sql, $data=array())
     {
-        $class_name = get_class();
-        $class_object = new $class_name();
-
-        return $class_object->_selectModel($sql, $data);
+        return parent::_selectModel($sql, $data, get_class());
     }
 
     /**
@@ -74,9 +113,18 @@ class CMSStatus extends AB_Model
      */
     public static function insert($sql, $data=array())
     {
-        $class_name = get_class();
-        $class_object = new $class_name();
+        return parent::_insert($sql, $data, self::sequence_name);
+    }
 
-        return $class_object->_insert($sql, $data);
+    /**
+     * Get CMSStatus from primary key
+     *
+     * @param   integer $id    Primary key value
+     *
+     * @return  CMSStatus|null 
+     */
+    public static function getFromPrimaryKey($id)
+    {
+        return current(self::find(array(self::$primary_key_name => $id)));
     }
 }

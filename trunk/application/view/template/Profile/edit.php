@@ -1,4 +1,3 @@
-<input type="hidden" name="uid" value="<?php echo $this->profile->getUID() ?>">
 <table>
     <tr>
         <td class="formtitle">

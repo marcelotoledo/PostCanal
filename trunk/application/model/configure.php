@@ -49,30 +49,70 @@ class <class> extends AB_Model
      *
      * @var string
      */
-    protected \$table_name = '<table>';
+    protected static \$table_name = '<table>';
 
     /**
      * Sequence name
      *
      * @var string
      */
-    protected \$sequence_name = <sequence>;
+    protected static \$sequence_name = <<sequence>>;
 
     /**
-     * Primary key column name
+     * Primary key name
      *
      * @var string
      */
-    protected \$primary_key = '<pk>';
+    protected static \$primary_key_name = '<pk>';
 
+
+    /**
+     * Get table name
+     *
+     * @return  string
+     */
+    public function getTableName()
+    {
+        return self::\$table_name;
+    }
+
+    /**
+     * Get sequence name
+     *
+     * @return  string
+     */
+    public function getSequenceName()
+    {
+        return self::\$sequence_name;
+    }
+
+    /**
+     * Get primary key name
+     *
+     * @return  string
+     */
+    public function getPrimaryKeyName()
+    {
+        return self::\$primary_key_name;
+    }
+
+    /**
+     * Save model
+     *
+     * @return  boolean
+     */
+    public function save()
+    {
+        return parent::_save(self::\$sequence_name);
+    }
 
     /**
      * Find <class> with an encapsulated SELECT command
      *
-     * @param   array   $conditions WHERE parameters
-     * @param   array   $order      ORDER parameters
-     * @param   integer $limit      LIMIT parameter
-     * @param   integer $offset     OFFSET parameter
+     * @param   array   \$conditions WHERE parameters
+     * @param   array   \$order      ORDER parameters
+     * @param   integer \$limit      LIMIT parameter
+     * @param   integer \$offset     OFFSET parameter
      * @return  array
      */
     public static function find (\$conditions=array(), 
@@ -80,25 +120,24 @@ class <class> extends AB_Model
                                  \$limit=0, 
                                  \$offset=0)
     {
-        \$class_name = get_class();
-        \$class_object = new \$class_name();
-
-        return \$class_object->_find(\$conditions, \$order, \$limit, \$offset);
+        return parent::_find(\$conditions, 
+                             \$order, 
+                             \$limit, 
+                             \$offset, 
+                             self::\$table_name,
+                             get_class());
     }
 
     /**
      * Get <class> with SQL
      *
-     * @param   string  $sql    SQL query
-     * @param   array   $data   values array
+     * @param   string  \$sql    SQL query
+     * @param   array   \$data   values array
      * @return  array
      */
     public static function selectModel (\$sql, \$data=array())
     {
-        \$class_name = get_class();
-        \$class_object = new \$class_name();
-
-        return \$class_object->_selectModel(\$sql, \$data);
+        return parent::_selectModel(\$sql, \$data, get_class());
     }
 
     /**
@@ -110,10 +149,19 @@ class <class> extends AB_Model
      */
     public static function insert(\$sql, \$data=array())
     {
-        \$class_name = get_class();
-        \$class_object = new \$class_name();
+        return parent::_insert(\$sql, \$data, self::sequence_name);
+    }
 
-        return \$class_object->_insert(\$sql, \$data);
+    /**
+     * Get <class> from primary key
+     *
+     * @param   integer \$id    Primary key value
+     *
+     * @return  <class>|null 
+     */
+    public static function getFromPrimaryKey(\$id)
+    {
+        return current(self::find(array(self::\$primary_key_name => \$id)));
     }
 }
 EOS;
@@ -121,10 +169,10 @@ EOS;
 
 $_sequence = empty($_sequence) ? "null" : "'" . $_sequence . "'";
 
-$output = str_replace ("<class>",    $_class,    $output);
-$output = str_replace ("<table>",    $_table,    $output);
-$output = str_replace ("<sequence>", $_sequence, $output);
-$output = str_replace ("<pk>",       $_pk,       $output);
+$output = str_replace ("<class>",      $_class,    $output);
+$output = str_replace ("<table>",      $_table,    $output);
+$output = str_replace ("<<sequence>>", $_sequence, $output);
+$output = str_replace ("<pk>",         $_pk,       $output);
 
 
 try
