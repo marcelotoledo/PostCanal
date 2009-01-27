@@ -31,7 +31,7 @@ $output = <<<EOS
 /**
  * <controller> controller class
  * 
- * @category    Autoblog
+ * @category    Blotomate
  * @package     Controller
  */
 class <controller>Controller extends AB_Controller

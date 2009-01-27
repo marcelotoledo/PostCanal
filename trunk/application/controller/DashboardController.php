@@ -3,7 +3,7 @@
 /**
  * Dashboard controller class
  * 
- * @category    Autoblog
+ * @category    Blotomate
  * @package     Controller
  */
 class DashboardController extends SessionController
@@ -19,7 +19,7 @@ class DashboardController extends SessionController
     {
         parent::__construct($request, $response);
         $this->getView()->setLayout('dashboard');
-        $this->sessionCheck();
+        $this->sessionAuthorize();
     }
 
     /**

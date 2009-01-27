@@ -3,7 +3,7 @@
 /**
  * Application mailer class
  * 
- * @category    Autoblog
+ * @category    Blotomate
  * @package     Library
  */
 class ApplicationMailer

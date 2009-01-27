@@ -3,7 +3,7 @@
 /**
  * Class loader
  *
- * @category    Autoblog
+ * @category    Blotomate
  * @package     AB
  */
 class AB_Loader

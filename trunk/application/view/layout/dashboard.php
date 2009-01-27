@@ -17,7 +17,7 @@
         [<?php $this->DefaultHelper()->href("perfil", "profile", "edit") ?>]
     </div>
     <div style="float:right">
-        <?php echo $this->DefaultHelper()->getSessionLabel() ?>
+        <?php $this->DefaultHelper()->sessionEmail() ?>
         [<?php $this->DefaultHelper()->href("sair", "profile", "logout") ?>]
     </div>
 </div>

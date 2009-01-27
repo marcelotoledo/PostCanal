@@ -3,7 +3,7 @@
 /**
  * AggregatorItem model class
  * 
- * @category    Autoblog
+ * @category    Blotomate
  * @package     Model
  */
 class AggregatorItem extends AB_Model

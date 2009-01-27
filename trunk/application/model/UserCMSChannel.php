@@ -3,7 +3,7 @@
 /**
  * UserCMSChannel model class
  * 
- * @category    Autoblog
+ * @category    Blotomate
  * @package     Model
  */
 class UserCMSChannel extends AB_Model

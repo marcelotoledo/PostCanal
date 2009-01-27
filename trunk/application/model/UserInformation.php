@@ -3,7 +3,7 @@
 /**
  * UserInformation model class
  * 
- * @category    Autoblog
+ * @category    Blotomate
  * @package     Model
  */
 class UserInformation extends AB_Model

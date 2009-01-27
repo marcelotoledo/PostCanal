@@ -3,7 +3,7 @@
 /**
  * ApplicationLog model class
  * 
- * @category    Autoblog
+ * @category    Blotomate
  * @package     Model
  */
 class ApplicationLog extends AB_Model

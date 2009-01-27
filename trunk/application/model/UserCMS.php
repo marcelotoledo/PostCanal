@@ -3,7 +3,7 @@
 /**
  * UserCMS model class
  * 
- * @category    Autoblog
+ * @category    Blotomate
  * @package     Model
  */
 class UserCMS extends AB_Model
@@ -131,5 +131,17 @@ class UserCMS extends AB_Model
     public static function getFromPrimaryKey($id)
     {
         return current(self::find(array(self::$primary_key_name => $id)));
+    }
+
+    /**
+     * Get CMS list from user profile
+     *
+     * @param   integer     $user_profile_id    User profile PK
+     * @return  array
+     */
+    public static function getFromUserProfileId($user_profile_id)
+    {
+        return self::find(array('user_profile_id' => $user_profile_id),
+                          array('name ASC'));
     }
 }

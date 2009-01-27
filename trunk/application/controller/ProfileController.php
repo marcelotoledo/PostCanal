@@ -3,7 +3,7 @@
 /**
  * Profile controller class
  * 
- * @category    Autoblog
+ * @category    Blotomate
  * @package     Controller
  */
 class ProfileController extends SessionController
@@ -40,15 +40,15 @@ class ProfileController extends SessionController
     /**
      * Mailer constants
      */
-    const MAIL_NEW_PROFILE_SUBJECT = "[autoblog] new profile";
+    const MAIL_NEW_PROFILE_SUBJECT = "[blotomate] novo perfil";
     const MAIL_NEW_PROFILE_TEMPLATE = "mail_register_new.html";
-    const MAIL_EXISTING_PROFILE_SUBJECT = "[autoblog] existing profile";
+    const MAIL_EXISTING_PROFILE_SUBJECT = "[blotomate] perfil existente";
     const MAIL_EXISTING_PROFILE_TEMPLATE = "mail_register_existing.html";
-    const MAIL_RECOVERY_SUBJECT = "[autoblog] recuperar senha";
+    const MAIL_RECOVERY_SUBJECT = "[blotomate] recuperar senha";
     const MAIL_RECOVERY_TEMPLATE = "mail_recovery.html";
-    const MAIL_PASSWORD_SUBJECT = "[autoblog] senha alterada";
+    const MAIL_PASSWORD_SUBJECT = "[blotomate] senha alterada";
     const MAIL_PASSWORD_TEMPLATE = "mail_password.html";
-    const MAIL_DUMMY_SUBJECT = "[autoblog] perfil inexistente";
+    const MAIL_DUMMY_SUBJECT = "[blotomate] perfil inexistente";
     const MAIL_DUMMY_TEMPLATE = "mail_dummy.html";
 
 
@@ -88,12 +88,12 @@ class ProfileController extends SessionController
 
                 if($profile->register_confirmation)
                 {
-                    $identification = array
-                    (
-                        'uid' => $profile->getUID(),
-                        'label' => $profile->login_email,
-                    );
-                    $this->sessionCreate($identification);
+                    $this->sessionCreate();
+                    $this->user_profile_id = $profile->user_profile_id;
+                    $this->user_profile_uid = $profile->getUID();
+                    $this->user_profile_login_email = $profile->login_email;
+                    $this->sessionLock();
+
                     $result = self::LOGIN_OK;
                 }
 
@@ -354,13 +354,7 @@ class ProfileController extends SessionController
      */
     public function editAction()
     {
-        $uid = self::getUIDFromSession();
-        $profile = null;
-
-        if(!empty($uid))
-        {
-            $profile = UserProfile::getFromUID($uid);
-        }
+        $profile = UserProfile::getFromPrimaryKey($this->user_profile_id);
 
         if(empty($profile))
         {
@@ -377,7 +371,8 @@ class ProfileController extends SessionController
         }
 
         $this->getView()->setLayout('dashboard');
-        return array('information' => $information);
+        return array('profile' => $profile, 
+                     'information' => $information);
     }
 
     /**
@@ -393,16 +388,10 @@ class ProfileController extends SessionController
         $new_password = $this->getRequest()->new_password;
         $new_password_confirm = $this->getRequest()->new_password_confirm;
 
-        $uid = self::getUIDFromSession();
-        $profile = null;
-        $result = self::EDIT_SAVE_FAILED;
-
         $this->getView()->setLayout(null);
 
-        if(!empty($uid))
-        {
-            $profile = UserProfile::getFromUID($uid);
-        }
+        $profile = UserProfile::getFromPrimaryKey($this->user_profile_id);
+        $result = self::EDIT_SAVE_FAILED;
 
         if(empty($profile))
         {
@@ -428,16 +417,19 @@ class ProfileController extends SessionController
 
             $profile->login_password_md5 = md5($new_password);
 
-            $identification = array
-            (
-                'uid' => $profile->getUID(),
-                'label' => $profile->login_email,
-            );
-            $this->sessionCreate($identification);
-
             try
             {
                 $profile->save();
+
+                /* regenerate session */
+
+                $this->sessionDestroy();
+                $this->sessionCreate();
+                $this->user_profile_id = $profile->user_profile_id;
+                $this->user_profile_uid = $profile->getUID();
+                $this->user_profile_login_email = $profile->login_email;
+                $this->sessionLock();
+
                 $result = self::EDIT_SAVE_OK;
             }
             catch(Exception $exception)
@@ -472,6 +464,15 @@ class ProfileController extends SessionController
         }
 
         return Zend_Json::encode(array('result' => $result));
+    }
+
+    /**
+     * Email change action (TODO)
+     * 
+     * @return  string
+     */
+    public function emailChangeAction()
+    {
     }
 
     /**

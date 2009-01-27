@@ -3,20 +3,21 @@
 /**
  * Default helper class
  *
- * @category    Autoblog
+ * @category    Blotomate
  * @package     View
  */
 class DefaultHelper extends AB_Helper
 {
-    public function getSessionLabel()
+    public function sessionEmail()
     {
-        $id = SessionController::getSessionIdentification();
-        $label = null;
+        $session = SessionController::recoverSession();
+        $email = null;
 
-        if(is_array($id))
-            if(array_key_exists('label', $id))
-                $label = $id['label'];
+        if(is_object($session))
+        {
+            $email = $session->user_profile_login_email;
+        }
 
-        return $label;
+        echo $email;
     }
 }

@@ -3,7 +3,7 @@
 /**
  * AggregatorChannel model class
  * 
- * @category    Autoblog
+ * @category    Blotomate
  * @package     Model
  */
 class AggregatorChannel extends AB_Model

@@ -3,7 +3,7 @@
 /**
  * Controller
  * 
- * @category    Autoblog
+ * @category    Blotomate
  * @package     AB
  */
 class AB_Controller
@@ -90,7 +90,13 @@ class AB_Controller
         {
             $this->view->setData($this->{$action_method}());
 
-            if($this->response->getStatus() != AB_Response::STATUS_REDIRECT)
+            /* safe status when rendering view */
+
+            $safe = array(AB_Response::STATUS_OK,
+                          AB_Response::STATUS_NOT_FOUND,
+                          AB_Response::STATUS_ERROR);
+
+            if(in_array($this->response->getStatus(), $safe))
             {
                 ob_start();
                 $this->view->render();

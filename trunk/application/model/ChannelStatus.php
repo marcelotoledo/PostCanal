@@ -3,7 +3,7 @@
 /**
  * ChannelStatus model class
  * 
- * @category    Autoblog
+ * @category    Blotomate
  * @package     Model
  */
 class ChannelStatus extends AB_Model

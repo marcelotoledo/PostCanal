@@ -3,7 +3,7 @@
 /**
  * Error controller class
  * 
- * @category    Autoblog
+ * @category    Blotomate
  * @package     Controller
  */
 

@@ -3,7 +3,7 @@
 /**
  * Index controller class
  * 
- * @category    Autoblog
+ * @category    Blotomate
  * @package     Controller
  */
 class IndexController extends AB_Controller
@@ -27,7 +27,7 @@ class IndexController extends AB_Controller
      */
     public function indexAction()
     {
-        if(SessionController::sessionStatus())
+        if(SessionController::sessionAlive())
         {
             $this->getResponse()->setRedirect(AB_Request::url("dashboard"));
         }

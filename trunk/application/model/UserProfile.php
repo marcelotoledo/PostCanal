@@ -3,7 +3,7 @@
 /**
  * UserProfile model class
  * 
- * @category    Autoblog
+ * @category    Blotomate
  * @package     Model
  */
 class UserProfile extends AB_Model

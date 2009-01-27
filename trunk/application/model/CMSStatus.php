@@ -3,7 +3,7 @@
 /**
  * CMSStatus model class
  * 
- * @category    Autoblog
+ * @category    Blotomate
  * @package     Model
  */
 class CMSStatus extends AB_Model

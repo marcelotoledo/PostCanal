@@ -39,7 +39,7 @@ $output = <<<EOS
 /**
  * <class> model class
  * 
- * @category    Autoblog
+ * @category    Blotomate
  * @package     Model
  */
 class <class> extends AB_Model

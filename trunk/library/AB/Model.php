@@ -3,7 +3,7 @@
 /**
  * Model
  * 
- * @category    Autoblog
+ * @category    Blotomate
  * @package     AB
  */
 abstract class AB_Model

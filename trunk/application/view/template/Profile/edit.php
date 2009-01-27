@@ -14,6 +14,18 @@
     </tr>
 </table>
 <br>
+<table>
+    <tr>
+        <td class="formlabel">&nbsp;</td>
+        <td><a id="mailchangelnk">trocar e-mail</a></td>
+    </tr>        
+    <tr>
+        <td class="formlabel">E-mail:</td>
+        <td><input type="login_email" name="login_email"
+            value="<?php echo $this->profile->login_email ?>" disabled></td>
+    </tr>
+</table>
+<br>
 <input type="hidden" name="pwdchange" value="no">
 <table>
     <tr>

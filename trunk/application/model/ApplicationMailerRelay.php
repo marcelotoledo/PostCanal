@@ -3,7 +3,7 @@
 /**
  * ApplicationMailerRelay model class
  * 
- * @category    Autoblog
+ * @category    Blotomate
  * @package     Model
  */
 class ApplicationMailerRelay extends AB_Model

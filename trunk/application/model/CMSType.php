@@ -3,7 +3,7 @@
 /**
  * CMSType model class
  * 
- * @category    Autoblog
+ * @category    Blotomate
  * @package     Model
  */
 class CMSType extends AB_Model
