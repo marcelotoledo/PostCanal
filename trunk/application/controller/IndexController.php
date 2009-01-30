@@ -18,6 +18,7 @@ class IndexController extends AB_Controller
     public function __construct($request, $response)
     {
         parent::__construct($request, $response);
+        $this->setViewLayout('index');
     }
 
     /**
@@ -29,9 +30,7 @@ class IndexController extends AB_Controller
     {
         if(SessionController::sessionAlive())
         {
-            $this->getResponse()->setRedirect(AB_Request::url("dashboard"));
+            $this->setResponseRedirect(AB_Request::url("dashboard"));
         }
-
-        $this->getView()->setLayout('index');
     }
 }

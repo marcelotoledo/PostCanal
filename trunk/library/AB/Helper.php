@@ -27,7 +27,39 @@ class AB_Helper
     }
 
     /**
-     * HREF
+     * URL (without initial /)
+     *
+     * @param   string  $controller
+     * @param   string  $action
+     * @param   array   $parameters
+     * @return  string
+     */
+    public function url($controller=null, $action=null, $parameters=array())
+    {
+        echo self::relativeURL(AB_Request::url($controller, 
+                                               $action, 
+                                               $parameters));
+    }
+
+    /**
+     * HREF (with initial /)
+     *
+     * @param   string  $controller
+     * @param   string  $action
+     * @param   array   $parameters
+     * @return  string
+     */
+    public function href($controller=null, $action=null, $parameters=array())
+    {
+        $url = self::relativeURL(AB_Request::url($controller, 
+                                                 $action, 
+                                                 $parameters));
+
+        echo empty($url) ? "/" : $url;
+    }
+
+    /**
+     * Anchor
      *
      * @param   string  $label
      * @param   string  $controller
@@ -35,52 +67,101 @@ class AB_Helper
      * @param   array   $parameters
      * @return  void
      */
-    public function href($label, $controller=null, $action=null, 
-                         $parameters=array())
+    public function a($label, $controller=null, $action=null, 
+                      $parameters=array())
     {
-        $url = AB_Request::url($controller, $action, $parameters);
-
-        echo "<a href=\"" . $url . "\">" . $label . "</a>";
+        echo "<a href=\"";
+        $this->href($controller, $action, $parameters);
+        echo "\">";
+        echo $label;
+        echo "</a>";
     }
 
     /**
-     * Javascript referencing
+     * Script source
      *
-     * @param   string  $name     Javascript file name (with .js)
+     * @param   string  $name
      * @return  void
      */
-    public function script($name)
+    public function script_src($name)
     {
-        echo "<script type=\"text/javascript\" " . 
-             "src=\"" . BASE_URL . 
-             "/js/" . $name . "\"></script>\n";
+        echo self::relativeURL(BASE_URL) . "/script/" . $name;
     }
 
     /**
-     * Style referencing
+     * Script
+     *
+     * @param   string  $name     Script file name (with .js)
+     * @param   string  $type     Script type
+     * @return  void
+     */
+    public function script($name, $type="text/javascript")
+    {
+        echo "<script type=\"" . $type . "\" src=\"";
+        $this->script_src($name);
+        echo "\"></script>\n";
+    }
+
+    /**
+     * Style URL
+     *
+     * @param   string  $name
+     * @return  void
+     */
+    public function style_url($name)
+    {
+        echo self::relativeURL(BASE_URL) . "/style/" . $name;
+    }
+
+    /**
+     * Style
      *
      * @param   string  $name     CSS file name (with .css)
      * @param   string  $media    CSS media
      * @return  void
      */
-    public function style($name, $media="screen")
+    public function style($name, $type="text/css", $media="screen")
     {
-        echo "<style type=\"text/css\" " . 
-             "media=\"" . $media . "\">" . 
-             "@import url(\"" . BASE_URL . 
-             "/css/" . $name . "\");</style>\n";
+        echo "<style type=\"" . $type . "\" media=\"" . $media . "\">";
+        echo "@import url(\"";
+        $this->style_url($name);
+        echo "\");</style>\n";
     }
+
+    /**
+     * Image source
+     *
+     * @param   string  $path
+     * @return  void
+     */
+    public function img_src($path)
+    {
+        echo self::relativeURL(BASE_URL) . "/image/" . $path;
+    }
+
+    /**
+     * Image
+     *
+     * @param   string  $path   Image path
+     * @return  void
+     */
+    public function img($path, $alt="")
+    {
+        echo "<img src=\"";
+        echo $this->img_src($path);
+        echo "\" alt=\"" . $alt . "\">\n";
+    }
+
+
 
     /**
      * Javascript including
      *
      * @return  void
      */
-    public function includeJavascript()
+    public function include_javascript()
     {
-        $template = $this->view->getRequest()->getController() . "/" . 
-                    $this->view->getRequest()->getAction();
-
+        $template = $this->view->getTemplate();
         $path = APPLICATION_PATH . "/view/template/" . $template . ".js";
 
         if(file_exists($path) == true)
@@ -96,11 +177,9 @@ class AB_Helper
      *
      * @return  void
      */
-    public function includeStyleSheet()
+    public function include_stylesheet()
     {
-        $template = $this->view->getRequest()->getController() . "/" . 
-                    $this->view->getRequest()->getAction();
-
+        $template = $this->view->getTemplate();
         $path = APPLICATION_PATH . "/view/template/" . $template . ".css";
 
         if(file_exists($path) == true)
@@ -112,25 +191,29 @@ class AB_Helper
     }
 
     /**
-     * Get helper data from action method
+     * Get relative URL
      *
-     * @param   string  $helper_key Array key from helper array
-     * @return  mixed
+     * @param   string  $url
+     * @return  string
      */
-    private function getHelperData($helper_key)
+    protected static function relativeURL($url)
     {
-        $data = array();
+        $relative = $url;
 
-        if(is_array($this->view->helper))
+        if(($position = strpos($relative, "//")) > 0)
         {
-            $helper = $this->view->helper;
-        
-            if(array_key_exists($helper_key, $helper))
-            {
-                $data = $helper[$helper_key];
-            }
+            $relative = substr($relative, $position + 2);
         }
 
-        return $data;
+        if(($position = strpos($relative, "/")) > 0)
+        {
+            $relative = substr($relative, $position);
+        }
+        else
+        {
+            $relative = "";
+        }
+
+        return $relative;
     }
 }

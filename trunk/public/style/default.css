@@ -16,6 +16,8 @@ a
 {
     color: navy;
     text-decoration: underline;
+    cursor: pointer; 
+    cursor: hand;
 }
 
 a:hover

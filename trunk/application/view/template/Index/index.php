@@ -2,6 +2,7 @@
     <tr>
         <td id="bigtitle"><span>Blotomate</span></td>
         <td>
+            <form id="authform">
             <input type="hidden" name="register" value="no">
             <table>
                 <tr>
@@ -40,6 +41,7 @@
                     </td>
                 </tr>
             </table>
+            </form>
         </td>
     </tr>
 </table>

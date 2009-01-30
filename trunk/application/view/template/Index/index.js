@@ -1,5 +1,7 @@
 $(document).ready(function()
 {
+    var active_request = false;
+
     /* spinner */
 
     function showSpinner()
@@ -7,8 +9,7 @@ $(document).ready(function()
         $("#spinner").spinner
         ({
             height: 32, width: 32, speed: 50,
-            image: "<?php echo BASE_URL ?>" + 
-                   "/image/spinner/linux_spinner.png"
+            image: "<?php $this->img_src('spinner/linux_spinner.png') ?>"
         });
     }
 
@@ -50,6 +51,11 @@ $(document).ready(function()
 
     $("#pwdlnk").click(function()
     {
+        if(active_request == true)
+        {
+            return null;
+        }
+
         if($("input[@name='email']").val() == "")
         {
             simple_popup("digite um EMAIL");
@@ -58,27 +64,33 @@ $(document).ready(function()
 
         parameters = { email: $("input[@name='email']").val() }
 
-        showSpinner();
         $.ajax
         ({
             type: "POST",
-            url: "<?php echo AB_Request::url('profile', 'recovery') ?>",
-            dataType: "json",
+            url: "<?php echo $this->url('profile', 'recovery') ?>",
+            dataType: "text",
             data: parameters,
-            success: function (message) 
-            { 
+            beforeSend: function()
+            {
+                active_request = true;
+                showSpinner();
+            },
+            complete: function()
+            {
+                active_request = false;
                 hideSpinner();
-                result = message ? message.result : null;
-                if(result == "recovery_ok") 
+            },
+            success: function (data) 
+            { 
+                if(data == "recovery_ok") 
                     simple_popup("Um EMAIL foi enviado " + 
                                  "para o endereço informado");
-                else if(result == "recovery_instruction_failed") 
+                else if(data == "recovery_instruction_failed") 
                     simple_popup("Não foi possível enviar instruções " + 
                                  "para o endereço de e-mail especificado!");
             }, 
-            error: function (message) 
+            error: function () 
             { 
-                hideSpinner();
                 simple_popup("ERRO NO SERVIDOR");
             }
         });
@@ -88,6 +100,11 @@ $(document).ready(function()
 
     $("input[@name='authsubmit']").click(function() 
     {
+        if(active_request == true)
+        {
+            return null;
+        }
+
         register = $("input[@name='register']").val();
         email = $("input[@name='email']").val();
         password = $("input[@name='password']").val();
@@ -109,33 +126,35 @@ $(document).ready(function()
         action = (register == "yes") ? "register" : "login";
         parameters = { email: email, password: password, confirm: confirm_ }
 
-        showSpinner();
-        $("input[@name='authsubmit']").attr("disabled", true);
-
         $.ajax
         ({
             type: "POST",
-            url: "<?php echo AB_Request::url('profile') ?>/" + action,
-            dataType: "json",
+            url: "<?php $this->url('profile') ?>/" + action,
+            dataType: "text",
             data: parameters,
+            beforeSend: function ()
+            {
+                active_request = true;
+                showSpinner();
+            },
+            complete: function()
+            {
+                active_request = false;
+                hideSpinner();
+            },
             success: function (data) 
             { 
-                $("input[@name='authsubmit']").attr("disabled", false);
-                hideSpinner();
-
-                result = data ? data.result : null;
-
                 /* login */
 
-                if(result == "login_ok") 
+                if(data == "login_ok") 
                 {
-                    window.location = "<?php echo AB_Request::url('dashboard') ?>";
+                    window.location = "<?php $this->url('dashboard') ?>";
                 }
-                else if(result == "login_invalid") 
+                else if(data == "login_invalid") 
                 {
                     simple_popup("Autenticação INVÁLIDA");
                 }
-                else if(result == "login_register_unconfirmed") 
+                else if(data == "login_register_unconfirmed") 
                 {
                     simple_popup("Cadastro NÃO CONFIRMADO.<br>" + 
                           "Verifique o pedido de confirmação " + 
@@ -144,34 +163,32 @@ $(document).ready(function()
 
                 /* register */
 
-                else if(result == "register_ok") 
+                else if(data == "register_ok") 
                 {
                     simple_popup("Cadastro realizado com sucesso.\n" + 
                           "Um EMAIL foi enviado para o endereço informado");
                     toggleAuthForm();
                 }
-                else if(result == "register_failed") 
+                else if(data == "register_failed") 
                 {
                     simple_popup("Não foi possível efetuar um novo cadastro");
                 }
-                else if(result == "register_incomplete") 
+                else if(data == "register_incomplete") 
                 {
                     simple_popup("Cadastro INCOMPLETO");
                 }
-                else if(result == "register_password_not_matched") 
+                else if(data == "register_password_not_matched") 
                 {
                     simple_popup("Senha e Confirmação NÃO CORRESPONDEM");
                 }
-                else if(result == "register_instruction_failed") 
+                else if(data == "register_instruction_failed") 
                 {
                     simple_popup("Não foi possível enviar instruções " + 
                           "para o endereço de e-mail especificado!");
                 }
             }, 
-            error: function (data) 
+            error: function () 
             { 
-                $("input[@name='authsubmit']").attr("disabled", false);
-                hideSpinner();
                 simple_popup("ERRO NO SERVIDOR");
             }
         });

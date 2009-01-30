@@ -149,13 +149,13 @@ class UserProfile extends AB_Model
     }
 
     /**
-     * Get UserProfile from primary key
+     * Find UserProfile by primary key
      *
      * @param   integer $id    Primary key value
      *
      * @return  UserProfile|null 
      */
-    public static function getFromPrimaryKey($id)
+    public static function findByPrimaryKey($id)
     {
         return current(self::find(array(self::$primary_key_name => $id)));
     }
@@ -166,7 +166,7 @@ class UserProfile extends AB_Model
      * @param   string  $email
      * @return  UserProfile|null
      */
-    public static function getFromEmail($email)
+    public static function findByEmail($email)
     {
         return current(self::find(array(
             'login_email' => $email,
@@ -180,7 +180,7 @@ class UserProfile extends AB_Model
      * @param   string  $password_md5   md5($password)
      * @return  UserProfile|null
      */
-    public static function getFromLogin($email, $password_md5)
+    public static function findByLogin($email, $password_md5)
     {
         return current(self::find(array(
             'login_email'        => $email,
@@ -194,7 +194,7 @@ class UserProfile extends AB_Model
      * @param   string  $uid
      * @return  UserProfile|null
      */
-    public static function getFromUID($uid)
+    public static function findByUID($uid)
     {
         if(empty($uid)) return null;
 

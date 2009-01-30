@@ -108,18 +108,21 @@ class SessionController extends AB_Controller
     /**
      * Check login session
      *
-     * @return  void
+     * @return  boolean
      */
     protected function sessionAuthorize()
     {
         $registry = AB_Registry::singleton();
         $redirect = $registry->session->unauthorized->redirect;
+        $alive = self::sessionAlive();
 
-        if(self::sessionAlive() == false)
+        if($alive == false)
         {
-            $this->getResponse()->setRedirect(
+            $this->setResponseRedirect(
                 $redirect, AB_Response::STATUS_UNAUTHORIZED);
         }
+
+        return $alive;
     }
 
     /**

@@ -32,13 +32,13 @@
 
 <p id="changenotice" style="display:none">
 Senha alterada com sucesso. 
-<?php $this->DefaultHelper()->href("clique aqui") ?> 
+<?php $this->DefaultHelper()->a("clique aqui") ?> 
 para acessar a página de autenticação</p>
 
 <?php else : ?>
 
 <p>Este link expirou. Utilize a 
-<?php $this->DefaultHelper()->href("página principal") ?> para solicitar um
+<?php $this->DefaultHelper()->a("página principal") ?> para solicitar um
 novo pedido de recuperação de senha.</p>
 
 <?php endif ?>

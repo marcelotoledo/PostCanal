@@ -119,13 +119,13 @@ class ApplicationMailerRelay extends AB_Model
     }
 
     /**
-     * Get ApplicationMailerRelay from primary key
+     * Find ApplicationMailerRelay by primary key
      *
      * @param   integer $id    Primary key value
      *
      * @return  ApplicationMailerRelay|null 
      */
-    public static function getFromPrimaryKey($id)
+    public static function findByPrimaryKey($id)
     {
         return current(self::find(array(self::$primary_key_name => $id)));
     }

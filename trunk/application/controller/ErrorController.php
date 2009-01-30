@@ -19,26 +19,48 @@ class ErrorController extends AB_Controller
     public function __construct($request, $response)
     {
         parent::__construct($request, $response);
-        $this->getView()->setLayout(null);
+        $this->setViewLayout(null);
+        $this->setViewTemplate(null);
     }
 
     /**
-     * Status 404 action
+     * Action magic method
      *
-     * @return  string
+     * @param   string  $method
+     * @param   array   $arguments
+     * @return  void
      */
-    public function status404Action()
+    protected function __call($method, $arguments)
     {
-        return "<h1>404 Not Found</h1>";
+        if(($position = strpos($method, 'Action')) > 0)
+        {
+            $template = substr($method, 0, $position) . ".html";
+            $body = self::readTemplate($template);
+
+            empty($body) ? 
+                $this->setResponseRedirect(BASE_URL) : 
+                $this->setViewData($body);
+        }
     }
 
     /**
-     * Status 500 action
+     * Read error template
      *
-     * @return  string
+     * @param   string  $template
+     * @return void
      */
-    public function status500Action()
+    private static function readTemplate($template)
     {
-        return "<h1>500 Error</h1>";
+        $path = APPLICATION_PATH . "/view/template/Error/" . $template;
+        $body = "";
+
+        if(file_exists($path))
+        {
+            $f = fopen($path, "r");
+            while(!feof($f)) $body.= fgets($f);
+            fclose($f);
+        }
+
+        return $body;
     }
 }

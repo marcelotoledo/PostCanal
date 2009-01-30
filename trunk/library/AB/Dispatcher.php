@@ -59,34 +59,12 @@ class AB_Dispatcher
     }
 
     /**
-     * Current request
-     *
-     * @return  AB_Request
-     */
-    public function getRequest()
-    {
-        return $this->request;
-    }
-
-    /**
-     * Current response
-     *
-     * @return  AB_Response
-     */
-    public function getResponse()
-    {
-        return $this->response;
-    }
-
-    /**
      * Dispatch request and response to controller
      *
      * @return void
      */
     public function dispatch()
     {
-        $controller = null;
-
         try
         {
             $this->controllerFactory()->runAction();

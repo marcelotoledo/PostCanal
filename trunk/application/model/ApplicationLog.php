@@ -119,13 +119,13 @@ class ApplicationLog extends AB_Model
     }
 
     /**
-     * Get ApplicationLog from primary key
+     * Find ApplicationLog by primary key
      *
      * @param   integer $id    Primary key value
      *
      * @return  ApplicationLog|null 
      */
-    public static function getFromPrimaryKey($id)
+    public static function findByPrimaryKey($id)
     {
         return current(self::find(array(self::$primary_key_name => $id)));
     }

@@ -33,6 +33,13 @@ class AB_Response
     private $status = self::STATUS_OK;
 
     /**
+     * Response redirect
+     *
+     * @var boolean
+     */
+    private $is_redirect = false;
+
+    /**
      * Response body
      *
      * @var string
@@ -117,6 +124,17 @@ class AB_Response
     {
         $this->setHeader('Location', $url);
         $this->setStatus($status);
+        $this->is_redirect = true;
+    }
+
+    /**
+     * Is redirect ?
+     * 
+     * @return  boolean
+     */
+    public function isRedirect()
+    {
+        return $this->is_redirect;
     }
 
     /**

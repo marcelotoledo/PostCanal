@@ -9,13 +9,6 @@
 class AB_View
 {
     /**
-     * Request
-     *
-     * @var AB_Request
-     */
-    private $request;
-
-    /**
      * View helpers
      *
      * @var array
@@ -37,6 +30,14 @@ class AB_View
     private $layout = 'default';
 
     /**
+     * View template
+     *
+     * @var string
+     */
+    private $template;
+
+
+    /**
      * View constructor
      *
      * @param   AB_Request  $request
@@ -44,7 +45,8 @@ class AB_View
      */
     public function __construct($request)
     {
-        $this->request = $request;
+        $this->template = $request->getController() . "/" . 
+                          $request->getAction();
     }
 
     /**
@@ -103,16 +105,6 @@ class AB_View
     }
 
     /**
-     * Get request
-     *
-     * @return AB_Request
-     */
-    public function getRequest()
-    {
-        return $this->request;
-    }
-
-    /**
      * Set view data
      *
      * @param   mixed   $data
@@ -121,16 +113,6 @@ class AB_View
     public function setData($data)
     {
         $this->data = $data;
-    }
-
-    /**
-     * Get view data
-     *
-     * @return  mixed
-     */
-    public function getData()
-    {
-        return $this->data;
     }
 
     /**
@@ -145,13 +127,24 @@ class AB_View
     }
 
     /**
-     * Get layout
+     * Set template
+     *
+     * @param   string  $template
+     * @return  void
+     */
+    public function setTemplate($template)
+    {
+        $this->template = $template;
+    }
+
+    /**
+     * Get template
      *
      * @return  string
      */
-    public function getLayout()
+    public function getTemplate()
     {
-        return $this->layout;
+        return $this->template;
     }
 
     /**
@@ -164,11 +157,14 @@ class AB_View
     {
         if(empty($this->layout))
         {
-            /* render text */
-
-            if(is_string($this->data))
+            if(empty($this->template))
             {
-                echo $this->data;
+                /* render text */
+
+                if(is_string($this->data))
+                {
+                    echo $this->data;
+                }
             }
 
             /* render view template */
@@ -204,10 +200,7 @@ class AB_View
      */
     private function renderTemplate()
     {
-        $template = $this->request->getController() . "/" . 
-                    $this->request->getAction();
-
-        $path = APPLICATION_PATH . "/view/template/" . $template . ".php";
+        $path = APPLICATION_PATH . "/view/template/" . $this->template . ".php";
 
         if(file_exists($path) == true)
         {
@@ -215,7 +208,7 @@ class AB_View
         }
         else
         {
-            throw new Exception("template " . $template . " not found");
+            throw new Exception("template " . $this->template . " not found");
         }
     }
 }

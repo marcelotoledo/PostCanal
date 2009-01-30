@@ -1,5 +1,7 @@
 $(document).ready(function()
 {
+    var active_request = false;
+
     /* spinner */
 
     function showSpinner()
@@ -7,8 +9,7 @@ $(document).ready(function()
         $("#spinner").spinner
         ({
             height: 32, width: 32, speed: 50,
-            image: "<?php echo BASE_URL ?>" + 
-                   "/image/spinner/linux_spinner.png"
+            image: "<?php $this->img_src('spinner/linux_spinner.png') ?>"
         });
     }
 
@@ -22,6 +23,11 @@ $(document).ready(function()
 
     $("input[@name='pwdchangesubmit']").click(function() 
     {
+        if(active_request == true)
+        {
+            return null;
+        }
+
         uid = $("input[@name='uid']").val();
         password = $("input[@name='password']").val();
         confirm_ = $("input[@name='confirm']").val();
@@ -40,41 +46,40 @@ $(document).ready(function()
 
         parameters = { uid: uid, password: password, confirm: confirm_ }
 
-        showSpinner();
-        $("input[@name='pwdchangesubmit']").attr("disabled", true);
-
         $.ajax
         ({
             type: "POST",
-            url: "<?php echo AB_Request::url('profile','passwordChange') ?>",
-            dataType: "json",
+            url: "<?php $this->url('profile','passwordChange') ?>",
+            dataType: "text",
             data: parameters,
+            beforeSend: function()
+            {
+                active_request = true;
+                showSpinner();
+            },
+            complete: function()
+            {
+                active_request = false;
+                hideSpinner();
+            },
             success: function (data) 
             { 
-
-                $("input[@name='pwdchangesubmit']").attr("disabled", false);
-                hideSpinner();
-
-                result = data ? data.result : null;
-
-                if(result == "password_change_ok") 
+                if(data == "password_change_ok") 
                 {
                     $("#pwdform").toggle();
                     $("#changenotice").toggle();
                 }
-                else if(result == "password_change_failed") 
+                else if(data == "password_change_failed") 
                 {
                     simple_popup("Não foi possível alterar a senha de acesso");
                 }
-                else if(result == "password_change_not_matched") 
+                else if(data == "password_change_not_matched") 
                 {
                     simple_popup("Senha e Confirmação NÃO CORRESPONDEM");
                 }
             }, 
             error: function (data) 
             { 
-                $("input[@name='pwdchangesubmit']").attr("disabled", false);
-                hideSpinner();
                 simple_popup("ERRO NO SERVIDOR");
             }
         });

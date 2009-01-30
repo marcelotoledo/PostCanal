@@ -122,13 +122,13 @@ class AggregatorChannel extends AB_Model
     }
 
     /**
-     * Get AggregatorChannel from primary key
+     * Find AggregatorChannel by primary key
      *
      * @param   integer $id    Primary key value
      *
      * @return  AggregatorChannel|null 
      */
-    public static function getFromPrimaryKey($id)
+    public static function findByPrimaryKey($id)
     {
         return current(self::find(array(self::$primary_key_name => $id)));
     }

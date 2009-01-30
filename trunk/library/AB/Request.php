@@ -147,11 +147,14 @@ class AB_Request
         if(count($parameters) > 0)
         {
             $url .= "?";
+            $url_parameters = array();
 
             foreach($parameters as $name => $value)
             {
-                $url .= $name . "=" . urlencode($value);
+                $url_parameters[] = $name . "=" . urlencode($value);
             }
+
+            $url .= implode("&", $url_parameters);
         }
 
         return $url;

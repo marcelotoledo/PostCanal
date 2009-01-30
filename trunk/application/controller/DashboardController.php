@@ -18,7 +18,7 @@ class DashboardController extends SessionController
     public function __construct($request, $response)
     {
         parent::__construct($request, $response);
-        $this->getView()->setLayout('dashboard');
+        $this->setViewLayout('dashboard');
         $this->sessionAuthorize();
     }
 
@@ -29,5 +29,12 @@ class DashboardController extends SessionController
      */
     public function indexAction()
     {
+        $profile = UserProfile::findByPrimaryKey($this->user_profile_id);
+
+        if(empty($profile))
+        {
+            $this->sessionDestroy();
+            $this->setResponseRedirect(BASE_URL);
+        }
     }
 }

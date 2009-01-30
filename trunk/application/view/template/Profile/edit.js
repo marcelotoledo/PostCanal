@@ -1,5 +1,7 @@
 $(document).ready(function()
 {
+    var active_request = false;
+
     /* spinner */
 
     function showSpinner()
@@ -7,8 +9,7 @@ $(document).ready(function()
         $("#spinner").spinner
         ({
             height: 32, width: 32, speed: 50,
-            image: "<?php echo BASE_URL ?>" + 
-                   "/image/spinner/linux_spinner.png"
+            image: "<?php $this->img_src('spinner/linux_spinner.png') ?>"
         });
     }
 
@@ -53,13 +54,18 @@ $(document).ready(function()
 
     $("input[@name='editcancel']").click(function() 
     {
-        window.location = "<?php echo AB_Request::url('dashboard') ?>";
+        setPasswordChange(false);
     });
 
     /* submit */
 
     $("input[@name='editsubmit']").click(function() 
     {
+        if(active_request == true)
+        {
+            return null;
+        }
+
         name = $("input[@name='name']").val();
         pwdchange = $("input[@name='pwdchange']").val();
         current_password = $("input[@name='current_password']").val();
@@ -86,45 +92,45 @@ $(document).ready(function()
                        new_password: new_password, 
                        new_password_confirm: new_password_confirm }
 
-        showSpinner();
-        $("input[@name='editsubmit']").attr("disabled", true);
-
         $.ajax
         ({
             type: "POST",
-            url: "<?php echo AB_Request::url('profile', 'editSave') ?>",
-            dataType: "json",
+            url: "<?php $this->url('profile', 'editSave') ?>",
+            dataType: "text",
             data: parameters,
-            success: function (data) 
-            { 
-                $("input[@name='editsubmit']").attr("disabled", false);
+            beforeSend: function ()
+            {
+                active_request = true;
+                showSpinner();
+            },
+            complete: function ()
+            {
+                active_request = false;
                 setPasswordChange(false);
                 hideSpinner();
-
-                result = data ? data.result : null;
-
-                if(result == "edit_save_ok") 
+            },
+            success: function (data) 
+            { 
+                if(data == "edit_save_ok") 
                 {
                     simple_popup("Perfil alterado com sucesso");
                 }
-                else if(result == "edit_save_failed")
+                else if(data == "edit_save_failed")
                 {
                     simple_popup("Alteração do perfil FALHOU!");
                 }
-                else if(result == "edit_save_password_not_matched")
+                else if(data == "edit_save_password_not_matched")
                 {
                     simple_popup("Senha e confirmação NÃO CORRESPONDEM");
                 }
-                else if(result == "edit_save_wrong_password")
+                else if(data == "edit_save_wrong_password")
                 {
                     simple_popup("Senha incorreta!");
                 }
             }, 
-            error: function (data) 
+            error: function () 
             { 
-                $("input[@name='editsubmit']").attr("disabled", false);
-                hideSpinner();
-                simple_popup("ERRO NO SERVIDOR");
+                window.location = "<?php $this->url('dashboard') ?>";
             }
         });
     });

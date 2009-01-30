@@ -119,13 +119,13 @@ class AggregatorItem extends AB_Model
     }
 
     /**
-     * Get AggregatorItem from primary key
+     * Find AggregatorItem by primary key
      *
      * @param   integer $id    Primary key value
      *
      * @return  AggregatorItem|null 
      */
-    public static function getFromPrimaryKey($id)
+    public static function findByPrimaryKey($id)
     {
         return current(self::find(array(self::$primary_key_name => $id)));
     }

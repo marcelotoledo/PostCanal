@@ -8,16 +8,16 @@
  */
 class DefaultHelper extends AB_Helper
 {
-    public function sessionEmail()
+    public function sessionAttribute($attribute)
     {
         $session = SessionController::recoverSession();
-        $email = null;
+        $value = null;
 
         if(is_object($session))
         {
-            $email = $session->user_profile_login_email;
+            $value = $session->{$attribute};
         }
 
-        echo $email;
+        echo $value;
     }
 }

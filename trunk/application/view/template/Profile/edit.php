@@ -1,7 +1,8 @@
+<form id="editform">
 <table>
     <tr>
         <td class="formtitle">
-            <span id="authtitle">Editar perfil</span>
+            <span>Editar perfil</span>
         </td>
         <td class="formloading">
             <div id="spinner">&nbsp;</div>
@@ -47,8 +48,9 @@
     <tr class="formbutton">
         <td>&nbsp;</td>
         <td>
-        <input name="editcancel" type="button" value="Cancelar">
+        <input name="editcancel" type="reset" value="Cancelar">
         <input name="editsubmit" type="button" value="Alterar">
         </td>
     </tr>
 </table>
+</form>

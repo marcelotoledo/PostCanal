@@ -45,33 +45,69 @@ class AB_Controller
     }
 
     /**
-     * Current request
+     * Get request parameter
      *
-     * @return  AB_Request
+     * @param   string  $name
+     * @return  void
      */
-    public function getRequest()
+    public function getRequestParameter($name)
     {
-        return $this->request;
+        return $this->request->{$name};
     }
 
     /**
-     * Current response
+     * Set response redirect
      *
-     * @return  AB_Response
+     * @return  void
      */
-    public function getResponse()
+    public function setResponseRedirect($url, $status=null)
     {
-        return $this->response;
+        $this->response->setRedirect($url, $status);
     }
 
     /**
-     * Current view
+     * Set view layout
      *
-     * @return  AB_View
+     * @param   string  $layout
+     * @return  void
      */
-    public function getView()
+    public function setViewLayout($layout)
     {
-        return $this->view;
+        $this->view->setLayout($layout);
+    }
+
+    /**
+     * Set view template
+     *
+     * @param   string  $template
+     * @return  void
+     */
+    public function setViewTemplate($template)
+    {
+        $this->view->setTemplate($template);
+    }
+
+    /**
+     * Set view parameter
+     *
+     * @param   string  $name
+     * @param   mixed   $value
+     * @return  void
+     */
+    public function setViewParameter($name, $value)
+    {
+        $this->view->{$name} = $value;
+    }
+
+    /**
+     * Set view data (override parameters)
+     *
+     * @param   string  $value
+     * @return  void
+     */
+    public function setViewData($value)
+    {
+        $this->view->setData($value);
     }
 
     /**
@@ -88,15 +124,9 @@ class AB_Controller
 
         if(is_callable(array($this, $action_method)) == true)
         {
-            $this->view->setData($this->{$action_method}());
+            $this->{$action_method}();
 
-            /* safe status when rendering view */
-
-            $safe = array(AB_Response::STATUS_OK,
-                          AB_Response::STATUS_NOT_FOUND,
-                          AB_Response::STATUS_ERROR);
-
-            if(in_array($this->response->getStatus(), $safe))
+            if($this->response->isRedirect() == false)
             {
                 ob_start();
                 $this->view->render();
@@ -105,7 +135,7 @@ class AB_Controller
         }
         else
         {
-            $this->response->setStatus(404);
+            $this->response->setStatus(AB_Response::STATUS_NOT_FOUND);
             throw new Exception ("action " . $action . " not found");
         }
     }

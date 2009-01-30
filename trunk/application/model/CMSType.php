@@ -117,13 +117,13 @@ class CMSType extends AB_Model
     }
 
     /**
-     * Get CMSType from primary key
+     * Find CMSType by primary key
      *
      * @param   integer $id    Primary key value
      *
      * @return  CMSType|null 
      */
-    public static function getFromPrimaryKey($id)
+    public static function findByPrimaryKey($id)
     {
         return current(self::find(array(self::$primary_key_name => $id)));
     }

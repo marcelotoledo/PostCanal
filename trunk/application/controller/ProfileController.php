@@ -9,7 +9,7 @@
 class ProfileController extends SessionController
 {
     /**
-     * Response constants
+     * Request/Response constants
      */
     const LOGIN_OK = "login_ok";
     const LOGIN_INVALID = "login_invalid";
@@ -27,6 +27,8 @@ class ProfileController extends SessionController
     const CONFIRM_OK = "confirm_ok";
     const CONFIRM_FAILED = "confirm_failed";
     const CONFIRM_DONE_BEFORE = "confirm_done_before";
+    const CONFIRM_TYPE_NEW_PROFILE = "newprofile";
+    const CONFIRM_TYPE_EMAIL_CHANGE = "emailchange";
 
     const PASSWORD_CHANGE_OK = "password_change_ok";
     const PASSWORD_CHANGE_FAILED = "password_change_failed";
@@ -50,92 +52,100 @@ class ProfileController extends SessionController
     const MAIL_PASSWORD_TEMPLATE = "mail_password.html";
     const MAIL_DUMMY_SUBJECT = "[blotomate] perfil inexistente";
     const MAIL_DUMMY_TEMPLATE = "mail_dummy.html";
+    const MAIL_EMAIL_CHANGE_SUBJECT = "[blotomate] mudança de e-mail";
+    const MAIL_EMAIL_CHANGE_TEMPLATE = "mail_email_change.html";
 
 
     /**
      * Profile controller constructor
      *
      * @param   AB_Request  $request
-     * @param   AB_Response $result
+     * @param   AB_Response $response
      * @return  void
      */
-    public function __construct($request, $result)
+    public function __construct($request, $response)
     {
-        parent::__construct($request, $result);
+        parent::__construct($request, $response);
     }
 
     /**
      * Login
      *
-     * @return  string
+     * @return  void
      */
     public function loginAction()
     {
-        $email = $this->getRequest()->email;
-        $password = $this->getRequest()->password;
-        $profile = null;
-        $result = self::LOGIN_INVALID;
+        $this->setViewLayout(null);
+        $this->setViewTemplate(null);
+
+        $email = $this->getRequestParameter('email');
+        $password = $this->getRequestParameter('password');
+
+        $this->setViewData(self::LOGIN_INVALID);
 
         /* check for existing profile */
 
+        $profile = null;
+
         if(!empty($email) && !empty($password))
         {
-            $profile = UserProfile::getFromLogin($email, md5($password));
-
-            if(is_object($profile))
-            {
-                /* valid login, create session */
-
-                if($profile->register_confirmation)
-                {
-                    $this->sessionCreate();
-                    $this->user_profile_id = $profile->user_profile_id;
-                    $this->user_profile_uid = $profile->getUID();
-                    $this->user_profile_login_email = $profile->login_email;
-                    $this->sessionLock();
-
-                    $result = self::LOGIN_OK;
-                }
-
-                /* no register confirmation */
-
-                else
-                {
-                    $result = self::LOGIN_REGISTER_UNCONFIRMED;
-                }
-            }
+            $profile = UserProfile::findByLogin($email, md5($password));
         }
 
-        $this->getView()->setLayout(null);
-        return Zend_Json::encode(array('result' => $result));
+        if(is_object($profile))
+        {
+            /* valid login, create session */
+
+            if($profile->register_confirmation)
+            {
+                $this->sessionCreate();
+                $this->user_profile_id = $profile->user_profile_id;
+                $this->user_profile_uid = $profile->getUID();
+                $this->user_profile_login_email = $profile->login_email;
+                $this->sessionLock();
+
+                $this->setViewData(self::LOGIN_OK);
+            }
+
+            /* no register confirmation */
+
+            else
+            {
+                $this->setViewData(self::LOGIN_REGISTER_UNCONFIRMED);
+            }
+        }
     }
 
     /**
      * Register
      *
-     * @return  string
+     * @return void
      */
     public function registerAction()
     {
-        $email = $this->getRequest()->email;
-        $password = $this->getRequest()->password;
-        $confirm = $this->getRequest()->confirm;
-        $profile = null;
-        $result = self::REGISTER_FAILED;
+        $this->setViewLayout(null);
+        $this->setViewTemplate(null);
+        $this->setViewData(self::REGISTER_FAILED);
+
+        $email = $this->getRequestParameter('email');
+        $password = $this->getRequestParameter('password');
+        $confirm = $this->getRequestParameter('confirm');
 
         /* check for existing profile */
 
+        $profile = null;
+
         if(empty($email) || empty($password) || empty($confirm))
         {
-            $result = self::REGISTER_INCOMPLETE;
+            $this->setViewData(self::REGISTER_INCOMPLETE);
         }
         elseif(!empty($password) && !empty($confirm) && $password != $confirm)
         {
-            $result = self::REGISTER_PASSWORD_NOT_MATCHED;
+            $this->setViewData(self::REGISTER_PASSWORD_NOT_MATCHED);
         }
         else
         {
-            $profile = UserProfile::getFromEmail($email);
+            $profile = UserProfile::findByEmail($email);
 
             /* register new user profile */
 
@@ -165,7 +175,7 @@ class ProfileController extends SessionController
                     $profile->save();
                 }
 
-                $result = self::REGISTER_OK;
+                $this->setViewData(self::REGISTER_OK);
             }
             catch(Exception $exception)
             {
@@ -181,12 +191,9 @@ class ProfileController extends SessionController
                     $profile->save();
                 }
 
-                $result = self::REGISTER_INSTRUCTION_FAILED;
+                $this->setViewData(self::REGISTER_INSTRUCTION_FAILED);
             }
         }
-
-        $this->getView()->setLayout(null);
-        return Zend_Json::encode(array('result' => $result));
     }
 
     /**
@@ -196,20 +203,25 @@ class ProfileController extends SessionController
      */
     public function logoutAction()
     {
+        $this->setViewLayout(null);
+        $this->setViewTemplate(null);
         $this->sessionDestroy();
-        $this->getResponse()->setRedirect(BASE_URL);
+        $this->setResponseRedirect(BASE_URL);
     }
 
     /**
      * Password recovery
      *
-     * @return  string
+     * @return void
      */
     public function recoveryAction()
     {
-        $email = $this->getRequest()->email;
-        $profile = UserProfile::getFromEmail($email);
-        $result = self::RECOVERY_OK;
+        $this->setViewLayout(null);
+        $this->setViewTemplate(null);
+        $this->setViewData(self::RECOVERY_OK);
+
+        $email = $this->getRequestParameter('email');
+        $profile = UserProfile::findByEmail($email);
 
         /* recovery instructions */
 
@@ -225,7 +237,7 @@ class ProfileController extends SessionController
             {
                 $message = $exception->getMessage();
                 AB_Log::write($message, AB_Log::PRIORITY_ERROR);
-                $result = self::RECOVERY_INSTRUCTION_FAILED;
+                $this->setViewData(self::RECOVERY_INSTRUCTION_FAILED);
             }
         }
 
@@ -241,12 +253,9 @@ class ProfileController extends SessionController
             {
                 $message = $exception->getMessage();
                 AB_Log::write($message, AB_Log::PRIORITY_WARNING);
-                $result = self::RECOVERY_INSTRUCTION_FAILED;
+                $this->setViewData(self::RECOVERY_INSTRUCTION_FAILED);
             }
         }
-
-        $this->getView()->setLayout(null);
-        return Zend_Json::encode(array('result' => $result));
     }
 
     /**
@@ -256,33 +265,55 @@ class ProfileController extends SessionController
      */
     public function confirmAction()
     {
-        $uid = $this->getRequest()->uid;
+        $this->setViewLayout('index');
+        $this->setViewParameter('result', self::CONFIRM_FAILED);
+
+        $uid = $this->getRequestParameter('uid');
+        $type = $this->getRequestParameter('type');
+
         $profile = null;
-        $result = self::CONFIRM_FAILED;
 
         if(!empty($uid))
         {
-            $profile = UserProfile::getFromUID($uid);
+            $profile = UserProfile::findByUID($uid);
         }
 
         if(is_object($profile))
         {
-            if($profile->register_confirmation == false)
+            if($type == self::CONFIRM_TYPE_NEW_PROFILE)
             {
-                $profile->register_confirmation = true;
-                $profile->register_confirmation_time = date("Y-m-d H:i:s");
-                $profile->save();
-
-                $result = self::CONFIRM_OK;
+                if($profile->register_confirmation == false)
+                {
+                    $profile->register_confirmation = true;
+                    $profile->register_confirmation_time = date("Y-m-d H:i:s");
+                    $profile->save();
+    
+                    $this->setViewParameter('result', self::CONFIRM_OK);
+                }
+                else
+                {
+                    $this->setViewParameter('result', 
+                        self::CONFIRM_DONE_BEFORE);
+                }
             }
-            else
+            elseif($type == self::CONFIRM_TYPE_EMAIL_CHANGE) // TODO
             {
-                $result = self::CONFIRM_DONE_BEFORE;
+throw new UnexpectedValueException("see 'TODO' in " . __FILE__ .":". __LINE__);
+                if($profile->email_change == false)
+                {
+                    $profile->email_change = true;
+                    $profile->email_change_time = date("Y-m-d H:i:s");
+                    $profile->save();
+    
+                    $this->setViewParameter('result', self::CONFIRM_OK);
+                }
+                else
+                {
+                    $this->setViewParameter('result', 
+                        self::CONFIRM_DONE_BEFORE);
+                }
             }
         }
-
-        $this->getView()->setLayout('index');
-        return array('result' => $result);
     }
 
     /**
@@ -292,36 +323,42 @@ class ProfileController extends SessionController
      */
     public function passwordAction()
     {
-        $uid = $this->getRequest()->uid;
-        $password = $this->getRequest()->password;
-        $confirm = $this->getRequest()->confirm;
+        $this->setViewLayout('index');
+
+        $uid = $this->getRequestParameter('uid');
+        $password = $this->getRequestParameter('password');
+        $confirm = $this->getRequestParameter('confirm');
+
         $profile = null;
 
         if(!empty($uid))
         {
-            $profile = UserProfile::getFromUID($uid);
+            $profile = UserProfile::findByUID($uid);
         }
 
-        $this->getView()->setLayout('index');
-        return array('profile' => $profile);
+        $this->setViewParameter('profile', $profile);
     }
 
     /**
      * Password change action
      * 
-     * @return  string
+     * @return void
      */
     public function passwordChangeAction()
     {
-        $uid = $this->getRequest()->uid;
-        $password = $this->getRequest()->password;
-        $confirm = $this->getRequest()->confirm;
+        $this->setViewLayout(null);
+        $this->setViewTemplate(null);
+        $this->setViewData(self::PASSWORD_CHANGE_FAILED);
+
+        $uid = $this->getRequestParameter('uid');
+        $password = $this->getRequestParameter('password');
+        $confirm = $this->getRequestParameter('confirm');
+
         $profile = null;
-        $result = self::PASSWORD_CHANGE_FAILED;
 
         if(!empty($uid))
         {
-            $profile = UserProfile::getFromUID($uid);
+            $profile = UserProfile::findByUID($uid);
         }
 
         if(is_object($profile))
@@ -338,13 +375,10 @@ class ProfileController extends SessionController
                 }
                 else
                 {
-                    $result = self::PASSWORD_CHANGE_NOT_MATCHED;
+                    $this->setViewData(self::PASSWORD_CHANGE_NOT_MATCHED);
                 }
             }
         } 
-
-        $this->getView()->setLayout(null);
-        return Zend_Json::encode(array('result' => $result));
     }
 
     /**
@@ -354,50 +388,59 @@ class ProfileController extends SessionController
      */
     public function editAction()
     {
-        $profile = UserProfile::getFromPrimaryKey($this->user_profile_id);
+        $this->setViewLayout('dashboard');
 
-        if(empty($profile))
+        if(!$this->sessionAuthorize())
         {
-            $this->getResponse()->setRedirect(BASE_URL);
             return null;
         }
 
-        $id = $profile->user_profile_id;
-        $information = UserInformation::getFromPrimaryKey($id);
+        $id = $this->user_profile_id;
+        $profile = UserProfile::findByPrimaryKey($id);
+
+        if(empty($profile)) 
+        {
+            $this->setResponseRedirect(BASE_URL);
+            return null;
+        }
+
+        $information = UserInformation::findByPrimaryKey($id);
 
         if(empty($information))
         {
             $information = new UserInformation();
         }
 
-        $this->getView()->setLayout('dashboard');
-        return array('profile' => $profile, 
-                     'information' => $information);
+        $this->setViewParameter('profile', $profile);
+        $this->setViewParameter('information', $information);
     }
 
     /**
      * Profile editing save action
      *
-     * @return string
+     * @return void
      */
     public function editSaveAction()
     {
-        $pwdchange = $this->getRequest()->pwdchange;
-        $name = $this->getRequest()->name;
-        $current_password = $this->getRequest()->current_password;
-        $new_password = $this->getRequest()->new_password;
-        $new_password_confirm = $this->getRequest()->new_password_confirm;
+        $this->setViewLayout(null);
+        $this->setViewTemplate(null);
+        $this->setViewData(self::EDIT_SAVE_FAILED);
 
-        $this->getView()->setLayout(null);
-
-        $profile = UserProfile::getFromPrimaryKey($this->user_profile_id);
-        $result = self::EDIT_SAVE_FAILED;
-
-        if(empty($profile))
+        if(!self::sessionAlive())
         {
-            $this->getResponse()->setRedirect(BASE_URL);
-            return Zend_Json::encode(array('result' => $result));
+            throw new Exception("session is not alive");
         }
+
+        $profile_id = $this->user_profile_id;
+        $profile = UserProfile::findByPrimaryKey($profile_id);
+
+        if(empty($profile)) throw new InvalidArgumentException();
+
+        $pwdchange = $this->getRequestParameter('pwdchange');
+        $name = $this->getRequestParameter('name');
+        $current_password = $this->getRequestParameter('current_password');
+        $new_password = $this->getRequestParameter('new_password');
+        $new_password_confirm = $this->getRequestParameter('new_password_confirm');
 
         /* password change */
 
@@ -405,14 +448,14 @@ class ProfileController extends SessionController
         {
             if($profile->login_password_md5 != md5($current_password))
             {
-                $result = self::EDIT_SAVE_WRONG_PASSWORD;
-                return Zend_Json::encode(array('result' => $result));
+                $this->setViewData(self::EDIT_SAVE_WRONG_PASSWORD);
+                return null;
             }
 
             if($new_password != $new_password_confirm)
             {
-                $result = self::EDIT_SAVE_PASSWORD_NOT_MATCHED;
-                return Zend_Json::encode(array('result' => $result));
+                $this->setViewData(self::EDIT_SAVE_PASSWORD_NOT_MATCHED);
+                return null;
             }
 
             $profile->login_password_md5 = md5($new_password);
@@ -423,14 +466,15 @@ class ProfileController extends SessionController
 
                 /* regenerate session */
 
+                $profile_id = $profile->user_profile_id;
                 $this->sessionDestroy();
                 $this->sessionCreate();
-                $this->user_profile_id = $profile->user_profile_id;
+                $this->user_profile_id = $profile_id;
                 $this->user_profile_uid = $profile->getUID();
                 $this->user_profile_login_email = $profile->login_email;
                 $this->sessionLock();
 
-                $result = self::EDIT_SAVE_OK;
+                $this->setViewData(self::EDIT_SAVE_OK);
             }
             catch(Exception $exception)
             {
@@ -441,13 +485,12 @@ class ProfileController extends SessionController
 
         /* information change */
 
-        $id = $profile->user_profile_id;
-        $information = UserInformation::getFromPrimaryKey($id);
+        $information = UserInformation::findByPrimaryKey($profile_id);
 
         if(empty($information))
         {
             $information = new UserInformation();
-            $information->user_profile_id = $id;
+            $information->user_profile_id = $profile_id;
         }
 
         $information->name = $name;
@@ -455,24 +498,23 @@ class ProfileController extends SessionController
         try
         {
             $information->save();
-            $result = self::EDIT_SAVE_OK;
+            $this->setViewData(self::EDIT_SAVE_OK);
         }
         catch(Exception $exception)
         {
             $message = $exception->getMessage();
             AB_Log::write($message, AB_Log::PRIORITY_ERROR);
         }
-
-        return Zend_Json::encode(array('result' => $result));
     }
 
     /**
      * Email change action (TODO)
      * 
-     * @return  string
+     * @return void
      */
     public function emailChangeAction()
     {
+throw new BadMethodCallException("see 'TODO' in " . __FILE__ .":". __LINE__);
     }
 
     /**
@@ -512,9 +554,10 @@ class ProfileController extends SessionController
         $subject = self::MAIL_NEW_PROFILE_SUBJECT;
         $body = self::readInstruction(self::MAIL_NEW_PROFILE_TEMPLATE);
 
-        $confirm_url = AB_Request::url("profile", 
-                                       "confirm", 
-                                       array("uid" => $profile->getUID()));
+        $confirm_url = AB_Request::url(
+            "profile", "confirm", array(
+                "uid" => $profile->getUID(),
+                "type" => self::CONFIRM_TYPE_NEW_PROFILE));
 
         $body = str_replace("{CONFIRM_URL}", $confirm_url, $body);
 
@@ -583,6 +626,38 @@ class ProfileController extends SessionController
     }
 
     /**
+     * Send email change instruction (TODO)
+     *
+     * @param   UserProfile $profile
+     * @throws  Exception
+     * return   boolean
+     */
+    public static function sendEmailChangeInstruction($profile)
+    {
+throw new BadMethodCallException("see 'TODO' in " . __FILE__ .":". __LINE__);
+        if(!is_object($profile))
+        {
+            return false;
+        }
+
+        $subject = self::MAIL_EMAIL_CHANGE_SUBJECT;
+        $body = self::readInstruction(self::MAIL_EMAIL_CHANGE_TEMPLATE);
+
+        $confirm_url = AB_Request::url(
+            "profile", "confirm", array(
+                "uid" => $profile->getUID(),
+                "type" => self::CONFIRM_TYPE_EMAIL_CHANGE));
+
+        $body = str_replace("{CONFIRM_URL}", $confirm_url, $body);
+
+        self::sendEmail($profile->login_email_change, __METHOD__, $subject, $body);
+
+        return true;
+    }
+
+
+
+    /**
      * Send recovery notice
      *
      * @param   UserProfile $profile
@@ -632,34 +707,10 @@ class ProfileController extends SessionController
     }
 
     /**
-     * Get UID from session
-     *
-     * @return  string|null
-     */
-    private static function getUIDFromSession()
-    {
-        $id = SessionController::getSessionIdentification();
-        $uid = null;
-
-        if(!empty($id))
-        {
-            if(is_array($id))
-            {
-                if(array_key_exists('uid', $id))
-                {
-                    $uid = $id['uid'];
-                }
-            }
-        }
-
-        return $uid;
-    }
-
-    /**
      * Read instruction template
      *
      * @param   string  $template
-     * @return  string
+     * @return void
      */
     private static function readInstruction($template)
     {
