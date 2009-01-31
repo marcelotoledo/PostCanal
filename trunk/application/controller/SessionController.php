@@ -29,21 +29,6 @@ class SessionController extends AB_Controller
     }
 
     /**
-     * Action magic method
-     *
-     * @param   string  $method
-     * @param   array   $arguments
-     * @return  void
-     */
-    protected function __call($method, $arguments)
-    {
-        if(strpos($method, 'Action') > 0)
-        {
-            $this->getResponse()->setRedirect(BASE_URL);
-        }
-    }
-
-    /**
      * Get overloading
      *
      * @param   string  $name

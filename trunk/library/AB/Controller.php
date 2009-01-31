@@ -56,16 +56,6 @@ class AB_Controller
     }
 
     /**
-     * Set response redirect
-     *
-     * @return  void
-     */
-    public function setResponseRedirect($url, $status=null)
-    {
-        $this->response->setRedirect($url, $status);
-    }
-
-    /**
      * Set view layout
      *
      * @param   string  $layout
@@ -108,6 +98,26 @@ class AB_Controller
     public function setViewData($value)
     {
         $this->view->setData($value);
+    }
+
+    /**
+     * Set response status
+     *
+     * @return  void
+     */
+    public function setResponseStatus($status)
+    {
+        $this->response->setStatus($status);
+    }
+
+    /**
+     * Set response redirect
+     *
+     * @return  void
+     */
+    public function setResponseRedirect($url, $status=null)
+    {
+        $this->response->setRedirect($url, $status);
     }
 
     /**

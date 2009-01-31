@@ -255,3 +255,10 @@ HORAS TRABALHADAS: 5h
 - Cadastro de CMS
 
 HORAS TRABALHADAS: 9h
+
+==========
+31/01/2008
+==========
+
+- Correção no MODEL (setTimeZone) e config/environment
+- Correção de BUGS

@@ -74,9 +74,16 @@ class AB_Dispatcher
         {
             $message = $exception->getMessage();
 
+            /* unauthorized */
+
+            if ($this->response->getStatus() == AB_Response::STATUS_UNAUTHORIZED)
+            {
+                AB_Log::write($message, AB_Log::PRIORITY_INFO);
+            }
+
             /* not found exception */
 
-            if ($this->response->getStatus() == AB_Response::STATUS_NOT_FOUND)
+            elseif ($this->response->getStatus() == AB_Response::STATUS_NOT_FOUND)
             {
                 AB_Log::write($message, AB_Log::PRIORITY_WARNING);
             }

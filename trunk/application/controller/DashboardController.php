@@ -29,7 +29,8 @@ class DashboardController extends SessionController
      */
     public function indexAction()
     {
-        $profile = UserProfile::findByPrimaryKey($this->user_profile_id);
+        $id = $this->user_profile_id;
+        $profile = UserProfile::findByPrimaryKeyEnabled($id);
 
         if(empty($profile))
         {

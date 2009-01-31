@@ -396,7 +396,7 @@ throw new UnexpectedValueException("see 'TODO' in " . __FILE__ .":". __LINE__);
         }
 
         $id = $this->user_profile_id;
-        $profile = UserProfile::findByPrimaryKey($id);
+        $profile = UserProfile::findByPrimaryKeyEnabled($id);
 
         if(empty($profile)) 
         {
@@ -428,13 +428,17 @@ throw new UnexpectedValueException("see 'TODO' in " . __FILE__ .":". __LINE__);
 
         if(!self::sessionAlive())
         {
+            $this->setResponseStatus(AB_Response::STATUS_UNAUTHORIZED);
             throw new Exception("session is not alive");
         }
 
-        $profile_id = $this->user_profile_id;
-        $profile = UserProfile::findByPrimaryKey($profile_id);
+        $id = $this->user_profile_id;
+        $profile = UserProfile::findByPrimaryKeyEnabled($id);
 
-        if(empty($profile)) throw new InvalidArgumentException();
+        if(empty($profile))
+        {
+            throw new Exception("invalid profile with id (" . $id . ")");
+        }
 
         $pwdchange = $this->getRequestParameter('pwdchange');
         $name = $this->getRequestParameter('name');
@@ -466,10 +470,10 @@ throw new UnexpectedValueException("see 'TODO' in " . __FILE__ .":". __LINE__);
 
                 /* regenerate session */
 
-                $profile_id = $profile->user_profile_id;
+                $id = $profile->user_profile_id;
                 $this->sessionDestroy();
                 $this->sessionCreate();
-                $this->user_profile_id = $profile_id;
+                $this->user_profile_id = $id;
                 $this->user_profile_uid = $profile->getUID();
                 $this->user_profile_login_email = $profile->login_email;
                 $this->sessionLock();
@@ -485,12 +489,12 @@ throw new UnexpectedValueException("see 'TODO' in " . __FILE__ .":". __LINE__);
 
         /* information change */
 
-        $information = UserInformation::findByPrimaryKey($profile_id);
+        $information = UserInformation::findByPrimaryKey($id);
 
         if(empty($information))
         {
             $information = new UserInformation();
-            $information->user_profile_id = $profile_id;
+            $information->user_profile_id = $id;
         }
 
         $information->name = $name;

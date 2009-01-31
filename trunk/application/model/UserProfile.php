@@ -158,6 +158,20 @@ class UserProfile extends AB_Model
     }
 
     /**
+     * Find UserProfile by primary key and enabled
+     *
+     * @param   integer $id    Primary key value
+     *
+     * @return  UserProfile|null 
+     */
+    public static function findByPrimaryKeyEnabled($id)
+    {
+        return current(self::find(array(
+            self::$primary_key_name => $id, 
+            'enabled'               => true)));
+    }
+
+    /**
      * Get UserProfile from email
      *
      * @param   string  $email
