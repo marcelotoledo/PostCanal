@@ -69,10 +69,12 @@ class UserInformation extends AB_Model
     {
         $current_date = date("Y/m/d H:i:s");
 
-        $this->isNew() ? $this->created_at = $current_date : 
-                         $this->updated_at = $current_date;
+        $new = $this->isNew();
 
-        return parent::_save(self::$sequence_name);
+        $new ? $this->created_at = $current_date : 
+               $this->updated_at = $current_date;
+
+        return parent::_save(self::$sequence_name, $new);
     }
 
     /**

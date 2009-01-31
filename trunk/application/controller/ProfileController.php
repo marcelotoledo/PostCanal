@@ -369,7 +369,7 @@ throw new UnexpectedValueException("see 'TODO' in " . __FILE__ .":". __LINE__);
                 {
                     $profile->login_password_md5 = md5($password);
                     $profile->save();
-                    $result = self::PASSWORD_CHANGE_OK;
+                    $this->setViewData(self::PASSWORD_CHANGE_OK);
                     self::sendPasswordNotice($profile);
                     $this->sessionDestroy();
                 }

@@ -64,7 +64,6 @@ abstract class AB_Model
      */
     public function __set ($name, $value)
     {
-        /* fix boolean */
         if(is_bool($value)) $value = ($value == true) ? 1 : 0;
 
         $this->data[$name] = $value;
@@ -77,12 +76,17 @@ abstract class AB_Model
      * 
      * @return  boolean
      */
-    public function _save($sequence)
+    public function _save($sequence, $new=null)
     {
         $connection = self::getConnection();
         $saved = false;
 
-        if($this->isNew())
+        if(empty($new))
+        {
+            $new = $this->isNew();
+        }
+
+        if($new)
         {
             $columns = array_keys($this->data);
 
@@ -140,10 +144,10 @@ abstract class AB_Model
      *
      * @return  boolean
      */
-    public function isNew()
-    {
-        return is_null($this->getPrimaryKey());
-    }
+     public function isNew()
+     {
+         return is_null($this->getPrimaryKey());
+     }
 
     /**
      * Set model primary key
