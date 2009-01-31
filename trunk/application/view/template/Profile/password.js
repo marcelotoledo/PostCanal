@@ -6,17 +6,17 @@ $(document).ready(function()
 
     function showSpinner()
     {
-        $("#spinner").spinner
+        $.ab_spinner
         ({
-            height: 32, width: 32, speed: 50,
-            image: "<?php $this->img_src('spinner/linux_spinner.png') ?>"
+            height: 32, width: 32,
+            image: "<?php $this->img_src('spinner/linux_spinner.png') ?>",
+            message: "... carregando"
         });
     }
 
     function hideSpinner()
     {
-        $.spinnerStop();
-        $("#spinner").attr("style", "");
+        $.ab_spinner_stop();
     }
 
     /* password change */
@@ -34,13 +34,13 @@ $(document).ready(function()
 
         if(password == "" || confirm_ == "")
         {
-            simple_popup("Preencha o formulário corretamente");
+            $.ab_alert("Preencha o formulário corretamente");
             return null;
         }
 
         if(password != confirm_)
         {
-            simple_popup("Senha e confirmação NÃO CORRESPONDEM");
+            $.ab_alert("Senha e confirmação NÃO CORRESPONDEM");
             return null;
         }
 
@@ -71,16 +71,16 @@ $(document).ready(function()
                 }
                 else if(data == "password_change_failed") 
                 {
-                    simple_popup("Não foi possível alterar a senha de acesso");
+                    $.ab_alert("Não foi possível alterar a senha de acesso");
                 }
                 else if(data == "password_change_not_matched") 
                 {
-                    simple_popup("Senha e Confirmação NÃO CORRESPONDEM");
+                    $.ab_alert("Senha e Confirmação NÃO CORRESPONDEM");
                 }
             }, 
             error: function (data) 
             { 
-                simple_popup("ERRO NO SERVIDOR");
+                $.ab_alert("ERRO NO SERVIDOR");
             }
         });
     });

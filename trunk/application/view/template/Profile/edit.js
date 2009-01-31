@@ -6,17 +6,17 @@ $(document).ready(function()
 
     function showSpinner()
     {
-        $("#spinner").spinner
+        $.ab_spinner
         ({
-            height: 32, width: 32, speed: 50,
-            image: "<?php $this->img_src('spinner/linux_spinner.png') ?>"
+            height: 32, width: 32,
+            image: "<?php $this->img_src('spinner/linux_spinner.png') ?>",
+            message: "... carregando"
         });
     }
 
     function hideSpinner()
     {
-        $.spinnerStop();
-        $("#spinner").attr("style", "");
+        $.ab_spinner_stop();
     }
 
     /* password change */
@@ -76,13 +76,13 @@ $(document).ready(function()
             (current_password == "" || new_password == "" || 
              new_password_confirm == ""))
         {
-            simple_popup("Preencha o formulário corretamente");
+            $.ab_alert("Preencha o formulário corretamente");
             return null;
         }
 
         if(pwdchange == "yes" && new_password != new_password_confirm)
         {
-            simple_popup("Senha e confirmação NÃO CORRESPONDEM");
+            $.ab_alert("Senha e confirmação NÃO CORRESPONDEM");
             return null;
         }
 
@@ -113,19 +113,19 @@ $(document).ready(function()
             { 
                 if(data == "edit_save_ok") 
                 {
-                    simple_popup("Perfil alterado com sucesso");
+                    $.ab_alert("Perfil alterado com sucesso");
                 }
                 else if(data == "edit_save_failed")
                 {
-                    simple_popup("Alteração do perfil FALHOU!");
+                    $.ab_alert("Alteração do perfil FALHOU!");
                 }
                 else if(data == "edit_save_password_not_matched")
                 {
-                    simple_popup("Senha e confirmação NÃO CORRESPONDEM");
+                    $.ab_alert("Senha e confirmação NÃO CORRESPONDEM");
                 }
                 else if(data == "edit_save_wrong_password")
                 {
-                    simple_popup("Senha incorreta!");
+                    $.ab_alert("Senha incorreta!");
                 }
             }, 
             error: function () 

@@ -3,8 +3,8 @@
 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
 <title>Blotomate</title>
 <?php $this->DefaultHelper()->script("jquery-1.2.6.min.js") ?>
-<?php $this->DefaultHelper()->script("jquery.spinner.js") ?>
-<?php $this->DefaultHelper()->script("simple_popup.js") ?>
+<?php $this->DefaultHelper()->script("ab/spinner.js") ?>
+<?php $this->DefaultHelper()->script("ab/alert.js") ?>
 <?php $this->DefaultHelper()->include_javascript() ?>
 <?php $this->DefaultHelper()->include_stylesheet() ?>
 <?php $this->DefaultHelper()->style("default.css") ?>

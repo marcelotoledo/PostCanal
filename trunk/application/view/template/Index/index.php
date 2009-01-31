@@ -2,18 +2,11 @@
     <tr>
         <td id="bigtitle"><span>Blotomate</span></td>
         <td>
+            <div id="authtitle"><h1>Autenticação</h1></div>
+            <div id="regtitle" style="display:none"><h1>Novo Cadastro</h1></div>
             <form id="authform">
             <input type="hidden" name="register" value="no">
             <table>
-                <tr>
-                    <td class="formtitle">
-                        <span id="authtitle">Autenticação</span>
-                        <span id="regtitle" style="display:none">Novo Cadastro</span>
-                    </td>
-                    <td class="formloading">
-                        <div id="spinner">&nbsp;</div>
-                    </td>
-                </tr>
                 <tr>
                     <td class="formlabel">E-mail:</td>
                     <td><input type="text" name="email"></td>

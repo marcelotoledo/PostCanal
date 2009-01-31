@@ -37,5 +37,11 @@ class DashboardController extends SessionController
             $this->sessionDestroy();
             $this->setResponseRedirect(BASE_URL);
         }
+
+        $this->setViewParameter('profile', $profile);
+        $this->setViewParameter('information', 
+            UserInformation::findByPrimaryKey($id));
+        $this->setViewParameter('cmslist', 
+            UserCMS::findByUserProfileId($id));
     }
 }

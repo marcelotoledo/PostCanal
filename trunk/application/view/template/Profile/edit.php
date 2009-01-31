@@ -1,13 +1,6 @@
+<h1>Editar perfil</h1>
 <form id="editform">
 <table>
-    <tr>
-        <td class="formtitle">
-            <span>Editar perfil</span>
-        </td>
-        <td class="formloading">
-            <div id="spinner">&nbsp;</div>
-        </td>
-    </tr>
     <tr>
         <td class="formlabel">Nome:</td>
         <td><input type="text" name="name" 
@@ -46,7 +39,9 @@
         <td><input type="password" name="new_password_confirm" disabled></td>
     </tr>
     <tr class="formbutton">
-        <td>&nbsp;</td>
+        <td style="text-align:right">
+            <div id="spinner" style="float:right">&nbsp;</div>
+        </td>
         <td>
         <input name="editcancel" type="reset" value="Cancelar">
         <input name="editsubmit" type="button" value="Alterar">

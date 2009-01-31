@@ -6,17 +6,17 @@ $(document).ready(function()
 
     function showSpinner()
     {
-        $("#spinner").spinner
+        $.ab_spinner
         ({
-            height: 32, width: 32, speed: 50,
-            image: "<?php $this->img_src('spinner/linux_spinner.png') ?>"
+            height: 32, width: 32,
+            image: "<?php $this->img_src('spinner/linux_spinner.png') ?>",
+            message: "... carregando"
         });
     }
 
     function hideSpinner()
     {
-        $.spinnerStop();
-        $("#spinner").attr("style", "");
+        $.ab_spinner_stop();
     }
 
     /* default value for register */
@@ -58,7 +58,7 @@ $(document).ready(function()
 
         if($("input[@name='email']").val() == "")
         {
-            simple_popup("digite um EMAIL");
+            $.ab_alert("digite um EMAIL");
             return null;
         }
 
@@ -83,15 +83,15 @@ $(document).ready(function()
             success: function (data) 
             { 
                 if(data == "recovery_ok") 
-                    simple_popup("Um EMAIL foi enviado " + 
+                    $.ab_alert("Um EMAIL foi enviado " + 
                                  "para o endereço informado");
                 else if(data == "recovery_instruction_failed") 
-                    simple_popup("Não foi possível enviar instruções " + 
+                    $.ab_alert("Não foi possível enviar instruções " + 
                                  "para o endereço de e-mail especificado!");
             }, 
             error: function () 
             { 
-                simple_popup("ERRO NO SERVIDOR");
+                $.ab_alert("ERRO NO SERVIDOR");
             }
         });
     });
@@ -113,13 +113,13 @@ $(document).ready(function()
         if(email == "" || password == "" || 
           (register == "yes" && confirm_ == ""))
         {
-            simple_popup("Preencha o formulário corretamente");
+            $.ab_alert("Preencha o formulário corretamente");
             return null;
         }
 
         if(register == "yes" && password != confirm_)
         {
-            simple_popup("Senha e confirmação NÃO CORRESPONDEM");
+            $.ab_alert("Senha e confirmação NÃO CORRESPONDEM");
             return null;
         }
 
@@ -152,11 +152,11 @@ $(document).ready(function()
                 }
                 else if(data == "login_invalid") 
                 {
-                    simple_popup("Autenticação INVÁLIDA");
+                    $.ab_alert("Autenticação INVÁLIDA");
                 }
                 else if(data == "login_register_unconfirmed") 
                 {
-                    simple_popup("Cadastro NÃO CONFIRMADO.<br>" + 
+                    $.ab_alert("Cadastro NÃO CONFIRMADO.<br>" + 
                           "Verifique o pedido de confirmação " + 
                           "enviada por e-mail.");
                 }
@@ -165,31 +165,31 @@ $(document).ready(function()
 
                 else if(data == "register_ok") 
                 {
-                    simple_popup("Cadastro realizado com sucesso.\n" + 
-                          "Um EMAIL foi enviado para o endereço informado");
+                    $.ab_alert("Cadastro realizado com sucesso.\n" + 
+                        "Um EMAIL foi enviado para o endereço informado");
                     toggleAuthForm();
                 }
                 else if(data == "register_failed") 
                 {
-                    simple_popup("Não foi possível efetuar um novo cadastro");
+                    $.ab_alert("Não foi possível efetuar um novo cadastro");
                 }
                 else if(data == "register_incomplete") 
                 {
-                    simple_popup("Cadastro INCOMPLETO");
+                    $.ab_alert("Cadastro INCOMPLETO");
                 }
                 else if(data == "register_password_not_matched") 
                 {
-                    simple_popup("Senha e Confirmação NÃO CORRESPONDEM");
+                    $.ab_alert("Senha e Confirmação NÃO CORRESPONDEM");
                 }
                 else if(data == "register_instruction_failed") 
                 {
-                    simple_popup("Não foi possível enviar instruções " + 
-                          "para o endereço de e-mail especificado!");
+                    $.ab_alert("Não foi possível enviar instruções " + 
+                        "para o endereço de e-mail especificado!");
                 }
             }, 
             error: function () 
             { 
-                simple_popup("ERRO NO SERVIDOR");
+                $.ab_alert("ERRO NO SERVIDOR");
             }
         });
     });

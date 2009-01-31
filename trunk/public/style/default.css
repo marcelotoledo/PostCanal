@@ -27,9 +27,41 @@ a:hover
     cursor: hand;
 }
 
-/* simple popup */
+h1
+{
+    font-size: x-large;
+}
 
-.simple-popup-div
+h2
+{
+    font-size: large;
+}
+
+/* ab spinner */
+
+.ab-spinner-div
+{
+    position: absolute;
+    top: 0;
+    left: 0;
+    background: yellow;
+}
+
+.ab-spinner-div table
+{
+    padding: 10px;
+}
+
+.ab-spinner-div-inner
+{
+    display: table-cell;
+    vertical-align: middle;
+    text-align: left;
+}
+
+/* ab alert */
+
+.ab-alert-div
 {
     position: absolute;
     top: 0;
@@ -37,7 +69,7 @@ a:hover
     background: white;
 }
 
-.simple-popup-div-inner
+.ab-alert-div-inner
 {
     padding: 50px 20px 50px 20px;
     border: gray 2px solid;
@@ -48,7 +80,7 @@ a:hover
     text-align: left;
 }
 
-.simple-popup-close
+.ab-alert-close
 {
     /* void */
 }

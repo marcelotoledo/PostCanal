@@ -1,6 +1,8 @@
 div#topbar
 {
     padding: 10px;
+    padding-left: 25px;
+    padding-right: 25px;
     height: 15px;
     background-color: bisque;
 }
@@ -8,4 +10,10 @@ div#topbar
 div#dashboardcontent
 {
     padding: 10px;
+    padding-left: 25px;
+}
+
+.dashboardinfo
+{
+    font-style: italic;
 }
