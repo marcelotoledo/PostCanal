@@ -67,8 +67,6 @@ class ApplicationLog extends AB_Model
      */
     public function save()
     {
-        if($this->isNew()) $this->created_at = date("Y/m/d H:i:s");
-
         return parent::_save(self::$sequence_name);
     }
 

@@ -1,5 +1,7 @@
 /* drop */
 
+SET TIME ZONE 'UTC';
+
 DROP TABLE IF EXISTS aggregator_item;
 DROP SEQUENCE IF EXISTS aggregator_item_seq;
 DROP TABLE IF EXISTS user_cms_channel;
@@ -27,7 +29,7 @@ CREATE TABLE application_log
     application_log_id integer NOT NULL DEFAULT nextval('application_log_seq'),
     priority integer NOT NULL DEFAULT 0,
     message text NOT NULL DEFAULT '',
-    created_at timestamp without time zone NOT NULL,
+    created_at timestamp without time zone NOT NULL DEFAULT NOW(),
     CONSTRAINT application_log_pk PRIMARY KEY (application_log_id)
 );
 
@@ -38,7 +40,7 @@ CREATE TABLE application_mailer_relay
         DEFAULT nextval('application_mailer_relay_seq'),
     recipient character varying(100) NOT NULL,
     identifier_md5 character varying(32) DEFAULT NULL,
-    created_at timestamp without time zone NOT NULL
+    created_at timestamp without time zone NOT NULL DEFAULT NOW()
 );
 
 CREATE TABLE channel_status
@@ -78,7 +80,7 @@ CREATE TABLE aggregator_channel
     title character varying(100) NOT NULL,
     link character varying(200) NOT NULL,
     description text NOT NULL DEFAULT '',
-    created_at timestamp without time zone NOT NULL,
+    created_at timestamp without time zone NOT NULL DEFAULT NOW(),
     updated_at timestamp without time zone DEFAULT NULL,
     enabled boolean NOT NULL DEFAULT true,
     CONSTRAINT aggregator_channel_pk PRIMARY KEY (aggregator_channel_id),
@@ -94,7 +96,7 @@ CREATE TABLE aggregator_item
     title text NOT NULL, 
     link text NOT NULL,
     description text NOT NULL DEFAULT '',
-    created_at timestamp without time zone NOT NULL, 
+    created_at timestamp without time zone NOT NULL DEFAULT NOW(), 
     CONSTRAINT aggregator_item_pk PRIMARY KEY (aggregator_item_id),
     CONSTRAINT aggregator_channel_fk FOREIGN KEY (aggregator_channel_id) 
         REFERENCES aggregator_channel (aggregator_channel_id) ON DELETE CASCADE
@@ -112,7 +114,7 @@ CREATE TABLE user_profile
     register_confirmation boolean NOT NULL DEFAULT false,
     register_confirmation_time timestamp without time zone DEFAULT NULL,
     recovery_message_time timestamp without time zone DEFAULT NULL,
-    created_at timestamp without time zone NOT NULL,
+    created_at timestamp without time zone NOT NULL DEFAULT NOW(),
     updated_at timestamp without time zone DEFAULT NULL,
     enabled boolean NOT NULL DEFAULT true,
     CONSTRAINT user_profile_pk PRIMARY KEY (user_profile_id)
@@ -123,7 +125,7 @@ CREATE TABLE user_information
     user_profile_id integer NOT NULL,
     name character varying(100) NOT NULL DEFAULT '',
     /* TODO: location, language, etc. */
-    created_at timestamp without time zone NOT NULL,
+    created_at timestamp without time zone NOT NULL DEFAULT NOW(),
     updated_at timestamp without time zone DEFAULT NULL,
     CONSTRAINT user_profile_fk FOREIGN KEY (user_profile_id) 
         REFERENCES user_profile (user_profile_id) ON DELETE CASCADE
@@ -141,7 +143,7 @@ CREATE TABLE user_cms
     url_admin character varying(200) NOT NULL,
     admin_username character varying(100) NOT NULL,
     admin_password character varying(100) NOT NULL,
-    created_at timestamp without time zone NOT NULL,
+    created_at timestamp without time zone NOT NULL DEFAULT NOW(),
     updated_at timestamp without time zone DEFAULT NULL,
     enabled boolean NOT NULL DEFAULT true,
     CONSTRAINT user_cms_pk PRIMARY KEY (user_cms_id),
@@ -161,7 +163,7 @@ CREATE TABLE user_cms_channel
     aggregator_channel_id integer NOT NULL,
     title character varying(100) NOT NULL,
     description text NOT NULL DEFAULT '',
-    created_at timestamp without time zone NOT NULL,
+    created_at timestamp without time zone NOT NULL DEFAULT NOW(),
     updated_at timestamp without time zone DEFAULT NULL,
     enabled boolean NOT NULL DEFAULT true,
     CONSTRAINT user_cms_channel_pk PRIMARY KEY (user_cms_channel_id),

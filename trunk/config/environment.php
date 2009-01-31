@@ -37,6 +37,7 @@ $registry->database->host = "localhost";
 $registry->database->username = "blotomate";
 $registry->database->password = "blotomate";
 $registry->database->db = "blotomate";
+$registry->database->timezone = "UTC";
 
 
 /* response headers */

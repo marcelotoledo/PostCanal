@@ -67,10 +67,7 @@ class AggregatorChannel extends AB_Model
      */
     public function save()
     {
-        $current_date = date("Y/m/d H:i:s");
-
-        $this->isNew() ? $this->created_at = $current_date : 
-                         $this->updated_at = $current_date;
+        if(!$this->isNew()) $this->updated_at = date("Y/m/d H:i:s");
 
         return parent::_save(self::$sequence_name);
     }

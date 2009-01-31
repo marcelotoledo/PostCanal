@@ -72,21 +72,16 @@ abstract class AB_Model
     /**
      * Save model
      *
-     * @param   string      Sequence name
+     * @param   string      $sequence   Sequence name
      * 
      * @return  boolean
      */
-    public function _save($sequence, $new=null)
+    public function _save($sequence)
     {
         $connection = self::getConnection();
         $saved = false;
 
-        if(empty($new))
-        {
-            $new = $this->isNew();
-        }
-
-        if($new)
+        if($this->isNew())
         {
             $columns = array_keys($this->data);
 
@@ -434,6 +429,55 @@ abstract class AB_Model
             }
         }
 
+        /* set time zone */
+
+        self::setTimeZone();
+
+
         return $registry->database->connection;
+    }
+
+    /**
+     * Set database timezone
+     *
+     * @return  void
+     */
+    private static function setTimeZone()
+    {
+        $registry = AB_Registry::singleton();
+
+        if(!empty($registry->database->driver) && 
+           !empty($registry->database->connection) && 
+           !empty($registry->database->timezone))
+        {
+            try
+            {
+                $driver = strtolower($registry->database->driver);
+                $connection = $registry->database->connection;
+                $timezone = $registry->database->timezone;
+
+                if($driver == "pgsql")
+                {
+                    $connection->exec("SET TIME ZONE '" . $timezone . "'");
+                }
+                elseif($driver == "mysql")
+                {
+                    $connection->exec("SET time_zone = '" . $timezone . "'");
+                }
+                else
+                {
+                    $message = __CLASS__ . "::" . __METHOD__ . 
+                               " has no implementation to driver" . 
+                               " (" . $driver . ")";
+                    throw new Exception($message);
+                }
+            }
+            catch(Exception $exception)
+            {
+                $message = "failed to set the timezone; ";
+                $message.= $exception->getMessage();
+                throw new Exception($message);
+            }
+        }
     }
 }
