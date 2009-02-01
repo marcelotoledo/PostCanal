@@ -11,13 +11,16 @@
 <table>
     <tr>
         <td class="formlabel">Endereço do CMS:</td>
-        <td><input type="text" name="url_base" value="http://"></td>
+        <td>
+            <input type="text" name="input_url_base" value="http://">
+            <div id="commited_url_base" style="display:none" class="pseudoinput"></div>
+            <a id="check_url_base">verificar</a>
+            <a id="change_url_base" style="display:none">modificar</a>
+        </td>
     </tr>
     <tr>
         <td class="formlabel">Tipo de CMS:</td>
-        <td>
-            <select name="cms_type_id" disabled></select>
-        </td>
+        <td><select name="cms_type" disabled></select></td>
     </tr>
     <tr>
         <td class="formlabel">Gerenciador:</td>

@@ -94,21 +94,6 @@ td.formlabel
     font-weight: bold;
 }
 
-td.formtitle 
-{ 
-    padding-bottom: 25px;
-}
-
-td.formtitle span
-{ 
-    font-size: large; 
-}
-
-td.formloading
-{
-    vertical-align: top;
-}
-
 tr.formbutton
 {
     height: 50px;
@@ -118,4 +103,14 @@ tr.formbutton
 tr.formbutton td
 {
     text-align: right;
+}
+
+div.pseudoinput
+{
+    border: 2px solid gray;
+    background-color: lightgreen;
+    padding: 3px;
+    margin: 5px;
+    margin-left: 0px;
+    display: inline;
 }
