@@ -1,10 +1,10 @@
 #!/bin/bash
 total=0
 changelog=$@
-days_worked=`grep HORAS $@ | wc -l | sed -e 's/[ ]*//g'`
+days_worked=`grep -h HORAS $@ | wc -l | sed -e 's/[ ]*//g'`
 value_hour="14.5"
 
-for i in `grep HORAS $changelog | sed -e 's/HORAS TRABALHADAS: //g' | sed -e 's/h//g'`; do
+for i in `grep -h HORAS $changelog | sed -e 's/HORAS TRABALHADAS: //g' | sed -e 's/h//g'`; do
     total=$(expr $i + $total); 
 done
 
