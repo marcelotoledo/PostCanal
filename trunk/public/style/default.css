@@ -23,8 +23,6 @@ a
 a:hover
 {
     color: blue;
-    cursor: pointer; 
-    cursor: hand;
 }
 
 h1
@@ -103,14 +101,4 @@ tr.formbutton
 tr.formbutton td
 {
     text-align: right;
-}
-
-div.pseudoinput
-{
-    border: 2px solid gray;
-    background-color: lightgreen;
-    padding: 3px;
-    margin: 5px;
-    margin-left: 0px;
-    display: inline;
 }

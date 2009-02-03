@@ -29,6 +29,13 @@ class CMSType extends AB_Model
      */
     protected static $primary_key_name = 'cms_type_id';
 
+    /**
+     * CMSType application library object
+     *
+     * @var Object
+     */
+    protected $library_object = null;
+
 
     /**
      * Get table name
@@ -68,6 +75,28 @@ class CMSType extends AB_Model
     public function save()
     {
         return parent::_save(self::$sequence_name);
+    }
+
+    /**
+     * Get CMSType application library object
+     *
+     * @return  Object
+     */
+    public function getLibraryObject()
+    {
+        if($this->isNew())
+        {
+            $message = "a new object cannot use this method";
+            throw new Exception($message);
+        }
+
+        if(!is_object($this->library_object))
+        {
+            $this->library_object = self::loadLibraryClass(
+                $this->name, $this->version);
+        }
+
+        return $this->library_object;
     }
 
     /**
@@ -126,5 +155,71 @@ class CMSType extends AB_Model
     public static function findByPrimaryKey($id)
     {
         return current(self::find(array(self::$primary_key_name => $id)));
+    }
+
+    /**
+     * Load CMS Type application library class
+     *
+     * @param   string          $name
+     * @oaram   string          $version
+     * @return  Object|null
+     */
+    protected static function loadLibraryClass($name, $version)
+    {
+        $path = APPLICATION_PATH . "/library/CMSType";
+
+        if(!file_exists($path))
+        {
+            $message = "directory " . $path . " not found";
+            throw new Exception($message);
+        }
+
+        $name = eregi_replace("[^[:alpha:]]", "_", $name);
+        $version = eregi_replace("[^[:alpha:]]", "_", $version);
+
+        /* load essential classes */
+
+        self::_loadClass(
+            "CMSTypeAbstract", 
+            $path . "/Abstract.php");
+
+        self::_loadClass(
+            "CMSTypeInterface", 
+            $path . "/Interface.php");
+
+        self::_loadClass(
+            "CMSType" . $name . "Abstract", 
+            $path . "/" . $name . "/Abstract.php");
+
+        self::_loadClass(
+            "CMSType" . $name . $version, 
+            $path . "/" . $name . "/" . $version . "/Main.php");
+
+        if(!class_exists(($c = "CMSType" . $name . $version)))
+        {
+            $message = "class ". $c . " not found";
+            throw new Exception($message);
+        }
+
+        return new $c;
+    }
+
+
+    /**
+     * Simple class loader
+     *
+     * @param   $name   Class name
+     * @param   $path   Class path
+     * @return  void
+     */
+    protected static function _loadClass($name, $path)
+    {
+        if(!class_exists($name))
+        {
+            if(file_exists($path))
+            {
+                include $path;
+            }
+        }
     }
 }

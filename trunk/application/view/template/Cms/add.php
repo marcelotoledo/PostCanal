@@ -13,7 +13,6 @@
         <td class="formlabel">Endereço do CMS:</td>
         <td>
             <input type="text" name="input_url_base" value="http://">
-            <div id="commited_url_base" style="display:none" class="pseudoinput"></div>
             <a id="check_url_base">verificar</a>
             <a id="change_url_base" style="display:none">modificar</a>
         </td>

@@ -15,7 +15,10 @@ DROP TABLE IF EXISTS cms_status;
 DROP TABLE IF EXISTS user_information;
 DROP TABLE IF EXISTS user_profile;
 DROP SEQUENCE IF EXISTS user_profile_seq;
+DROP TABLE IF EXISTS cms_type_discovery;
+DROP SEQUENCE IF EXISTS cms_type_discovery_seq;
 DROP TABLE IF EXISTS cms_type;
+DROP SEQUENCE IF EXISTS cms_type_seq;
 DROP TABLE IF EXISTS application_log;
 DROP SEQUENCE IF EXISTS application_log_seq;
 DROP TABLE IF EXISTS application_mailer_relay;
@@ -61,13 +64,31 @@ CREATE TABLE cms_status
     CONSTRAINT cms_status_id_unique UNIQUE (cms_status_id)
 );
 
+/* cms type */
+
+CREATE SEQUENCE cms_type_seq;
 CREATE TABLE cms_type
 (
-    cms_type_id integer NOT NULL,
+    cms_type_id integer NOT NULL DEFAULT nextval('cms_type_seq'),
     name character varying(50) NOT NULL,
+    version character varying(50) NOT NULL,
+    maintenance boolean NOT NULL DEFAULT false,
     enabled boolean NOT NULL DEFAULT false,
     CONSTRAINT cms_type_pk PRIMARY KEY (cms_type_id),
     CONSTRAINT cms_type_id_unique UNIQUE (cms_type_id)
+);
+
+CREATE SEQUENCE cms_type_discovery_seq;
+CREATE TABLE cms_type_discovery
+(
+    cms_type_discovery_id integer NOT NULL 
+        DEFAULT nextval('cms_type_discovery_seq'),
+    cms_type_id integer NOT NULL,
+    name character varying(50) NOT NULL,
+    value character varying(200) NOT NULL,
+    CONSTRAINT cms_type_discovery_pk PRIMARY KEY (cms_type_discovery_id),
+    CONSTRAINT cms_type_fk FOREIGN KEY (cms_type_id) 
+        REFERENCES cms_type (cms_type_id) ON DELETE CASCADE
 );
 
 /* aggregator */
@@ -75,7 +96,8 @@ CREATE TABLE cms_type
 CREATE SEQUENCE aggregator_channel_seq;
 CREATE TABLE aggregator_channel
 (
-    aggregator_channel_id integer NOT NULL DEFAULT nextval('aggregator_channel_seq'),
+    aggregator_channel_id integer NOT NULL 
+        DEFAULT nextval('aggregator_channel_seq'),
     channel_status_id integer NOT NULL,
     title character varying(100) NOT NULL,
     link character varying(200) NOT NULL,
@@ -91,7 +113,7 @@ CREATE TABLE aggregator_channel
 CREATE SEQUENCE aggregator_item_seq;
 CREATE TABLE aggregator_item
 (
-    aggregator_item_id integer NOT NULL DEFAULT nextval('aggregator_item_seq'), 
+    aggregator_item_id integer NOT NULL DEFAULT nextval('aggregator_item_seq'),
     aggregator_channel_id integer NOT NULL, 
     title text NOT NULL, 
     link text NOT NULL,
@@ -158,7 +180,8 @@ CREATE TABLE user_cms
 CREATE SEQUENCE user_cms_channel_seq;
 CREATE TABLE user_cms_channel
 (
-    user_cms_channel_id integer NOT NULL DEFAULT nextval('user_cms_channel_seq'),
+    user_cms_channel_id integer NOT NULL 
+        DEFAULT nextval('user_cms_channel_seq'),
     user_cms_id integer NOT NULL,
     aggregator_channel_id integer NOT NULL,
     title character varying(100) NOT NULL,

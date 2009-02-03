@@ -6,7 +6,7 @@
  * @category    Blotomate
  * @package     Controller
  */
-class SessionController extends AB_Controller
+abstract class SessionController extends AB_Controller
 {
     /**
      * Session

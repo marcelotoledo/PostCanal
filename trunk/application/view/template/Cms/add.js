@@ -25,19 +25,14 @@ $(document).ready(function()
 
     function commitUrlBase()
     {
-        $("input[@name='input_url_base']").hide();
-        $("#commited_url_base").html(url_base);
-        $("#commited_url_base").show();
+        $("input[@name='input_url_base']").attr("disabled", true);
         $("#check_url_base").hide();
         $("#change_url_base").show();
     }
 
     function changeUrlBase()
     {
-        $("#commited_url_base").html("");
-        $("#commited_url_base").hide();
-        $("input[@name='input_url_base']").val(url_base);
-        $("input[@name='input_url_base']").show();
+        $("input[@name='input_url_base']").attr("disabled", false);
         $("#change_url_base").hide();
         $("#check_url_base").show();
     }
@@ -57,13 +52,13 @@ $(document).ready(function()
             return null;
         }
 
-        parameters = { url_base: url_base }
+        parameters = { url: url_base }
 
         $.ajax
         ({
             type: "POST",
             url: "<?php $this->url('cms', 'checkUrlBase') ?>",
-            dataType: "text",
+            dataType: "json",
             data: parameters,
             beforeSend: function ()
             {
@@ -77,6 +72,16 @@ $(document).ready(function()
             },
             success: function (data) 
             { 
+                $.ab_alert( /* debug */
+                    "url_status = " + data.url_status + "<br>" + 
+                    "url = " + data.url+ "<br>" + 
+                    "cms_type_status = " + data.cms_type_status + "<br>" + 
+                    "cms_type_name = " + data.cms_type_name + "<br>" + 
+                    "cms_type_version = " + data.cms_type_version + "<br>" + 
+                    "url_admin_status = " + data.url_admin_status + "<br>" + 
+                    "url_admin = " + data.url_admin + "<br>"
+                );
+                /*
                 if(data == "url_base_ok") 
                 {
                     commitUrlBase();
@@ -85,10 +90,11 @@ $(document).ready(function()
                 {
                     $.ab_alert("Não foi possível verificar o endereço do CMS");
                 }
+                */
             }, 
             error: function () 
             { 
-                window.location = "<?php $this->url('dashboard') ?>";
+                /* window.location = "<?php $this->url('dashboard') ?>"; */
             }
         });
     }

@@ -137,9 +137,15 @@ class AB_Dispatcher
 
         if(class_exists($class_name))
         {
-            $controller = new $class_name($this->request, $this->response);
+            $reflection = new ReflectionClass($class_name);
+
+            if($reflection->isAbstract() == false)
+            {
+                $controller = new $class_name($this->request, $this->response);
+            }
         }
-        else
+
+        if(is_object($controller) == false)
         {
             $this->response->setStatus(AB_Response::STATUS_NOT_FOUND);
             throw new Exception ("controller " . $name . " not found");
