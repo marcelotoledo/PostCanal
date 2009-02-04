@@ -26,7 +26,7 @@ class CmsController extends SessionController
 
 
     /**
-     * Cms controller constructor
+     * CMS controller constructor
      *
      * @param   AB_Request  $request
      * @param   AB_Response $response
@@ -67,6 +67,13 @@ class CmsController extends SessionController
         $cms_type_version = "";
         $url_admin_status = self::URL_FAILED;
         $url_admin        = "";
+
+
+        /* fix url */
+
+        if(!eregi("^[[:alpha:]]+:\/\/", $url)) $url = "http://" . $url;
+        if(eregi("[[:alpha:]]\/$", $url)) $url = substr($url, 0, -1);
+
 
         /* get response from url */
 
@@ -113,7 +120,7 @@ class CmsController extends SessionController
 
             if(!is_object($cms_type))
             {
-                $cms_type = self::discoveryCMSTypeFromBody(
+                $cms_type = self::discoveryCMSTypeFromHTML(
                     $response->getBody());
             }
         }
@@ -132,7 +139,7 @@ class CmsController extends SessionController
 
             /* get url admin */
 
-            $cms_type->getLibraryObject(); // ...TODO 
+            $cms_type->getHandler(); // ...TODO 
         }
 
 
@@ -193,6 +200,8 @@ class CmsController extends SessionController
     {
         $cms_type = null;
 
+        /* test url value */
+
         $discovery = current(CMSTypeDiscovery::findByNameValue(
             CMSTypeDiscovery::NAME_URL,
             $url, true
@@ -220,6 +229,8 @@ class CmsController extends SessionController
         foreach($headers as $name => $value)
         {
             $header = strtolower($name . ": " . $value);
+
+            /* test header value */
 
             $discovery = CMSTypeDiscovery::findByNameValue(
                 CMSTypeDiscovery::NAME_HEADER,
@@ -250,28 +261,35 @@ class CmsController extends SessionController
     }
 
     /**
-     * Discovery CMS type from body
+     * Discovery CMS type from HTML
      *
      * @param   string          $body
      * @return  CMSType|null
      */
-    private function discoveryCMSTypeFromBody($body)
+    private function discoveryCMSTypeFromHTML($body)
     {
         $cms_type = null;
         $results = array();
 
+        /* get all html rules */
+
         $discovery = CMSTypeDiscovery::findByNameValue(
-            CMSTypeDiscovery::NAME_DOM
+            CMSTypeDiscovery::NAME_HTML
         );
 
-        $dom = new Zend_Dom_Query($body);
+        /* clean body spaces and newlines */
+
+        $body = ereg_replace("\n", "", $body);
+        $body = ereg_replace("[[:space:]]+", " ", $body);
+
+        /* test html */
 
         for($i=0; $i<count($discovery); $i++)
         {
             $cms_type_id = $discovery[$i]->cms_type_id;
             $query = $discovery[$i]->value;
 
-            if(count($dom->query($query)) > 0)
+            if(eregi($query, $body) > 0)
             {
                 array_key_exists($cms_type_id, $results) ? 
                     $results[$cms_type_id]++             :

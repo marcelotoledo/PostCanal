@@ -81,6 +81,12 @@ $(document).ready(function()
                     "url_admin_status = " + data.url_admin_status + "<br>" + 
                     "url_admin = " + data.url_admin + "<br>"
                 );
+
+                if(data.url)
+                {
+                    $("input[@name='input_url_base']").val(data.url);
+                }
+
                 /*
                 if(data == "url_base_ok") 
                 {

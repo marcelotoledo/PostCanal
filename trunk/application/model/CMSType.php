@@ -30,11 +30,11 @@ class CMSType extends AB_Model
     protected static $primary_key_name = 'cms_type_id';
 
     /**
-     * CMSType application library object
+     * CMSType handler
      *
      * @var Object
      */
-    protected $library_object = null;
+    protected $handler = null;
 
 
     /**
@@ -78,11 +78,11 @@ class CMSType extends AB_Model
     }
 
     /**
-     * Get CMSType application library object
+     * Get CMSType handler
      *
      * @return  Object
      */
-    public function getLibraryObject()
+    public function getHandler()
     {
         if($this->isNew())
         {
@@ -90,13 +90,13 @@ class CMSType extends AB_Model
             throw new Exception($message);
         }
 
-        if(!is_object($this->library_object))
+        if(!is_object($this->handler))
         {
-            $this->library_object = self::loadLibraryClass(
+            $this->handler = self::loadHandler(
                 $this->name, $this->version);
         }
 
-        return $this->library_object;
+        return $this->handler;
     }
 
     /**
@@ -158,13 +158,13 @@ class CMSType extends AB_Model
     }
 
     /**
-     * Load CMS Type application library class
+     * Load CMS Type handler
      *
      * @param   string          $name
      * @oaram   string          $version
      * @return  Object|null
      */
-    protected static function loadLibraryClass($name, $version)
+    protected static function loadHandler($name, $version)
     {
         $path = APPLICATION_PATH . "/library/CMSType";
 
@@ -206,7 +206,7 @@ class CMSType extends AB_Model
 
 
     /**
-     * Simple class loader
+     * Class loader
      *
      * @param   $name   Class name
      * @param   $path   Class path

@@ -6,8 +6,8 @@
 
         url                 http:\/\/.+\.wordpress\.com
         header              server:\ wordpress\.com
-        dom                 div#wrapper
-        dom                 meta[@name='generator'][@content^='WordPress']
+        html                div.+id.+wrapper
+        html                <meta[^>]+(content)+[^>]+(wordpress\.com)+[^>]+>
 */
 
 /**
@@ -23,7 +23,7 @@ class CMSTypeDiscovery extends AB_Model
      */
     const NAME_URL    = "url";
     const NAME_HEADER = "header";
-    const NAME_DOM    = "dom";
+    const NAME_HTML   = "html";
 
 
     /**

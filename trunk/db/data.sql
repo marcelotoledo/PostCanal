@@ -28,5 +28,5 @@ INSERT INTO user_information (user_profile_id) VALUES (CURRVAL('user_profile_seq
 /* cms type */
 
 INSERT INTO cms_type (name, version, enabled) VALUES ('WordPress', 'WordPress.com', true);
-INSERT INTO cms_type_discovery (cms_type_id, name, value) VALUES (CURRVAL('cms_type_seq'), 'url', '^http:\\/\\/.+\\.wordpress\\.com$');
-INSERT INTO cms_type_discovery (cms_type_id, name, value) VALUES (CURRVAL('cms_type_seq'), 'dom', 'meta[@name="generator"][@content="WordPress.com"]');
+-- INSERT INTO cms_type_discovery (cms_type_id, name, value) VALUES (CURRVAL('cms_type_seq'), 'url', '^http:\\/\\/.+\\.wordpress\\.com$'); -- invalid (.+).wordpress.com do not return 404 response status
+INSERT INTO cms_type_discovery (cms_type_id, name, value) VALUES (CURRVAL('cms_type_seq'), 'html', '<meta[^>]+(content)+[^>]+(wordpress\.com)+[^>]+>');
