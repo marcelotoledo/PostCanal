@@ -4,7 +4,7 @@
  * Application mailer class
  * 
  * @category    Blotomate
- * @package     Library
+ * @package     Application library
  */
 class ApplicationMailer
 {

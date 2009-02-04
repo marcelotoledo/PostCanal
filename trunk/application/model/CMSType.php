@@ -193,7 +193,7 @@ class CMSType extends AB_Model
 
         self::_loadClass(
             "CMSType" . $name . $version, 
-            $path . "/" . $name . "/" . $version . "/Main.php");
+            $path . "/" . $name . "/" . $version . "/Handler.php");
 
         if(!class_exists(($c = "CMSType" . $name . $version)))
         {

@@ -18,4 +18,24 @@ abstract class CMSTypeWordPressAbstract
     public function __construct()
     {
     }
+
+    /**
+     * Get admin URL
+     *
+     * @return  string
+     */
+    public function getAdminURL()
+    {
+        return $this->base_url . "/wp-admin";
+    }
+
+    /**
+     * Get admin auth URL
+     *
+     * @return  string
+     */
+    public function getAdminAuthURL()
+    {
+        return $this->base_url . "/wp-login.php?action=auth";
+    }
 }

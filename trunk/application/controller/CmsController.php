@@ -56,6 +56,8 @@ class CmsController extends SessionController
      */
     public function checkUrlBaseAction()
     {
+        include APPLICATION_PATH . "/library/ApplicationHTTPClient.php";
+
         $this->setViewLayout(null);
         $this->setViewTemplate(null);
         
@@ -71,38 +73,17 @@ class CmsController extends SessionController
 
         /* fix url */
 
-        if(!eregi("^[[:alpha:]]+:\/\/", $url)) $url = "http://" . $url;
-        if(eregi("[[:alpha:]]\/$", $url)) $url = substr($url, 0, -1);
+        $url = ApplicationHTTPClient::fixURL($url);
 
+        /* http request */
 
-        /* get response from url */
-
-        $response = null;
-
-        if(!empty($url))
-        {
-            try
-            {
-                $client = new Zend_Http_Client($url);
-                $response = $client->request();
-            }
-            catch(Exception $exception)
-            {
-                $message = "failed to get response from (" . $url . "); ";
-                $message.= $exception->getMessage();
-                AB_Log::write($message, AB_Log::PRIORITY_INFO);
-            }
-        }
-
-    
-        /* get url status from response */
-
-        $url_status = self::getUrlStatusFromResponse($response);
-
+        $client = new ApplicationHTTPClient();
+        $client->request($url);
+        $url_status = $client->getStatus();
 
         /* get cms type */
 
-        if(is_object($response) && $url_status == self::URL_OK)
+        if($url_status == ApplicationHTTPClient::STATUS_OK)
         {
             /* discovery CMS type from URL */
 
@@ -113,7 +94,7 @@ class CmsController extends SessionController
             if(!is_object($cms_type))
             {
                 $cms_type = self::discoveryCMSTypeFromHeaders(
-                    $response->getHeaders());
+                    $client->getHeaders());
             }
 
             /* discovery CMS type from body */
@@ -121,7 +102,7 @@ class CmsController extends SessionController
             if(!is_object($cms_type))
             {
                 $cms_type = self::discoveryCMSTypeFromHTML(
-                    $response->getBody());
+                    $client->getBody());
             }
         }
 
@@ -139,7 +120,14 @@ class CmsController extends SessionController
 
             /* get url admin */
 
-            $cms_type->getHandler(); // ...TODO 
+            $handler = $cms_type->getHandler();
+            $handler->setBaseURL($url);
+            $url_admin = $handler->getAdminURL();
+
+            /* get response from url_admin */
+
+            $client->request($url_admin);
+            $url_admin_status = $client->getStatus();
         }
 
 
@@ -152,42 +140,6 @@ class CmsController extends SessionController
             'url_admin_status' => $url_admin_status,
             'url_admin'        => $url_admin
         )));
-    }
-
-    /**
-     * Get URL status from response
-     *
-     * @param   Zend_Http_Response  $response
-     * @return  string
-     */
-    private function getUrlStatusFromResponse($response)
-    {
-        $status = null;
-        $result = self::URL_FAILED;
-
-        if(is_object($response))
-        {
-            $status = $response->getStatus();
-        }
-
-        if($status == 200)
-        {
-            $result = self::URL_OK;
-        }
-        elseif($status >= 300 && $status < 400)
-        {
-            $result = self::URL_ERROR_3XX;
-        }
-        elseif($status >= 400 && $status < 500)
-        {
-            $result = self::URL_ERROR_4XX;
-        }
-        elseif($status >= 500 && $status < 600)
-        {
-            $result = self::URL_ERROR_5XX;
-        }
-
-        return $result;
     }
 
     /**
@@ -266,7 +218,7 @@ class CmsController extends SessionController
      * @param   string          $body
      * @return  CMSType|null
      */
-    private function discoveryCMSTypeFromHTML($body)
+    private function discoveryCMSTypeFromHTML($html)
     {
         $cms_type = null;
         $results = array();
@@ -277,10 +229,9 @@ class CmsController extends SessionController
             CMSTypeDiscovery::NAME_HTML
         );
 
-        /* clean body spaces and newlines */
+        /* clean html */
 
-        $body = ereg_replace("\n", "", $body);
-        $body = ereg_replace("[[:space:]]+", " ", $body);
+        $html = ApplicationHTTPClient::cleanHTML($html);
 
         /* test html */
 
@@ -289,7 +240,7 @@ class CmsController extends SessionController
             $cms_type_id = $discovery[$i]->cms_type_id;
             $query = $discovery[$i]->value;
 
-            if(eregi($query, $body) > 0)
+            if(eregi($query, $html) > 0)
             {
                 array_key_exists($cms_type_id, $results) ? 
                     $results[$cms_type_id]++             :
