@@ -118,11 +118,14 @@ class CmsController extends SessionController
             $cms_type_name = $cms_type->name;
             $cms_type_version = $cms_type->version;
 
+            $info = $cms_type->getPluginInfo($url);
+
             /* get url admin */
 
-            $handler = $cms_type->getHandler();
-            $handler->setBaseURL($url);
-            $url_admin = $handler->getAdminURL();
+            if(array_key_exists('url_admin', $info))
+            {
+                $url_admin = $info['url_admin'];
+            }
 
             /* get response from url_admin */
 

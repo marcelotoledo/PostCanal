@@ -30,11 +30,11 @@ class CMSType extends AB_Model
     protected static $primary_key_name = 'cms_type_id';
 
     /**
-     * CMSType handler
+     * CMSType plugin info
      *
      * @var Object
      */
-    protected $handler = null;
+    protected $plugin_info = array();
 
 
     /**
@@ -78,25 +78,26 @@ class CMSType extends AB_Model
     }
 
     /**
-     * Get CMSType handler
+     * Get CMSType plugin info
      *
-     * @return  Object
+     * @param   string  $url    Base URL
+     * @return  array
      */
-    public function getHandler()
+    public function getPluginInfo($url)
     {
         if($this->isNew())
         {
-            $message = "a new object cannot use this method";
+            $message = "new model cannot determine cms type and get it's info";
             throw new Exception($message);
         }
 
-        if(!is_object($this->handler))
+        if(count($this->plugin_info) == 0)
         {
-            $this->handler = self::loadHandler(
-                $this->name, $this->version);
+            $this->plugin_info = self::loadPluginInfo(
+                $this->name, $this->version, $url);
         }
 
-        return $this->handler;
+        return $this->plugin_info;
     }
 
     /**
@@ -158,68 +159,56 @@ class CMSType extends AB_Model
     }
 
     /**
-     * Load CMS Type handler
-     *
-     * @param   string          $name
-     * @oaram   string          $version
-     * @return  Object|null
+     * Load CMS Type plugin info
+     * 
+     * @param   string          $name       Plugin Name
+     * @oaram   string          $version    Plugin Version
+     * @oaram   string          $url        Base URL
+     * @return  array
      */
-    protected static function loadHandler($name, $version)
+    protected static function loadPluginInfo($name, $version, $url)
     {
         $path = APPLICATION_PATH . "/library/CMSType";
+        $filename = strtolower($name) . ".py";
+        $plugin = null;
 
-        if(!file_exists($path))
+        if(!file_exists(($plugin = $path . "/" . $filename)))
         {
-            $message = "directory " . $path . " not found";
+            $message = "plugin (" . $plugin . ") does not exist";
             throw new Exception($message);
         }
 
-        $name = eregi_replace("[^[:alpha:]]", "_", $name);
-        $version = eregi_replace("[^[:alpha:]]", "_", $version);
+        $registry = AB_Registry::singleton();
+        $python = $registry->python->interpreter->path;
 
-        /* load essential classes */
+        if(empty($python)) $python = "python";
 
-        self::_loadClass(
-            "CMSTypeAbstract", 
-            $path . "/Abstract.php");
+        /* execute plugin command */
 
-        self::_loadClass(
-            "CMSTypeInterface", 
-            $path . "/Interface.php");
+        $command = $python . " " . 
+                   $plugin . " " . 
+                   escapeshellarg($version) . " " . 
+                   escapeshellarg($url);
+        $output = array();
+        $status = 0;
 
-        self::_loadClass(
-            "CMSType" . $name . "Abstract", 
-            $path . "/" . $name . "/Abstract.php");
+        exec($command, $output, $status);
 
-        self::_loadClass(
-            "CMSType" . $name . $version, 
-            $path . "/" . $name . "/" . $version . "/Handler.php");
+        /* log exec command and its return */
 
-        if(!class_exists(($c = "CMSType" . $name . $version)))
+        $message = "exec (" . $command . ") return (" . $status . ")";
+        AB_Log::write($message, AB_Log::PRIORITY_INFO);
+
+        /* convert output to array */
+
+        $results = array();
+
+        for($i=0; $i<count($output); $i++)
         {
-            $message = "class ". $c . " not found";
-            throw new Exception($message);
+            list($arg1, $arg2) = split("\t", $output[$i]);
+            $results[$arg1] = $arg2;
         }
 
-        return new $c;
-    }
-
-
-    /**
-     * Class loader
-     *
-     * @param   $name   Class name
-     * @param   $path   Class path
-     * @return  void
-     */
-    protected static function _loadClass($name, $path)
-    {
-        if(!class_exists($name))
-        {
-            if(file_exists($path))
-            {
-                include $path;
-            }
-        }
+        return $results;
     }
 }
