@@ -177,11 +177,8 @@ class ProfileController extends SessionController
 
                 $this->setViewData(self::REGISTER_OK);
             }
-            catch(Exception $exception)
+            catch(AB_Exception $exception)
             {
-                $message = $exception->getMessage();
-                AB_Log::write($message, AB_Log::PRIORITY_WARNING);
-
                 /* disable unconfirmed profile 
                    when unable to send instructions */
 
@@ -191,7 +188,11 @@ class ProfileController extends SessionController
                     $profile->save();
                 }
 
-                $this->setViewData(self::REGISTER_INSTRUCTION_FAILED);
+                AB_Exception::throwNew(
+                    "failed to send register instructions to profile " .
+                    "id (" . $profile->user_profile_id . ")",
+                    E_USER_WARNING, 
+                    $exception);
             }
         }
     }
@@ -233,11 +234,15 @@ class ProfileController extends SessionController
                 $profile->recovery_message_time = date("Y-m-d H:i:s");
                 $profile->save();
             }
-            catch(Exception $exception)
+            catch(AB_Exception $exception)
             {
-                $message = $exception->getMessage();
-                AB_Log::write($message, AB_Log::PRIORITY_ERROR);
                 $this->setViewData(self::RECOVERY_INSTRUCTION_FAILED);
+
+                AB_Exception::throwNew(
+                    "failed to send recovery instructions to profile " . 
+                    "id (" . $profile->user_profile_id . ")",
+                    E_USER_WARNING, 
+                    $exception);
             }
         }
 
@@ -249,11 +254,15 @@ class ProfileController extends SessionController
             {
                 self::sendDummyInstruction($email);
             }
-            catch(Exception $exception)
+            catch(AB_Exception $exception)
             {
-                $message = $exception->getMessage();
-                AB_Log::write($message, AB_Log::PRIORITY_WARNING);
                 $this->setViewData(self::RECOVERY_INSTRUCTION_FAILED);
+
+                AB_Exception::throwNew(
+                    "failed to send dummy instructions to " . 
+                    "email (" . $email . ")",
+                    E_USER_WARNING, 
+                    $exception);
             }
         }
     }
@@ -298,7 +307,7 @@ class ProfileController extends SessionController
             }
             elseif($type == self::CONFIRM_TYPE_EMAIL_CHANGE) // TODO
             {
-throw new UnexpectedValueException("see 'TODO' in " . __FILE__ .":". __LINE__);
+throw new UnexpectedValueException("See TODO in " . __FILE__ .":". __LINE__);
                 if($profile->email_change == false)
                 {
                     $profile->email_change = true;
@@ -378,7 +387,7 @@ throw new UnexpectedValueException("see 'TODO' in " . __FILE__ .":". __LINE__);
                     $this->setViewData(self::PASSWORD_CHANGE_NOT_MATCHED);
                 }
             }
-        } 
+        }
     }
 
     /**
@@ -429,7 +438,7 @@ throw new UnexpectedValueException("see 'TODO' in " . __FILE__ .":". __LINE__);
         if(!self::sessionAlive())
         {
             $this->setResponseStatus(AB_Response::STATUS_UNAUTHORIZED);
-            throw new Exception("session is not alive");
+            AB_Exception::throwNew("session is not alive", E_USER_NOTICE);
         }
 
         $id = $this->user_profile_id;
@@ -437,7 +446,9 @@ throw new UnexpectedValueException("see 'TODO' in " . __FILE__ .":". __LINE__);
 
         if(empty($profile))
         {
-            throw new Exception("invalid profile with id (" . $id . ")");
+            AB_Exception::throwNew(
+                "invalid profile with id (" . $id . ")", 
+                E_USER_WARNING);
         }
 
         $pwdchange = $this->getRequestParameter('pwdchange');
@@ -480,10 +491,12 @@ throw new UnexpectedValueException("see 'TODO' in " . __FILE__ .":". __LINE__);
 
                 $this->setViewData(self::EDIT_SAVE_OK);
             }
-            catch(Exception $exception)
+            catch(AB_Exception $exception)
             {
-                $message = $exception->getMessage();
-                AB_Log::write($message, AB_Log::PRIORITY_ERROR);
+                AB_Exception::throwNew(
+                    "failed to save profile after password change",
+                    E_USER_WARNING, 
+                    $exception);
             }
         }
 
@@ -504,10 +517,12 @@ throw new UnexpectedValueException("see 'TODO' in " . __FILE__ .":". __LINE__);
             $information->save();
             $this->setViewData(self::EDIT_SAVE_OK);
         }
-        catch(Exception $exception)
+        catch(AB_Exception $exception)
         {
-            $message = $exception->getMessage();
-            AB_Log::write($message, AB_Log::PRIORITY_ERROR);
+            AB_Exception::throwNew(
+                "failed to save information after edit", 
+                E_USER_WARNING, 
+                $exception);
         }
     }
 
@@ -518,7 +533,7 @@ throw new UnexpectedValueException("see 'TODO' in " . __FILE__ .":". __LINE__);
      */
     public function emailChangeAction()
     {
-throw new BadMethodCallException("see 'TODO' in " . __FILE__ .":". __LINE__);
+throw new BadMethodCallException("See TODO in " . __FILE__ .":". __LINE__);
     }
 
     /**
@@ -528,7 +543,6 @@ throw new BadMethodCallException("see 'TODO' in " . __FILE__ .":". __LINE__);
      * @param   string  $identifier
      * @param   string  $subject
      * @param   string  $body
-     * @throws  Exception
      * @return  void
      */
     private static function sendEmail($email, $identifier, $subject, $body)
@@ -545,8 +559,7 @@ throw new BadMethodCallException("see 'TODO' in " . __FILE__ .":". __LINE__);
      * Send new profile instruction
      *
      * @param   UserProfile $profile
-     * @throws  Exception
-     * return   boolean
+     * @return  boolean
      */
     public static function sendNewInstruction($profile)
     {
@@ -574,8 +587,7 @@ throw new BadMethodCallException("see 'TODO' in " . __FILE__ .":". __LINE__);
      * Send existing profile instruction
      *
      * @param   UserProfile $profile
-     * @throws  Exception
-     * return   boolean
+     * @return  boolean
      */
     public static function sendExistingInstruction($profile)
     {
@@ -605,8 +617,7 @@ throw new BadMethodCallException("see 'TODO' in " . __FILE__ .":". __LINE__);
      * Send recovery instruction
      *
      * @param   UserProfile $profile
-     * @throws  Exception
-     * return   boolean
+     * @return  boolean
      */
     public static function sendRecoveryInstruction($profile)
     {
@@ -633,12 +644,11 @@ throw new BadMethodCallException("see 'TODO' in " . __FILE__ .":". __LINE__);
      * Send email change instruction (TODO)
      *
      * @param   UserProfile $profile
-     * @throws  Exception
-     * return   boolean
+     * @return  boolean
      */
     public static function sendEmailChangeInstruction($profile)
     {
-throw new BadMethodCallException("see 'TODO' in " . __FILE__ .":". __LINE__);
+throw new BadMethodCallException("See TODO in " . __FILE__ .":". __LINE__);
         if(!is_object($profile))
         {
             return false;
@@ -665,8 +675,7 @@ throw new BadMethodCallException("see 'TODO' in " . __FILE__ .":". __LINE__);
      * Send recovery notice
      *
      * @param   UserProfile $profile
-     * @throws  Exception
-     * return   boolean
+     * @return  boolean
      */
     public static function sendPasswordNotice($profile)
     {
@@ -689,8 +698,7 @@ throw new BadMethodCallException("see 'TODO' in " . __FILE__ .":". __LINE__);
      * Send dummy instruction
      *
      * @param   string      $email
-     * @throws  Exception
-     * return   boolean
+     * @return  boolean
      */
     public static function sendDummyInstruction($email)
     {
@@ -714,7 +722,7 @@ throw new BadMethodCallException("see 'TODO' in " . __FILE__ .":". __LINE__);
      * Read instruction template
      *
      * @param   string  $template
-     * @return void
+     * @return  void
      */
     private static function readInstruction($template)
     {

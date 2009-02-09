@@ -9,35 +9,31 @@
 class AB_Log
 {
     /**
-     * Log priority constants
-     */
-    const PRIORITY_INFO    = 0;
-    const PRIORITY_WARNING = 1;
-    const PRIORITY_ERROR   = 2;
-
-
-    /**
-     * Write log in database
+     * Write log
      *
      * @param   string  $message    Log message
      * @param   integer $priority   Priority
      * @param   string  $model      Model name
      * @return  void
      */
-    public static function write ($message, 
-                                  $priority=self::PRIORITY_INFO, 
+    public static function write ($message,
+                                  $priority=E_USER_NOTICE,
+                                  $controller=null,
+                                  $action=null,
                                   $model='ApplicationLog')
     {
         if(class_exists($model) == false)
         {
-            self::_write("class " . $model . " not found");
-            echo "see error_log for more details\n";
+            self::writeErrorLog("model (" . $model . ") not found");
         }
         else
         {
             $m = new $model();
             $m->message = $message;
             $m->priority = $priority;
+            
+            if(!empty($controller)) $m->controller = $controller;
+            if(!empty($action)) $m->action = $action;
 
             try
             {
@@ -49,6 +45,24 @@ class AB_Log
                 self::writeErrorLog($message);
             }
         }
+    }
+
+    /**
+     * Write AB_Exception log
+     *
+     * @param   AB_Exception    $exception  Exception
+     * @param   string          $model      Model name
+     * @return  void
+     */
+    public static function writeException (
+        AB_Exception $exception, 
+        $model='ApplicationLog')
+    {
+        self::write($exception->getMessage(),
+                    $exception->getCode(),
+                    $exception->getController(),
+                    $exception->getAction(),
+                    $model);
     }
 
     /**

@@ -81,6 +81,7 @@ class CMSType extends AB_Model
      * Get CMSType plugin info
      *
      * @param   string  $url    Base URL
+     * @throws  AB_Exception
      * @return  array
      */
     public function getPluginInfo($url)
@@ -88,7 +89,10 @@ class CMSType extends AB_Model
         if($this->isNew())
         {
             $message = "new model cannot determine cms type and get it's info";
-            throw new Exception($message);
+            AB_Exception::throwNew(
+                "a new cms type can not be used " . 
+                "to obtain information from the plugin",
+                E_USER_ERROR);
         }
 
         if(count($this->plugin_info) == 0)
@@ -164,6 +168,7 @@ class CMSType extends AB_Model
      * @param   string          $name       Plugin Name
      * @oaram   string          $version    Plugin Version
      * @oaram   string          $url        Base URL
+     * @throws  AB_Exception
      * @return  array
      */
     protected static function loadPluginInfo($name, $version, $url)
@@ -174,8 +179,9 @@ class CMSType extends AB_Model
 
         if(!file_exists(($plugin = $path . "/" . $filename)))
         {
-            $message = "plugin (" . $plugin . ") does not exist";
-            throw new Exception($message);
+            AB_Exception::throwNew(
+                "plugin (" . $plugin . ") does not exist",
+                E_USER_ERROR);
         }
 
         $registry = AB_Registry::singleton();
@@ -196,8 +202,9 @@ class CMSType extends AB_Model
 
         /* log exec command and its return */
 
-        $message = "exec (" . $command . ") return (" . $status . ")";
-        AB_Log::write($message, AB_Log::PRIORITY_INFO);
+        AB_Log::write(
+            "exec (" . $command . ") return (" . $status . ")",
+            E_USER_NOTICE);
 
         /* convert output to array */
 

@@ -65,43 +65,61 @@ class AB_Dispatcher
      */
     public function dispatch()
     {
+        $has_error = false;
+        $error = null; 
+        $controller = $this->request->getController();
+        $action = $this->request->getAction();
+
         try
         {
             $this->controllerFactory()->runAction();
-            $this->response->send();
+        }
+        catch(AB_Exception $exception)
+        {
+            $exception->setController($controller);
+            $exception->setAction($action);
+
+            $has_error = true;
+            $error = ((string) $exception);
+
+            /* notices and warnings are ok, otherwise, set error response */
+
+            if($exception->getCode() == E_USER_ERROR)
+            {
+                $this->response->setStatus(AB_Response::STATUS_ERROR);
+            }
+
+            /* log AB_Exception */
+
+            AB_Log::writeException($exception);
         }
         catch(Exception $exception)
         {
-            $message = $exception->getMessage();
+            $has_error = true;
+            $error = "Exception: " . $exception->getMessage() . "; " . 
+                     "status: " . $exception->getStatus() . "; " . 
+                     "file: " . $exception->getFile() . "; " . 
+                     "line: " . $exception->getLine() . "; " . 
+                     "trace: " . $exception->getTraceAsString();
 
-            /* unauthorized */
+            /* unexpected exceptions are serious errors */
 
-            if ($this->response->getStatus() == AB_Response::STATUS_UNAUTHORIZED)
+            $this->response->setStatus(AB_Response::STATUS_ERROR);
+ 
+            /* log Exception */
+
+            AB_Log::write($error, E_USER_ERROR, $controller, $action);
+        }
+
+        /* show errors */
+
+        if($has_error)
+        {
+            /* show error message in browser */
+
+            if(error_reporting() > 0)
             {
-                AB_Log::write($message, AB_Log::PRIORITY_INFO);
-            }
-
-            /* not found exception */
-
-            elseif ($this->response->getStatus() == AB_Response::STATUS_NOT_FOUND)
-            {
-                AB_Log::write($message, AB_Log::PRIORITY_WARNING);
-            }
-
-            /* error exception */
-
-            else
-            {
-                $this->response->setStatus(AB_Response::STATUS_ERROR);
-                AB_Log::write($message, AB_Log::PRIORITY_ERROR);
-            }
-
-            /* show exception in browser */
-
-            if(empty(AB_Registry::singleton()->debug) == false &&
-                     AB_Registry::singleton()->debug  == true)
-            {
-                $this->response->setBody($message);
+                $this->response->setBody("<pre>" . $error . "</pre>");
             }
 
             /* run error controller actions */
@@ -111,18 +129,18 @@ class AB_Dispatcher
                 $this->controllerFactory('Error')->runAction('status' . 
                     $this->response->getStatus());
             }
-
-            /* send response */
-
-            $this->response->send();
         }
+
+        /* send response */
+
+        $this->response->send();
     }
 
     /**
      * Initialize controller class
      *
      * @param   string          $name   Controller name
-     * @throws  Exception
+     * @throws  AB_Exception
      * @return  AB_Controller
      */
     private function controllerFactory($name=null)
@@ -148,7 +166,9 @@ class AB_Dispatcher
         if(is_object($controller) == false)
         {
             $this->response->setStatus(AB_Response::STATUS_NOT_FOUND);
-            throw new Exception ("controller " . $name . " not found");
+            throw new AB_Exception(
+                "controller (" . $name . ") not found",
+                E_USER_WARNING);
         }
 
         return $controller;

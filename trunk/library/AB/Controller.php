@@ -124,7 +124,7 @@ class AB_Controller
      * Run controller action
      *
      * @param   string      $name   Action name
-     * @throws  Exception
+     * @throws  AB_Exception
      * @return  void
      */
     public function runAction($name=null)
@@ -146,7 +146,11 @@ class AB_Controller
         else
         {
             $this->response->setStatus(AB_Response::STATUS_NOT_FOUND);
-            throw new Exception ("action " . $action . " not found");
+
+            $message = "action (" . $action . ") not found";
+            $controller = $this->request->getController();
+
+            throw new AB_Exception($message, E_USER_NOTICE, $controller);
         }
     }
 }

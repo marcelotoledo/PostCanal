@@ -103,9 +103,9 @@ class ApplicationMailer
     /**
      * Send email
      *
-     * @param   string      $recipient      Email address
-     * @param   string      $identifier     Message identifier
-     * @throws  Exception
+     * @param   string          $recipient      Email address
+     * @param   string          $identifier     Message identifier
+     * @throws  AB_Exception
      * @return  boolean
      */
     public function send($recipient, $identifier=null)
@@ -131,9 +131,10 @@ class ApplicationMailer
             }
             catch(Exception $exception)
             {
-                $message = "sending mail failed; ";
-                $message.= $exception->getMessage();
-                throw new Exception($message);
+                $message = "sending mail to recipient " . 
+                           "(" . $recipient . ") failed";
+
+                AB_Exception::throwNew($message, E_USER_NOTICE, $exception);
             }
         }
 
@@ -199,7 +200,7 @@ class ApplicationMailer
                        "recipient (" . $recipient . ") and " . 
                        "identifier (" . $identifier . ")";
 
-            AB_Log::write($message, AB_Log::PRIORITY_WARNING);
+            AB_Exception::throwNew($message, E_USER_WARNING);
         }
 
         return $deny ^ true;

@@ -8,7 +8,7 @@ require "../library/AB/Loader.php";
 AB_Loader::register();
 
 
-/* configuration setup */
+/* environment setup */
 
 require "../config/environment.php";
 

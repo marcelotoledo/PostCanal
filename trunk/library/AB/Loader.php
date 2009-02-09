@@ -104,6 +104,7 @@ class AB_Loader
      * Zend loader
      *
      * @param   string  $name   Class name
+     * @throw   AB_Exception
      * @return  void
      */
     public static function loadZend($name)
@@ -123,7 +124,7 @@ class AB_Loader
         }
         else
         {
-            throw new Exception("Zend_Loader not found");
+            throw new AB_Exception("class Zend_Loader not found", E_USER_ERROR);
         }
     }
 }

@@ -71,7 +71,7 @@ try
 catch(Exception $exception)
 {
     echo "failed to configure " . $_controller . "\n";
-    echo $exception . "\n";
+    echo $exception->getMessage() . "\n";
 
     exit(1);
 }
@@ -88,7 +88,7 @@ if(file_exists($template_dir) == false)
     catch(Exception $exception)
     {
         echo "failed to create templates for " . $_controller . "\n";
-        echo $exception . "\n";
+        echo $exception->getMessage() . "\n";
 
         exit(1);
     }

@@ -172,7 +172,6 @@ class AB_Response
     /**
      * Send response headers
      *
-     * @throws  Exception
      * @return  void
      */
     private function sendHeaders()
@@ -192,15 +191,6 @@ class AB_Response
                 header($name . ": " . $header, true);
             }
         }
-        /*
-        else
-        {
-            throw new Exception(
-                "headers already sent in " . 
-                $headers_file . ":" . 
-                $headers_line);
-        }
-        */
     }
 
     /**

@@ -68,9 +68,8 @@ class ApplicationHTTPClient
             }
             catch(Exception $exception)
             {
-                $message = "failed to get response from (" . $url . "); ";
-                $message.= $exception->getMessage();
-                AB_Log::write($message, AB_Log::PRIORITY_INFO);
+                $message = "failed to get response from url (" . $url . ")";
+                AB_Exception::throwNew($message, E_USER_NOTICE, $exception);
             }
         }
 

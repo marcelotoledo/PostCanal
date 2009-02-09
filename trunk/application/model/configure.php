@@ -188,7 +188,7 @@ try
 catch(Exception $exception)
 {
     echo "failed to configure " . $_class . "\n";
-    echo $exception . "\n";
+    echo $exception->getMessage() . "\n";
 
     exit(1);
 }

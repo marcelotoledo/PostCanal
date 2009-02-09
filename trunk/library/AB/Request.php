@@ -76,7 +76,7 @@ class AB_Request
 
         if(empty($arguments[0]) == false)
         {
-            $this->controller = ucfirst($arguments[0]);
+            $this->controller = urlencode(ucfirst($arguments[0]));
         }
 
         /* initialize action */
@@ -85,7 +85,7 @@ class AB_Request
         {
             if(empty($arguments[1]) == false)
             {
-                $this->action = $arguments[1];
+                $this->action = urlencode($arguments[1]);
             }
         }
     }
@@ -163,6 +163,7 @@ class AB_Request
     /**
      * Path from server (tested only with Apache web server)
      *
+     * @throws  AB_Exception
      * @return  string
      */
     public static function pathFromServer()
@@ -171,7 +172,7 @@ class AB_Request
 
         if(empty($request_uri) == true)
         {
-            throw new Exception("request uri is empty");
+            throw new AB_Exception("request uri is empty", E_USER_ERROR);
         }
 
         $path = $request_uri;

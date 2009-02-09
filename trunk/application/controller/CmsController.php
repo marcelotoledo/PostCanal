@@ -70,7 +70,6 @@ class CmsController extends SessionController
         $url_admin_status = self::URL_FAILED;
         $url_admin        = "";
 
-
         /* fix url */
 
         $url = ApplicationHTTPClient::fixURL($url);
@@ -151,7 +150,7 @@ class CmsController extends SessionController
      * @param   string          $url
      * @return  CMSType|null
      */
-    private function discoveryCMSTypeFromURL($url)
+    private static function discoveryCMSTypeFromURL($url)
     {
         $cms_type = null;
 
@@ -176,7 +175,7 @@ class CmsController extends SessionController
      * @param   array           $headers
      * @return  CMSType|null
      */
-    private function discoveryCMSTypeFromHeaders($headers)
+    private static function discoveryCMSTypeFromHeaders($headers)
     {
         $cms_type = null;
         $results = array();
@@ -221,7 +220,7 @@ class CmsController extends SessionController
      * @param   string          $body
      * @return  CMSType|null
      */
-    private function discoveryCMSTypeFromHTML($html)
+    private static function discoveryCMSTypeFromHTML($html)
     {
         $cms_type = null;
         $results = array();

@@ -25,11 +25,6 @@ $registry = AB_Registry::singleton();
 
 /* FRAMEWORK */
 
-/* debug */
-
-$registry->debug = true; /* show exceptions in browser */
-
-
 /* database */
 
 $registry->database->driver = "pgsql";

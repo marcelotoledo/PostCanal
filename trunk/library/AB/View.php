@@ -150,7 +150,7 @@ class AB_View
     /**
      * View render
      *
-     * @throws  Exception
+     * @throws  AB_Exception
      * @return  void
      */
     public function render()
@@ -187,7 +187,9 @@ class AB_View
             }
             else
             {
-                throw new Exception("layout " . $this->layout . " not found");
+                throw new AB_Exception(
+                    "layout (" . $this->layout . ") not found",
+                    E_USER_ERROR);
             }
         }
     }
@@ -195,7 +197,7 @@ class AB_View
     /**
      * View template render
      *
-     * @throws  Exception
+     * @throws  AB_Exception
      * @return  void
      */
     private function renderTemplate()
@@ -208,7 +210,9 @@ class AB_View
         }
         else
         {
-            throw new Exception("template " . $this->template . " not found");
+            throw new AB_Exception(
+                "template (" . $this->template . ") not found",
+                E_USER_ERROR);
         }
     }
 }
