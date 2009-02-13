@@ -415,25 +415,44 @@ abstract class AB_Model
      *
      * @return  PDO
      */
-    public static function getConnection()
+    public static function getConnection($database='default')
     {
         $registry = AB_Registry::singleton();
+        $configuration = $registry->database->{$database};
+
+        if(empty($configuration))
+        {
+            $message = "database->" . $database . " " . 
+                       "does not exists in registry";
+
+            throw new AB_Exception($message, E_USER_ERROR);
+        }
         
-        if(empty($registry->database->connection))
+        $has_connection = false;
+        $connection = $registry->connection->{$database};
+
+        if($connection instanceof PDO)
+        {
+            $has_connection = true;
+        }
+
+        if($has_connection == false)
         {
             try
             {
-                $registry->database->connection = new PDO
+                $connection = new PDO
                 (
-                    $registry->database->driver . ":host=" . 
-                    $registry->database->host . ";dbname=" . 
-                    $registry->database->db, 
-                    $registry->database->username,
-                    $registry->database->password
+                    $configuration->driver . ":host=" . 
+                    $configuration->host . ";dbname=" . 
+                    $configuration->db, 
+                    $configuration->username,
+                    $configuration->password
                 );
 
-                $registry->database->connection->setAttribute(
+                $connection->setAttribute(
                     PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+                $registry->connection->{$database} = $connection;
             }
             catch(PDOException $exception)
             {
@@ -447,10 +466,9 @@ abstract class AB_Model
 
         /* set time zone */
 
-        self::setTimeZone();
+        self::setTimeZone($database);
 
-
-        return $registry->database->connection;
+        return ($regitry->connection->{$database} = $connection);
     }
 
     /**
@@ -458,19 +476,20 @@ abstract class AB_Model
      *
      * @return  void
      */
-    private static function setTimeZone()
+    private static function setTimeZone($database)
     {
         $registry = AB_Registry::singleton();
+        $connection = $registry->connection->{$database};
+        $configuration = $registry->database->{$database};
 
-        if(!empty($registry->database->driver) && 
-           !empty($registry->database->connection) && 
-           !empty($registry->database->timezone))
+        if(!empty($connection) && 
+           !empty($configuration->driver) && 
+           !empty($configuration->timezone))
         {
             try
             {
-                $driver = strtolower($registry->database->driver);
-                $connection = $registry->database->connection;
-                $timezone = $registry->database->timezone;
+                $driver = strtolower($configuration->driver);
+                $timezone = $configuration->timezone;
 
                 if($driver == "pgsql")
                 {

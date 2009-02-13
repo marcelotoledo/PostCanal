@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<environment>
+    <database>
+        <default>
+            <driver>pgsql</driver>
+            <host>localhost</host>
+            <username>blotomate</username>
+            <password>blotomate</password>
+            <db>blotomate</db>
+            <timezone>UTC</timezone>
+        </default>
+    </database>
+    <mailer>
+        <default>
+            <server>smtp.gmail.com</server>
+            <auth>login</auth>
+            <ssl>ssl</ssl>
+            <port>465</port>
+            <sender>
+                <default>
+                    <username>cdz0vfk61y@gmail.com</username>
+                    <password>fdm0juk2gn</password>
+                    <email>cdz0vfk61y@gmail.com</email>
+                </default>
+            </sender>
+            <relay>
+                <time>43200</time>
+                <count>2</count>
+            </relay>
+        </default>
+    </mailer>
+</environment>

@@ -97,7 +97,7 @@ class AB_Dispatcher
         {
             $has_error = true;
             $error = "Exception: " . $exception->getMessage() . "; " . 
-                     "status: " . $exception->getStatus() . "; " . 
+                     "status: " . $exception->getCode() . "; " . 
                      "file: " . $exception->getFile() . "; " . 
                      "line: " . $exception->getLine() . "; " . 
                      "trace: " . $exception->getTraceAsString();

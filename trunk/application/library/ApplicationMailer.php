@@ -56,26 +56,28 @@ class ApplicationMailer
      *
      * @return  void
      */
-    public function __construct()
+    public function __construct($mailer='default', $sender='default')
     {
         $registry = AB_Registry::singleton();
+        $mailer_config = $registry->mailer->{$mailer};
+        $sender_config = $mailer_config->sender->{$sender};
 
-        $server = $registry->mailer->server;
+        $server = $mailer_config->server;
 
         $config = array
         (
-            'auth'     => $registry->mailer->auth,
-            'ssl'      => $registry->mailer->ssl,
-            'port'     => $registry->mailer->port,
-            'username' => $registry->mailer->sender->username,
-            'password' => $registry->mailer->sender->password
+            'auth'     => $mailer_config->auth,
+            'ssl'      => $mailer_config->ssl,
+            'port'     => $mailer_config->port,
+            'username' => $sender_config->username,
+            'password' => $sender_config->password
         );
 
-        $this->from = $registry->mailer->sender->email;
+        $this->from = $sender_config->email;
         $this->transport = new Zend_Mail_Transport_Smtp($server, $config);
         $this->charset = "UTF-8";
-        $this->relay_time = $registry->mailer->relay->time;
-        $this->relay_count = $registry->mailer->relay->count;
+        $this->relay_time = $mailer_config->relay->time;
+        $this->relay_count = $mailer_config->relay->count;
     }
 
     /**

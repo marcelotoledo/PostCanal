@@ -22,17 +22,14 @@ set_include_path (LIBRARY_PATH . PATH_SEPARATOR . get_include_path());
 
 $registry = AB_Registry::singleton();
 
+$xml = new Zend_Config_Xml(BASE_PATH . '/config/environment.xml');
+
 
 /* FRAMEWORK */
 
 /* database */
 
-$registry->database->driver = "pgsql";
-$registry->database->host = "localhost";
-$registry->database->username = "blotomate";
-$registry->database->password = "blotomate";
-$registry->database->db = "blotomate";
-$registry->database->timezone = "UTC";
+$registry->database = $xml->database;
 
 
 /* response headers */
@@ -58,15 +55,7 @@ $registry->session->unauthorized->redirect = BASE_URL;
 
 /* mailer */
 
-$registry->mailer->server = "smtp.gmail.com";
-$registry->mailer->auth = "login";
-$registry->mailer->ssl = "ssl";
-$registry->mailer->port = 465;
-$registry->mailer->sender->username = "cdz0vfk61y@gmail.com";
-$registry->mailer->sender->password = "fdm0juk2gn";
-$registry->mailer->sender->email = "cdz0vfk61y@gmail.com";
-$registry->mailer->relay->time = 43200;
-$registry->mailer->relay->count = 2;
+$registry->mailer = $xml->mailer;
 
 
 /* python */
