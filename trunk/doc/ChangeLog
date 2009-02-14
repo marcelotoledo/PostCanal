@@ -40,3 +40,28 @@ HORAS TRABALHADAS: 2h
 - Criação de plugin de tipo de CMS utilizando python
 
 HORAS TRABALHADAS: 4h
+
+==========
+08/02/2008
+==========
+
+- Inclusao de classe para gerenciamento de Exceptions
+
+HORAS TRABALHADAS: 4h
+
+==========
+13/02/2008
+==========
+
+- Correcao de BUGS
+
+HORAS TRABALHADAS: 2h
+
+==========
+14/02/2008
+==========
+
+- Alteracao do metodo de reconhecimento do tipo de CMS
+- Criacao de tabela para reconhecimento da página de autenticação
+
+HORAS TRABALHADAS: 3h

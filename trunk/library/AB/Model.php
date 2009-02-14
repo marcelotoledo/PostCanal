@@ -431,7 +431,7 @@ abstract class AB_Model
         $has_connection = false;
         $connection = $registry->connection->{$database};
 
-        if($connection instanceof PDO)
+        if(get_class($connection) == "PDO")
         {
             $has_connection = true;
         }
@@ -468,7 +468,7 @@ abstract class AB_Model
 
         self::setTimeZone($database);
 
-        return ($regitry->connection->{$database} = $connection);
+        return $connection;
     }
 
     /**

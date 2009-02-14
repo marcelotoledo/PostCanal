@@ -9,6 +9,14 @@
 class CMSType extends AB_Model
 {
     /**
+     * Discovery constants
+     */
+    const DISCOVERY_URL    = "url";
+    const DISCOVERY_HEADER = "header";
+    const DISCOVERY_HTML   = "html";
+
+
+    /**
      * Table name
      *
      * @var string
@@ -30,7 +38,14 @@ class CMSType extends AB_Model
     protected static $primary_key_name = 'cms_type_id';
 
     /**
-     * CMSType plugin info
+     * Discovery table name
+     *
+     * @var string
+     */
+    protected static $discovery_table_name = 'cms_type_discovery';
+
+    /**
+     * CMSType plugin info (DEPRECATED)
      *
      * @var Object
      */
@@ -78,7 +93,7 @@ class CMSType extends AB_Model
     }
 
     /**
-     * Get CMSType plugin info
+     * Get CMSType plugin info (DEPRECATED)
      *
      * @param   string  $url    Base URL
      * @throws  AB_Exception
@@ -162,8 +177,202 @@ class CMSType extends AB_Model
         return current(self::find(array(self::$primary_key_name => $id)));
     }
 
+    /* CMS TYPE DISCOVERY */
+
     /**
-     * Load CMS Type plugin info
+     * Discovery CMS type
+     *
+     * @param   string          $url
+     * @param   string          $headers
+     * @param   string          $html
+     * @return  CMSType|null
+     */
+    public static function discovery($url, $headers, $html)
+    {
+        $cms_type = null;
+        $rules = array();
+        $types = array();
+
+        /* url */
+
+        $results = self::discoveryByURL($url, $types);
+        $rules = array_merge($rules, array_unique(array_keys($results)));
+        $types = array_unique(array_values($results));
+
+        /* headers */
+
+        $results = self::discoveryByHeaders($headers, $types);
+        $rules = array_merge($rules, array_unique(array_keys($results)));
+        $types = array_unique(array_values($results));
+
+        /* body */
+
+        $results = self::discoveryByHTML($html, $types);
+        $rules = array_merge($rules, array_unique(array_keys($results)));
+        $types = array_unique(array_values($results));
+
+        /* more than one cms type == warning */
+
+        if(count($types) > 1)
+        {
+            $message = "cms types [" . implode(", ", $types) . "] " . 
+                       "have conflicting discovery rules " . 
+                       "[" . implode(", ", $rules) . "]";
+
+            AB_Log::write($message, E_USER_WARNING);
+        }
+
+        $type = current($types);
+
+        if(!empty($type))
+        {
+            $total = self::discoveryTotalRulesForCMS($type);
+
+            /* if all rules passed for current type, then get cms type */
+
+            if(count($rules) >= $total)
+            {
+                $cms_type = self::findByPrimaryKey($type);
+            }
+
+            /* log 'not all rules passed' type */
+
+            else
+            {
+                $message = "cms type (" . $type . ") did not matched " .
+                           "a total of (" . $total . ") discovery rules. " .
+                           "matched only [" . implode(", ", $rules) . "] ";
+
+                AB_Log::write($message, E_USER_WARNING);
+            }
+        }
+
+        return $cms_type;
+    }
+
+    /**
+     * Find discovery rules by URL
+     * 
+     * @param   string      $url
+     * @param   array       $types      CMS type IDs array
+     * @param   boolean     $regexp
+     * @return  array
+     */
+    protected static function discoveryByURL(
+        $url, $types=array(), $regexp=true)
+    {
+        return self::discoveryByNameValue(
+            self::DISCOVERY_URL, $url, $types, $regexp);
+    }
+
+    /**
+     * Find discovery rules by Headers
+     * 
+     * @param   array       $headers
+     * @param   array       $types      CMS type IDs array
+     * @param   boolean     $regexp
+     * @return  array
+     */
+    protected static function discoveryByHeaders(
+        $headers, $types=array(), $regexp=true)
+    {
+        $results = array();
+
+        foreach($headers as $name => $value)
+        {
+            if(!empty($value))
+            {
+                if(is_array($value)) $value = implode("; ", $value);
+
+                $header = strtolower($name . ": " . $value);
+
+                $results = array_merge(
+                    $results, self::discoveryByNameValue(
+                        self::DISCOVERY_HEADER, $header, $types, $regexp));
+            }
+        }
+
+        return $results;
+    }
+
+    /**
+     * Find discovery rules by HTML
+     * 
+     * @param   string      $html
+     * @param   array       $types      CMS type IDs array
+     * @param   boolean     $regexp
+     * @return  array
+     */
+    protected static function discoveryByHTML(
+        $html, $types=array(), $regexp=true)
+    {
+        return self::discoveryByNameValue(
+           self::DISCOVERY_HTML, $html, $types, $regexp);
+    }
+
+    /**
+     * Find discovery rules by name [and value [regexp]]
+     *
+     * @param   string  $name
+     * @param   string  $value
+     * @param   array   $types      CMS type IDs array
+     * @param   boolean $regexp
+     *
+     * @return  array
+     */
+    protected static function discoveryByNameValue(
+        $name, $value=null, $types=array(), $regexp=false)
+    {
+        $sql = "SELECT cms_type_discovery_id, cms_type_id " .
+               "FROM " . self::$discovery_table_name . " " .
+               "WHERE name = ? ";
+
+        $conditions = array();
+        $conditions[] = $name;
+
+        if(!empty($value)) 
+        {
+            $sql.= " AND ? " . ($regexp ? '~*' : '=') . " value ";
+            $conditions[] = $value;
+        }
+
+        if(count($types) > 0)
+        {
+            $sql.= " AND cms_type_id IN (" . implode(", ", $types) . ") ";
+        }
+
+        $sql.= " ORDER BY cms_type_id ASC";
+
+        $results = array();
+
+        foreach(self::select($sql, $conditions) as $i)
+        {
+            $results[$i->cms_type_discovery_id] = $i->cms_type_id;
+        }
+
+        return $results;
+    }
+
+    /**
+     * Total rules for a CMS type
+     *
+     * @param   integer     $type       CMS type ID
+     * @return  integer                 Total
+     */
+    protected static function discoveryTotalRulesForCMS($type)
+    {
+        $sql = "SELECT COUNT(*) AS total FROM cms_type_discovery " . 
+               "WHERE cms_type_id = ?";
+
+        $result = current(self::select($sql, array($type)));
+
+        return is_object($result) ? $result->total : 0;
+    }
+
+    /* CMS TYPE PLUGIN */
+
+    /**
+     * Load CMS Type plugin info (DEPRECATED)
      * 
      * @param   string          $name       Plugin Name
      * @oaram   string          $version    Plugin Version

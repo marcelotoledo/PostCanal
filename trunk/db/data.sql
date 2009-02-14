@@ -1,11 +1,3 @@
-/* base */
-
-INSERT INTO channel_status (channel_status_id, error_level, label) VALUES (11, 0, 'channel_ok');
-INSERT INTO channel_status (channel_status_id, error_level, label) VALUES (21, 2, 'channel_link_3xx');
-INSERT INTO channel_status (channel_status_id, error_level, label) VALUES (22, 2, 'channel_link_4xx');
-INSERT INTO channel_status (channel_status_id, error_level, label) VALUES (23, 2, 'channel_link_5xx');
-INSERT INTO channel_status (channel_status_id, error_level, label) VALUES (41, 1, 'channel_no_itens');
-
 -- INSERT INTO cms_status (cms_status_id, error_level, label) VALUES (11, 0, 'CMS_OK');
 -- INSERT INTO cms_status (cms_status_id, error_level, label) VALUES (21, 2, 'URL_BASE_3XX');
 -- INSERT INTO cms_status (cms_status_id, error_level, label) VALUES (22, 2, 'URL_BASE_4XX');
@@ -28,5 +20,11 @@ INSERT INTO user_information (user_profile_id) VALUES (CURRVAL('user_profile_seq
 /* cms type */
 
 INSERT INTO cms_type (name, version, enabled) VALUES ('WordPress', 'WordPress.com', true);
--- INSERT INTO cms_type_discovery (cms_type_id, name, value) VALUES (CURRVAL('cms_type_seq'), 'url', '^http:\\/\\/.+\\.wordpress\\.com$'); -- invalid (.+).wordpress.com do not return 404 response status
-INSERT INTO cms_type_discovery (cms_type_id, name, value) VALUES (CURRVAL('cms_type_seq'), 'html', '<meta[^>]+(content)+[^>]+(wordpress\.com)+[^>]+>');
+
+INSERT INTO cms_type_discovery (cms_type_id, name, value) VALUES (CURRVAL('cms_type_seq'), 'url', '^http:\\/\\/.+\\.wordpress\\.com$');
+INSERT INTO cms_type_discovery (cms_type_id, name, value) VALUES (CURRVAL('cms_type_seq'), 'html', '<meta[^>]+(content)+[^>]+(wordpress.com)+[^>]+>');
+
+INSERT INTO cms_type_default_attribute (cms_type_id, name, value) VALUES (CURRVAL('cms_type_seq'), 'manager_url', '/wp-admin');
+INSERT INTO cms_type_default_attribute (cms_type_id, name, value) VALUES (CURRVAL('cms_type_seq'), 'manager_form_action_url', '/wp-login.php');
+INSERT INTO cms_type_default_attribute (cms_type_id, name, value) VALUES (CURRVAL('cms_type_seq'), 'manager_form_input_username', 'user_login');
+INSERT INTO cms_type_default_attribute (cms_type_id, name, value) VALUES (CURRVAL('cms_type_seq'), 'manager_form_input_password', 'user_pass');

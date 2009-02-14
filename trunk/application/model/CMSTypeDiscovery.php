@@ -147,15 +147,80 @@ class CMSTypeDiscovery extends AB_Model
     }
 
     /**
+     * Find CMSTypeDiscovery by URL
+     * 
+     * @param   string      $url
+     * @param   array       $types
+     * @param   boolean     $regexp
+     * @return  array
+     */
+    public static function findByURL($url, 
+                                     $types=array(),
+                                     $regexp=true)
+    {
+        return self::findByNameValue(self::NAME_URL, $url, $types, $regexp);
+    }
+
+    /**
+     * Find CMSTypeDiscovery by Headers
+     * 
+     * @param   array       $headers
+     * @param   array       $types
+     * @param   boolean     $regexp
+     * @return  array
+     */
+    public static function findByHeaders($headers, 
+                                         $types=array(),
+                                         $regexp=true)
+    {
+        $results = array();
+
+        foreach($headers as $name => $value)
+        {
+            if(!empty($value))
+            {
+                if(is_array($value)) $value = implode("; ", $value);
+
+                $header = strtolower($name . ": " . $value);
+
+                $results = array_merge(
+                    $results, self::findByNameValue(
+                        self::NAME_HEADER, $header, $types, $regexp));
+            }
+        }
+
+        return $results;
+    }
+
+    /**
+     * Find CMSTypeDiscovery by HTML
+     * 
+     * @param   string      $html
+     * @param   array       $types
+     * @param   boolean     $regexp
+     * @return  array
+     */
+    public static function findByHTML($html, 
+                                      $types=array(),
+                                      $regexp=true)
+    {
+        return self::findByNameValue(self::NAME_HTML, $html, $types, $regexp);
+    }
+
+    /**
      * Find CMSTypeDiscovery by name [and value [regexp]]
      *
      * @param   string  $name
      * @param   string  $value
+     * @param   array   $discovery
      * @param   boolean $regexp
      *
      * @return  array
      */
-    public static function findByNameValue($name, $value=null, $regexp=false)
+    public static function findByNameValue($name, 
+                                           $value=null, 
+                                           $types=array(),
+                                           $regexp=false)
     {
         $sql = " SELECT * FROM " . self::$table_name;
         $sql.= " WHERE name = ? ";
@@ -168,8 +233,29 @@ class CMSTypeDiscovery extends AB_Model
             $conditions[] = $value;
         }
 
+        if(count($types) > 0)
+        {
+            $sql.= " AND cms_type_id IN (" . implode(", ", $types) . ") ";
+        }
+
         $sql.= " ORDER BY cms_type_id ASC";
-        
-        return self::_selectModel($sql, array_values($conditions), get_class());
+
+        return self::_selectModel($sql, $conditions, get_class());
+    }
+
+    /**
+     * Total rules for a CMS type
+     *
+     * @param   integer     $type       CMS Type ID
+     * @return  integer                 Total
+     */
+    public static function totalRulesForCMS($type)
+    {
+        $sql = "SELECT COUNT(*) AS total FROM cms_type_discovery " . 
+               "WHERE cms_type_id = ?";
+
+        $result = current(self::select($sql, array($type)));
+
+        return is_object($result) ? $result->total : 0;
     }
 }

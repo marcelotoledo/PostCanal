@@ -9,13 +9,20 @@
 class ApplicationHTTPClient
 {
     /**
-     * status constants 
+     * Status constants 
      */
     const STATUS_OK     = "status_ok";
     const STATUS_FAILED = "status_failed";
     const STATUS_3XX    = "status_3xx";
     const STATUS_4XX    = "status_4xx";
     const STATUS_5XX    = "status_5xx";
+
+    
+    /**
+     * Overflow constants
+     */
+    const MAX_HEADERS     = 256;
+    const MAX_BODY_LENGHT = 5242880; // 5242880 bytes = 5Mb
 
 
     /**
@@ -125,6 +132,20 @@ class ApplicationHTTPClient
             $headers = $this->response->getHeaders();
         }
 
+        $total = count($headers);
+
+        if($total > self::MAX_HEADERS)
+        {
+            $headers = array_slice($headers, 0, self::MAX_HEADERS, true);
+
+            $message = "the response has a total of " . 
+                       "(" . $total . ") headers " .
+                       "and was reduced to ";
+                       "(" . self::MAX_HEADERS . ") headers";
+
+            AB_Log::write($message, E_USER_WARNING);
+        }
+
         return $headers;
     }
 
@@ -140,6 +161,19 @@ class ApplicationHTTPClient
         if(is_object($this->response))
         {
             $body = $this->response->getBody();
+            $lenght = strlen($body);
+
+            if($lenght > self::MAX_BODY_LENGHT)
+            {
+                $body = substr($body, 0, self::MAX_BODY_LENGHT);
+
+                $message = "the response body has a size of " . 
+                           "(" . $lenght . ") bytes " .
+                           "and was truncated to ";
+                           "(" . self::MAX_BODY_LENGHT . ") bytes";
+
+                AB_Log::write($message, E_USER_WARNING);
+            }
         }
 
         return $body;
@@ -163,19 +197,5 @@ class ApplicationHTTPClient
         $resource = empty($matches[6]) ? ""        : $matches[5] . $matches[6];
 
         return $protocol . $address . $port . $resource;
-    }
-
-    /**
-     * Clean HTML
-     * 
-     * @param   string      $html
-     * @return  string
-     */
-    public static function cleanHTML($html)
-    {
-        $html = ereg_replace("\n", "", $html);
-        $html = ereg_replace("[[:space:]]+", " ", $html);
-
-        return $html;
     }
 }

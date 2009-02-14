@@ -78,31 +78,41 @@ class CmsController extends SessionController
 
         $client = new ApplicationHTTPClient();
         $client->request($url);
-        $url_status = $client->getStatus();
 
-        /* get cms type */
+        /* log requested url */
+
+        $message = "url (" . $url . ") requested by ";
+
+        foreach(array('HTTP_CLIENT_IP', 
+                      'HTTP_X_FORWARDED_FOR', 
+                      'REMOTE_ADDR') as $i)
+        {
+            if(array_key_exists($i, $_SERVER))
+            {
+                $message.= strtolower($i) . " (" . $_SERVER[$i] . ") ";
+            }
+        }
+
+        if(!empty($this->user_profile_id)) # TODO bugfix
+        {
+            $message.= "user profile (" . $this->user_profile_id . ")";
+        }
+
+        AB_Log::write($message, 
+                      E_USER_NOTICE,
+                      $this->getRequestController(),
+                      $this->getRequestAction());
+
+        /* discovery cms type */
+
+        $url_status = $client->getStatus();
 
         if($url_status == ApplicationHTTPClient::STATUS_OK)
         {
-            /* discovery CMS type from URL */
-
-            $cms_type = self::discoveryCMSTypeFromURL($url);
-
-            /* discovery CMS type from headers */
-
-            if(!is_object($cms_type))
-            {
-                $cms_type = self::discoveryCMSTypeFromHeaders(
-                    $client->getHeaders());
-            }
-
-            /* discovery CMS type from body */
-
-            if(!is_object($cms_type))
-            {
-                $cms_type = self::discoveryCMSTypeFromHTML(
-                    $client->getBody());
-            }
+            $cms_type = CMSType::discovery(
+                $url, 
+                $client->getHeaders(), 
+                self::cleanHTML($client->getBody()));
         }
 
         if(is_object($cms_type))
@@ -117,19 +127,19 @@ class CmsController extends SessionController
             $cms_type_name = $cms_type->name;
             $cms_type_version = $cms_type->version;
 
-            $info = $cms_type->getPluginInfo($url);
+            # $info = $cms_type->getPluginInfo($url);
 
-            /* get url admin */
+            # /* get url admin */
 
-            if(array_key_exists('url_admin', $info))
-            {
-                $url_admin = $info['url_admin'];
-            }
+            # if(array_key_exists('url_admin', $info))
+            # {
+                # $url_admin = $info['url_admin'];
+            # }
 
-            /* get response from url_admin */
+            # /* get response from url_admin */
 
-            $client->request($url_admin);
-            $url_admin_status = $client->getStatus();
+            # $client->request($url_admin);
+            # $url_admin_status = $client->getStatus();
         }
 
 
@@ -145,121 +155,18 @@ class CmsController extends SessionController
     }
 
     /**
-     * Discovery CMS type from url
-     *
-     * @param   string          $url
-     * @return  CMSType|null
+     * Clean HTML (~-25%)
+     * 
+     * @param   string      $html
+     * @return  string
      */
-    private static function discoveryCMSTypeFromURL($url)
+    private static function cleanHTML($html)
     {
-        $cms_type = null;
+        $html = ereg_replace("\r", "", $html);              // no returns
+        $html = ereg_replace("\n", "", $html);              // no newlines
+        $html = ereg_replace("[[:space:]]+", " ", $html);   // no spaces
+        $html = ereg_replace(">[^<]*<", "><", $html);       // tags only
 
-        /* test url value */
-
-        $discovery = current(CMSTypeDiscovery::findByNameValue(
-            CMSTypeDiscovery::NAME_URL,
-            $url, true
-        ));
-
-        if(is_object($discovery))
-        {
-            $cms_type = CMSType::findByPrimaryKey($discovery->cms_type_id);
-        }
-
-        return $cms_type;
-    }
-
-    /**
-     * Discovery CMS type from Headers
-     *
-     * @param   array           $headers
-     * @return  CMSType|null
-     */
-    private static function discoveryCMSTypeFromHeaders($headers)
-    {
-        $cms_type = null;
-        $results = array();
-
-        foreach($headers as $name => $value)
-        {
-            $header = strtolower($name . ": " . $value);
-
-            /* test header value */
-
-            $discovery = CMSTypeDiscovery::findByNameValue(
-                CMSTypeDiscovery::NAME_HEADER,
-                $header, true
-            );
-
-            for($i=0; $i<count($discovery); $i++)
-            {
-                $cms_type_id = $discovery[$i]->cms_type_id;
-
-                array_key_exists($cms_type_id, $results) ? 
-                    $results[$cms_type_id]++             :
-                    $results[$cms_type_id] = 1           ;
-            }
-        }
-
-        /* top ponctuated cms type come first */
-
-        arsort($results);
-        $cms_type_id = key($results);
-
-        if(!empty($cms_type_id))
-        {
-            $cms_type = CMSType::findByPrimaryKey($cms_type_id);
-        }
-
-        return $cms_type;
-    }
-
-    /**
-     * Discovery CMS type from HTML
-     *
-     * @param   string          $body
-     * @return  CMSType|null
-     */
-    private static function discoveryCMSTypeFromHTML($html)
-    {
-        $cms_type = null;
-        $results = array();
-
-        /* get all html rules */
-
-        $discovery = CMSTypeDiscovery::findByNameValue(
-            CMSTypeDiscovery::NAME_HTML
-        );
-
-        /* clean html */
-
-        $html = ApplicationHTTPClient::cleanHTML($html);
-
-        /* test html */
-
-        for($i=0; $i<count($discovery); $i++)
-        {
-            $cms_type_id = $discovery[$i]->cms_type_id;
-            $query = $discovery[$i]->value;
-
-            if(eregi($query, $html) > 0)
-            {
-                array_key_exists($cms_type_id, $results) ? 
-                    $results[$cms_type_id]++             :
-                    $results[$cms_type_id] = 1           ;
-            }
-        }
-
-        /* top ponctuated cms type come first */
-
-        arsort($results);
-        $cms_type_id = key($results);
-
-        if(!empty($cms_type_id))
-        {
-            $cms_type = CMSType::findByPrimaryKey($cms_type_id);
-        }
-
-        return $cms_type;
+        return $html;
     }
 }

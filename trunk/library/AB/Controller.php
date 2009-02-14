@@ -45,6 +45,26 @@ class AB_Controller
     }
 
     /**
+     * Get request controller
+     *
+     * @return  string
+     */
+    public function getRequestController()
+    {
+        return $this->request->getController();
+    }
+
+    /**
+     * Get request action
+     *
+     * @return  string
+     */
+    public function getRequestAction()
+    {
+        return $this->request->getAction();
+    }
+
+    /**
      * Get request parameter
      *
      * @param   string  $name

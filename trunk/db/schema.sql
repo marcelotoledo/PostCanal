@@ -17,6 +17,8 @@ DROP TABLE IF EXISTS user_profile;
 DROP SEQUENCE IF EXISTS user_profile_seq;
 DROP TABLE IF EXISTS cms_type_discovery;
 DROP SEQUENCE IF EXISTS cms_type_discovery_seq;
+DROP TABLE IF EXISTS cms_type_default_attribute;
+DROP SEQUENCE IF EXISTS cms_type_default_attribute_seq;
 DROP TABLE IF EXISTS cms_type;
 DROP SEQUENCE IF EXISTS cms_type_seq;
 DROP TABLE IF EXISTS application_log;
@@ -24,7 +26,8 @@ DROP SEQUENCE IF EXISTS application_log_seq;
 DROP TABLE IF EXISTS application_mailer_relay;
 DROP SEQUENCE IF EXISTS application_mailer_relay_seq;
 
-/* base */
+
+/* log */
 
 CREATE SEQUENCE application_log_seq;
 CREATE TABLE application_log
@@ -32,9 +35,14 @@ CREATE TABLE application_log
     application_log_id integer NOT NULL DEFAULT nextval('application_log_seq'),
     priority integer NOT NULL DEFAULT 0,
     message text NOT NULL DEFAULT '',
+    controller character varying(100) NOT NULL DEFAULT '',
+    action character varying(100) NOT NULL DEFAULT '',
     created_at timestamp without time zone NOT NULL DEFAULT NOW(),
     CONSTRAINT application_log_pk PRIMARY KEY (application_log_id)
 );
+
+
+/* mailer */
 
 CREATE SEQUENCE application_mailer_relay_seq;
 CREATE TABLE application_mailer_relay
@@ -45,6 +53,7 @@ CREATE TABLE application_mailer_relay
     identifier_md5 character varying(32) DEFAULT NULL,
     created_at timestamp without time zone NOT NULL DEFAULT NOW()
 );
+
 
 CREATE TABLE channel_status
 (
@@ -64,6 +73,7 @@ CREATE TABLE cms_status
     CONSTRAINT cms_status_id_unique UNIQUE (cms_status_id)
 );
 
+
 /* cms type */
 
 CREATE SEQUENCE cms_type_seq;
@@ -72,6 +82,8 @@ CREATE TABLE cms_type
     cms_type_id integer NOT NULL DEFAULT nextval('cms_type_seq'),
     name character varying(50) NOT NULL,
     version character varying(50) NOT NULL,
+    default_manager_url character varying(200) DEFAULT NULL,
+    default_manager_form_action_url character varying(200) DEFAULT NULL,
     maintenance boolean NOT NULL DEFAULT false,
     enabled boolean NOT NULL DEFAULT false,
     CONSTRAINT cms_type_pk PRIMARY KEY (cms_type_id),
@@ -90,6 +102,21 @@ CREATE TABLE cms_type_discovery
     CONSTRAINT cms_type_fk FOREIGN KEY (cms_type_id) 
         REFERENCES cms_type (cms_type_id) ON DELETE CASCADE
 );
+
+CREATE SEQUENCE cms_type_default_attribute_seq;
+CREATE TABLE cms_type_default_attribute
+(
+    cms_type_default_attribute_id integer NOT NULL
+        DEFAULT NEXTVAL('cms_type_default_attribute_seq'),
+    cms_type_id integer NOT NULL,
+    name character varying(100) NOT NULL,
+    value character varying(200) NOT NULL,
+    CONSTRAINT cms_type_default_attribute_pk 
+        PRIMARY KEY (cms_type_default_attribute_id),
+    CONSTRAINT cms_type_fk FOREIGN KEY (cms_type_id) 
+        REFERENCES cms_type (cms_type_id) ON DELETE CASCADE
+);
+
 
 /* aggregator */
 
@@ -123,6 +150,7 @@ CREATE TABLE aggregator_item
     CONSTRAINT aggregator_channel_fk FOREIGN KEY (aggregator_channel_id) 
         REFERENCES aggregator_channel (aggregator_channel_id) ON DELETE CASCADE
 );
+
 
 /* user */
 
