@@ -266,7 +266,7 @@ class CMSType extends AB_Model
                 $message = "type (" . $type . ") did not matched " .
                            "a total of (" . $total . ") discovery rules. " .
                            "matched only {" . implode(", ", $rules) . "}";
-                $attributes = array('class' => __CLASS__, 'method' => __METHOD__);
+                $attributes = array('method' => __METHOD__);
                 AB_Log::write($message, E_USER_WARNING, $attributes);
             }
         }
