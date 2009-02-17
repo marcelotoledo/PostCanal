@@ -10,7 +10,7 @@ $(document).ready(function() { var active_request = false;  function showSpinner
  name = $("input[@name='name']").val(); pwdchange = $("input[@name='pwdchange']").val(); current_password = $("input[@name='current_password']").val(); new_password = $("input[@name='new_password']").val(); new_password_confirm = $("input[@name='new_password_confirm']").val(); if(pwdchange == "yes" && (current_password == "" || new_password == "" || new_password_confirm == "")) { $.ab_alert("Preencha o formulário corretamente"); return null; }
  if(pwdchange == "yes" && new_password != new_password_confirm) { $.ab_alert("Senha e confirmação NÃO CORRESPONDEM"); return null; }
  parameters = { name: name, pwdchange: pwdchange, current_password: current_password, new_password: new_password, new_password_confirm: new_password_confirm }
- $.ajax ({ type: "POST", url: "<?php $this->url('profile', 'edit') ?>", dataType: "text", data: parameters, beforeSend: function () { active_request = true; showSpinner(); }
+ $.ajax ({ type: "POST", url: "<?php $this->url('profile', 'edit') ?>", dataType: "json", data: parameters, beforeSend: function () { active_request = true; showSpinner(); }
 , complete: function () { active_request = false; setPasswordChange(false); hideSpinner(); }
 , success: function (data) { if(data == "edit_save_ok") { $.ab_alert("Perfil alterado com sucesso"); }
  else if(data == "edit_save_failed") { $.ab_alert("Alteração do perfil FALHOU!"); }

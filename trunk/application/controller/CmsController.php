@@ -6,20 +6,20 @@
  * @category    Blotomate
  * @package     Controller
  */
-class CmsController extends SessionController
+class CmsController extends AbstractController
 {
     /**
      * CMS type response constants
      */
-    const CMS_TYPE_OK          = "cms_type_ok";
-    const CMS_TYPE_FAILED      = "cms_type_failed";
-    const CMS_TYPE_MAINTENANCE = "cms_type_maintenance";
+    const CMS_TYPE_OK          = "ok";
+    const CMS_TYPE_FAILED      = "failed";
+    const CMS_TYPE_MAINTENANCE = "maintenance";
 
     /**
      * Manager html check status response constants
      */
-    const M_H_STATUS_OK     = "manager_html_status_ok";
-    const M_H_STATUS_FAILED = "manager_html_status_failed";
+    const M_H_STATUS_OK     = "ok";
+    const M_H_STATUS_FAILED = "failed";
 
 
     /**
@@ -181,7 +181,7 @@ class CmsController extends SessionController
 
         /* send response */
 
-        $this->setViewData(Zend_Json::encode(array(
+        $this->setViewDataJson(array(
             'url_status'          => $url_status,
             'url'                 => $url,
             'cms_type_status'     => $cms_type_status,
@@ -190,7 +190,7 @@ class CmsController extends SessionController
             'manager_url_status'  => $manager_url_status,
             'manager_url'         => $manager_url,
             'manager_html_status' => $manager_html_status
-        )));
+        ));
     }
 
     /**

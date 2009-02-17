@@ -28,7 +28,7 @@ class IndexController extends AB_Controller
      */
     public function indexAction()
     {
-        if(SessionController::sessionAlive())
+        if(AbstractController::sessionAlive())
         {
             $this->setResponseRedirect(AB_Request::url("dashboard"));
         }

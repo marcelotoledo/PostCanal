@@ -16,7 +16,7 @@ class DefaultHelper extends AB_Helper
      */
     public function sessionAttribute($attribute)
     {
-        $session = SessionController::recoverSession();
+        $session = AbstractController::recoverSession();
         $value = null;
 
         if(is_object($session))

@@ -159,7 +159,7 @@ $(document).ready(function()
         ({
             type: "POST",
             url: "<?php $this->url('cms', 'addSave') ?>",
-            dataType: "text",
+            dataType: "json",
             data: parameters,
             beforeSend: function ()
             {

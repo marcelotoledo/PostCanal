@@ -6,7 +6,7 @@
  * @category    Blotomate
  * @package     Controller
  */
-class DashboardController extends SessionController
+class DashboardController extends AbstractController
 {
     /**
      * Dashboard controller constructor

@@ -6,7 +6,7 @@
  * @category    Blotomate
  * @package     Controller
  */
-class ProfileController extends SessionController
+class ProfileController extends AbstractController
 {
     /**
      * Request/Response constants
@@ -81,7 +81,7 @@ class ProfileController extends SessionController
         $email = $this->getRequestParameter('email');
         $password = $this->getRequestParameter('password');
 
-        $this->setViewData(self::LOGIN_INVALID);
+        $this->setViewDataJson(self::LOGIN_INVALID);
 
         /* check for existing profile */
 
@@ -104,7 +104,7 @@ class ProfileController extends SessionController
                 $this->user_profile_login_email = $profile->login_email;
                 $this->sessionLock();
 
-                $this->setViewData(self::LOGIN_OK);
+                $this->setViewDataJson(self::LOGIN_OK);
 
                 $attributes = array ('method' => __METHOD__,
                                      'user_profile_id' => $this->user_profile_id);
@@ -116,7 +116,7 @@ class ProfileController extends SessionController
 
             else
             {
-                $this->setViewData(self::LOGIN_REGISTER_UNCONFIRMED);
+                $this->setViewDataJson(self::LOGIN_REGISTER_UNCONFIRMED);
             }
         }
     }
@@ -130,7 +130,7 @@ class ProfileController extends SessionController
     {
         $this->setViewLayout(null);
         $this->setViewTemplate(null);
-        $this->setViewData(self::REGISTER_FAILED);
+        $this->setViewDataJson(self::REGISTER_FAILED);
 
         $email = $this->getRequestParameter('email');
         $password = $this->getRequestParameter('password');
@@ -142,11 +142,11 @@ class ProfileController extends SessionController
 
         if(empty($email) || empty($password) || empty($confirm))
         {
-            $this->setViewData(self::REGISTER_INCOMPLETE);
+            $this->setViewDataJson(self::REGISTER_INCOMPLETE);
         }
         elseif(!empty($password) && !empty($confirm) && $password != $confirm)
         {
-            $this->setViewData(self::REGISTER_PASSWORD_NOT_MATCHED);
+            $this->setViewDataJson(self::REGISTER_PASSWORD_NOT_MATCHED);
         }
         else
         {
@@ -185,7 +185,7 @@ class ProfileController extends SessionController
                     $profile->save();
                 }
 
-                $this->setViewData(self::REGISTER_OK);
+                $this->setViewDataJson(self::REGISTER_OK);
             }
             catch(AB_Exception $exception)
             {
@@ -228,7 +228,7 @@ class ProfileController extends SessionController
     {
         $this->setViewLayout(null);
         $this->setViewTemplate(null);
-        $this->setViewData(self::RECOVERY_OK);
+        $this->setViewDataJson(self::RECOVERY_OK);
 
         $email = $this->getRequestParameter('email');
         $profile = UserProfile::findByEmail($email);
@@ -245,7 +245,7 @@ class ProfileController extends SessionController
             }
             catch(AB_Exception $exception)
             {
-                $this->setViewData(self::RECOVERY_INSTRUCTION_FAILED);
+                $this->setViewDataJson(self::RECOVERY_INSTRUCTION_FAILED);
 
                 $message = "failed to send recovery instructions";
                 $data = array('method' => __METHOD__,
@@ -264,7 +264,7 @@ class ProfileController extends SessionController
             }
             catch(AB_Exception $exception)
             {
-                $this->setViewData(self::RECOVERY_INSTRUCTION_FAILED);
+                $this->setViewDataJson(self::RECOVERY_INSTRUCTION_FAILED);
 
                 $message = "failed to send dummy instructions " . 
                            "to email (" . $email . ")";
@@ -377,7 +377,7 @@ throw new UnexpectedValueException("See TODO in " . __FILE__ .":". __LINE__);
     {
         $this->setViewLayout(null);
         $this->setViewTemplate(null);
-        $this->setViewData(self::PASSWORD_CHANGE_FAILED);
+        $this->setViewDataJson(self::PASSWORD_CHANGE_FAILED);
 
         $uid = $this->getRequestParameter('uid');
         $password = $this->getRequestParameter('password');
@@ -403,13 +403,13 @@ throw new UnexpectedValueException("See TODO in " . __FILE__ .":". __LINE__);
                                          'user_profile_id' => $profile->user_profile_id);
                     self::notice("password changed", $attributes);
 
-                    $this->setViewData(self::PASSWORD_CHANGE_OK);
+                    $this->setViewDataJson(self::PASSWORD_CHANGE_OK);
                     self::sendPasswordNotice($profile);
                     $this->sessionDestroy();
                 }
                 else
                 {
-                    $this->setViewData(self::PASSWORD_CHANGE_NOT_MATCHED);
+                    $this->setViewDataJson(self::PASSWORD_CHANGE_NOT_MATCHED);
                 }
             }
         }
@@ -470,7 +470,7 @@ throw new UnexpectedValueException("See TODO in " . __FILE__ .":". __LINE__);
     {
         $this->setViewLayout(null);
         $this->setViewTemplate(null);
-        $this->setViewData(self::EDIT_SAVE_FAILED);
+        $this->setViewDataJson(self::EDIT_SAVE_FAILED);
 
         if(!self::sessionAlive())
         {
@@ -502,13 +502,13 @@ throw new UnexpectedValueException("See TODO in " . __FILE__ .":". __LINE__);
         {
             if($profile->login_password_md5 != md5($current_password))
             {
-                $this->setViewData(self::EDIT_SAVE_WRONG_PASSWORD);
+                $this->setViewDataJson(self::EDIT_SAVE_WRONG_PASSWORD);
                 return null;
             }
 
             if($new_password != $new_password_confirm)
             {
-                $this->setViewData(self::EDIT_SAVE_PASSWORD_NOT_MATCHED);
+                $this->setViewDataJson(self::EDIT_SAVE_PASSWORD_NOT_MATCHED);
                 return null;
             }
 
@@ -532,7 +532,7 @@ throw new UnexpectedValueException("See TODO in " . __FILE__ .":". __LINE__);
                 $this->user_profile_login_email = $profile->login_email;
                 $this->sessionLock();
 
-                $this->setViewData(self::EDIT_SAVE_OK);
+                $this->setViewDataJson(self::EDIT_SAVE_OK);
             }
             catch(AB_Exception $exception)
             {
@@ -558,7 +558,7 @@ throw new UnexpectedValueException("See TODO in " . __FILE__ .":". __LINE__);
         try
         {
             $information->save();
-            $this->setViewData(self::EDIT_SAVE_OK);
+            $this->setViewDataJson(self::EDIT_SAVE_OK);
         }
         catch(AB_Exception $exception)
         {

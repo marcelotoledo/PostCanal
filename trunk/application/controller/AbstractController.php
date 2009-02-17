@@ -1,12 +1,12 @@
 <?php
 
 /**
- * Session controller class
+ * Abstract controller class
  * 
  * @category    Blotomate
  * @package     Controller
  */
-abstract class SessionController extends AB_Controller
+abstract class AbstractController extends AB_Controller
 {
     /**
      * Session
@@ -25,11 +25,31 @@ abstract class SessionController extends AB_Controller
      */
     public function __construct($request, $response)
     {
+        /* session start */
+
+        Zend_Session::start();
+
         parent::__construct($request, $response);
     }
 
+    /* JSON */
+
+    /**
+     * Set view data encoded on Json format
+     *
+     * @param   mixed   $data
+     * @return  void
+     */
+    public function setViewDataJson($data)
+    {
+        parent::setViewData(Zend_Json::encode($data));
+    }
+
+    /* SESSION */
+
     /**
      * Get overloading
+     * Get session attribute
      *
      * @param   string  $name
      * @return  mixed
@@ -49,6 +69,7 @@ abstract class SessionController extends AB_Controller
 
     /**
      * Set overloading
+     * Set session attribute
      *
      * @param   string  $name
      * @param   mixed   $value
