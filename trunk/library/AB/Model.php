@@ -5,6 +5,7 @@
  * 
  * @category    Blotomate
  * @package     AB
+ * @author      Rafael Castilho <rafael@castilho.biz>
  */
 abstract class AB_Model
 {

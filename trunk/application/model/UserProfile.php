@@ -5,6 +5,7 @@
  * 
  * @category    Blotomate
  * @package     Model
+ * @author      Rafael Castilho <rafael@castilho.biz>
  */
 class UserProfile extends AB_Model
 {

@@ -5,6 +5,7 @@
  * 
  * @category    Blotomate
  * @package     Model
+ * @author      Rafael Castilho <rafael@castilho.biz>
  */
 class ApplicationLog extends AB_Model
 {

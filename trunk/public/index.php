@@ -1,6 +1,11 @@
 <?php
 
-/* BLOTOMATE BOOTSTRAP */
+/**
+ * Bootstrap
+ *
+ * @category    Blotomate
+ * @author      Rafael Castilho <rafael@castilho.biz>
+ */
 
 /* autoloader setup */
 

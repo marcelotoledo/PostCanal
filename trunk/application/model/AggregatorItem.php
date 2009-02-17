@@ -5,6 +5,7 @@
  * 
  * @category    Blotomate
  * @package     Model
+ * @author      Rafael Castilho <rafael@castilho.biz>
  */
 class AggregatorItem extends AB_Model
 {

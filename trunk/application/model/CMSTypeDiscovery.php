@@ -1,20 +1,19 @@
 <?php
 
-/* CMS type discovery examples:
-
-        NAME                VALUE
-
-        url                 http:\/\/.+\.wordpress\.com
-        header              server:\ wordpress\.com
-        html                div.+id.+wrapper
-        html                <meta[^>]+(content)+[^>]+(wordpress\.com)+[^>]+>
-*/
-
 /**
  * CMSTypeDiscovery model class (DEPRECATED)
  * 
  * @category    Blotomate
  * @package     Model
+ * @author      Rafael Castilho <rafael@castilho.biz>
+ * @examples
+ *
+ * NAME                VALUE
+ *
+ * url                 http:\/\/.+\.wordpress\.com
+ * header              server:\ wordpress\.com
+ * html                div.+id.+wrapper
+ * html                <meta[^>]+(content)+[^>]+(wordpress\.com)+[^>]+>
  */
 class CMSTypeDiscovery extends AB_Model
 {

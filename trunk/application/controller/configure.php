@@ -3,6 +3,8 @@
 
 /**
  * Controller configuration tool
+ *
+ * @author      Rafael Castilho <rafael@castilho.biz>
  */
 
 $_controller = ucfirst($argv[1]);

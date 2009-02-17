@@ -2,6 +2,8 @@
 
 /**
  * Environment configuration
+ *
+ * @author      Rafael Castilho <rafael@castilho.biz>
  */
 
 /* php */

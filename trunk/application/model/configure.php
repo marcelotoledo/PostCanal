@@ -3,6 +3,8 @@
 
 /**
  * Model configuration tool
+ *
+ * @author      Rafael Castilho <rafael@castilho.biz>
  */
 
 $_class    = $argv[1];

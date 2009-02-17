@@ -5,6 +5,7 @@
  * 
  * @category    Blotomate
  * @package     Controller
+ * @author      Rafael Castilho <rafael@castilho.biz>
  */
 class DashboardController extends AbstractController
 {

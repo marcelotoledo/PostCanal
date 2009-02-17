@@ -5,6 +5,16 @@
  * 
  * @category    Blotomate
  * @package     Model
+ * @author      Rafael Castilho <rafael@castilho.biz>
+ * @examples
+ *
+ * DISCOVERY
+ *
+ * url                 http:\/\/.+\.wordpress\.com
+ * header              server:\ wordpress\.com
+ * html                div.+id.+wrapper
+ * html                <meta[^>]+(content)+[^>]+(wordpress\.com)+[^>]+>
+ *
  */
 class CMSType extends AB_Model
 {

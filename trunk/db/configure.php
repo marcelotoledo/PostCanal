@@ -3,6 +3,8 @@
 
 /**
  * Database configuration tool
+ * 
+ * @author      Rafael Castilho <rafael@castilho.biz>
  */
 
 require "../library/AB/Loader.php";
