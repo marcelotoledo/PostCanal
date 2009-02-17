@@ -5,7 +5,7 @@ $(document).ready(function() { var active_request = false;  function showSpinner
  uid = $("input[@name='uid']").val(); password = $("input[@name='password']").val(); confirm_ = $("input[@name='confirm']").val(); if(password == "" || confirm_ == "") { $.ab_alert("Preencha o formulário corretamente"); return null; }
  if(password != confirm_) { $.ab_alert("Senha e confirmação NÃO CORRESPONDEM"); return null; }
  parameters = { uid: uid, password: password, confirm: confirm_ }
- $.ajax ({ type: "POST", url: "<?php $this->url('profile','passwordChange') ?>", dataType: "text", data: parameters, beforeSend: function() { active_request = true; showSpinner(); }
+ $.ajax ({ type: "POST", url: "<?php $this->url('profile','password') ?>", dataType: "text", data: parameters, beforeSend: function() { active_request = true; showSpinner(); }
 , complete: function() { active_request = false; hideSpinner(); }
 , success: function (data) { if(data == "password_change_ok") { $("#pwdform").toggle(); $("#changenotice").toggle(); }
  else if(data == "password_change_failed") { $.ab_alert("Não foi possível alterar a senha de acesso"); }

@@ -187,9 +187,9 @@ class AB_View
             }
             else
             {
-                throw new AB_Exception(
-                    "layout (" . $this->layout . ") not found",
-                    E_USER_ERROR);
+                $message = "layout (" . $this->layout . ") not found";
+                $data = array('method' => __METHOD__);
+                throw new AB_Exception($message, E_USER_ERROR, $data);
             }
         }
     }
@@ -210,9 +210,9 @@ class AB_View
         }
         else
         {
-            throw new AB_Exception(
-                "template (" . $this->template . ") not found",
-                E_USER_ERROR);
+            $message = "template (" . $this->template . ") not found";
+            $data = array('method' => __METHOD__);
+            throw new AB_Exception($message, E_USER_ERROR, $data);
         }
     }
 }

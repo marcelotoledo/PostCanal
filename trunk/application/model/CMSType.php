@@ -11,9 +11,20 @@ class CMSType extends AB_Model
     /**
      * Discovery constants
      */
-    const DISCOVERY_URL    = "url";
-    const DISCOVERY_HEADER = "header";
-    const DISCOVERY_HTML   = "html";
+    const D_URL    = "url";
+    const D_HEADER = "header";
+    const D_HTML   = "html";
+
+    /**
+     * Default attributes constants
+     */
+
+    /* manager */
+
+    const A_M_URL             = "manager_url";
+    const A_M_FORM_ACTION_URL = "manager_form_action_url";
+    const A_M_FORM_INPUT_USR  = "manager_form_input_username";
+    const A_M_FORM_INPUT_PWD  = "manager_form_input_password";
 
 
     /**
@@ -36,13 +47,6 @@ class CMSType extends AB_Model
      * @var string
      */
     protected static $primary_key_name = 'cms_type_id';
-
-    /**
-     * Discovery table name
-     *
-     * @var string
-     */
-    protected static $discovery_table_name = 'cms_type_discovery';
 
     /**
      * CMSType plugin info (DEPRECATED)
@@ -103,11 +107,10 @@ class CMSType extends AB_Model
     {
         if($this->isNew())
         {
-            $message = "new model cannot determine cms type and get it's info";
-            AB_Exception::throwNew(
-                "a new cms type can not be used " . 
-                "to obtain information from the plugin",
-                E_USER_ERROR);
+#            throw new AB_Exception(
+#                "a new cms type can not be used " . 
+#                "to obtain information from the plugin",
+#                E_USER_ERROR);
         }
 
         if(count($this->plugin_info) == 0)
@@ -117,6 +120,28 @@ class CMSType extends AB_Model
         }
 
         return $this->plugin_info;
+    }
+
+    /**
+     * Get default attributes
+     *
+     * @return  array
+     */
+    public function getDefaultAttributes()
+    {
+        $sql = "SELECT name, value FROM cms_type_default_attribute " . 
+               "WHERE cms_type_id = ?";
+
+        $conditions = array($this->cms_type_id);
+
+        $results = array();
+
+        foreach(self::select($sql, $conditions) as $i)
+        {
+            $results[$i->name] = $i->value;
+        }
+
+        return $results;
     }
 
     /**
@@ -215,11 +240,10 @@ class CMSType extends AB_Model
 
         if(count($types) > 1)
         {
-            $message = "cms types [" . implode(", ", $types) . "] " . 
-                       "have conflicting discovery rules " . 
-                       "[" . implode(", ", $rules) . "]";
-
-            AB_Log::write($message, E_USER_WARNING);
+            $message = "types {" . implode(", ", $types) . "} have conflicting " .
+                       "discovery rules {" . implode(", ", $rules) . "}";
+            $attributes = array('method' => __METHOD__);
+            AB_Log::write($message, E_USER_WARNING, $attributes);
         }
 
         $type = current($types);
@@ -239,11 +263,11 @@ class CMSType extends AB_Model
 
             else
             {
-                $message = "cms type (" . $type . ") did not matched " .
+                $message = "type (" . $type . ") did not matched " .
                            "a total of (" . $total . ") discovery rules. " .
-                           "matched only [" . implode(", ", $rules) . "] ";
-
-                AB_Log::write($message, E_USER_WARNING);
+                           "matched only {" . implode(", ", $rules) . "}";
+                $attributes = array('class' => __CLASS__, 'method' => __METHOD__);
+                AB_Log::write($message, E_USER_WARNING, $attributes);
             }
         }
 
@@ -262,7 +286,7 @@ class CMSType extends AB_Model
         $url, $types=array(), $regexp=true)
     {
         return self::discoveryByNameValue(
-            self::DISCOVERY_URL, $url, $types, $regexp);
+            self::D_URL, $url, $types, $regexp);
     }
 
     /**
@@ -288,7 +312,7 @@ class CMSType extends AB_Model
 
                 $results = array_merge(
                     $results, self::discoveryByNameValue(
-                        self::DISCOVERY_HEADER, $header, $types, $regexp));
+                        self::D_HEADER, $header, $types, $regexp));
             }
         }
 
@@ -307,7 +331,7 @@ class CMSType extends AB_Model
         $html, $types=array(), $regexp=true)
     {
         return self::discoveryByNameValue(
-           self::DISCOVERY_HTML, $html, $types, $regexp);
+           self::D_HTML, $html, $types, $regexp);
     }
 
     /**
@@ -324,8 +348,7 @@ class CMSType extends AB_Model
         $name, $value=null, $types=array(), $regexp=false)
     {
         $sql = "SELECT cms_type_discovery_id, cms_type_id " .
-               "FROM " . self::$discovery_table_name . " " .
-               "WHERE name = ? ";
+               "FROM cms_type_discovery WHERE name = ? ";
 
         $conditions = array();
         $conditions[] = $name;
@@ -369,6 +392,67 @@ class CMSType extends AB_Model
         return is_object($result) ? $result->total : 0;
     }
 
+    /* MANAGER */
+
+    /**
+     * Check manager HTML from manager url
+     *
+     * @param   string          $html
+     * @param   string          $attributes
+     * @throws  AB_Exception
+     * @return  boolean
+     */
+    public static function managerHTMLCheck($html, $attributes)
+    {
+        $html_size = strlen($html);
+        $exception_data = array('method' => __METHOD__);
+
+        $keys = array (self::A_M_FORM_ACTION_URL, self::A_M_FORM_INPUT_USR,
+                       self::A_M_FORM_INPUT_PWD);
+
+        for($i=0; $i<count($keys); $i++)
+        {
+            if(!array_key_exists($keys[$i], $attributes))
+            {
+                $message = "the attributes array " .
+                           "not have the index (" . $keys[$i] . ")";
+                throw new AB_Exception($message, E_USER_WARNING, $exception_data);
+            }
+        }
+
+        $check = array();
+
+        $k = self::A_M_FORM_ACTION_URL;
+        $value = preg_replace("/[^a-zA-Z0-9]+/", ".+", $attributes[$k]);
+        $rgexp = "/<form[^>]+(action)+[^>]+(" . $value . ")+[^>]+>/i";
+        $check[$k] = $rgexp;
+
+        $k = self::A_M_FORM_INPUT_USR;
+        $value = preg_replace("/[^a-zA-Z0-9]+/", ".+", $attributes[$k]);
+        $rgexp = "/<input[^>]+(name)+[^>]+(" . $value . ")+[^>]+>/i";
+        $check[$k] = $rgexp;
+
+        $k = self::A_M_FORM_INPUT_PWD;
+        $value = preg_replace("/[^a-zA-Z0-9]+/", ".+", $attributes[$k]);
+        $rgexp = "/<input[^>]+(name)+[^>]+(" . $value . ")+[^>]+>/i";
+        $check[$k] = $rgexp;
+
+
+        foreach($check as $k=>$r)
+        {
+            if(preg_match($r, $html) == 0)
+            {
+                $message = "failed to match the expression (" . $r . ") " .
+                           "for attribute (" . $k . "=" . $attributes[$k] . ") " .
+                           "and the html document with " .
+                           "(" . $html_size . ") bytes in size";
+                throw new AB_Exception($message, E_USER_WARNING, $exception_data);
+            }
+        }
+
+        return true;
+    }
+
     /* CMS TYPE PLUGIN */
 
     /**
@@ -388,9 +472,9 @@ class CMSType extends AB_Model
 
         if(!file_exists(($plugin = $path . "/" . $filename)))
         {
-            AB_Exception::throwNew(
-                "plugin (" . $plugin . ") does not exist",
-                E_USER_ERROR);
+#            throw new AB_Exception(
+#                "plugin (" . $plugin . ") does not exist",
+#                E_USER_ERROR);
         }
 
         $registry = AB_Registry::singleton();
@@ -411,9 +495,7 @@ class CMSType extends AB_Model
 
         /* log exec command and its return */
 
-        AB_Log::write(
-            "exec (" . $command . ") return (" . $status . ")",
-            E_USER_NOTICE);
+##        self::log("exec (" . $command . ") return (" . $status . ")");
 
         /* convert output to array */
 

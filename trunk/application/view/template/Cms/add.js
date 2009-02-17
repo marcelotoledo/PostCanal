@@ -37,7 +37,7 @@ $(document).ready(function()
         $("#check_url_base").show();
     }
 
-    function checkUrlBase()
+    function check()
     {
         if(active_request == true)
         {
@@ -57,7 +57,7 @@ $(document).ready(function()
         $.ajax
         ({
             type: "POST",
-            url: "<?php $this->url('cms', 'checkUrlBase') ?>",
+            url: "<?php $this->url('cms', 'check') ?>",
             dataType: "json",
             data: parameters,
             beforeSend: function ()
@@ -78,8 +78,9 @@ $(document).ready(function()
                     "cms_type_status = " + data.cms_type_status + "<br>" + 
                     "cms_type_name = " + data.cms_type_name + "<br>" + 
                     "cms_type_version = " + data.cms_type_version + "<br>" + 
-                    "url_admin_status = " + data.url_admin_status + "<br>" + 
-                    "url_admin = " + data.url_admin + "<br>"
+                    "manager_url_status = " + data.manager_url_status + "<br>" + 
+                    "manager_url = " + data.manager_url + "<br>" + 
+                    "manager_html_status = " + data.manager_html_status + "<br>"
                 );
 
                 if(data.url)
@@ -105,14 +106,16 @@ $(document).ready(function()
         });
     }
 
+    /* 
     $("input[@name='input_url_base']").blur(function()
     {
-        checkUrlBase();
+        check();
     });
+    */
 
     $("#check_url_base").click(function()
     {
-        checkUrlBase();
+        check();
     });
 
     $("#change_url_base").click(function()

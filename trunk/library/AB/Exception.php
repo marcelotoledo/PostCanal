@@ -9,33 +9,24 @@
 class AB_Exception extends Exception
 {
     /**
-     * Controller
-     * 
-     * @var string
+     * Data
+     *
+     * @var array
      */
-    protected $controller;
-     
-    /**
-     * Action
-     * 
-     * @var string
-     */
-    protected $action;
- 
+    protected $data;
+
 
     /**
      * Exception constructor
      *
      * @param   string  $message
      * @param   integer $code
-     * @param   string  $controller
-     * @param   string  $action
+     * @param   array   $data
      * @return void
      */
     public function __construct($message, 
                                 $code=E_USER_NOTICE, 
-                                $controller=null, 
-                                $action=null)
+                                $data=array())
     {
         /* force use of predefined codes */
 
@@ -46,8 +37,7 @@ class AB_Exception extends Exception
             $code = E_USER_ERROR;
         }
 
-        $this->controller = $controller;
-        $this->action = $action;
+        $this->data = $data;
 
         parent::__construct($message, $code);
     }
@@ -67,91 +57,108 @@ class AB_Exception extends Exception
             case E_USER_ERROR:   $priority = "ERROR";   break;
             case E_USER_WARNING: $priority = "WARNING"; break;
             case E_USER_NOTICE:  $priority = "NOTICE";  break;
-            default:             $priority = "UNKNOWN"; /* must never occur */
+            default:             $priority = "ERROR";
         }
 
         $message = $priority . ": " . $this->getMessage();
 
-        if(!empty($this->controller))
-            $message.= "; controller: " . $this->controller;
+        foreach($this->data as $name => $value)
+        {
+            $message.= ";\n" . $name . ": " . $value;
+        }
+            
+        $message.= ";\nfile: " . $this->getFile();
+        $message.= ";\nline: " . $this->getLine();
 
-        if(!empty($this->action))
-            $message.= "; action: " . $this->action;
-
-        $message.= "; file: " . $this->getFile();
-        $message.= "; line: " . $this->getLine();
-        $message.= "; trace: " . $this->getTraceAsString();
+        if($priority == "ERROR")
+        {
+            $message.= ";\ntrace: " . $this->getTraceAsString();
+        }
 
         return $message;
     }
 
     /**
-     * Get controller
+     * Get overloading
      *
-     * @return string
+     * @param   string  $name
+     * @return  mixed
      */
-    public function getController()
+    public function __get($name)
     {
-        return $this->controller;
+        $value = null;
+
+        if(is_array($this->data))
+        {
+            if(array_key_exists($name, $this->data))
+            {
+                $value = $this->data[$name];
+            }
+        }
+
+        return $value;
     }
 
     /**
-     * Set controller
+     * Set overloading
      *
-     * @param   string  $controller
+     * @param   string  $name
+     * @param   mixed   $value
      * @return  void
      */
-    public function setController($controller)
+    public function __set($name, $value)
     {
-        $this->controller = $controller;
+        if(is_array($this->data) == false)
+        {
+            $this->data = array();
+        }
+
+        $this->data[$name] = $value;
     }
 
     /**
-     * Get action
+     * Write to log
      *
-     * @return string
-     */
-    public function getAction()
-    {
-        return $this->action;
-    }
-
-    /**
-     * Set action
-     *
-     * @param   string  $action
+     * @param   string          $model      Model name
      * @return  void
      */
-    public function setAction($action)
+    public function log($model='ApplicationLog')
     {
-        $this->action = $action;
+        AB_Log::write($this->getMessage(), $this->getCode(), $this->data, $model);
     }
 
     /**
-     * Throw new exception
+     * Forward exception
      *
      * @param   string          $message
      * @param   integer         $code
      * @param   Exception       $exception
+     * @param   array           $data
      * @return  void
      */
-    public static function throwNew($message, $code, $exception=null)
+    public static function forward($message, $code, $exception=null, $data=array())
     {
         if(is_object($exception))
         {
-            $message.= ";\n" . $exception->getMessage();
-
             if(get_class($exception) == __CLASS__)
             {
+                $message.= ";\n" . $exception->getMessage();
+
                 /* E_USER_ERROR < E_USER_WARNING < E_USER_NOTICE */
 
                 if($exception->getCode() < $code)
                 {
                     $code = $exception->getCode();
                 }
+
+                $data = array_merge($exception->data, $data);
+            }
+            else
+            {
+                $message.= ";\nexception: " . chop($exception->getMessage());
             }
         }
 
-        throw new AB_Exception ($message, $code);
+        throw new AB_Exception ($message, $code, $data);
     }
 }

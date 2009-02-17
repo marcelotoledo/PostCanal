@@ -133,10 +133,9 @@ class ApplicationMailer
             }
             catch(Exception $exception)
             {
-                $message = "sending mail to recipient " . 
-                           "(" . $recipient . ") failed";
-
-                AB_Exception::throwNew($message, E_USER_NOTICE, $exception);
+                $message = "sending mail to recipient (" . $recipient . ") failed";
+                $data = array('method' => __METHOD__);
+                AB_Exception::forward($message, E_USER_NOTICE, $exception, $data);
             }
         }
 
@@ -198,11 +197,10 @@ class ApplicationMailer
 
         if($deny)
         {
-            $message = "mailer relay denied to " . 
-                       "recipient (" . $recipient . ") and " . 
-                       "identifier (" . $identifier . ")";
-
-            AB_Exception::throwNew($message, E_USER_WARNING);
+            $message = "mailer relay denied to recipient (" . $recipient . ") " .
+                       "and identifier (" . $identifier . ")";
+            $data = array('method' => __METHOD__);
+            throw new AB_Exception($message, E_USER_WARNING, $data);
         }
 
         return $deny ^ true;

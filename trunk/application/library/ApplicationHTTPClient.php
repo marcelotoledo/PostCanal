@@ -76,7 +76,8 @@ class ApplicationHTTPClient
             catch(Exception $exception)
             {
                 $message = "failed to get response from url (" . $url . ")";
-                AB_Exception::throwNew($message, E_USER_NOTICE, $exception);
+                $data = array('method' => __METHOD__);
+                AB_Exception::forward($message, E_USER_NOTICE, $exception, $data);
             }
         }
 
@@ -133,17 +134,19 @@ class ApplicationHTTPClient
         }
 
         $total = count($headers);
+        $registry = AB_Registry::singleton();
+        $max_headers = $registry->httpClient->maxHeaders;
 
-        if($total > self::MAX_HEADERS)
+        if(!empty($max_headers) && $total > $max_headers)
         {
-            $headers = array_slice($headers, 0, self::MAX_HEADERS, true);
+            $headers = array_slice($headers, 0, $max_headers, true);
 
-            $message = "the response has a total of " . 
+            $message = "the response has a total of " .
                        "(" . $total . ") headers " .
-                       "and was reduced to ";
-                       "(" . self::MAX_HEADERS . ") headers";
-
-            AB_Log::write($message, E_USER_WARNING);
+                       "and was reduced to " .
+                       "(" . $max_headers . ") headers";
+            $attributes = array('method' => __METHOD__);
+            AB_Log::write($message, E_USER_WARNING, $attributes);
         }
 
         return $headers;
@@ -162,40 +165,22 @@ class ApplicationHTTPClient
         {
             $body = $this->response->getBody();
             $lenght = strlen($body);
+            $registry = AB_Registry::singleton();
+            $max_body_lenght = $registry->httpClient->maxBodyLenght;
 
-            if($lenght > self::MAX_BODY_LENGHT)
+            if(!empty($max_body_lenght) && $lenght > $max_body_lenght)
             {
-                $body = substr($body, 0, self::MAX_BODY_LENGHT);
+                $body = substr($body, 0, $max_body_lenght);
 
-                $message = "the response body has a size of " . 
+                $message = "the response body has a size of " .
                            "(" . $lenght . ") bytes " .
-                           "and was truncated to ";
-                           "(" . self::MAX_BODY_LENGHT . ") bytes";
-
-                AB_Log::write($message, E_USER_WARNING);
+                           "and was truncated to " .
+                           "(" . $max_body_lenght . ") bytes";
+                $attributes = array('method' => __METHOD__);
+                AB_Log::write($message, E_USER_WARNING, $attributes);
             }
         }
 
         return $body;
-    }
-
-    /**
-     * Fix URL
-     * 
-     * @param   string      $url
-     * @return  string
-     */
-    public static function fixURL($url)
-    {
-        $pattern = "#^(.*?//)*([\w\.\d]*)(:(\d+))*(/*)(.*)$#";
-        $matches = array();
-        preg_match($pattern, $url, $matches);
-
-        $protocol = empty($matches[1]) ? "http://" : $matches[1];
-        $address  = empty($matches[2]) ? ""        : $matches[2];
-        $port     = empty($matches[3]) ? ""        : $matches[3];
-        $resource = empty($matches[6]) ? ""        : $matches[5] . $matches[6];
-
-        return $protocol . $address . $port . $resource;
     }
 }

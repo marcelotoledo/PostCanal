@@ -58,6 +58,12 @@ $registry->session->unauthorized->redirect = BASE_URL;
 $registry->mailer = $xml->mailer;
 
 
+/* http client */
+
+$registry->httpClient->maxHeaders = 30;
+$registry->httpClient->maxBodyLenght = 5242880; // 5242880 bytes = 5Mb
+
+
 /* python */
 
 $registry->python->interpreter->path = "/usr/local/bin/python";

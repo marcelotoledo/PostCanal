@@ -76,10 +76,11 @@ class AB_Dispatcher
         }
         catch(AB_Exception $exception)
         {
-            $exception->setController($controller);
-            $exception->setAction($action);
-
             $has_error = true;
+
+            $exception->controller = $controller;
+            $exception->action = $action;
+
             $error = ((string) $exception);
 
             /* notices and warnings are ok, otherwise, set error response */
@@ -91,15 +92,16 @@ class AB_Dispatcher
 
             /* log AB_Exception */
 
-            AB_Log::writeException($exception);
+            $exception->log();
         }
         catch(Exception $exception)
         {
             $has_error = true;
-            $error = "Exception: " . $exception->getMessage() . "; " . 
-                     "status: " . $exception->getCode() . "; " . 
-                     "file: " . $exception->getFile() . "; " . 
-                     "line: " . $exception->getLine() . "; " . 
+
+            $error = "message: " . $exception->getMessage() . "; " .
+                     "status: " . $exception->getCode() . "; " .
+                     "file: " . $exception->getFile() . "; " .
+                     "line: " . $exception->getLine() . "; " .
                      "trace: " . $exception->getTraceAsString();
 
             /* unexpected exceptions are serious errors */
@@ -108,7 +110,12 @@ class AB_Dispatcher
  
             /* log Exception */
 
-            AB_Log::write($error, E_USER_ERROR, $controller, $action);
+            $attributes = array
+            (
+                'method' => __METHOD__, 'controller' => $controller, 'action' => $action
+            );
+
+            AB_Log::write($error, E_USER_ERROR, $attributes);
         }
 
         /* show errors */
@@ -166,9 +173,9 @@ class AB_Dispatcher
         if(is_object($controller) == false)
         {
             $this->response->setStatus(AB_Response::STATUS_NOT_FOUND);
-            throw new AB_Exception(
-                "controller (" . $name . ") not found",
-                E_USER_WARNING);
+            $message = "controller (" . $name . ") not found";
+            $data = array('method' => __METHOD__);
+            throw new AB_Exception($message, E_USER_WARNING);
         }
 
         return $controller;

@@ -13,13 +13,13 @@ class AB_Log
      *
      * @param   string  $message    Log message
      * @param   integer $priority   Priority
+     * @param   array   $attributes Extra attributes
      * @param   string  $model      Model name
      * @return  void
      */
     public static function write ($message,
                                   $priority=E_USER_NOTICE,
-                                  $controller=null,
-                                  $action=null,
+                                  $attributes=array(),
                                   $model='ApplicationLog')
     {
         if(class_exists($model) == false)
@@ -31,10 +31,14 @@ class AB_Log
             $m = new $model();
             $m->message = $message;
             $m->priority = $priority;
-            
-            if(!empty($controller)) $m->controller = $controller;
-            if(!empty($action)) $m->action = $action;
 
+            /* set extra attributes */
+
+            foreach($attributes as $name => $value)
+            {
+                $m->{$name} = $value;
+            }
+            
             try
             {
                 $m->save();
@@ -45,24 +49,6 @@ class AB_Log
                 self::writeErrorLog($message);
             }
         }
-    }
-
-    /**
-     * Write AB_Exception log
-     *
-     * @param   AB_Exception    $exception  Exception
-     * @param   string          $model      Model name
-     * @return  void
-     */
-    public static function writeException (
-        AB_Exception $exception, 
-        $model='ApplicationLog')
-    {
-        self::write($exception->getMessage(),
-                    $exception->getCode(),
-                    $exception->getController(),
-                    $exception->getAction(),
-                    $model);
     }
 
     /**

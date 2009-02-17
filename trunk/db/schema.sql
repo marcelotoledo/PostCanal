@@ -34,9 +34,11 @@ CREATE TABLE application_log
 (
     application_log_id integer NOT NULL DEFAULT nextval('application_log_seq'),
     priority integer NOT NULL DEFAULT 0,
-    message text NOT NULL DEFAULT '',
+    message text NOT NULL,
+    method character varying(100) NOT NULL DEFAULT '',
     controller character varying(100) NOT NULL DEFAULT '',
     action character varying(100) NOT NULL DEFAULT '',
+    user_profile_id integer NOT NULL DEFAULT 0,
     created_at timestamp without time zone NOT NULL DEFAULT NOW(),
     CONSTRAINT application_log_pk PRIMARY KEY (application_log_id)
 );

@@ -11,7 +11,7 @@
 */
 
 /**
- * CMSTypeDiscovery model class
+ * CMSTypeDiscovery model class (DEPRECATED)
  * 
  * @category    Blotomate
  * @package     Model

@@ -9,20 +9,17 @@
 class CmsController extends SessionController
 {
     /**
-     * url response constants 
-     */
-    const URL_OK        = "url_ok";
-    const URL_FAILED    = "url_failed";
-    const URL_ERROR_3XX = "url_error_3xx";
-    const URL_ERROR_4XX = "url_error_4xx";
-    const URL_ERROR_5XX = "url_error_5xx";
-
-    /**
      * CMS type response constants
      */
     const CMS_TYPE_OK          = "cms_type_ok";
     const CMS_TYPE_FAILED      = "cms_type_failed";
     const CMS_TYPE_MAINTENANCE = "cms_type_maintenance";
+
+    /**
+     * Manager html check status response constants
+     */
+    const M_H_STATUS_OK     = "manager_html_status_ok";
+    const M_H_STATUS_FAILED = "manager_html_status_failed";
 
 
     /**
@@ -50,29 +47,30 @@ class CmsController extends SessionController
     }
 
     /**
-     * Check URL base action
+     * Check action
      *
      * @return void
      */
-    public function checkUrlBaseAction()
+    public function checkAction()
     {
         include APPLICATION_PATH . "/library/ApplicationHTTPClient.php";
 
         $this->setViewLayout(null);
         $this->setViewTemplate(null);
         
-        $url_status       = null;
-        $url              = $this->getRequestParameter('url');
-        $cms_type_status  = self::CMS_TYPE_FAILED;
-        $cms_type         = null;
-        $cms_type_name    = "";
-        $cms_type_version = "";
-        $url_admin_status = self::URL_FAILED;
-        $url_admin        = "";
+        $url_status          = null;
+        $url                 = $this->getRequestParameter('url');
+        $cms_type_status     = self::CMS_TYPE_FAILED;
+        $cms_type            = null;
+        $cms_type_name       = "";
+        $cms_type_version    = "";
+        $manager_url_status  = "";
+        $manager_url         = "";
+        $manager_html_status = self::M_H_STATUS_FAILED;
 
         /* fix url */
 
-        $url = ApplicationHTTPClient::fixURL($url);
+        $url = self::fixURL($url);
 
         /* http request */
 
@@ -83,25 +81,18 @@ class CmsController extends SessionController
 
         $message = "url (" . $url . ") requested by ";
 
-        foreach(array('HTTP_CLIENT_IP', 
-                      'HTTP_X_FORWARDED_FOR', 
-                      'REMOTE_ADDR') as $i)
+        foreach(array('HTTP_CLIENT_IP', 'HTTP_X_FORWARDED_FOR', 'REMOTE_ADDR') as $i)
         {
             if(array_key_exists($i, $_SERVER))
             {
                 $message.= strtolower($i) . " (" . $_SERVER[$i] . ") ";
             }
         }
+    
+        $attributes = array('method' => __METHOD__,
+                            'user_profile_id' => $this->user_profile_id);
 
-        if(!empty($this->user_profile_id)) # TODO bugfix
-        {
-            $message.= "user profile (" . $this->user_profile_id . ")";
-        }
-
-        AB_Log::write($message, 
-                      E_USER_NOTICE,
-                      $this->getRequestController(),
-                      $this->getRequestAction());
+        AB_Log::write($message, E_USER_NOTICE, $attributes);
 
         /* discovery cms type */
 
@@ -127,30 +118,78 @@ class CmsController extends SessionController
             $cms_type_name = $cms_type->name;
             $cms_type_version = $cms_type->version;
 
-            # $info = $cms_type->getPluginInfo($url);
+            $info = $cms_type->getDefaultAttributes();
 
-            # /* get url admin */
+            /* get url admin */
 
-            # if(array_key_exists('url_admin', $info))
-            # {
-                # $url_admin = $info['url_admin'];
-            # }
+            if(array_key_exists(CMSType::A_M_URL, $info))
+            {
+                $manager_url = $url . $info[CMSType::A_M_URL];
 
-            # /* get response from url_admin */
+                /* get response from manager url */
 
-            # $client->request($url_admin);
-            # $url_admin_status = $client->getStatus();
+                $client->request($manager_url);
+                $manager_url_status = $client->getStatus();
+
+                /* log status not expected */
+
+                if($manager_url_status != ApplicationHTTPClient::STATUS_OK)
+                {
+                    $message = "manager url (" . $manager_url . ") " .
+                               "for cms type (" . $cms_type->cms_type_id . ") " .
+                               "returned a status (" . $manager_url_status . ")";
+                    $_a = array('method' => __METHOD__,
+                                'user_profile_id' => $this->user_profile_id);
+                    AB_Log::write($message, E_USER_WARNING, $_a);
+                }
+            }
+            else
+            {
+                /* this could be a lapse of "DBA" memory ! */
+
+                $message = "cms type (" . $cms_type->cms_type_id . ") " . 
+                           "not have a default attribute (" . CMSType::A_M_URL . ")";
+                $_a = array('method' => __METHOD__,
+                            'user_profile_id' => $this->user_profile_id);
+                AB_Log::write($message, E_USER_WARNING, $_a);
+            }
+
+            /* check manager HTML from manager url response */
+
+            if($manager_url_status == ApplicationHTTPClient::STATUS_OK)
+            {
+                try
+                {
+                    if(CMSType::managerHTMLCheck(
+                        self::cleanHTML($client->getBody()), $info) == true)
+                    {
+                        $manager_html_status = self::M_H_STATUS_OK;
+                    }
+                }
+                catch(AB_Exception $exception)
+                {
+                    $message = "manager url (" . $manager_url . ") " . 
+                               "for cms type (" . $cms_type->cms_type_id . ") " .
+                               "failed on (" . $exception->getMessage() . "). " .
+                               "authentication will never be possible";
+                    $_a = array('method' => __METHOD__,
+                                'user_profile_id' => $this->user_profile_id);
+                    AB_Log::write($message, E_USER_ERROR, $_a);
+                }
+            }
         }
 
+        /* send response */
 
         $this->setViewData(Zend_Json::encode(array(
-            'url_status'       => $url_status,
-            'url'              => $url,
-            'cms_type_status'  => $cms_type_status,
-            'cms_type_name'    => $cms_type_name,
-            'cms_type_version' => $cms_type_version,
-            'url_admin_status' => $url_admin_status,
-            'url_admin'        => $url_admin
+            'url_status'          => $url_status,
+            'url'                 => $url,
+            'cms_type_status'     => $cms_type_status,
+            'cms_type_name'       => $cms_type_name,
+            'cms_type_version'    => $cms_type_version,
+            'manager_url_status'  => $manager_url_status,
+            'manager_url'         => $manager_url,
+            'manager_html_status' => $manager_html_status
         )));
     }
 
@@ -168,5 +207,25 @@ class CmsController extends SessionController
         $html = ereg_replace(">[^<]*<", "><", $html);       // tags only
 
         return $html;
+    }
+
+    /**
+     * Fix URL
+     * 
+     * @param   string      $url
+     * @return  string
+     */
+    private static function fixURL($url)
+    {
+        $pattern = "#^(.*?//)*([\w\.\d]*)(:(\d+))*(/*)(.*)$#";
+        $matches = array();
+        preg_match($pattern, $url, $matches);
+
+        $protocol = empty($matches[1]) ? "http://" : $matches[1];
+        $address  = empty($matches[2]) ? ""        : $matches[2];
+        $port     = empty($matches[3]) ? ""        : $matches[3];
+        $resource = empty($matches[6]) ? ""        : $matches[5] . $matches[6];
+
+        return $protocol . $address . $port . $resource;
     }
 }

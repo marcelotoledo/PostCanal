@@ -26,5 +26,5 @@ INSERT INTO cms_type_discovery (cms_type_id, name, value) VALUES (CURRVAL('cms_t
 
 INSERT INTO cms_type_default_attribute (cms_type_id, name, value) VALUES (CURRVAL('cms_type_seq'), 'manager_url', '/wp-admin');
 INSERT INTO cms_type_default_attribute (cms_type_id, name, value) VALUES (CURRVAL('cms_type_seq'), 'manager_form_action_url', '/wp-login.php');
-INSERT INTO cms_type_default_attribute (cms_type_id, name, value) VALUES (CURRVAL('cms_type_seq'), 'manager_form_input_username', 'user_login');
-INSERT INTO cms_type_default_attribute (cms_type_id, name, value) VALUES (CURRVAL('cms_type_seq'), 'manager_form_input_password', 'user_pass');
+INSERT INTO cms_type_default_attribute (cms_type_id, name, value) VALUES (CURRVAL('cms_type_seq'), 'manager_form_input_username', 'log');
+INSERT INTO cms_type_default_attribute (cms_type_id, name, value) VALUES (CURRVAL('cms_type_seq'), 'manager_form_input_password', 'pwd');

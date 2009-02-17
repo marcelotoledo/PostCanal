@@ -103,10 +103,10 @@ abstract class SessionController extends AB_Controller
 
         if($alive == false)
         {
-            $this->setResponseRedirect(
-                $redirect, AB_Response::STATUS_UNAUTHORIZED);
-
-            AB_Exception::throwNew("session unauthorized", E_USER_NOTICE);
+            $this->setResponseRedirect($redirect, AB_Response::STATUS_UNAUTHORIZED);
+            $message = "session unauthorized";
+            $data = array('method' => __METHOD__);
+            throw new AB_Exception($message, E_USER_NOTICE, $data);
         }
 
         return $alive;

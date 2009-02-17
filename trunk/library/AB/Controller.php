@@ -45,30 +45,20 @@ class AB_Controller
     }
 
     /**
-     * Get request controller
+     * Get request method
      *
      * @return  string
      */
-    public function getRequestController()
+    public function getRequestMethod()
     {
-        return $this->request->getController();
-    }
-
-    /**
-     * Get request action
-     *
-     * @return  string
-     */
-    public function getRequestAction()
-    {
-        return $this->request->getAction();
+        return $this->request->getMethod();
     }
 
     /**
      * Get request parameter
      *
      * @param   string  $name
-     * @return  void
+     * @return  mixed
      */
     public function getRequestParameter($name)
     {
@@ -166,11 +156,9 @@ class AB_Controller
         else
         {
             $this->response->setStatus(AB_Response::STATUS_NOT_FOUND);
-
             $message = "action (" . $action . ") not found";
-            $controller = $this->request->getController();
-
-            throw new AB_Exception($message, E_USER_NOTICE, $controller);
+            $data = array('method' => __METHOD__);
+            throw new AB_Exception($message, E_USER_NOTICE, $data);
         }
     }
 }

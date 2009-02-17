@@ -105,6 +105,11 @@ class ProfileController extends SessionController
                 $this->sessionLock();
 
                 $this->setViewData(self::LOGIN_OK);
+
+                $attributes = array ('method' => __METHOD__,
+                                     'user_profile_id' => $this->user_profile_id);
+
+                self::notice("session created", $attributes);
             }
 
             /* no register confirmation */
@@ -155,6 +160,11 @@ class ProfileController extends SessionController
                 $profile->login_email = $email;
                 $profile->login_password_md5 = md5($password);
                 $profile->save();
+
+                $attributes = array ('method' => __METHOD__,
+                                     'user_profile_id' => $profile->user_profile_id);
+
+                self::notice("registered new", $attributes);
             }
         }
 
@@ -188,11 +198,10 @@ class ProfileController extends SessionController
                     $profile->save();
                 }
 
-                AB_Exception::throwNew(
-                    "failed to send register instructions to profile " .
-                    "id (" . $profile->user_profile_id . ")",
-                    E_USER_WARNING, 
-                    $exception);
+                $message = "failed to send register instructions";
+                $data = array('method' => __METHOD__,
+                              'user_profile_id' => $profile->user_profile_id);
+                AB_Exception::forward($message, E_USER_WARNING, $exception, $data);
             }
         }
     }
@@ -238,11 +247,10 @@ class ProfileController extends SessionController
             {
                 $this->setViewData(self::RECOVERY_INSTRUCTION_FAILED);
 
-                AB_Exception::throwNew(
-                    "failed to send recovery instructions to profile " . 
-                    "id (" . $profile->user_profile_id . ")",
-                    E_USER_WARNING, 
-                    $exception);
+                $message = "failed to send recovery instructions";
+                $data = array('method' => __METHOD__,
+                              'user_profile_id' => $profile->user_profile_id);
+                AB_Exception::forward($message, E_USER_WARNING, $exception, $data);
             }
         }
 
@@ -258,11 +266,11 @@ class ProfileController extends SessionController
             {
                 $this->setViewData(self::RECOVERY_INSTRUCTION_FAILED);
 
-                AB_Exception::throwNew(
-                    "failed to send dummy instructions to " . 
-                    "email (" . $email . ")",
-                    E_USER_WARNING, 
-                    $exception);
+                $message = "failed to send dummy instructions " . 
+                           "to email (" . $email . ")";
+                $data = array('method' => __METHOD__,
+                              'user_profile_id' => $profile->user_profile_id);
+                AB_Exception::forward($message, E_USER_WARNING, $exception, $data);
             }
         }
     }
@@ -326,11 +334,23 @@ throw new UnexpectedValueException("See TODO in " . __FILE__ .":". __LINE__);
     }
 
     /**
-     * Password change form
+     * Password change action
      * 
      * @return  array
      */
     public function passwordAction()
+    {
+        $this->getRequestMethod() == AB_Request::METHOD_POST ?
+            $this->passwordMethodPOST() :
+            $this->passwordMethodGET();
+    }
+
+    /**
+     * Password change form
+     * 
+     * @return  array
+     */
+    private function passwordMethodGET()
     {
         $this->setViewLayout('index');
 
@@ -349,11 +369,11 @@ throw new UnexpectedValueException("See TODO in " . __FILE__ .":". __LINE__);
     }
 
     /**
-     * Password change action
+     * Password change save
      * 
      * @return void
      */
-    public function passwordChangeAction()
+    private function passwordMethodPOST()
     {
         $this->setViewLayout(null);
         $this->setViewTemplate(null);
@@ -378,6 +398,11 @@ throw new UnexpectedValueException("See TODO in " . __FILE__ .":". __LINE__);
                 {
                     $profile->login_password_md5 = md5($password);
                     $profile->save();
+
+                    $attributes = array ('method' => __METHOD__,
+                                         'user_profile_id' => $profile->user_profile_id);
+                    self::notice("password changed", $attributes);
+
                     $this->setViewData(self::PASSWORD_CHANGE_OK);
                     self::sendPasswordNotice($profile);
                     $this->sessionDestroy();
@@ -391,11 +416,23 @@ throw new UnexpectedValueException("See TODO in " . __FILE__ .":". __LINE__);
     }
 
     /**
-     * Profile editing form action
+     * Profile editing action
      *
      * @return array|null
      */
     public function editAction()
+    {
+        $this->getRequestMethod() == AB_Request::METHOD_POST ?
+            $this->editMethodPOST() :
+            $this->editMethodGET();
+    }
+
+    /**
+     * Profile editing form
+     *
+     * @return array|null
+     */
+    private function editMethodGET()
     {
         $this->setViewLayout('dashboard');
 
@@ -425,11 +462,11 @@ throw new UnexpectedValueException("See TODO in " . __FILE__ .":". __LINE__);
     }
 
     /**
-     * Profile editing save action
+     * Profile editing save
      *
      * @return void
      */
-    public function editSaveAction()
+    private function editMethodPOST()
     {
         $this->setViewLayout(null);
         $this->setViewTemplate(null);
@@ -438,17 +475,19 @@ throw new UnexpectedValueException("See TODO in " . __FILE__ .":". __LINE__);
         if(!self::sessionAlive())
         {
             $this->setResponseStatus(AB_Response::STATUS_UNAUTHORIZED);
-            AB_Exception::throwNew("session is not alive", E_USER_NOTICE);
+            $message = "session is not alive";
+            $data = array('method' => __METHOD__);
+            throw new AB_Exception($message, E_USER_NOTICE, $data);
         }
 
         $id = $this->user_profile_id;
         $profile = UserProfile::findByPrimaryKeyEnabled($id);
 
-        if(empty($profile))
+        if(!is_object($profile))
         {
-            AB_Exception::throwNew(
-                "invalid profile with id (" . $id . ")", 
-                E_USER_WARNING);
+            $message = "invalid user profile";
+            $data = array('method' => __METHOD__, 'user_profile_id' => $id);
+            throw new AB_Exception($message, E_USER_WARNING, $data);
         }
 
         $pwdchange = $this->getRequestParameter('pwdchange');
@@ -479,6 +518,10 @@ throw new UnexpectedValueException("See TODO in " . __FILE__ .":". __LINE__);
             {
                 $profile->save();
 
+                $attributes = array ('method' => __METHOD__,
+                                     'user_profile_id' => $id);
+                self::notice("password edited", $attributes);
+
                 /* regenerate session */
 
                 $id = $profile->user_profile_id;
@@ -493,10 +536,10 @@ throw new UnexpectedValueException("See TODO in " . __FILE__ .":". __LINE__);
             }
             catch(AB_Exception $exception)
             {
-                AB_Exception::throwNew(
-                    "failed to save profile after password change",
-                    E_USER_WARNING, 
-                    $exception);
+                $message = "failed to save user profile after password editing";
+                $data = array('method' => __METHOD__,
+                              'user_profile_id' => $profile->user_profile_id);
+                AB_Exception::forward($message, E_USER_WARNING, $exception, $data);
             }
         }
 
@@ -519,21 +562,11 @@ throw new UnexpectedValueException("See TODO in " . __FILE__ .":". __LINE__);
         }
         catch(AB_Exception $exception)
         {
-            AB_Exception::throwNew(
-                "failed to save information after edit", 
-                E_USER_WARNING, 
-                $exception);
+            $message = "failed to save information after editing";
+            $data = array('method' => __METHOD__,
+                          'user_profile_id' => $profile->user_profile_id);
+            AB_Exception::forward($message, E_USER_WARNING, $exception, $data);
         }
-    }
-
-    /**
-     * Email change action (TODO)
-     * 
-     * @return void
-     */
-    public function emailChangeAction()
-    {
-throw new BadMethodCallException("See TODO in " . __FILE__ .":". __LINE__);
     }
 
     /**
@@ -737,5 +770,29 @@ throw new BadMethodCallException("See TODO in " . __FILE__ .":". __LINE__);
         }
 
         return $body;
+    }
+
+    /**
+     * Log user profile activities
+     *
+     * @param   string  $message
+     * @param   integer $attributes
+     * @return  void
+     */
+    private static function notice($message, $attributes=array())
+    {
+        $message = $message . " by ";
+
+        foreach(array('HTTP_CLIENT_IP',
+                      'HTTP_X_FORWARDED_FOR',
+                      'REMOTE_ADDR') as $i)
+        {
+            if(array_key_exists($i, $_SERVER))
+            {
+                $message.= strtolower($i) . " (" . $_SERVER[$i] . ") ";
+            }
+        }
+
+        AB_Log::write($message, E_USER_NOTICE, $attributes);
     }
 }

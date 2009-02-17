@@ -9,11 +9,25 @@
 class AB_Request
 {
     /**
+     * Method constants
+     */
+    const METHOD_GET  = "GET";
+    const METHOD_POST = "POST";
+
+
+    /**
      * Request path
      *
      * @var string
      */
     private $path = "/";
+
+    /**
+     * Request method
+     *
+     * @var string
+     */
+    private $method;
 
     /**
      * Controller name
@@ -65,27 +79,37 @@ class AB_Request
      */
     private function initialize()
     {
-        /* initialize path */
+        /* initialize */
 
         $this->path = self::pathFromServer();
+        $this->method = self::methodFromServer();
 
         /* initialize controller */
 
         $arguments = explode ("/", trim($this->path, "/"));
         $total_arguments = count($arguments);
 
-        if(empty($arguments[0]) == false)
+        if(count($arguments) > 0)
         {
-            $this->controller = urlencode(ucfirst($arguments[0]));
+            $controller_name = ((string) urldecode($arguments[0]));
+            $controller_name = preg_replace("/[^a-zA-Z0-9_]/", "", $controller_name);
+
+            if(strlen($controller_name) > 0)
+            {
+                $this->controller = ucfirst($controller_name);
+            }
         }
 
         /* initialize action */
 
         if($total_arguments > 1)
         {
-            if(empty($arguments[1]) == false)
+            $action_name = ((string) urldecode($arguments[1]));
+            $action_name = preg_replace("/[^a-zA-Z0-9_]/", "", $action_name);
+
+            if(strlen($action_name) > 0)
             {
-                $this->action = urlencode($arguments[1]);
+                $this->action = $action_name;
             }
         }
     }
@@ -98,6 +122,16 @@ class AB_Request
     public function getPath()
     {
         return $this->path;
+    }
+
+    /**
+     * Request method
+     *
+     * @return  string
+     */
+    public function getMethod()
+    {
+        return $this->method;
     }
 
     /**
@@ -168,18 +202,20 @@ class AB_Request
      */
     public static function pathFromServer()
     {
-        $request_uri = $_SERVER['REQUEST_URI'];
+        $request_uri = ((string)$_SERVER['REQUEST_URI']);
 
-        if(empty($request_uri) == true)
+        if(strlen($request_uri) == 0)
         {
-            throw new AB_Exception("request uri is empty", E_USER_ERROR);
+            $message = "request uri is empty";
+            $data = array('method' => __METHOD__);
+            throw new AB_Exception($message, E_USER_ERROR, $data);
         }
 
         $path = $request_uri;
 
-        $script_name = $_SERVER['SCRIPT_NAME'];
+        $script_name = ((string)$_SERVER['SCRIPT_NAME']);
  
-        if(!empty($script_name))
+        if(strlen($script_name) > 0)
         {
             if(strpos($path, $script_name) === 0)
             {
@@ -189,7 +225,7 @@ class AB_Request
 
         $script_dir = str_replace("/index.php", "", $script_name);
 
-        if(!empty($script_dir))
+        if(strlen($script_dir) > 0)
         {
             if(strpos($path, $script_dir) === 0)
             {
@@ -197,9 +233,9 @@ class AB_Request
             }
         }
 
-        $query_string = $_SERVER['QUERY_STRING'];
+        $query_string = ((string)$_SERVER['QUERY_STRING']);
 
-        if(!empty($query_string))
+        if(strlen($query_string) > 0)
         {
             if(strpos($path, $query_string) > 0)
             {
@@ -208,5 +244,25 @@ class AB_Request
         }
 
         return $path;
+    }
+
+    /**
+     * Method from server (tested only with Apache web server)
+     *
+     * @throws  AB_Exception
+     * @return  string
+     */
+    public static function methodFromServer()
+    {
+        $request_method = ((string)$_SERVER['REQUEST_METHOD']);
+
+        if(strlen($request_method) == 0)
+        {
+            $message = "request method is empty";
+            $data = array('method' => __METHOD__);
+            throw new AB_Exception($message, E_USER_ERROR, $data);
+        }
+
+        return $request_method;
     }
 }

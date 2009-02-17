@@ -106,8 +106,8 @@ abstract class AB_Model
                 }
             }
 
-            $sql = "UPDATE " . $this->getTableName() . 
-                   "   SET " . implode(", ", $arguments) . 
+            $sql = "UPDATE " . $this->getTableName() .
+                   " SET " . implode(", ", $arguments) .
                    " WHERE " . $this->getPrimaryKeyName() . " = ?";
             
             array_push($values, $this->getPrimaryKey());
@@ -128,8 +128,8 @@ abstract class AB_Model
      */
     public function delete()
     {
-        $sql = "DELETE FROM " . $this->getTableName() . 
-               "      WHERE " . $this->getPrimaryKeyName() . " = ?";
+        $sql = "DELETE FROM " . $this->getTableName() .
+               " WHERE " . $this->getPrimaryKeyName() . " = ?";
 
         return (self::execute($sql, array($this->getPrimaryKey())) > 0);
     }
@@ -246,12 +246,10 @@ abstract class AB_Model
             }
             catch(PDOException $exception)
             {
-                $message = "[select] model (" . $model . ") " . 
-                           "with sql (" . $sql . ") failed; " .
-                           $exception->getMessage() . "; " . 
-                           $exception->getTraceAsString();
-
-                throw new AB_Exception($message, E_USER_ERROR);
+                $message = "select model (" . $model . ") " . 
+                           "with sql (" . $sql . ") failed";
+                $data = array ('method' => __METHOD__);
+                AB_Exception::forward($message, E_USER_ERROR, $exception, $data);
             }
         }
         else
@@ -264,12 +262,10 @@ abstract class AB_Model
             }
             catch(PDOException $exception)
             {
-                $message = "[select] model (" . $model . ") " . 
-                           "with sql (" . $sql . ") failed; " .
-                           $exception->getMessage() . "; " . 
-                           $exception->getTraceAsString();
-
-                throw new AB_Exception($message, E_USER_ERROR);
+                $message = "select model (" . $model . ") " . 
+                           "with sql (" . $sql . ") failed";
+                $data = array ('method' => __METHOD__);
+                AB_Exception::forward($message, E_USER_ERROR, $exception, $data);
             }
         }
  
@@ -299,11 +295,9 @@ abstract class AB_Model
             }
             catch(PDOException $exception)
             {
-                $message = "[execute] sql (" . $sql . ") failed" .
-                           $exception->getMessage() . "; " . 
-                           $exception->getTraceAsString();
-
-                throw new AB_Exception($message, E_USER_ERROR);
+                $message = "execute sql (" . $sql . ") failed";
+                $data = array ('method' => __METHOD__);
+                AB_Exception::forward($message, E_USER_ERROR, $exception, $data);
             }
         }
         else
@@ -314,11 +308,9 @@ abstract class AB_Model
             }
             catch(PDOException $exception)
             {
-                $message = "[execute] sql (" . $sql . ") failed; " .
-                           $exception->getMessage() . "; " . 
-                           $exception->getTraceAsString();
-
-                throw new AB_Exception($message, E_USER_ERROR);
+                $message = "execute sql (" . $sql . ") failed";
+                $data = array ('method' => __METHOD__);
+                AB_Exception::forward($message, E_USER_ERROR, $exception, $data);
             }
         }
 
@@ -368,11 +360,9 @@ abstract class AB_Model
             }
             catch(PDOException $exception)
             {
-                $message = "[select] sql (" . $sql . ") failed; " .
-                           $exception->getMessage() . "; " . 
-                           $exception->getTraceAsString();
-
-                throw new AB_Exception($message, E_USER_ERROR);
+                $message = "select sql (" . $sql . ") failed";
+                $data = array ('method' => __METHOD__);
+                AB_Exception::forward($message, E_USER_ERROR, $exception, $data);
             }
         }
         else
@@ -383,11 +373,9 @@ abstract class AB_Model
             }
             catch(PDOException $exception)
             {
-                $message = "[select] sql (" . $sql . ") failed; " .
-                           $exception->getMessage() . "; " . 
-                           $exception->getTraceAsString();
-
-                throw new AB_Exception($message, E_USER_ERROR);
+                $message = "select sql (" . $sql . ") failed";
+                $data = array ('method' => __METHOD__);
+                AB_Exception::forward($message, E_USER_ERROR, $exception, $data);
             }
         }
 
@@ -422,10 +410,9 @@ abstract class AB_Model
 
         if(empty($configuration))
         {
-            $message = "database->" . $database . " " . 
-                       "does not exists in registry";
-
-            throw new AB_Exception($message, E_USER_ERROR);
+            $message = "database (" . $database . ") does not exists in registry";
+            $data = array('method' => __METHOD__);
+            throw new AB_Exception($message, E_USER_ERROR, $data);
         }
         
         $has_connection = false;
@@ -456,11 +443,9 @@ abstract class AB_Model
             }
             catch(PDOException $exception)
             {
-                $message = "database connection failed; " .
-                           $exception->getMessage() . "; " . 
-                           $exception->getTraceAsString();
-
-                throw new AB_Exception($message, E_USER_ERROR);
+                $message = "database connection failed";
+                $data = array ('method' => __METHOD__);
+                AB_Exception::forward($message, E_USER_ERROR, $exception, $data);
             }
         }
 
@@ -501,19 +486,16 @@ abstract class AB_Model
                 }
                 else
                 {
-                    $message = __CLASS__ . "::" . __METHOD__ . 
-                               " has no implementation to driver" . 
-                               " (" . $driver . ")";
-
-                    throw new AB_Exception($message, E_USER_ERROR);
+                    $message = "no implementation to driver (" . $driver . ")";
+                    $data = array('method' => __METHOD__);
+                    throw new AB_Exception($message, E_USER_ERROR, $data);
                 }
             }
             catch(Exception $exception)
             {
-                $message = "failed to set the timezone; " . 
-                           $exception->getMessage();
-
-                throw new AB_Exception($message, E_USER_ERROR);
+                $message = "failed to set the timezone";
+                $data = array ('method' => __METHOD__);
+                AB_Exception::forward($message, E_USER_ERROR, $exception, $data);
             }
         }
     }
