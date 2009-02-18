@@ -69,10 +69,6 @@ class CmsController extends AbstractController
         $manager_url         = "";
         $manager_html_status = self::M_H_STATUS_FAILED;
 
-        /* fix url */
-
-        $url = self::fixURL($url);
-
         /* http request */
 
         $client = new ApplicationHTTPClient();
@@ -102,9 +98,7 @@ class CmsController extends AbstractController
         if($url_status == ApplicationHTTPClient::STATUS_OK)
         {
             $cms_type = CMSType::discovery(
-                $url, 
-                $client->getHeaders(), 
-                self::cleanHTML($client->getBody()));
+                $url, $client->getHeaders(), $client->getBody());
         }
 
         if(is_object($cms_type))
@@ -119,13 +113,13 @@ class CmsController extends AbstractController
             $cms_type_name = $cms_type->name;
             $cms_type_version = $cms_type->version;
 
-            $info = $cms_type->getDefaultAttributes();
+            $config = $cms_type->getConfiguration();
 
             /* get url admin */
 
-            if(array_key_exists(CMSType::A_M_URL, $info))
+            if(array_key_exists(CMSType::CONFIG_MANAGER_URL, $config))
             {
-                $manager_url = $url . $info[CMSType::A_M_URL];
+                $manager_url = $url . $config[CMSType::CONFIG_MANAGER_URL];
 
                 /* get response from manager url */
 
@@ -149,20 +143,20 @@ class CmsController extends AbstractController
                 /* this could be a lapse of "DBA" memory ! */
 
                 $message = "cms type (" . $cms_type->cms_type_id . ") " . 
-                           "not have a default attribute (" . CMSType::A_M_URL . ")";
+                           "not have configuration for (" . 
+                           CMSType::CONFIG_MANAGER_URL . ")";
                 $_a = array('method' => __METHOD__,
                             'user_profile_id' => $this->user_profile_id);
                 AB_Log::write($message, E_USER_WARNING, $_a);
             }
 
-            /* check manager HTML from manager url response */
+            /* check manager response */
 
             if($manager_url_status == ApplicationHTTPClient::STATUS_OK)
             {
                 try
                 {
-                    if(CMSType::managerHTMLCheck(
-                        self::cleanHTML($client->getBody()), $info) == true)
+                    if(CMSType::managerCheckHTML($client->getBody(), $config) == true)
                     {
                         $manager_html_status = self::M_H_STATUS_OK;
                     }
@@ -192,22 +186,6 @@ class CmsController extends AbstractController
             'manager_url'         => $manager_url,
             'manager_html_status' => $manager_html_status
         ));
-    }
-
-    /**
-     * Clean HTML (~-25%)
-     * 
-     * @param   string      $html
-     * @return  string
-     */
-    private static function cleanHTML($html)
-    {
-        $html = ereg_replace("\r", "", $html);              // no returns
-        $html = ereg_replace("\n", "", $html);              // no newlines
-        $html = ereg_replace("[[:space:]]+", " ", $html);   // no spaces
-        $html = ereg_replace(">[^<]*<", "><", $html);       // tags only
-
-        return $html;
     }
 
     /**

@@ -2,7 +2,7 @@ $(document).ready(function()
 {
     var active_request = false;
 
-    var url_base = "";
+    var url = "";
 
     /* spinner */
 
@@ -21,38 +21,67 @@ $(document).ready(function()
         $.ab_spinner_stop();
     }
 
-    /* cms url base check */
+    /* url switches */
 
-    function commitUrlBase()
+    function commitURL()
     {
-        $("input[@name='input_url_base']").attr("disabled", true);
-        $("#check_url_base").hide();
-        $("#change_url_base").show();
+        $("input[@name='input_url']").attr("disabled", true);
+        $("#check_url").hide();
+        $("#change_url").show();
     }
 
-    function changeUrlBase()
+    function changeURL()
     {
-        $("input[@name='input_url_base']").attr("disabled", false);
-        $("#change_url_base").hide();
-        $("#check_url_base").show();
+        $("input[@name='input_url']").attr("disabled", false);
+        $("#change_url").hide();
+        $("#check_url").show();
+        changeCMSType();
     }
 
-    function check()
+    /* cms type switches */
+
+    function commitCMSType(name)
+    {
+        $("select[@name='cms_type']").attr("disabled", false);
+        $("select[@name='cms_type']").html("<option>" + name + "</option>");
+    }
+
+    function changeCMSType()
+    {
+        $("select[@name='cms_type']").attr("disabled", true);
+        $("select[@name='cms_type']").html("");
+    }
+
+    /* manager url switches */
+
+    function commitManagerURL(url)
+    {
+        $("input[@name='manager_url']").val(url);
+    }
+
+    function changeManagerURL()
+    {
+        $("input[@name='manager_url']").val("");
+    }
+
+    /* check url */
+
+    function checkURL()
     {
         if(active_request == true)
         {
             return null;
         }
 
-        url_base = $("input[@name='input_url_base']").val();
+        url = $("input[@name='input_url']").val();
 
-        if(url_base == "")
+        if(url == "")
         {
             $.ab_alert("informe o endereço do CMS");
             return null;
         }
 
-        parameters = { url: url_base }
+        parameters = { url: url }
 
         $.ajax
         ({
@@ -72,7 +101,8 @@ $(document).ready(function()
             },
             success: function (data) 
             { 
-                $.ab_alert( /* debug */
+                /*
+                $.ab_alert(
                     "url_status = " + data.url_status + "<br>" + 
                     "url = " + data.url+ "<br>" + 
                     "cms_type_status = " + data.cms_type_status + "<br>" + 
@@ -82,22 +112,99 @@ $(document).ready(function()
                     "manager_url = " + data.manager_url + "<br>" + 
                     "manager_html_status = " + data.manager_html_status + "<br>"
                 );
-
-                if(data.url)
-                {
-                    $("input[@name='input_url_base']").val(data.url);
-                }
+                */
 
                 /*
-                if(data == "url_base_ok") 
+                if(data.url)
                 {
-                    commitUrlBase();
+                    $("input[@name='input_url']").val(data.url);
                 }
-                else if(data == "url_base_failed")
+
+                /* url status */
+
+                if(data.url_status == "status_ok") 
                 {
-                    $.ab_alert("Não foi possível verificar o endereço do CMS");
+                    commitURL();
                 }
-                */
+                else if(data.url_status == "status_failed")
+                {
+                    changeURL();
+                    $.ab_alert("Não foi possível verificar o endereço do CMS informado");
+                }
+                else if(data.url_status == "status_4xx")
+                {
+                    changeURL();
+                    $.ab_alert("Não foi possível localizar o endereço do CMS informado");
+                }
+                else if(data.url_status == "status_3xx" || 
+                        data.url_status == "status_5xx")
+                {
+                    changeURL();
+                    $.ab_alert("O endereço informado possui erros ou está" +
+                               "sendo redirecionado para outro local");
+                }
+
+                /* cms type */
+
+                if(data.cms_type_status == "ok")
+                {
+                    commitCMSType(data.cms_type_name + " (" + 
+                                  data.cms_type_version + ")");
+                }
+                else if(data.cms_type_status == "failed")
+                {
+                    changeURL();
+                    commitCMSType("");
+                    $.ab_alert("Não foi possível determinar o tipo de CMS " + 
+                               "para o endereço informado");
+                }
+                else if(data.cms_type_status == "maintenance")
+                {
+                    commitCMSType("");
+                    $.ab_alert("O tipo de CMS " + 
+                               data.cms_type_name + " (" + 
+                               data.cms_type_version + ") " +
+                               " está em manutenção. Tente novamente mais tarde");
+                }
+
+                /* manager url */
+
+                if(data.cms_type_status == "ok" &&
+                   data.manager_url == "")
+                {
+                    changeManagerURL();
+                }
+
+                if(data.manager_url_status == "status_ok")
+                {
+                    if(data.manager_html_status == "ok")
+                    {
+                        commitManagerURL();
+                    }
+                    else
+                    {
+                        changeManagerURL();
+                        $.ab_alert("O endereço padrão do gerenciador não é válido." +
+                                   "Informe o endereço manualmente.");
+                    }
+                }
+                else if(data.manager_url_status == "status_failed")
+                {
+                    changeManagerURL();
+                    $.ab_alert("Não foi possível obter o endereço do gerenciador");
+                }
+                else if(data.manager_url_status == "status_4xx")
+                {
+                    changeManagerURL();
+                    $.ab_alert("Não foi possível localizar o endereço do gerenciador");
+                }
+                else if(data.manager_url_status == "status_3xx" || 
+                        data.manager_url_status == "status_5xx")
+                {
+                    changeManagerURL();
+                    $.ab_alert("O endereço do gerenciador possui erros ou está" +
+                               "sendo redirecionado para outro local");
+                }
             }, 
             error: function () 
             { 
@@ -106,21 +213,23 @@ $(document).ready(function()
         });
     }
 
+    /* triggers */
+
     /* 
-    $("input[@name='input_url_base']").blur(function()
+    $("input[@name='input_url']").blur(function()
     {
         check();
     });
     */
 
-    $("#check_url_base").click(function()
+    $("#check_url").click(function()
     {
-        check();
+        checkURL();
     });
 
-    $("#change_url_base").click(function()
+    $("#change_url").click(function()
     {
-        changeUrlBase();
+        changeURL();
     });
 
     /* cancel */
@@ -140,10 +249,10 @@ $(document).ready(function()
         }
 
         name = $("input[@name='name']").val();
-        admin_username = $("input[@name='admin_username']").val();
-        admin_password = $("input[@name='admin_password']").val();
+        manager_username = $("input[@name='manager_username']").val();
+        manager_password = $("input[@name='manager_password']").val();
 
-        if(name == "" || admin_username == "" || admin_password == "")
+        if(name == "" || manager_username == "" || manager_password == "")
         {
             $.ab_alert("Preencha o formulário corretamente");
             return null;

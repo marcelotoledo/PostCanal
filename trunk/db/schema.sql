@@ -1,30 +1,30 @@
-/* drop */
-
 SET TIME ZONE 'UTC';
 
-DROP TABLE IF EXISTS aggregator_item;
-DROP SEQUENCE IF EXISTS aggregator_item_seq;
-DROP TABLE IF EXISTS user_cms_channel;
-DROP SEQUENCE IF EXISTS user_cms_channel_seq;
-DROP TABLE IF EXISTS aggregator_channel;
-DROP SEQUENCE IF EXISTS aggregator_channel_seq;
-DROP TABLE IF EXISTS channel_status;
-DROP TABLE IF EXISTS user_cms;
-DROP SEQUENCE IF EXISTS user_cms_seq;
-DROP TABLE IF EXISTS cms_status;
-DROP TABLE IF EXISTS user_information;
-DROP TABLE IF EXISTS user_profile;
-DROP SEQUENCE IF EXISTS user_profile_seq;
-DROP TABLE IF EXISTS cms_type_discovery;
-DROP SEQUENCE IF EXISTS cms_type_discovery_seq;
-DROP TABLE IF EXISTS cms_type_default_attribute;
-DROP SEQUENCE IF EXISTS cms_type_default_attribute_seq;
-DROP TABLE IF EXISTS cms_type;
-DROP SEQUENCE IF EXISTS cms_type_seq;
-DROP TABLE IF EXISTS application_log;
+/* drop */
+
+DROP TABLE IF EXISTS application_log CASCADE;
+DROP TABLE IF EXISTS application_mailer_relay CASCADE;
+DROP TABLE IF EXISTS channel_status CASCADE;
+DROP TABLE IF EXISTS cms_status CASCADE;
+DROP TABLE IF EXISTS cms_type CASCADE;
+DROP TABLE IF EXISTS cms_type_discovery CASCADE;
+DROP TABLE IF EXISTS cms_type_configuration CASCADE;
+DROP TABLE IF EXISTS aggregator_channel CASCADE;
+DROP TABLE IF EXISTS aggregator_item CASCADE;
+DROP TABLE IF EXISTS user_profile CASCADE;
+DROP TABLE IF EXISTS user_information CASCADE;
+DROP TABLE IF EXISTS user_cms CASCADE;
+DROP TABLE IF EXISTS user_cms_channel CASCADE;
 DROP SEQUENCE IF EXISTS application_log_seq;
-DROP TABLE IF EXISTS application_mailer_relay;
 DROP SEQUENCE IF EXISTS application_mailer_relay_seq;
+DROP SEQUENCE IF EXISTS cms_type_seq;
+DROP SEQUENCE IF EXISTS cms_type_discovery_seq;
+DROP SEQUENCE IF EXISTS cms_type_configuration_seq;
+DROP SEQUENCE IF EXISTS aggregator_channel_seq;
+DROP SEQUENCE IF EXISTS aggregator_item_seq;
+DROP SEQUENCE IF EXISTS user_profile_seq; ;
+DROP SEQUENCE IF EXISTS user_cms_seq;
+DROP SEQUENCE IF EXISTS user_cms_channel_seq;
 
 
 /* log */
@@ -98,23 +98,23 @@ CREATE TABLE cms_type_discovery
     cms_type_discovery_id integer NOT NULL 
         DEFAULT nextval('cms_type_discovery_seq'),
     cms_type_id integer NOT NULL,
-    name character varying(50) NOT NULL,
-    value character varying(200) NOT NULL,
+    name character varying(100) NOT NULL,
+    value text NOT NULL,
     CONSTRAINT cms_type_discovery_pk PRIMARY KEY (cms_type_discovery_id),
     CONSTRAINT cms_type_fk FOREIGN KEY (cms_type_id) 
         REFERENCES cms_type (cms_type_id) ON DELETE CASCADE
 );
 
-CREATE SEQUENCE cms_type_default_attribute_seq;
-CREATE TABLE cms_type_default_attribute
+CREATE SEQUENCE cms_type_configuration_seq;
+CREATE TABLE cms_type_configuration
 (
-    cms_type_default_attribute_id integer NOT NULL
-        DEFAULT NEXTVAL('cms_type_default_attribute_seq'),
+    cms_type_configuration_id integer NOT NULL
+        DEFAULT NEXTVAL('cms_type_configuration_seq'),
     cms_type_id integer NOT NULL,
     name character varying(100) NOT NULL,
     value character varying(200) NOT NULL,
-    CONSTRAINT cms_type_default_attribute_pk 
-        PRIMARY KEY (cms_type_default_attribute_id),
+    CONSTRAINT cms_type_configuration_pk 
+        PRIMARY KEY (cms_type_configuration_id),
     CONSTRAINT cms_type_fk FOREIGN KEY (cms_type_id) 
         REFERENCES cms_type (cms_type_id) ON DELETE CASCADE
 );

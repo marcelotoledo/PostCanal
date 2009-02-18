@@ -100,7 +100,7 @@ class AB_Dispatcher
             $has_error = true;
 
             $error = "message: " . $exception->getMessage() . "; " .
-                     "status: " . $exception->getCode() . "; " .
+                     "code: " . $exception->getCode() . "; " .
                      "file: " . $exception->getFile() . "; " .
                      "line: " . $exception->getLine() . "; " .
                      "trace: " . $exception->getTraceAsString();
