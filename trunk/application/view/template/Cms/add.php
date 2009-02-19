@@ -12,18 +12,23 @@
     <tr>
         <td class="formlabel">Endereço do CMS:</td>
         <td>
-            <input type="text" name="input_url" value="http://">
+            <input type="text" name="input_url" value="">
+            <div id="input_url_ro" style="display:none"></div>
             <a id="check_url">verificar</a>
             <a id="change_url" style="display:none">modificar</a>
         </td>
     </tr>
-    <tr>
+    <tr id="cms_type_row" style="display:none">
         <td class="formlabel">Tipo de CMS:</td>
-        <td><select name="cms_type" disabled></select></td>
+        <td><div id="input_cms_type_ro"></div></td>
     </tr>
-    <tr>
+    <tr id="manager_url_row" style="display:none">
         <td class="formlabel">Gerenciador:</td>
-        <td><input type="text" name="manager_url" value="http://" disabled></td>
+        <td>
+            <input type="text" name="manager_url" value="">
+            <a id="check_manager_url">verificar</a>
+            <div id="input_manager_url_ro" style="display:none"></div>
+        </td>
     </tr>
 </table>
 <br>

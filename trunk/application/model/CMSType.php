@@ -26,6 +26,7 @@ class CMSType extends AB_Model
     const DISCOVERY_URL_REPLACE  = "url_replace";
     const DISCOVERY_URL_MATCH    = "url_match";
     const DISCOVERY_HEADER       = "header";
+    //    DISCOVERY_HEADER_REPLACE: is not necessary because headers have a simple format
     const DISCOVERY_HEADER_MATCH = "header_match";
     const DISCOVERY_HTML         = "html";
     const DISCOVERY_HTML_REPLACE = "html_replace";
@@ -35,10 +36,10 @@ class CMSType extends AB_Model
      * Configuration constants
      */
     const CONFIG_MANAGER_URL            = "manager_url";
-    const CONFIG_MANAGER_URL_MANUAL     = "manager_url_manual";
     const CONFIG_MANAGER_ACTION_URL     = "manager_action_url";
     const CONFIG_MANAGER_INPUT_USERNAME = "manager_input_username";
     const CONFIG_MANAGER_INPUT_PASSWORD = "manager_input_password";
+
     const CONFIG_MANAGER_HTML_REPLACE   = "manager_html_replace";
     const CONFIG_MANAGER_HTML_MATCH     = "manager_html_match";
 

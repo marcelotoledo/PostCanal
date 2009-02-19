@@ -32,7 +32,6 @@ INSERT INTO cms_type_discovery (cms_type_id, name, value) VALUES (CURRVAL('cms_t
 INSERT INTO cms_type_discovery (cms_type_id, name, value) VALUES (CURRVAL('cms_type_seq'), 'html_match', 'a:1:{i:0;a:1:{i:0;s:31:"/<meta[^>]+(generator)+[^>]+>/i";}}');
 
 INSERT INTO cms_type_configuration (cms_type_id, name, value) VALUES (CURRVAL('cms_type_seq'), 'manager_url', '/wp-admin');
-INSERT INTO cms_type_configuration (cms_type_id, name, value) VALUES (CURRVAL('cms_type_seq'), 'manager_url_manual', 'no');
 INSERT INTO cms_type_configuration (cms_type_id, name, value) VALUES (CURRVAL('cms_type_seq'), 'manager_action_url', '/wp-login.php');
 INSERT INTO cms_type_configuration (cms_type_id, name, value) VALUES (CURRVAL('cms_type_seq'), 'manager_input_username', 'log');
 INSERT INTO cms_type_configuration (cms_type_id, name, value) VALUES (CURRVAL('cms_type_seq'), 'manager_input_password', 'pwd');

@@ -76,6 +76,7 @@ class UserProfile extends AB_Model
     public function save()
     {
         if(!$this->isNew()) $this->updated_at = date("Y/m/d H:i:s");
+        $this->login_email = strtolower($this->login_email);
 
         return parent::_save(self::$sequence_name);
     }
@@ -92,7 +93,7 @@ class UserProfile extends AB_Model
         if(!$this->isNew())
         {
             $_md5 = md5($this->user_profile_id . ":" .
-                        $this->login_email . ":" .
+                        strtolower($this->login_email) . ":" .
                         $this->login_password_md5);
             $uid = self::encodeUID($_md5);
         }   
@@ -181,7 +182,7 @@ class UserProfile extends AB_Model
     public static function findByEmail($email)
     {
         return current(self::find(array(
-            'login_email' => $email,
+            'login_email' => strtolower($email),
             'enabled'     => true)));
     }
 
@@ -195,7 +196,7 @@ class UserProfile extends AB_Model
     public static function findByLogin($email, $password_md5)
     {
         return current(self::find(array(
-            'login_email'        => $email,
+            'login_email'        => strtolower($email),
             'login_password_md5' => $password_md5,
             'enabled'            => true)));
     }

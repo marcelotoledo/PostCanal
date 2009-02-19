@@ -55,7 +55,7 @@ abstract class AbstractController extends AB_Controller
      * @param   string  $name
      * @return  mixed
      */
-    protected function __get ($name)
+    protected function __get($name)
     {
         $session = $this->getSession();
         $value = null;
@@ -76,7 +76,7 @@ abstract class AbstractController extends AB_Controller
      * @param   mixed   $value
      * @return  void
      */
-    protected function __set ($name, $value)
+    protected function __set($name, $value)
     {
         $session = $this->getSession();
 
@@ -91,7 +91,7 @@ abstract class AbstractController extends AB_Controller
      *
      * @return  void
      */
-    protected function sessionCreate ()
+    protected function sessionCreate()
     {
         $registry = AB_Registry::singleton();
         $expiration = $registry->session->expiration;
