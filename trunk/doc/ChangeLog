@@ -98,5 +98,6 @@ HORAS TRABALHADAS: 7h
 
 - Ajustes no VIEW do cadastro de CMS
 - Modificacao do cadastro de usuario, cadastrar/verificar e-mail em LOWERCASE
+- Otimizacao na classe base do Model, parametro sequence em save() redundante
 
-HORAS TRABALHADAS: 4h
+HORAS TRABALHADAS: 6h

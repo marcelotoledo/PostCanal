@@ -70,7 +70,7 @@ class UserCMS extends AB_Model
     {
         if(!$this->isNew()) $this->updated_at = date("Y/m/d H:i:s");
 
-        return parent::_save(self::$sequence_name);
+        return parent::save();
     }
 
     /**

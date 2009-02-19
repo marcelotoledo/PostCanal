@@ -62,16 +62,6 @@ class CMSStatus extends AB_Model
     }
 
     /**
-     * Save model
-     *
-     * @return  boolean
-     */
-    public function save()
-    {
-        return parent::_save(self::$sequence_name);
-    }
-
-    /**
      * Find CMSStatus with an encapsulated SELECT command
      *
      * @param   array   $conditions WHERE parameters

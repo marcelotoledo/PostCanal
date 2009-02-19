@@ -78,7 +78,7 @@ class UserProfile extends AB_Model
         if(!$this->isNew()) $this->updated_at = date("Y/m/d H:i:s");
         $this->login_email = strtolower($this->login_email);
 
-        return parent::_save(self::$sequence_name);
+        return parent::save();
     }
 
     /**

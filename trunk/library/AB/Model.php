@@ -73,11 +73,9 @@ abstract class AB_Model
     /**
      * Save model
      *
-     * @param   string      $sequence   Sequence name
-     * 
      * @return  boolean
      */
-    public function _save($sequence)
+    public function save()
     {
         $connection = self::getConnection();
         $saved = false;
@@ -90,7 +88,10 @@ abstract class AB_Model
                    "(" . implode(", ", $columns) . ") VALUES " .
                    "(?" . str_repeat(", ?", count($columns) - 1) . ")";
 
-            $id = self::_insert($sql, array_values($this->data), $sequence);
+            $id = self::_insert($sql, 
+                                array_values($this->data), 
+                                $this->getSequenceName());
+
             $this->setPrimaryKey($id);
             $saved = ($id > 0);
         }
@@ -119,8 +120,6 @@ abstract class AB_Model
 
         return $saved;
     }
-
-    abstract protected function save();
 
     /**
      * Delete model

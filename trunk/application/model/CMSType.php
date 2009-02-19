@@ -111,16 +111,6 @@ class CMSType extends AB_Model
     }
 
     /**
-     * Save model
-     *
-     * @return  boolean
-     */
-    public function save()
-    {
-        return parent::_save(self::$sequence_name);
-    }
-
-    /**
      * Get CMSType plugin info (DEPRECATED)
      *
      * @param   string  $url    Base URL
