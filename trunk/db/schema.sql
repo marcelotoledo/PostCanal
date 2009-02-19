@@ -4,15 +4,13 @@ SET TIME ZONE 'UTC';
 
 DROP TABLE IF EXISTS application_log CASCADE;
 DROP TABLE IF EXISTS application_mailer_relay CASCADE;
-DROP TABLE IF EXISTS channel_status CASCADE;
-DROP TABLE IF EXISTS cms_status CASCADE;
 DROP TABLE IF EXISTS cms_type CASCADE;
 DROP TABLE IF EXISTS cms_type_discovery CASCADE;
 DROP TABLE IF EXISTS cms_type_configuration CASCADE;
 DROP TABLE IF EXISTS aggregator_channel CASCADE;
 DROP TABLE IF EXISTS aggregator_item CASCADE;
 DROP TABLE IF EXISTS user_profile CASCADE;
-DROP TABLE IF EXISTS user_information CASCADE;
+DROP TABLE IF EXISTS user_profile_information CASCADE;
 DROP TABLE IF EXISTS user_cms CASCADE;
 DROP TABLE IF EXISTS user_cms_channel CASCADE;
 DROP SEQUENCE IF EXISTS application_log_seq;
@@ -56,26 +54,6 @@ CREATE TABLE application_mailer_relay
     created_at timestamp without time zone NOT NULL DEFAULT NOW()
 );
 
-
-CREATE TABLE channel_status
-(
-    channel_status_id integer NOT NULL,
-    error_level integer NOT NULL DEFAULT 0,
-    label character varying(50) NOT NULL,
-    CONSTRAINT channel_status_pk PRIMARY KEY (channel_status_id),
-    CONSTRAINT channel_status_id_unique UNIQUE (channel_status_id)
-);
-
-CREATE TABLE cms_status
-(
-    cms_status_id integer NOT NULL,
-    error_level integer NOT NULL DEFAULT 0,
-    label character varying(50) NOT NULL,
-    CONSTRAINT cms_status_pk PRIMARY KEY (cms_status_id),
-    CONSTRAINT cms_status_id_unique UNIQUE (cms_status_id)
-);
-
-
 /* cms type */
 
 CREATE SEQUENCE cms_type_seq;
@@ -84,8 +62,6 @@ CREATE TABLE cms_type
     cms_type_id integer NOT NULL DEFAULT nextval('cms_type_seq'),
     name character varying(50) NOT NULL,
     version character varying(50) NOT NULL,
-    default_manager_url character varying(200) DEFAULT NULL,
-    default_manager_form_action_url character varying(200) DEFAULT NULL,
     maintenance boolean NOT NULL DEFAULT false,
     enabled boolean NOT NULL DEFAULT false,
     CONSTRAINT cms_type_pk PRIMARY KEY (cms_type_id),
@@ -98,7 +74,7 @@ CREATE TABLE cms_type_discovery
     cms_type_discovery_id integer NOT NULL 
         DEFAULT nextval('cms_type_discovery_seq'),
     cms_type_id integer NOT NULL,
-    name character varying(100) NOT NULL,
+    name character varying(50) NOT NULL,
     value text NOT NULL,
     CONSTRAINT cms_type_discovery_pk PRIMARY KEY (cms_type_discovery_id),
     CONSTRAINT cms_type_fk FOREIGN KEY (cms_type_id) 
@@ -111,8 +87,8 @@ CREATE TABLE cms_type_configuration
     cms_type_configuration_id integer NOT NULL
         DEFAULT NEXTVAL('cms_type_configuration_seq'),
     cms_type_id integer NOT NULL,
-    name character varying(100) NOT NULL,
-    value character varying(200) NOT NULL,
+    name character varying(50) NOT NULL,
+    value text NOT NULL,
     CONSTRAINT cms_type_configuration_pk 
         PRIMARY KEY (cms_type_configuration_id),
     CONSTRAINT cms_type_fk FOREIGN KEY (cms_type_id) 
@@ -125,18 +101,15 @@ CREATE TABLE cms_type_configuration
 CREATE SEQUENCE aggregator_channel_seq;
 CREATE TABLE aggregator_channel
 (
-    aggregator_channel_id integer NOT NULL 
-        DEFAULT nextval('aggregator_channel_seq'),
-    channel_status_id integer NOT NULL,
+    aggregator_channel_id integer NOT NULL DEFAULT nextval('aggregator_channel_seq'),
     title character varying(100) NOT NULL,
     link character varying(200) NOT NULL,
     description text NOT NULL DEFAULT '',
+    status character varying(50) NOT NULL,
     created_at timestamp without time zone NOT NULL DEFAULT NOW(),
     updated_at timestamp without time zone DEFAULT NULL,
     enabled boolean NOT NULL DEFAULT true,
-    CONSTRAINT aggregator_channel_pk PRIMARY KEY (aggregator_channel_id),
-    CONSTRAINT channel_status_fk FOREIGN KEY (channel_status_id) 
-        REFERENCES channel_status (channel_status_id) ON DELETE RESTRICT
+    CONSTRAINT aggregator_channel_pk PRIMARY KEY (aggregator_channel_id)
 );
 
 CREATE SEQUENCE aggregator_item_seq;
@@ -172,7 +145,7 @@ CREATE TABLE user_profile
     CONSTRAINT user_profile_pk PRIMARY KEY (user_profile_id)
 );
 
-CREATE TABLE user_information
+CREATE TABLE user_profile_information
 (
     user_profile_id integer NOT NULL,
     name character varying(100) NOT NULL DEFAULT '',
@@ -189,12 +162,12 @@ CREATE TABLE user_cms
     user_cms_id integer NOT NULL DEFAULT nextval('user_cms_seq'),
     user_profile_id integer NOT NULL,
     cms_type_id integer NOT NULL,
-    cms_status_id integer NOT NULL,
     name character varying(100) NOT NULL,
-    url_base character varying(200) NOT NULL,
-    url_admin character varying(200) NOT NULL,
-    admin_username character varying(100) NOT NULL,
-    admin_password character varying(100) NOT NULL,
+    url character varying(200) NOT NULL,
+    manager_url character varying(200) NOT NULL,
+    manager_username character varying(100) NOT NULL,
+    manager_password character varying(100) NOT NULL,
+    status character varying(50) NOT NULL,
     created_at timestamp without time zone NOT NULL DEFAULT NOW(),
     updated_at timestamp without time zone DEFAULT NULL,
     enabled boolean NOT NULL DEFAULT true,
@@ -202,9 +175,7 @@ CREATE TABLE user_cms
     CONSTRAINT user_profile_fk FOREIGN KEY (user_profile_id) 
         REFERENCES user_profile (user_profile_id) ON DELETE CASCADE,
     CONSTRAINT cms_type_fk FOREIGN KEY (cms_type_id) 
-        REFERENCES cms_type (cms_type_id) ON DELETE RESTRICT,
-    CONSTRAINT cms_status_fk FOREIGN KEY (cms_status_id) 
-        REFERENCES cms_status (cms_status_id) ON DELETE RESTRICT
+        REFERENCES cms_type (cms_type_id) ON DELETE RESTRICT
 );
 
 CREATE SEQUENCE user_cms_channel_seq;

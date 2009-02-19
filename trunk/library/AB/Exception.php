@@ -73,7 +73,7 @@ class AB_Exception extends Exception
 
         if($priority == "ERROR")
         {
-            $message.= ";\ntrace: " . $this->getTraceAsString();
+            $message.= ";\ntrace:\n" . $this->getTraceAsString();
         }
 
         return $message;

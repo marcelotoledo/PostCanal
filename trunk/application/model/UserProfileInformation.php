@@ -1,20 +1,20 @@
 <?php
 
 /**
- * UserInformation model class
+ * UserProfileInformation model class
  * 
  * @category    Blotomate
  * @package     Model
  * @author      Rafael Castilho <rafael@castilho.biz>
  */
-class UserInformation extends AB_Model
+class UserProfileInformation extends AB_Model
 {
     /**
      * Table name
      *
      * @var string
      */
-    protected static $table_name = 'user_information';
+    protected static $table_name = 'user_profile_information';
 
     /**
      * Sequence name
@@ -84,7 +84,7 @@ class UserInformation extends AB_Model
     }
 
     /**
-     * Find UserInformation with an encapsulated SELECT command
+     * Find UserProfileInformation with an encapsulated SELECT command
      *
      * @param   array   $conditions WHERE parameters
      * @param   array   $order      ORDER parameters
@@ -106,7 +106,7 @@ class UserInformation extends AB_Model
     }
 
     /**
-     * Get UserInformation with SQL
+     * Get UserProfileInformation with SQL
      *
      * @param   string  $sql    SQL query
      * @param   array   $data   values array
@@ -130,11 +130,11 @@ class UserInformation extends AB_Model
     }
 
     /**
-     * Find UserInformation by primary key
+     * Find UserProfileInformation by primary key
      *
      * @param   integer $id    Primary key value
      *
-     * @return  UserInformation|null 
+     * @return  UserProfileInformation|null 
      */
     public static function findByPrimaryKey($id)
     {

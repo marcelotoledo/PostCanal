@@ -39,7 +39,7 @@ class DashboardController extends AbstractController
             $this->setResponseRedirect(BASE_URL);
         }
 
-        $information = UserInformation::findByPrimaryKey($id);
+        $information = UserProfileInformation::findByPrimaryKey($id);
         $cms = UserCMS::findByUserProfileId($id);
 
         $this->setViewParameter('profile', $profile);

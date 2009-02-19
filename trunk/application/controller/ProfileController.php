@@ -451,11 +451,11 @@ throw new UnexpectedValueException("See TODO in " . __FILE__ .":". __LINE__);
             return null;
         }
 
-        $information = UserInformation::findByPrimaryKey($id);
+        $information = UserProfileInformation::findByPrimaryKey($id);
 
         if(empty($information))
         {
-            $information = new UserInformation();
+            $information = new UserProfileInformation();
         }
 
         $this->setViewParameter('profile', $profile);
@@ -546,11 +546,11 @@ throw new UnexpectedValueException("See TODO in " . __FILE__ .":". __LINE__);
 
         /* information change */
 
-        $information = UserInformation::findByPrimaryKey($id);
+        $information = UserProfileInformation::findByPrimaryKey($id);
 
         if(empty($information))
         {
-            $information = new UserInformation();
+            $information = new UserProfileInformation();
             $information->user_profile_id = $id;
         }
 
