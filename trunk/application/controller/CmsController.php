@@ -14,6 +14,7 @@ class CmsController extends AbstractController
      */
     const CMS_TYPE_OK          = "ok";
     const CMS_TYPE_FAILED      = "failed";
+    const CMS_TYPE_UNKNOWN     = "unknown";
     const CMS_TYPE_MAINTENANCE = "maintenance";
 
     /**
@@ -95,7 +96,7 @@ class CmsController extends AbstractController
     {
         $url_status       = null;
 
-        $cms_type         = null;
+        $cms_type         = 0;
         $cms_type_status  = self::CMS_TYPE_FAILED;
         $cms_type_name    = "";
         $cms_type_version = "";
@@ -105,7 +106,7 @@ class CmsController extends AbstractController
 
         /* http request */
 
-        $client->request($url);
+        try { $client->request($url); } catch(AB_Exception $e) { }
 
         /* log requested url */
 
@@ -119,8 +120,7 @@ class CmsController extends AbstractController
             }
         }
     
-        $a = array('method' => __METHOD__,
-                   'user_profile_id' => $this->user_profile_id);
+        $a = array('method' => __METHOD__, 'user_profile_id' => $this->user_profile_id);
 
         AB_Log::write($m, E_USER_NOTICE, $a);
 
@@ -132,9 +132,13 @@ class CmsController extends AbstractController
         if($url_status == ApplicationHTTPClient::STATUS_OK)
         {
             $type = CMSType::discovery($url, $client->getHeaders(), $client->getBody());
+
+            $cms_type_status = is_object($type) ? 
+                self::CMS_TYPE_OK : 
+                self::CMS_TYPE_UNKNOWN;
         }
 
-        if(is_object($type))
+        if($cms_type_status == self::CMS_TYPE_OK)
         {
             $cms_type = $type->cms_type_id;
             $cms_type_status = self::CMS_TYPE_OK;
@@ -199,7 +203,7 @@ class CmsController extends AbstractController
 
         /* get response from manager url */
 
-        $client->request($manager_url);
+        try { $client->request($manager_url); } catch(AB_Exception $e) { }
         $url_status = $client->getStatus();
 
         /* check manager response */
@@ -214,25 +218,5 @@ class CmsController extends AbstractController
         }
 
         return compact(array('manager_url', 'manager_status'));
-    }
-
-    /**
-     * Fix URL
-     * 
-     * @param   string      $url
-     * @return  string
-     */
-    private static function fixURL($url)
-    {
-        $pattern = "#^(.*?//)*([\w\.\d]*)(:(\d+))*(/*)(.*)$#";
-        $matches = array();
-        preg_match($pattern, $url, $matches);
-
-        $protocol = empty($matches[1]) ? "http://" : $matches[1];
-        $address  = empty($matches[2]) ? ""        : $matches[2];
-        $port     = empty($matches[3]) ? ""        : $matches[3];
-        $resource = empty($matches[6]) ? ""        : $matches[5] . $matches[6];
-
-        return $protocol . $address . $port . $resource;
     }
 }

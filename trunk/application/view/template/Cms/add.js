@@ -151,16 +151,14 @@ $(document).ready(function()
                     commitCMSType(data.cms_type_name + " (" + 
                                   data.cms_type_version + ")");
                 }
-                else if(data.cms_type_status == "failed")
+                else if(data.cms_type_status == "unknown")
                 {
                     changeURL();
-                    commitCMSType("");
                     $.ab_alert("Não foi possível determinar o tipo de CMS " + 
                                "para o endereço informado");
                 }
                 else if(data.cms_type_status == "maintenance")
                 {
-                    commitCMSType("");
                     $.ab_alert("O tipo de CMS " + 
                                data.cms_type_name + " (" + 
                                data.cms_type_version + ") " +
