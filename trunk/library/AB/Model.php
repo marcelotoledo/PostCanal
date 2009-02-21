@@ -9,6 +9,23 @@
  */
 abstract class AB_Model
 {
+    /** 
+     * column structure constants 
+     */
+    const STRUCTURE_TYPE     = 't';
+    const STRUCTURE_SIZE     = 's';
+    const STRUCTURE_REQUIRED = 'r';
+
+    /** 
+     * column type constants 
+     */
+    const TYPE_STRING  = 's';
+    const TYPE_INTEGER = 'i';
+    const TYPE_FLOAT   = 'f';
+    const TYPE_BOOLEAN = 'b';
+    const TYPE_DATE    = 'd';
+
+
     /**
      * Model data
      *
@@ -164,6 +181,20 @@ abstract class AB_Model
     {
         return array_key_exists($this->getPrimaryKeyName(), $this->data) ? 
             $this->data[$this->getPrimaryKeyName()] : null;
+    }
+
+    /**
+     * Validate model
+     *
+     * @return  boolean
+     */
+    public function validate()
+    {
+        $structure = $this->getTableStructure();
+
+        /* TODO */
+
+        return false;
     }
 
     /**
@@ -395,6 +426,7 @@ abstract class AB_Model
     }
 
     abstract protected function getTableName();
+    abstract protected function getTableStructure();
     abstract protected function getSequenceName();
     abstract protected function getPrimaryKeyName();
 

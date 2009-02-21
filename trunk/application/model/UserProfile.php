@@ -17,6 +17,13 @@ class UserProfile extends AB_Model
     protected static $table_name = 'user_profile';
 
     /**
+     * Table structure (serialized)
+     *
+     * @var string
+     */
+    protected static $table_structure = 'a:10:{s:15:"user_profile_id";a:3:{s:1:"t";s:1:"i";s:1:"s";i:0;s:1:"r";b:0;}s:11:"login_email";a:3:{s:1:"t";s:1:"s";s:1:"s";i:100;s:1:"r";b:1;}s:18:"login_password_md5";a:3:{s:1:"t";s:1:"s";s:1:"s";i:32;s:1:"r";b:1;}s:21:"register_message_time";a:3:{s:1:"t";s:1:"d";s:1:"s";i:0;s:1:"r";b:0;}s:21:"register_confirmation";a:3:{s:1:"t";s:1:"b";s:1:"s";i:0;s:1:"r";b:0;}s:26:"register_confirmation_time";a:3:{s:1:"t";s:1:"d";s:1:"s";i:0;s:1:"r";b:0;}s:21:"recovery_message_time";a:3:{s:1:"t";s:1:"d";s:1:"s";i:0;s:1:"r";b:0;}s:10:"created_at";a:3:{s:1:"t";s:1:"d";s:1:"s";i:0;s:1:"r";b:0;}s:10:"updated_at";a:3:{s:1:"t";s:1:"d";s:1:"s";i:0;s:1:"r";b:0;}s:7:"enabled";a:3:{s:1:"t";s:1:"b";s:1:"s";i:0;s:1:"r";b:0;}}';
+
+    /**
      * Sequence name
      *
      * @var string
@@ -46,6 +53,16 @@ class UserProfile extends AB_Model
     public function getTableName()
     {
         return self::$table_name;
+    }
+
+    /**
+     * Get table structure
+     *
+     * @return  string
+     */
+    public function getTableStructure()
+    {
+        return unserialize(self::$table_structure);
     }
 
     /**
@@ -231,10 +248,7 @@ class UserProfile extends AB_Model
      */
     private static function encodeUID($_md5)
     {
-        if(!eregi('^[0-9a-f]{32}$', $_md5))
-        {
-            return null;
-        }
+        if(!eregi('^[0-9a-f]{32}$', $_md5)) return null;
 
         $s = $_md5;
 
@@ -252,8 +266,7 @@ class UserProfile extends AB_Model
         $b = self::$uid_base;
         $out = "";
 
-        for($i = 0; $i < 40; $i++)
-            $out.= $b[base_convert($x[$i], 36, 10)];
+        for($i = 0; $i < 40; $i++) $out.= $b[base_convert($x[$i], 36, 10)];
 
         return $out;
     }
@@ -266,10 +279,7 @@ class UserProfile extends AB_Model
      */
     private static function decodeUID($uid)
     {
-        if(!eregi('^[0-9a-z]{40}$', $uid))
-        {
-            return null;
-        }
+        if(!eregi('^[0-9a-z]{40}$', $uid)) return null;
 
         $s = $uid;
         $b = self::$uid_base;
@@ -291,8 +301,7 @@ class UserProfile extends AB_Model
 
         $c = true;
 
-        for($i=0;$i<8;$i++)
-            if($h[($i*4)] != $h[$i + 32]) $c = false;
+        for($i=0;$i<8;$i++) if($h[($i*4)] != $h[$i + 32]) $c = false;
 
         return ($c == true) ? substr($h, 0, 32) : null;
     }
