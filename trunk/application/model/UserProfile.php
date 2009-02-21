@@ -17,11 +17,11 @@ class UserProfile extends AB_Model
     protected static $table_name = 'user_profile';
 
     /**
-     * Table structure (serialized)
+     * Table structure
      *
-     * @var string
+     * @var string|array
      */
-    protected static $table_structure = 'a:10:{s:15:"user_profile_id";a:3:{s:1:"t";s:1:"i";s:1:"s";i:0;s:1:"r";b:0;}s:11:"login_email";a:3:{s:1:"t";s:1:"s";s:1:"s";i:100;s:1:"r";b:1;}s:18:"login_password_md5";a:3:{s:1:"t";s:1:"s";s:1:"s";i:32;s:1:"r";b:1;}s:21:"register_message_time";a:3:{s:1:"t";s:1:"d";s:1:"s";i:0;s:1:"r";b:0;}s:21:"register_confirmation";a:3:{s:1:"t";s:1:"b";s:1:"s";i:0;s:1:"r";b:0;}s:26:"register_confirmation_time";a:3:{s:1:"t";s:1:"d";s:1:"s";i:0;s:1:"r";b:0;}s:21:"recovery_message_time";a:3:{s:1:"t";s:1:"d";s:1:"s";i:0;s:1:"r";b:0;}s:10:"created_at";a:3:{s:1:"t";s:1:"d";s:1:"s";i:0;s:1:"r";b:0;}s:10:"updated_at";a:3:{s:1:"t";s:1:"d";s:1:"s";i:0;s:1:"r";b:0;}s:7:"enabled";a:3:{s:1:"t";s:1:"b";s:1:"s";i:0;s:1:"r";b:0;}}';
+    protected $table_structure = 'a:10:{s:15:"user_profile_id";a:3:{s:1:"t";s:1:"i";s:1:"s";i:0;s:1:"r";b:0;}s:11:"login_email";a:3:{s:1:"t";s:1:"s";s:1:"s";i:100;s:1:"r";b:1;}s:18:"login_password_md5";a:3:{s:1:"t";s:1:"s";s:1:"s";i:32;s:1:"r";b:1;}s:21:"register_message_time";a:3:{s:1:"t";s:1:"d";s:1:"s";i:0;s:1:"r";b:0;}s:21:"register_confirmation";a:3:{s:1:"t";s:1:"b";s:1:"s";i:0;s:1:"r";b:0;}s:26:"register_confirmation_time";a:3:{s:1:"t";s:1:"d";s:1:"s";i:0;s:1:"r";b:0;}s:21:"recovery_message_time";a:3:{s:1:"t";s:1:"d";s:1:"s";i:0;s:1:"r";b:0;}s:10:"created_at";a:3:{s:1:"t";s:1:"d";s:1:"s";i:0;s:1:"r";b:0;}s:10:"updated_at";a:3:{s:1:"t";s:1:"d";s:1:"s";i:0;s:1:"r";b:0;}s:7:"enabled";a:3:{s:1:"t";s:1:"b";s:1:"s";i:0;s:1:"r";b:0;}}';
 
     /**
      * Sequence name
@@ -58,11 +58,16 @@ class UserProfile extends AB_Model
     /**
      * Get table structure
      *
-     * @return  string
+     * @return  array
      */
     public function getTableStructure()
     {
-        return unserialize(self::$table_structure);
+        if(!is_array($this->table_structure))
+        {
+            $this->table_structure = unserialize($this->table_structure);
+        }
+
+        return $this->table_structure;
     }
 
     /**

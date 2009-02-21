@@ -17,6 +17,13 @@ class ApplicationLog extends AB_Model
     protected static $table_name = 'application_log';
 
     /**
+     * Table structure
+     *
+     * @var string|array
+     */
+    protected $table_structure = 'a:8:{s:18:"application_log_id";a:3:{s:1:"t";s:1:"i";s:1:"s";i:0;s:1:"r";b:0;}s:8:"priority";a:3:{s:1:"t";s:1:"i";s:1:"s";i:0;s:1:"r";b:0;}s:7:"message";a:3:{s:1:"t";s:1:"s";s:1:"s";i:0;s:1:"r";b:1;}s:6:"method";a:3:{s:1:"t";s:1:"s";s:1:"s";i:100;s:1:"r";b:0;}s:10:"controller";a:3:{s:1:"t";s:1:"s";s:1:"s";i:100;s:1:"r";b:0;}s:6:"action";a:3:{s:1:"t";s:1:"s";s:1:"s";i:100;s:1:"r";b:0;}s:15:"user_profile_id";a:3:{s:1:"t";s:1:"i";s:1:"s";i:0;s:1:"r";b:0;}s:10:"created_at";a:3:{s:1:"t";s:1:"d";s:1:"s";i:0;s:1:"r";b:0;}}';
+
+    /**
      * Sequence name
      *
      * @var string
@@ -39,6 +46,21 @@ class ApplicationLog extends AB_Model
     public function getTableName()
     {
         return self::$table_name;
+    }
+
+    /**
+     * Get table structure
+     *
+     * @return  array
+     */
+    public function getTableStructure()
+    {
+        if(!is_array($this->table_structure))
+        {
+            $this->table_structure = unserialize($this->table_structure);
+        }
+
+        return $this->table_structure;
     }
 
     /**

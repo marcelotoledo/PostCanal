@@ -123,6 +123,7 @@ $output = <<<EOS
  * 
  * @category    Blotomate
  * @package     Model
+ * @author      Rafael Castilho <rafael@castilho.biz>
  */
 class <class> extends AB_Model
 {
@@ -134,11 +135,11 @@ class <class> extends AB_Model
     protected static \$table_name = '<table>';
 
     /**
-     * Table structure (serialized)
+     * Table structure
      *
-     * @var string
+     * @var string|array
      */
-    protected static \$table_structure = '<structure>';
+    protected \$table_structure = '<structure>';
 
     /**
      * Sequence name
@@ -168,11 +169,16 @@ class <class> extends AB_Model
     /**
      * Get table structure
      *
-     * @return  string
+     * @return  array
      */
     public function getTableStructure()
     {
-        return unserialize(self::\$table_structure);
+        if(!is_array(\$this->table_structure))
+        {
+            \$this->table_structure = unserialize(\$this->table_structure);
+        }
+
+        return \$this->table_structure;
     }
 
     /**

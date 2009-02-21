@@ -6,15 +6,6 @@
  * @category    Blotomate
  * @package     Model
  * @author      Rafael Castilho <rafael@castilho.biz>
- * @examples
- *
- * DISCOVERY
- *
- * url                 http:\/\/.+\.wordpress\.com
- * header              server:\ wordpress\.com
- * html                div.+id.+wrapper
- * html                <meta[^>]+(content)+[^>]+(wordpress\.com)+[^>]+>
- *
  */
 class CMSType extends AB_Model
 {
@@ -50,6 +41,13 @@ class CMSType extends AB_Model
      * @var string
      */
     protected static $table_name = 'cms_type';
+
+    /**
+     * Table structure
+     *
+     * @var string|array
+     */
+    protected $table_structure = 'a:5:{s:11:"cms_type_id";a:3:{s:1:"t";s:1:"i";s:1:"s";i:0;s:1:"r";b:0;}s:4:"name";a:3:{s:1:"t";s:1:"s";s:1:"s";i:50;s:1:"r";b:1;}s:7:"version";a:3:{s:1:"t";s:1:"s";s:1:"s";i:50;s:1:"r";b:1;}s:11:"maintenance";a:3:{s:1:"t";s:1:"b";s:1:"s";i:0;s:1:"r";b:0;}s:7:"enabled";a:3:{s:1:"t";s:1:"b";s:1:"s";i:0;s:1:"r";b:0;}}';
 
     /**
      * Sequence name
@@ -88,6 +86,21 @@ class CMSType extends AB_Model
     public function getTableName()
     {
         return self::$table_name;
+    }
+
+    /**
+     * Get table structure
+     *
+     * @return  array
+     */
+    public function getTableStructure()
+    {
+        if(!is_array($this->table_structure))
+        {
+            $this->table_structure = unserialize($this->table_structure);
+        }
+
+        return $this->table_structure;
     }
 
     /**

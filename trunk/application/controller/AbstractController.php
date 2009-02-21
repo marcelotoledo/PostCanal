@@ -33,6 +33,34 @@ abstract class AbstractController extends AB_Controller
         parent::__construct($request, $response);
     }
 
+    /**
+     * Run controller action
+     *
+     * @param   string      $name   Action name
+     * @throws  AB_Exception
+     * @return  void
+     */
+
+    public function runAction($name=null)
+    {
+        try
+        {
+            parent::runAction($name);
+        }
+        catch(AB_Exception $exception)
+        {
+            /* add user profile information to exception */
+
+            $message = "an error occurred while trying to execute action";
+
+            $data = ($id = intval($this->user_profile_id) > 0) ?
+                array('user_profile_id' => $id) : 
+                array();
+
+            AB_Exception::forward($message, E_USER_NOTICE, $exception, $data);
+        }
+    }   
+
     /* JSON */
 
     /**

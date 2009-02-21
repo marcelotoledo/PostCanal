@@ -481,13 +481,15 @@ throw new UnexpectedValueException("See TODO in " . __FILE__ .":". __LINE__);
             throw new AB_Exception($message, E_USER_NOTICE, $data);
         }
 
-        $id = $this->user_profile_id;
-        $profile = UserProfile::findByPrimaryKeyEnabled($id);
+        $id = intval($this->user_profile_id);
+        $profile = null;
+
+        if($id > 0) $profile = UserProfile::findByPrimaryKeyEnabled($id);
 
         if(!is_object($profile))
         {
             $message = "invalid user profile";
-            $data = array('method' => __METHOD__, 'user_profile_id' => $id);
+            $data = array('method' => __METHOD__);
             throw new AB_Exception($message, E_USER_WARNING, $data);
         }
 
@@ -519,8 +521,7 @@ throw new UnexpectedValueException("See TODO in " . __FILE__ .":". __LINE__);
             {
                 $profile->save();
 
-                $attributes = array ('method' => __METHOD__,
-                                     'user_profile_id' => $id);
+                $attributes = array ('method' => __METHOD__, 'user_profile_id' => $id);
                 self::notice("password edited", $attributes);
 
                 /* regenerate session */

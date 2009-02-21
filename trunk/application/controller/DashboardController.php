@@ -30,8 +30,10 @@ class DashboardController extends AbstractController
      */
     public function indexAction()
     {
-        $id = $this->user_profile_id;
-        $profile = UserProfile::findByPrimaryKeyEnabled($id);
+        $id = intval($this->user_profile_id);
+        $profile = null;
+
+        if($id > 0) $profile = UserProfile::findByPrimaryKeyEnabled($id);
 
         if(empty($profile))
         {
@@ -39,8 +41,14 @@ class DashboardController extends AbstractController
             $this->setResponseRedirect(BASE_URL);
         }
 
-        $information = UserProfileInformation::findByPrimaryKey($id);
-        $cms = UserCMS::findByUserProfileId($id);
+        $information = null;
+        $cms = null;
+
+        if($id > 0)
+        {
+            $information = UserProfileInformation::findByPrimaryKey($id);
+            $cms = UserCMS::findByUserProfileId($id);
+        }
 
         $this->setViewParameter('profile', $profile);
         $this->setViewParameter('information', $information);

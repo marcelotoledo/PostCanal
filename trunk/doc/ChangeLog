@@ -101,3 +101,13 @@ HORAS TRABALHADAS: 7h
 - Otimizacao na classe base do Model, parametro sequence em save() redundante
 
 HORAS TRABALHADAS: 6h
+
+==========
+20/02/2008
+==========
+
+- Introspecao adicionado ao Model
+- Abstract Controller modificado para incluir o parametro de usuario no Log de
+exceptions
+
+HORAS TRABALHADAS: 4h

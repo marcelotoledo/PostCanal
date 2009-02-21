@@ -17,6 +17,13 @@ class UserCMS extends AB_Model
     protected static $table_name = 'user_cms';
 
     /**
+     * Table structure
+     *
+     * @var string|array
+     */
+    protected $table_structure = 'a:12:{s:11:"user_cms_id";a:3:{s:1:"t";s:1:"i";s:1:"s";i:0;s:1:"r";b:0;}s:15:"user_profile_id";a:3:{s:1:"t";s:1:"i";s:1:"s";i:0;s:1:"r";b:1;}s:11:"cms_type_id";a:3:{s:1:"t";s:1:"i";s:1:"s";i:0;s:1:"r";b:1;}s:4:"name";a:3:{s:1:"t";s:1:"s";s:1:"s";i:100;s:1:"r";b:1;}s:3:"url";a:3:{s:1:"t";s:1:"s";s:1:"s";i:200;s:1:"r";b:1;}s:11:"manager_url";a:3:{s:1:"t";s:1:"s";s:1:"s";i:200;s:1:"r";b:1;}s:16:"manager_username";a:3:{s:1:"t";s:1:"s";s:1:"s";i:100;s:1:"r";b:1;}s:16:"manager_password";a:3:{s:1:"t";s:1:"s";s:1:"s";i:100;s:1:"r";b:1;}s:6:"status";a:3:{s:1:"t";s:1:"s";s:1:"s";i:50;s:1:"r";b:1;}s:10:"created_at";a:3:{s:1:"t";s:1:"d";s:1:"s";i:0;s:1:"r";b:0;}s:10:"updated_at";a:3:{s:1:"t";s:1:"d";s:1:"s";i:0;s:1:"r";b:0;}s:7:"enabled";a:3:{s:1:"t";s:1:"b";s:1:"s";i:0;s:1:"r";b:0;}}';
+
+    /**
      * Sequence name
      *
      * @var string
@@ -39,6 +46,21 @@ class UserCMS extends AB_Model
     public function getTableName()
     {
         return self::$table_name;
+    }
+
+    /**
+     * Get table structure
+     *
+     * @return  array
+     */
+    public function getTableStructure()
+    {
+        if(!is_array($this->table_structure))
+        {
+            $this->table_structure = unserialize($this->table_structure);
+        }
+
+        return $this->table_structure;
     }
 
     /**
