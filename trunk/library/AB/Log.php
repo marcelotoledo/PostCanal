@@ -60,6 +60,8 @@ class AB_Log
      */
     private static function writeErrorLog ($message)
     {
+        $message = preg_replace("/[\r\n]+/", "", $message);
+
         try
         {
             $f = fopen(BASE_PATH . "/log/error_log", "a");
