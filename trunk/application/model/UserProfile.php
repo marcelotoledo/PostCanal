@@ -19,9 +19,9 @@ class UserProfile extends AB_Model
     /**
      * Table structure
      *
-     * @var string|array
+     * @var array
      */
-    protected $table_structure = 'a:10:{s:15:"user_profile_id";a:3:{s:1:"t";s:1:"i";s:1:"s";i:0;s:1:"r";b:0;}s:11:"login_email";a:3:{s:1:"t";s:1:"s";s:1:"s";i:100;s:1:"r";b:1;}s:18:"login_password_md5";a:3:{s:1:"t";s:1:"s";s:1:"s";i:32;s:1:"r";b:1;}s:21:"register_message_time";a:3:{s:1:"t";s:1:"d";s:1:"s";i:0;s:1:"r";b:0;}s:21:"register_confirmation";a:3:{s:1:"t";s:1:"b";s:1:"s";i:0;s:1:"r";b:0;}s:26:"register_confirmation_time";a:3:{s:1:"t";s:1:"d";s:1:"s";i:0;s:1:"r";b:0;}s:21:"recovery_message_time";a:3:{s:1:"t";s:1:"d";s:1:"s";i:0;s:1:"r";b:0;}s:10:"created_at";a:3:{s:1:"t";s:1:"d";s:1:"s";i:0;s:1:"r";b:0;}s:10:"updated_at";a:3:{s:1:"t";s:1:"d";s:1:"s";i:0;s:1:"r";b:0;}s:7:"enabled";a:3:{s:1:"t";s:1:"b";s:1:"s";i:0;s:1:"r";b:0;}}';
+    protected static $table_structure = array('user_profile_id'=>array('type'=>'integer','size'=>0,'required'=>false),'login_email'=>array('type'=>'string','size'=>100,'required'=>true),'login_password_md5'=>array('type'=>'string','size'=>32,'required'=>true),'register_message_time'=>array('type'=>'date','size'=>0,'required'=>false),'register_confirmation'=>array('type'=>'boolean','size'=>0,'required'=>false),'register_confirmation_time'=>array('type'=>'date','size'=>0,'required'=>false),'recovery_message_time'=>array('type'=>'date','size'=>0,'required'=>false),'created_at'=>array('type'=>'date','size'=>0,'required'=>false),'updated_at'=>array('type'=>'date','size'=>0,'required'=>false),'enabled'=>array('type'=>'boolean','size'=>0,'required'=>false));
 
     /**
      * Sequence name
@@ -37,13 +37,22 @@ class UserProfile extends AB_Model
      */
     protected static $primary_key_name = 'user_profile_id';
 
-    /**
-     * UID base
-     *
-     * @var string
-     */
-    private static $uid_base = 'T6HCN9PtMz7BQrZbS3R4mAxJKDqFXG8EckLV';
 
+    /**
+     * Set overloading
+     *
+     * @param   string  $name
+     * @param   mixed   $value
+     * @return  void
+     */
+    public function __set ($name, $value)
+    {
+        /* filters */
+
+        if($name == 'login_email') $value = strtolower($value);
+
+        parent::__set($name, $value);
+    }
 
     /**
      * Get table name
@@ -62,12 +71,7 @@ class UserProfile extends AB_Model
      */
     public function getTableStructure()
     {
-        if(!is_array($this->table_structure))
-        {
-            $this->table_structure = unserialize($this->table_structure);
-        }
-
-        return $this->table_structure;
+        return self::$table_structure;
     }
 
     /**
@@ -91,19 +95,6 @@ class UserProfile extends AB_Model
     }
 
     /**
-     * Save model
-     *
-     * @return  boolean
-     */
-    public function save()
-    {
-        if(!$this->isNew()) $this->updated_at = date("Y/m/d H:i:s");
-        $this->login_email = strtolower($this->login_email);
-
-        return parent::save();
-    }
-
-    /**
      * Get UID
      *
      * @return  string|null
@@ -115,7 +106,7 @@ class UserProfile extends AB_Model
         if(!$this->isNew())
         {
             $_md5 = md5($this->user_profile_id . ":" .
-                        strtolower($this->login_email) . ":" .
+                        $this->login_email . ":" .
                         $this->login_password_md5);
             $uid = self::encodeUID($_md5);
         }   
@@ -268,7 +259,8 @@ class UserProfile extends AB_Model
             $x.= strrev($p);
         }
 
-        $b = self::$uid_base;
+        $registry = AB_Registry::singleton();
+        $b = $registry->model->user_profile->uid_base;
         $out = "";
 
         for($i = 0; $i < 40; $i++) $out.= $b[base_convert($x[$i], 36, 10)];
@@ -287,7 +279,8 @@ class UserProfile extends AB_Model
         if(!eregi('^[0-9a-z]{40}$', $uid)) return null;
 
         $s = $uid;
-        $b = self::$uid_base;
+        $registry = AB_Registry::singleton();
+        $b = $registry->model->user_profile->uid_base;
         $x = "";
 
         for($i = 0; $i < 40; $i++)

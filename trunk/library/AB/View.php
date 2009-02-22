@@ -180,17 +180,15 @@ class AB_View
 
         else
         {
-            $path = APPLICATION_PATH . "/view/layout/" . $this->layout . ".php";
-
-            if(file_exists($path))
+            if(($path = self::getLayoutPath($this->layout)))
             {
                 include $path;
             }
             else
             {
-                $message = "layout (" . $this->layout . ") not found";
-                $data = array('method' => __METHOD__);
-                throw new AB_Exception($message, E_USER_ERROR, $data);
+                $_m = "layout (" . $this->layout . ") not found";
+                $_d = array('method' => __METHOD__);
+                throw new AB_Exception($_m, E_USER_ERROR, $_d);
             }
         }
     }
@@ -203,17 +201,39 @@ class AB_View
      */
     private function renderTemplate()
     {
-        $path = APPLICATION_PATH . "/view/template/" . $this->template . ".php";
-
-        if(file_exists($path) == true)
+        if(($path = self::getTemplatePath($this->template)))
         {
             include $path;
         }
         else
         {
-            $message = "template (" . $this->template . ") not found";
-            $data = array('method' => __METHOD__);
-            throw new AB_Exception($message, E_USER_ERROR, $data);
+            $_m = "template (" . $this->template . ") not found";
+            $_d = array('method' => __METHOD__);
+            throw new AB_Exception($_m, E_USER_ERROR, $_d);
         }
+    }
+
+    /**
+     * get layout path
+     *
+     * @param   string  $layout
+     * @return  boolean
+     */
+    public static function getLayoutPath($layout)
+    {
+        $path = APPLICATION_PATH . "/view/layout/" . $layout . ".php";
+        return file_exists($path) ? $path : null;
+    }
+
+    /**
+     * get template path
+     *
+     * @param   string  $template
+     * @return  boolean
+     */
+    public static function getTemplatePath($template)
+    {
+        $path = APPLICATION_PATH . "/view/template/" . $template . ".php";
+        return file_exists($path) ? $path : null;
     }
 }

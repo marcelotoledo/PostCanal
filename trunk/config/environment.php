@@ -22,9 +22,14 @@ define('LIBRARY_PATH', BASE_PATH . "/library");
 set_include_path (LIBRARY_PATH . PATH_SEPARATOR . get_include_path());
 
 
-$registry = AB_Registry::singleton();
+/* load configuration from xml */
 
 $xml = new Zend_Config_Xml(BASE_PATH . '/config/environment.xml');
+
+
+/* start registry */
+
+$registry = AB_Registry::singleton();
 
 
 /* FRAMEWORK */
@@ -48,6 +53,11 @@ $registry->response->headers = array
 
 /* APPLICATION */
 
+/* model */
+
+$registry->model->user_profile->uid_base = 'KDqFXGT6HCN9ZbS3R4mAxJ8EckLVPtMz7BQr';
+
+
 /* login session */
 
 $registry->session->namespace = "login";
@@ -62,8 +72,8 @@ $registry->mailer = $xml->mailer;
 
 /* http client */
 
-$registry->httpClient->maxHeaders = 30;
-$registry->httpClient->maxBodyLenght = 5242880; // 5242880 bytes = 5Mb
+$registry->http_client->max_headers = 30;
+$registry->http_client->max_body_lenght = 5242880; // 5242880 bytes = 5Mb
 
 
 /* python */

@@ -1,5 +1,8 @@
 <?php
 
+include APPLICATION_PATH . "/library/ApplicationUtility.php";
+
+
 /**
  * CMSType model class
  * 
@@ -12,14 +15,10 @@ class CMSType extends AB_Model
     /**
      * Discovery constants
      */
-    const DISCOVERY_REQUIRED     = "required";
-    const DISCOVERY_URL          = "url";
     const DISCOVERY_URL_REPLACE  = "url_replace";
     const DISCOVERY_URL_MATCH    = "url_match";
-    const DISCOVERY_HEADER       = "header";
     //    DISCOVERY_HEADER_REPLACE: is not necessary because headers have a simple format
     const DISCOVERY_HEADER_MATCH = "header_match";
-    const DISCOVERY_HTML         = "html";
     const DISCOVERY_HTML_REPLACE = "html_replace";
     const DISCOVERY_HTML_MATCH   = "html_match";
 
@@ -45,9 +44,9 @@ class CMSType extends AB_Model
     /**
      * Table structure
      *
-     * @var string|array
+     * @var array
      */
-    protected $table_structure = 'a:5:{s:11:"cms_type_id";a:3:{s:1:"t";s:1:"i";s:1:"s";i:0;s:1:"r";b:0;}s:4:"name";a:3:{s:1:"t";s:1:"s";s:1:"s";i:50;s:1:"r";b:1;}s:7:"version";a:3:{s:1:"t";s:1:"s";s:1:"s";i:50;s:1:"r";b:1;}s:11:"maintenance";a:3:{s:1:"t";s:1:"b";s:1:"s";i:0;s:1:"r";b:0;}s:7:"enabled";a:3:{s:1:"t";s:1:"b";s:1:"s";i:0;s:1:"r";b:0;}}';
+    protected static $table_structure = array('cms_type_id'=>array('type'=>'integer','size'=>0,'required'=>false),'name'=>array('type'=>'string','size'=>50,'required'=>true),'version'=>array('type'=>'string','size'=>50,'required'=>true),'maintenance'=>array('type'=>'boolean','size'=>0,'required'=>false),'enabled'=>array('type'=>'boolean','size'=>0,'required'=>false));
 
     /**
      * Sequence name
@@ -95,12 +94,7 @@ class CMSType extends AB_Model
      */
     public function getTableStructure()
     {
-        if(!is_array($this->table_structure))
-        {
-            $this->table_structure = unserialize($this->table_structure);
-        }
-
-        return $this->table_structure;
+        return self::$table_structure;
     }
 
     /**
@@ -245,26 +239,11 @@ class CMSType extends AB_Model
     public static function discovery(&$url, $headers, &$html)
     {
         $cms_type = null;
+
         $types = array();
-        $results = array();
-
-        /* url */
-
-        $d = self::discoveryByURL($url, $types);
-        $types = array_unique(array_keys($d));
-        $results[self::DISCOVERY_URL] = $d;
-
-        /* headers */
-
-        $d = self::discoveryByHeaders($headers, $types);
-        $types = array_unique(array_keys($d));
-        $results[self::DISCOVERY_HEADER] = $d;
-
-        /* body */
-
-        $d = self::discoveryByHTML($html, $types);
-        $types = array_unique(array_keys($d));
-        $results[self::DISCOVERY_HTML] = $d;
+        $types = self::discoveryByURL($url, $types);
+        $types = self::discoveryByHeaders($headers, $types);
+        $types = self::discoveryByHTML($html, $types);
 
         $type = current($types);
 
@@ -272,48 +251,15 @@ class CMSType extends AB_Model
 
         if(count($types) > 1)
         {
-            $message = "types {" . implode(", ", $types) . "} " .
-                       "have conflicting discovery rules. " .
-                       "only (" . $type . ") will be considered";
-            $attributes = array('method' => __METHOD__);
-            AB_Log::write($message, E_USER_WARNING, $attributes);
+            $_m = "types {" . implode(", ", $types) . "} have conflicting " . 
+                  "discovery rules. only (" . $type . ") will be considered";
+            $_d = array('method' => __METHOD__);
+            AB_Log::write($_m, E_USER_WARNING, $_d);
         }
 
         if(!empty($type))
         {
-            /* check required rules */
-
-            $unmatched = array();
-
-            foreach(self::discoveryRequiredByType($type) as $r)
-            {
-                if(!in_array($type, array_keys($results[$r]))) $unmatched[] = $r;
-            }
-
-            /* if all rules passed for current type, then get cms type */
-
-            if(count($unmatched) == 0)
-            {
-                $cms_type = self::findByPrimaryKey($type);
-            }
-
-            /* log 'not all rules passed' type */
-
-            else
-            {
-                $message = "type (" . $type . ") unmatched required " .
-                           "discovery rules {" . implode(", ", $unmatched) . "}";
-                $attributes = array('method' => __METHOD__);
-                AB_Log::write($message, E_USER_WARNING, $attributes);
-            }
-
-            /* update url when available */
-
-            $u = self::DISCOVERY_URL;
-
-            if(array_key_exists($u, $results))
-                if(array_key_exists($type, $results[$u]))
-                    $url = $results[$u][$type];
+            $cms_type = self::findByPrimaryKey($type);
         }
 
         return $cms_type;
@@ -328,10 +274,34 @@ class CMSType extends AB_Model
      */
     protected static function discoveryByURL(&$url, $types=array())
     {
-        self::fixURL($url);
-        $r = self::discoveryFindRules(self::DISCOVERY_URL_REPLACE, $types);
-        $m = self::discoveryFindRules(self::DISCOVERY_URL_MATCH, $types);
-        return self::pregFilter($url, $r, $m);
+        ApplicationUtility::fixURL($url);
+
+        $r = self::discoveryRules(self::DISCOVERY_URL_REPLACE, $types);
+        $m = self::discoveryRules(self::DISCOVERY_URL_MATCH, $types);
+
+        $k = array();
+        $k = array_merge($k, array_keys($r));
+        $k = array_merge($k, array_keys($m));
+
+        $k = array_unique($k);
+
+        $results = array();
+
+        foreach($k as $i)
+        {
+            $a = $url;
+            $b = array_key_exists($i, $r) ? $r[$i] : array();
+            $c = array_key_exists($i, $m) ? $m[$i] : array();
+            $n = count($c);
+
+            if(ApplicationUtility::preg($a, $b, $c) == $n && $n > 0)
+            {
+                $url = $a;
+                $results[] = $i;
+            }
+        }
+
+        return (count($results) > 0) ? array_unique($results) : $types;
     }
 
     /**
@@ -343,7 +313,7 @@ class CMSType extends AB_Model
      */
     protected static function discoveryByHeaders($headers, $types=array())
     {
-        $m = self::discoveryFindRules(self::DISCOVERY_HEADER_MATCH, $types);
+        $m = self::discoveryRules(self::DISCOVERY_HEADER_MATCH, $types);
         $a = array();
 
         foreach($headers as $k => $v)
@@ -351,11 +321,20 @@ class CMSType extends AB_Model
             if(!empty($v))
             {
                 $h = strtolower($k. ": " . (is_array($v) ? implode("; ", $v) : $v));
-                $a = array_merge($a, self::pregFilter($h, array(), $m));
+
+                foreach($m as $type => $r)
+                {
+                    $n = count($r);
+
+                    if(ApplicationUtility::preg($h, array(), $r) == $n && $n > 0)
+                    {
+                        $a = array_merge($a, array($type));
+                    }
+                }
             }
         }
 
-        return $a;
+        return (count($a) > 0) ? array_unique($a) : $types;
     }
 
     /**
@@ -367,10 +346,33 @@ class CMSType extends AB_Model
      */
     protected static function discoveryByHTML(&$html, $types=array())
     {
-        self::cleanHTML($html);
-        $r = self::discoveryFindRules(self::DISCOVERY_HTML_REPLACE, $types);
-        $m = self::discoveryFindRules(self::DISCOVERY_HTML_MATCH, $types);
-        return self::pregFilter($html, $r, $m);
+        ApplicationUtility::compactHTML($html);
+
+        $r = self::discoveryRules(self::DISCOVERY_HTML_REPLACE, $types);
+        $m = self::discoveryRules(self::DISCOVERY_HTML_MATCH, $types);
+
+        $k = array();
+        $k = array_merge($k, array_keys($r));
+        $k = array_merge($k, array_keys($m));
+
+        $k = array_unique($k);
+
+        $results = array();
+
+        foreach($k as $i)
+        {
+            $a = $html;
+            $b = array_key_exists($i, $r) ? $r[$i] : array();
+            $c = array_key_exists($i, $m) ? $m[$i] : array();
+            $n = count($c);
+
+            if(ApplicationUtility::preg($a, $b, $c) == $n && $n > 0)
+            {
+                $results[] = $i;
+            }
+        }
+
+        return (count($results) > 0) ? array_unique($results) : $types;
     }
 
     /**
@@ -381,7 +383,7 @@ class CMSType extends AB_Model
      *
      * @return  array
      */
-    protected static function discoveryFindRules($name, $types=array())
+    protected static function discoveryRules($name, $types=array())
     {
         $sql = "SELECT cms_type_id, value FROM cms_type_discovery WHERE name = ? ";
 
@@ -406,22 +408,6 @@ class CMSType extends AB_Model
         return $results;
     }
 
-    /**
-     * Required rules for a CMS type
-     *
-     * @param   integer     $type       CMS type ID
-     * @return  integer                 Total
-     */
-    protected static function discoveryRequiredByType($type)
-    {
-        $sql = "SELECT value FROM cms_type_discovery " . 
-               "WHERE name = ? AND cms_type_id = ?";
-
-        $result = current(self::select($sql, array(self::DISCOVERY_REQUIRED, $type)));
-
-        return is_object($result) ? unserialize($result->value) : array();
-    }
-
     /* MANAGER */
 
     /**
@@ -433,18 +419,20 @@ class CMSType extends AB_Model
      */
     public static function managerCheckHTML(&$html, &$config)
     {
-        self::cleanHTML($html);
+        ApplicationUtility::compactHTML($html);
 
         $r = array();
         $m = array();
 
         $k = self::CONFIG_MANAGER_HTML_REPLACE;
-        if(array_key_exists($k, $config)) $r = array(unserialize($config[$k]));
+        if(array_key_exists($k, $config)) $r = unserialize($config[$k]);
 
         $k = self::CONFIG_MANAGER_HTML_MATCH;
-        if(array_key_exists($k, $config)) $m = array(unserialize($config[$k]));
+        if(array_key_exists($k, $config)) $m = unserialize($config[$k]);
 
-        return (count(self::pregFilter($html, $r, $m)) > 0);
+        $t = count($m);
+
+        return (ApplicationUtility::preg($html, $r, $m) == $t && $t > 0);
     }
 
     /* CMS TYPE PLUGIN */
@@ -502,89 +490,5 @@ class CMSType extends AB_Model
         }
 
         return $results;
-    }
-
-    /* UTILITIES */
-
-    /**
-     * PREG filter
-     * 
-     * @param   string      $subject
-     * @param   array       $replace    replace rules
-     * @param   array       $match      match rules
-     * @return  array
-     */
-    protected function pregFilter($subject, $replace, $match)
-    {
-        $replaced = array();
-    
-        foreach($replace as $k => $rules)
-        {
-            $current = $subject;
-    
-            foreach($rules as $r)
-            {
-                $parameters = array_merge($r, array($current));
-                $current = call_user_func_array('preg_replace', $parameters);
-            }
-    
-            if(strlen($current) > 0 && ($current != $subject))
-            {
-                $replaced[$k] = $current;
-            }
-        }
-    
-        $results = array();
-    
-        foreach($match as $k => $rules)
-        {
-            $current = array_key_exists($k, $replaced) ? $replaced[$k] : $subject;
-    
-            foreach($rules as $r)
-            {
-                $parameters = array_merge($r, array($current));
-    
-                if(call_user_func_array('preg_match', $parameters) > 0)
-                {
-                    $results[$k] = $current;
-                }
-            }
-        }
-    
-        return $results;
-    }
-
-    /**
-     * Fix URL
-     * 
-     * @param   string      $url
-     * @return  string
-     */
-    protected static function fixURL(&$url)
-    {
-        $pattern = "#^(.*?//)*([\w\.\d]*)(:(\d+))*(/*)(.*)$#";
-        $matches = array();
-        preg_match($pattern, $url, $matches);
-
-        $protocol = empty($matches[1]) ? "http://" : $matches[1];
-        $address  = empty($matches[2]) ? ""        : $matches[2];
-        $port     = empty($matches[3]) ? ""        : $matches[3];
-        $resource = empty($matches[6]) ? ""        : $matches[5] . $matches[6];
-
-        $url = $protocol . $address . $port . $resource;
-    }
-
-    /**
-     * Clean HTML (compact)
-     * 
-     * @param   string  $html
-     * @return  void
-     */
-    protected static function cleanHTML(&$html)
-    {
-        $html = preg_replace("/[\r\n]+/", "", $html); // new lines
-        $html = preg_replace("/[[:space:]]+/", " ", $html); // spaces
-        $html = preg_replace("/>[[:space:]]+</", "><", $html); // spaces
-        $html = preg_replace("/>[^<]*</", "><", $html); // tag content
     }
 }

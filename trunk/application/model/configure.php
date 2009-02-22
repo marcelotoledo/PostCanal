@@ -110,7 +110,9 @@ foreach(AB_Model::select(str_replace("<table>", $_table, $sql)) as $r)
     $structure[$r->attribute] = $f;
 }
 
-$_structure = serialize($structure);
+$_structure = var_export($structure, true);
+$_structure = preg_replace("/[[:space:]]+/", "", $_structure);
+$_structure = preg_replace("/,\)/", ")", $_structure);
 
 
 /* output */
@@ -137,9 +139,9 @@ class <class> extends AB_Model
     /**
      * Table structure
      *
-     * @var string|array
+     * @var array
      */
-    protected \$table_structure = '<structure>';
+    protected static \$table_structure = <structure>;
 
     /**
      * Sequence name
@@ -173,12 +175,7 @@ class <class> extends AB_Model
      */
     public function getTableStructure()
     {
-        if(!is_array(\$this->table_structure))
-        {
-            \$this->table_structure = unserialize(\$this->table_structure);
-        }
-
-        return \$this->table_structure;
+        return self::\$table_structure;
     }
 
     /**
@@ -265,6 +262,7 @@ EOS;
 /* replace variables */
 
 $_sequence = empty($_sequence) ? "null" : "'" . $_sequence . "'";
+if(empty($_structure)) $_structure = "array()";
 
 $output = str_replace ("<class>",      $_class,     $output);
 $output = str_replace ("<table>",      $_table,     $output);

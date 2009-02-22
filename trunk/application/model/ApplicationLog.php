@@ -19,9 +19,9 @@ class ApplicationLog extends AB_Model
     /**
      * Table structure
      *
-     * @var string|array
+     * @var array
      */
-    protected $table_structure = 'a:8:{s:18:"application_log_id";a:3:{s:1:"t";s:1:"i";s:1:"s";i:0;s:1:"r";b:0;}s:8:"priority";a:3:{s:1:"t";s:1:"i";s:1:"s";i:0;s:1:"r";b:0;}s:7:"message";a:3:{s:1:"t";s:1:"s";s:1:"s";i:0;s:1:"r";b:1;}s:6:"method";a:3:{s:1:"t";s:1:"s";s:1:"s";i:100;s:1:"r";b:0;}s:10:"controller";a:3:{s:1:"t";s:1:"s";s:1:"s";i:100;s:1:"r";b:0;}s:6:"action";a:3:{s:1:"t";s:1:"s";s:1:"s";i:100;s:1:"r";b:0;}s:15:"user_profile_id";a:3:{s:1:"t";s:1:"i";s:1:"s";i:0;s:1:"r";b:0;}s:10:"created_at";a:3:{s:1:"t";s:1:"d";s:1:"s";i:0;s:1:"r";b:0;}}';
+    protected static $table_structure = array('application_log_id'=>array('type'=>'integer','size'=>0,'required'=>false),'priority'=>array('type'=>'integer','size'=>0,'required'=>false),'message'=>array('type'=>'string','size'=>0,'required'=>true),'method'=>array('type'=>'string','size'=>100,'required'=>false),'controller'=>array('type'=>'string','size'=>100,'required'=>false),'action'=>array('type'=>'string','size'=>100,'required'=>false),'user_profile_id'=>array('type'=>'integer','size'=>0,'required'=>false),'created_at'=>array('type'=>'date','size'=>0,'required'=>false));
 
     /**
      * Sequence name
@@ -55,12 +55,7 @@ class ApplicationLog extends AB_Model
      */
     public function getTableStructure()
     {
-        if(!is_array($this->table_structure))
-        {
-            $this->table_structure = unserialize($this->table_structure);
-        }
-
-        return $this->table_structure;
+        return self::$table_structure;
     }
 
     /**

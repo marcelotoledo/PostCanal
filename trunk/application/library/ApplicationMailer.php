@@ -132,11 +132,18 @@ class ApplicationMailer
                 self::setRelay($recipient, $identifier);
                 $sent = true;
             }
+            catch(Zend_Exception $exception)
+            {
+                $message = "sending mail to recipient (" . $recipient . ") failed. " .
+                           "Zend_Exception (" . get_class($exception) . ")";
+                $data = array('method' => __METHOD__);
+                AB_Exception::forward($message, E_USER_WARNING, $exception, $data);
+            }
             catch(Exception $exception)
             {
                 $message = "sending mail to recipient (" . $recipient . ") failed";
                 $data = array('method' => __METHOD__);
-                AB_Exception::forward($message, E_USER_NOTICE, $exception, $data);
+                AB_Exception::forward($message, E_USER_ERROR, $exception, $data);
             }
         }
 

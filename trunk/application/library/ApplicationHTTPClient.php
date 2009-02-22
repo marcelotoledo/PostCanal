@@ -18,13 +18,6 @@ class ApplicationHTTPClient
     const STATUS_4XX    = "status_4xx";
     const STATUS_5XX    = "status_5xx";
 
-    
-    /**
-     * Overflow constants
-     */
-    const MAX_HEADERS     = 256;
-    const MAX_BODY_LENGHT = 5242880; // 5242880 bytes = 5Mb
-
 
     /**
      * HTTP Client
@@ -136,7 +129,7 @@ class ApplicationHTTPClient
 
         $total = count($headers);
         $registry = AB_Registry::singleton();
-        $max_headers = $registry->httpClient->maxHeaders;
+        $max_headers = $registry->http_client->max_headers;
 
         if(!empty($max_headers) && $total > $max_headers)
         {
@@ -167,7 +160,7 @@ class ApplicationHTTPClient
             $body = $this->response->getBody();
             $lenght = strlen($body);
             $registry = AB_Registry::singleton();
-            $max_body_lenght = $registry->httpClient->maxBodyLenght;
+            $max_body_lenght = $registry->http_client->max_body_lenght;
 
             if(!empty($max_body_lenght) && $lenght > $max_body_lenght)
             {

@@ -12,18 +12,18 @@ abstract class AB_Model
     /** 
      * column structure constants 
      */
-    const STRUCTURE_TYPE     = 't';
-    const STRUCTURE_SIZE     = 's';
-    const STRUCTURE_REQUIRED = 'r';
+    const STRUCTURE_TYPE     = 'type';
+    const STRUCTURE_SIZE     = 'size';
+    const STRUCTURE_REQUIRED = 'required';
 
     /** 
      * column type constants 
      */
-    const TYPE_STRING  = 's';
-    const TYPE_INTEGER = 'i';
-    const TYPE_FLOAT   = 'f';
-    const TYPE_BOOLEAN = 'b';
-    const TYPE_DATE    = 'd';
+    const TYPE_STRING  = 'string';
+    const TYPE_INTEGER = 'integer';
+    const TYPE_FLOAT   = 'float';
+    const TYPE_BOOLEAN = 'boolean';
+    const TYPE_DATE    = 'date';
 
 
     /**
@@ -68,6 +68,24 @@ abstract class AB_Model
         if(array_key_exists($name, $this->data))
         {
             $value = $this->data[$name];
+
+            $structure = $this->getTableStructure();
+
+            /* set variable type */
+
+            if(array_key_exists($name, $structure))
+            {
+                $type = $structure[$name][self::STRUCTURE_TYPE];
+
+                if($type == self::TYPE_DATE)
+                {
+                    $value = strtotime($value);
+                }
+                else
+                {
+                    settype($value, $type);
+                }
+            }
         }
 
         return $value;
@@ -84,6 +102,30 @@ abstract class AB_Model
     {
         if(is_bool($value)) $value = ($value == true) ? 1 : 0;
 
+        $structure = $this->getTableStructure();
+
+        /* set variable type */
+
+        if(array_key_exists($name, $structure))
+        {
+            $type = $structure[$name][self::STRUCTURE_TYPE];
+            $size = $structure[$name][self::STRUCTURE_SIZE];
+
+            if($type == self::TYPE_BOOLEAN) 
+            {
+                settype($value, 'integer');
+            }
+            elseif($type == self::TYPE_DATE)
+            {
+                if(($time = intval($value)) > 0)
+                    $value = date("Y-m-d H:i:s", $time);
+            }
+            else
+            {
+                settype($value, $type);
+            }
+        }
+
         $this->data[$name] = $value;
     }
 
@@ -96,6 +138,8 @@ abstract class AB_Model
     {
         $connection = self::getConnection();
         $saved = false;
+
+        $this->sanitize();
 
         if($this->isNew())
         {
@@ -184,17 +228,49 @@ abstract class AB_Model
     }
 
     /**
-     * Validate model
+     * Sanitize model
      *
-     * @return  boolean
+     * @throws  AB_Exception
+     * @return  void
      */
-    public function validate()
+    protected function sanitize()
     {
         $structure = $this->getTableStructure();
+        $columns = array_keys($structure);
 
-        /* TODO */
+        /* auto set (if exists) updated_at when model is not new */
 
-        return false;
+        if(!$this->isNew() && in_array('updated_at', $columns))
+        {
+            $this->updated_at = time();
+        }
+
+        /* check data for errors */
+
+        foreach($structure as $column => $settings)
+        {
+            /* truncate */
+
+            if(($size = $settings[self::STRUCTURE_SIZE]) > 0)
+            {
+                if(strlen($this->{$column}) > $size)
+                {
+                    $this->{$column} = substr($this->{$column}, 0, $size);
+                }
+            }
+
+            /* required */
+
+            if(($required = $settings[self::STRUCTURE_REQUIRED]) == true)
+            {
+                if(is_null($this->{$column}))
+                {
+                    $_m= "column (" . $column . ") is required";
+                    $_d = array('method' => __METHOD__);
+                    throw new AB_Exception($_m, E_USER_WARNING, $_d);
+                }
+            }
+        }
     }
 
     /**
@@ -277,10 +353,9 @@ abstract class AB_Model
             }
             catch(PDOException $exception)
             {
-                $message = "select model (" . $model . ") " . 
-                           "with sql (" . $sql . ") failed";
-                $data = array ('method' => __METHOD__);
-                AB_Exception::forward($message, E_USER_ERROR, $exception, $data);
+                $_m = "select model (" . $model . ") with sql (" . $sql . ") failed";
+                $_d = array ('method' => __METHOD__);
+                AB_Exception::forward($_m, E_USER_ERROR, $exception, $_d);
             }
         }
         else
@@ -293,10 +368,9 @@ abstract class AB_Model
             }
             catch(PDOException $exception)
             {
-                $message = "select model (" . $model . ") " . 
-                           "with sql (" . $sql . ") failed";
-                $data = array ('method' => __METHOD__);
-                AB_Exception::forward($message, E_USER_ERROR, $exception, $data);
+                $_m = "select model (" . $model . ") with sql (" . $sql . ") failed";
+                $_d = array ('method' => __METHOD__);
+                AB_Exception::forward($_m, E_USER_ERROR, $exception, $_d);
             }
         }
  
@@ -326,9 +400,9 @@ abstract class AB_Model
             }
             catch(PDOException $exception)
             {
-                $message = "execute sql (" . $sql . ") failed";
-                $data = array ('method' => __METHOD__);
-                AB_Exception::forward($message, E_USER_ERROR, $exception, $data);
+                $_m = "execute sql (" . $sql . ") failed";
+                $_d = array ('method' => __METHOD__);
+                AB_Exception::forward($_m, E_USER_ERROR, $exception, $_d);
             }
         }
         else
@@ -339,9 +413,9 @@ abstract class AB_Model
             }
             catch(PDOException $exception)
             {
-                $message = "execute sql (" . $sql . ") failed";
-                $data = array ('method' => __METHOD__);
-                AB_Exception::forward($message, E_USER_ERROR, $exception, $data);
+                $_m = "execute sql (" . $sql . ") failed";
+                $_d = array ('method' => __METHOD__);
+                AB_Exception::forward($_m, E_USER_ERROR, $exception, $_d);
             }
         }
 
@@ -391,9 +465,9 @@ abstract class AB_Model
             }
             catch(PDOException $exception)
             {
-                $message = "select sql (" . $sql . ") failed";
-                $data = array ('method' => __METHOD__);
-                AB_Exception::forward($message, E_USER_ERROR, $exception, $data);
+                $_m = "select sql (" . $sql . ") failed";
+                $_d = array ('method' => __METHOD__);
+                AB_Exception::forward($_m, E_USER_ERROR, $exception, $_d);
             }
         }
         else
@@ -404,9 +478,9 @@ abstract class AB_Model
             }
             catch(PDOException $exception)
             {
-                $message = "select sql (" . $sql . ") failed";
-                $data = array ('method' => __METHOD__);
-                AB_Exception::forward($message, E_USER_ERROR, $exception, $data);
+                $_m = "select sql (" . $sql . ") failed";
+                $_d = array ('method' => __METHOD__);
+                AB_Exception::forward($_m, E_USER_ERROR, $exception, $_d);
             }
         }
 
@@ -442,9 +516,9 @@ abstract class AB_Model
 
         if(empty($configuration))
         {
-            $message = "database (" . $database . ") does not exists in registry";
-            $data = array('method' => __METHOD__);
-            throw new AB_Exception($message, E_USER_ERROR, $data);
+            $_m = "database (" . $database . ") does not exists in registry";
+            $_d = array('method' => __METHOD__);
+            throw new AB_Exception($_m, E_USER_ERROR, $_d);
         }
         
         $has_connection = false;
@@ -475,9 +549,9 @@ abstract class AB_Model
             }
             catch(PDOException $exception)
             {
-                $message = "database connection failed";
-                $data = array ('method' => __METHOD__);
-                AB_Exception::forward($message, E_USER_ERROR, $exception, $data);
+                $_m = "database connection failed";
+                $_d = array ('method' => __METHOD__);
+                AB_Exception::forward($_m, E_USER_ERROR, $exception, $_d);
             }
         }
 
@@ -518,16 +592,16 @@ abstract class AB_Model
                 }
                 else
                 {
-                    $message = "no implementation to driver (" . $driver . ")";
-                    $data = array('method' => __METHOD__);
-                    throw new AB_Exception($message, E_USER_ERROR, $data);
+                    $_m = "no implementation to driver (" . $driver . ")";
+                    $_d = array('method' => __METHOD__);
+                    throw new AB_Exception($_m, E_USER_ERROR, $_d);
                 }
             }
             catch(Exception $exception)
             {
-                $message = "failed to set the timezone";
-                $data = array ('method' => __METHOD__);
-                AB_Exception::forward($message, E_USER_ERROR, $exception, $data);
+                $_m = "failed to set the timezone";
+                $_d = array ('method' => __METHOD__);
+                AB_Exception::forward($_m, E_USER_ERROR, $exception, $_d);
             }
         }
     }

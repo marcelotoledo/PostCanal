@@ -21,7 +21,6 @@ class ErrorController extends AB_Controller
     {
         parent::__construct($request, $response);
         $this->setViewLayout(null);
-        $this->setViewTemplate(null);
     }
 
     /**
@@ -35,33 +34,17 @@ class ErrorController extends AB_Controller
     {
         if(($position = strpos($method, 'Action')) > 0)
         {
-            $template = substr($method, 0, $position) . ".html";
-            $body = self::readTemplate($template);
+            $template = "Error/" . substr($method, 0, $position);
 
-            empty($body) ? 
-                $this->setResponseRedirect(BASE_URL) : 
-                $this->setViewData($body);
+            if(strlen(AB_View::getTemplatePath($template)) > 0)
+            {
+                $this->setViewTemplate($template);
+            }
+            else
+            {
+                $this->setViewTemplate(null);
+                $this->setResponseRedirect(BASE_URL);
+            }
         }
-    }
-
-    /**
-     * Read error template
-     *
-     * @param   string  $template
-     * @return void
-     */
-    private static function readTemplate($template)
-    {
-        $path = APPLICATION_PATH . "/view/template/Error/" . $template;
-        $body = "";
-
-        if(file_exists($path))
-        {
-            $f = fopen($path, "r");
-            while(!feof($f)) $body.= fgets($f);
-            fclose($f);
-        }
-
-        return $body;
     }
 }

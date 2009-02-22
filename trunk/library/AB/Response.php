@@ -156,7 +156,17 @@ class AB_Response
      */
     public function setBody($body)
     {
-        $this->body = empty($body) ? "" : $body;
+        $this->body = $body;
+    }
+
+    /**
+     * Get response body
+     *
+     * @return  string
+     */
+    public function getBody()
+    {
+        return $this->body;
     }
 
     /**

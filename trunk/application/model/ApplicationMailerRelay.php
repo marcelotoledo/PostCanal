@@ -19,9 +19,9 @@ class ApplicationMailerRelay extends AB_Model
     /**
      * Table structure
      *
-     * @var string|array
+     * @var array
      */
-    protected $table_structure = 'a:4:{s:27:"application_mailer_relay_id";a:3:{s:1:"t";s:1:"i";s:1:"s";i:0;s:1:"r";b:0;}s:9:"recipient";a:3:{s:1:"t";s:1:"s";s:1:"s";i:100;s:1:"r";b:1;}s:14:"identifier_md5";a:3:{s:1:"t";s:1:"s";s:1:"s";i:32;s:1:"r";b:0;}s:10:"created_at";a:3:{s:1:"t";s:1:"d";s:1:"s";i:0;s:1:"r";b:0;}}';
+    protected static $table_structure = array('application_mailer_relay_id'=>array('type'=>'integer','size'=>0,'required'=>false),'recipient'=>array('type'=>'string','size'=>100,'required'=>true),'identifier_md5'=>array('type'=>'string','size'=>32,'required'=>false),'created_at'=>array('type'=>'date','size'=>0,'required'=>false));
 
     /**
      * Sequence name
@@ -55,12 +55,7 @@ class ApplicationMailerRelay extends AB_Model
      */
     public function getTableStructure()
     {
-        if(!is_array($this->table_structure))
-        {
-            $this->table_structure = unserialize($this->table_structure);
-        }
-
-        return $this->table_structure;
+        return self::$table_structure;
     }
 
     /**

@@ -19,9 +19,9 @@ class UserProfileInformation extends AB_Model
     /**
      * Table structure
      *
-     * @var string|array
+     * @var array
      */
-    protected $table_structure = 'a:4:{s:15:"user_profile_id";a:3:{s:1:"t";s:1:"i";s:1:"s";i:0;s:1:"r";b:1;}s:4:"name";a:3:{s:1:"t";s:1:"s";s:1:"s";i:100;s:1:"r";b:0;}s:10:"created_at";a:3:{s:1:"t";s:1:"d";s:1:"s";i:0;s:1:"r";b:0;}s:10:"updated_at";a:3:{s:1:"t";s:1:"d";s:1:"s";i:0;s:1:"r";b:0;}}';
+    protected static $table_structure = array('user_profile_id'=>array('type'=>'integer','size'=>0,'required'=>true),'name'=>array('type'=>'string','size'=>100,'required'=>false),'created_at'=>array('type'=>'date','size'=>0,'required'=>false),'updated_at'=>array('type'=>'date','size'=>0,'required'=>false));
 
     /**
      * Sequence name
@@ -55,12 +55,7 @@ class UserProfileInformation extends AB_Model
      */
     public function getTableStructure()
     {
-        if(!is_array($this->table_structure))
-        {
-            $this->table_structure = unserialize($this->table_structure);
-        }
-
-        return $this->table_structure;
+        return self::$table_structure;
     }
 
     /**
@@ -81,18 +76,6 @@ class UserProfileInformation extends AB_Model
     public function getPrimaryKeyName()
     {
         return self::$primary_key_name;
-    }
-
-    /**
-     * Save model
-     *
-     * @return  boolean
-     */
-    public function save()
-    {
-        if(!$this->isNew()) $this->updated_at = date("Y/m/d H:i:s");
-
-        return parent::save();
     }
 
     /**

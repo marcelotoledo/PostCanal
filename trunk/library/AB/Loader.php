@@ -125,9 +125,9 @@ class AB_Loader
         }
         else
         {
-            $message = "class (Zend_Loader) not found";
-            $data = array('method' => __METHOD__);
-            throw new AB_Exception($message, E_USER_ERROR, $data);
+            $_m = "class (Zend_Loader) not found";
+            $_d = array('method' => __METHOD__);
+            throw new AB_Exception($_m, E_USER_ERROR, $_d);
         }
     }
 }

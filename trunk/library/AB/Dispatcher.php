@@ -67,9 +67,9 @@ class AB_Dispatcher
     public function dispatch()
     {
         $has_error = false;
-        $error = null; 
         $controller = $this->request->getController();
         $action = $this->request->getAction();
+        $error = null; 
 
         try
         {
@@ -78,13 +78,11 @@ class AB_Dispatcher
         catch(AB_Exception $exception)
         {
             $has_error = true;
-
             $exception->controller = $controller;
             $exception->action = $action;
-
             $error = ((string) $exception);
 
-            /* notices and warnings are ok, otherwise, set error response */
+            /* set error status */
 
             if($exception->getCode() == E_USER_ERROR)
             {
@@ -105,43 +103,47 @@ class AB_Dispatcher
                      "line: " . $exception->getLine() . "; " .
                      "trace: " . $exception->getTraceAsString();
 
-            /* unexpected exceptions are serious errors */
+            /* unexpected exceptions are fatal errors */
 
             $this->response->setStatus(AB_Response::STATUS_ERROR);
  
             /* log Exception */
 
-            $attributes = array
-            (
-                'method' => __METHOD__, 'controller' => $controller, 'action' => $action
-            );
+            $_d = array ('method' => __METHOD__, 
+                         'controller' => $controller, 
+                         'action' => $action);
 
-            AB_Log::write($error, E_USER_ERROR, $attributes);
+            AB_Log::write($error, E_USER_ERROR, $_d);
         }
 
-        /* show errors */
+        /* error reporting */
 
         if($has_error)
         {
-            /* show error message in browser */
+            (error_reporting() > 0) ? 
+                /* show error message in browser */
 
-            if(error_reporting() > 0)
-            {
-                $this->response->setBody("<pre>" . $error . "</pre>");
-            }
+                $this->response->setBody($error) :
 
-            /* run error controller actions */
+                /* run error controller actions */
 
-            else
-            {
-                $this->controllerFactory('Error')->runAction('status' . 
-                    $this->response->getStatus());
-            }
+                $this->errorAction($this->response->getStatus());
         }
 
         /* send response */
 
         $this->response->send();
+    }
+
+    /**
+     * Show error action (production)
+     *
+     * @param   integer $status
+     * @return  void 
+     */
+    private function errorAction($status)
+    {
+        $this->controllerFactory('Error')->runAction('status' . $status);
     }
 
     /**
@@ -174,9 +176,9 @@ class AB_Dispatcher
         if(is_object($controller) == false)
         {
             $this->response->setStatus(AB_Response::STATUS_NOT_FOUND);
-            $message = "controller (" . $name . ") not found";
-            $data = array('method' => __METHOD__);
-            throw new AB_Exception($message, E_USER_WARNING);
+            $_m = "controller (" . $name . ") not found";
+            $_d = array('method' => __METHOD__);
+            throw new AB_Exception($_m, E_USER_WARNING, $_d);
         }
 
         return $controller;

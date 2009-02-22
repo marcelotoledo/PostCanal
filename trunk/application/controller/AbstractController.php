@@ -53,11 +53,11 @@ abstract class AbstractController extends AB_Controller
 
             $message = "an error occurred while trying to execute action";
 
-            $data = ($id = intval($this->user_profile_id) > 0) ?
+            $_a = ($id = intval($this->user_profile_id) > 0) ?
                 array('user_profile_id' => $id) : 
                 array();
 
-            AB_Exception::forward($message, E_USER_NOTICE, $exception, $data);
+            AB_Exception::forward($message, E_USER_NOTICE, $exception, $_a);
         }
     }   
 
@@ -88,10 +88,7 @@ abstract class AbstractController extends AB_Controller
         $session = $this->getSession();
         $value = null;
 
-        if(is_object($session))
-        {
-            $value = $session->{$name};
-        }
+        if(is_object($session)) $value = $session->{$name};
 
         return $value;
     }
@@ -108,10 +105,7 @@ abstract class AbstractController extends AB_Controller
     {
         $session = $this->getSession();
 
-        if(is_object($session))
-        {
-            $session->{$name} = $value;
-        }
+        if(is_object($session)) $session->{$name} = $value;
     }
 
     /**

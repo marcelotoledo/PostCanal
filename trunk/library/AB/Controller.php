@@ -157,9 +157,9 @@ class AB_Controller
         else
         {
             $this->response->setStatus(AB_Response::STATUS_NOT_FOUND);
-            $message = "action (" . $action . ") not found";
-            $data = array('method' => __METHOD__);
-            throw new AB_Exception($message, E_USER_NOTICE, $data);
+            $_m = "action (" . $action . ") not found";
+            $_d = array('method' => __METHOD__);
+            throw new AB_Exception($_m, E_USER_NOTICE, $_d);
         }
     }
 }

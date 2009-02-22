@@ -207,9 +207,9 @@ class AB_Request
 
         if(strlen($request_uri) == 0)
         {
-            $message = "request uri is empty";
-            $data = array('method' => __METHOD__);
-            throw new AB_Exception($message, E_USER_ERROR, $data);
+            $_m = "request uri is empty";
+            $_d = array('method' => __METHOD__);
+            throw new AB_Exception($_m, E_USER_ERROR, $_d);
         }
 
         $path = $request_uri;
@@ -259,9 +259,9 @@ class AB_Request
 
         if(strlen($request_method) == 0)
         {
-            $message = "request method is empty";
-            $data = array('method' => __METHOD__);
-            throw new AB_Exception($message, E_USER_ERROR, $data);
+            $_m  = "request method is empty";
+            $_d = array('method' => __METHOD__);
+            throw new AB_Exception($_m, E_USER_ERROR, $_d);
         }
 
         return $request_method;
