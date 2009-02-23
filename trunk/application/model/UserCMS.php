@@ -151,6 +151,6 @@ class UserCMS extends AB_Model
     public static function findByUserProfileId($user_profile_id)
     {
         return self::find(array('user_profile_id' => $user_profile_id),
-                          array('name ASC'));
+                          array('name ASC, created_at ASC'));
     }
 }

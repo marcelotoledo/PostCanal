@@ -4,7 +4,7 @@ div#topbar
     padding-left: 25px;
     padding-right: 25px;
     height: 15px;
-    background-color: bisque;
+    background-color: wheat;
 }
 
 div#dashboardcontent
@@ -13,7 +13,116 @@ div#dashboardcontent
     padding-left: 25px;
 }
 
-.dashboardinfo
+/* draft */
+
+h1
 {
-    font-style: italic;
+    color: gray;
+    font-size: small;
+}
+h2
+{
+}
+#main-panel
+{
+}
+#right-panel
+{
+    background-color: wheat;
+    padding: 5px;
+}
+#cms-panel
+{
+    vertical-align: top;
+    text-align: right;
+    padding: 10px;
+    border-right: 1px solid gray;
+}
+#cms-panel table
+{
+    width: 200px;
+    border-top: 1px solid gray;
+}
+#rss-chanels-panel
+{
+    vertical-align: top;
+    padding: 10px;
+}
+#rss-chanels-panel table
+{
+    width: 200px;
+    border-top: 1px solid gray;
+}
+#rss-items-panel
+{
+    padding: 10px;
+    vertical-align: top;
+    background-color: white;
+}
+#rss-items-panel h2
+{
+    background-color: gray;
+    padding: 2px;
+    margin-left: -2px;
+    color: white;
+}
+#rss-items-panel table
+{
+    padding-top: 5px;
+    width: 500px;
+    margin-left: -2px;
+}
+#queue-panel
+{
+    padding: 10px;
+    background-color: white;
+}
+#queue-panel h2
+{
+    background-color: gray;
+    padding: 2px;
+    margin-left: -2px;
+    color: white;
+}
+#queue-panel table
+{
+    padding-top: 5px;
+    width: 500px;
+    margin-left: -2px;
+}
+.cms-item
+{
+    font-size: small;
+    text-align: right;
+    margin-right: -2px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    padding-right: 2px;
+}
+.cms-item-selected
+{
+    background-color: yellow;
+    margin-right:-15px;
+    padding-right:15px;
+}
+.channel-item
+{
+    padding-top: 2px;
+    padding-bottom: 2px;
+    margin-left: -2px;
+}
+.channel-item-selected
+{
+    background-color: white;
+    margin-left:-15px;
+    padding-left:13px;
+}
+
+.rss-item-title
+{
+    float: left;
+}
+.rss-item-date
+{
+    float: right;
 }

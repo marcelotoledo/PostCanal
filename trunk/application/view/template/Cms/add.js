@@ -318,10 +318,10 @@ $(document).ready(function()
         }
 
         name = $("input[@name='name']").val();
-        manager_username = $("input[@name='manager_username']").val();
-        manager_password = $("input[@name='manager_password']").val();
+        username = $("input[@name='manager_username']").val();
+        password = $("input[@name='manager_password']").val();
 
-        if(name == "" || manager_username == "" || manager_password == "")
+        if(name == "" || username == "" || password == "")
         {
             $.ab_alert("Preencha o formulário corretamente");
             return null;
@@ -334,8 +334,8 @@ $(document).ready(function()
         }
 
         parameters = { name: name, 
-                       manager_username: manager_username, 
-                       manager_password: manager_password }
+                       username: username, 
+                       password: password }
 
         $.ajax
         ({
