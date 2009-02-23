@@ -10,18 +10,15 @@
 class CmsController extends AbstractController
 {
     /**
-     * CMS type status response constants
+     * General constants
      */
-    const CMS_TYPE_OK          = "ok";
-    const CMS_TYPE_FAILED      = "failed";
-    const CMS_TYPE_UNKNOWN     = "unknown";
-    const CMS_TYPE_MAINTENANCE = "maintenance";
+    const STATUS_OK          = "ok";
+    const STATUS_FAILED      = "failed";
+    const STATUS_UNKNOWN     = "unknown";
+    const STATUS_MAINTENANCE = "maintenance";
+    const STATUS_NO_DATA     = "no_data";
 
-    /**
-     * Manager status response constants
-     */
-    const MANAGER_STATUS_OK     = "ok";
-    const MANAGER_STATUS_FAILED = "failed";
+    const CMS_ADD_SESSION    = "cms_add_session";
 
 
     /**
@@ -44,8 +41,57 @@ class CmsController extends AbstractController
      */
     public function addAction()
     {
+        $this->getRequestMethod() == AB_Request::METHOD_POST ?
+            $this->addMethodPOST() :
+            $this->addMethodGET();
+    }
+
+    /**
+     * Add action, method GET
+     *
+     * @return void
+     */
+    private function addMethodGET()
+    {
         $this->setViewLayout('dashboard');
         $this->setViewParameter('cms', new UserCMS());
+
+        /* create new namespace to store new cms information */
+
+        $ss = new Zend_Session_Namespace(self::CMS_ADD_SESSION);
+        $ss->data = array();
+    }
+
+    /**
+     * Add action, method POST (save)
+     *
+     * @return void
+     */
+    private function addMethodPOST()
+    {
+        $this->setViewLayout(null);
+        $this->setViewTemplate(null);
+        $result = self::STATUS_FAILED;
+
+        $name = $this->getRequestParameter('name');
+        $username = $this->getRequestParameter('username');
+        $password = $this->getRequestParameter('password');
+
+        $cms = null;
+
+        $ss = new Zend_Session_Namespace(self::CMS_ADD_SESSION);
+        $data = ((array) $ss->data);
+
+        if(count($data) == 0)
+        {
+            $result = self::STATUS_NO_DATA;
+            $this->setViewDataJson(compact(array('result')));
+            return null;
+        }
+
+        /* TODO ... */
+
+        $this->setViewDataJson(compact(array('result')));
     }
 
     /**
@@ -60,6 +106,8 @@ class CmsController extends AbstractController
         $this->setViewLayout(null);
         $this->setViewTemplate(null);
         
+        $ss = new Zend_Session_Namespace(self::CMS_ADD_SESSION);
+
         $url = null;
         $manager_url = null;
         $data = array();
@@ -70,14 +118,44 @@ class CmsController extends AbstractController
         if(strlen(($url = $this->getRequestParameter('url'))) > 0)
         {
             $data = $this->checkURL($url, $client);
+            $ss->data = array_merge($ss->data, $data);
         }
 
         /* manager url */
 
         if(strlen(($manager_url = $this->getRequestParameter('manager'))) > 0)
         {
-            $type = CMSType::findByPrimaryKey($this->getRequestParameter('type'));
+            $data = ((array) $ss->data);
+
+            if(!array_key_exists('cms_type', $data))
+            {
+                $_m = "cms type is not available in session";
+                $_d = array('method' => __METHOD__);
+                throw new AB_Exception($_m, E_USER_NOTICE, $_d);
+            }
+
+            $type = CMSType::findByPrimaryKey($data['cms_type']);
             $data = $this->checkManagerURL($manager_url, $client, $type);
+            $ss->data = array_merge($ss->data, $data);
+        }
+
+        /* manager login */
+
+        if(strlen(($username = $this->getRequestParameter('username'))) > 0 &&
+           strlen(($password = $this->getRequestParameter('password'))) > 0)
+        {
+            $data = ((array) $ss->data);
+
+            if(!array_key_exists('cms_type', $data) ||
+               !array_key_exists('manager_url', $data))
+            {
+                $_m = "required data is not available in session";
+                $_d = array('method' => __METHOD__);
+                throw new AB_Exception($_m, E_USER_NOTICE, $_d);
+            }
+
+            $data = $this->checkLogin($username, $password, $data);
+            $ss->data = array_merge($ss->data, $data);
         }
 
         /* send response */
@@ -97,12 +175,12 @@ class CmsController extends AbstractController
         $url_status       = null;
 
         $cms_type         = 0;
-        $cms_type_status  = self::CMS_TYPE_FAILED;
+        $cms_type_status  = self::STATUS_FAILED;
         $cms_type_name    = "";
         $cms_type_version = "";
 
         $manager_url      = "";
-        $manager_status   = self::MANAGER_STATUS_FAILED;
+        $manager_status   = self::STATUS_FAILED;
 
         /* http request */
 
@@ -132,21 +210,15 @@ class CmsController extends AbstractController
         if($url_status == ApplicationHTTPClient::STATUS_OK)
         {
             $type = CMSType::discovery($url, $client->getHeaders(), $client->getBody());
-
-            $cms_type_status = is_object($type) ? 
-                self::CMS_TYPE_OK : 
-                self::CMS_TYPE_UNKNOWN;
+            $cms_type_status = is_object($type) ? self::STATUS_OK : self::STATUS_UNKNOWN;
         }
 
-        if($cms_type_status == self::CMS_TYPE_OK)
+        if($cms_type_status == self::STATUS_OK)
         {
             $cms_type = $type->cms_type_id;
-            $cms_type_status = self::CMS_TYPE_OK;
+            $cms_type_status = self::STATUS_OK;
 
-            if($type->maintenance == true)
-            {
-                $cms_type_status = self::CMS_TYPE_MAINTENANCE;
-            }
+            if($type->maintenance == true) $cms_type_status = self::STATUS_MAINTENANCE;
 
             $cms_type_name = $type->name;
             $cms_type_version = $type->version;
@@ -164,9 +236,9 @@ class CmsController extends AbstractController
 
                 /* log unexpected status for default manager url */
 
-                if($manager_status != self::MANAGER_STATUS_OK)
+                if($manager_status != self::STATUS_OK)
                 {
-                    $message = "manager url (" . $manager_url . ") " .
+                    $message = "default manager url (" . $manager_url . ") " .
                                "for cms type (" . $type->cms_type_id . ") " .
                                "returned a manager status (" . $manager_status . ")";
                     $a = array('method' => __METHOD__,
@@ -199,7 +271,7 @@ class CmsController extends AbstractController
     private function checkManagerURL(&$manager_url, $client, $type)
     {
         $url_status     = null;
-        $manager_status = self::MANAGER_STATUS_FAILED;
+        $manager_status = self::STATUS_FAILED;
 
         /* get response from manager url */
 
@@ -213,10 +285,25 @@ class CmsController extends AbstractController
             if(CMSType::managerCheckHTML(
                 $client->getBody(), $type->getConfiguration()) == true)
             {
-                $manager_status = self::MANAGER_STATUS_OK;
+                $manager_status = self::STATUS_OK;
             }
         }
 
         return compact(array('manager_url', 'manager_status'));
+    }
+
+    /**
+     * Check manager login
+     *
+     * @params  string  $username
+     * @params  string  $password
+     * @param   array   $data
+     * @return  string
+     */
+    private function checkLogin($username, $password, $data)
+    {
+        $login_status = self::STATUS_FAILED;
+
+        return compact(array('login_status'));
     }
 }

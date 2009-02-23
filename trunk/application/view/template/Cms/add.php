@@ -39,7 +39,10 @@
     </tr>
     <tr>
         <td class="formlabel">Senha:</td>
-        <td><input type="password" name="manager_password"></td>
+        <td>
+            <input type="password" name="manager_password">
+            <a id="check_manager_login" style="display:none">verificar</a>
+        </td>
     </tr>
     <tr class="formbutton">
         <td>&nbsp;</td>

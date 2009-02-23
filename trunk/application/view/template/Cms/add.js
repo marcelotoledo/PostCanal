@@ -1,8 +1,11 @@
 $(document).ready(function()
 {
+    /* DEFAULTS */
+
     var active_request = false;
 
-    var url = "";
+
+    /* SWITCHES */
 
     /* spinner */
 
@@ -21,7 +24,7 @@ $(document).ready(function()
         $.ab_spinner_stop();
     }
 
-    /* url switches */
+    /* url */
 
     function commitURL(url)
     {
@@ -44,7 +47,7 @@ $(document).ready(function()
         resetManagerURL();
     }
 
-    /* cms type switches */
+    /* cms type */
 
     function commitCMSType(name)
     {
@@ -58,14 +61,16 @@ $(document).ready(function()
         $("#cms_type_row").hide();
     }
 
-    /* manager url switches */
+    /* manager url */
 
     function commitManagerURL(url)
     {
         $("input[@name='manager_url']").val(url);
         $("input[@name='manager_url']").hide();
+        $("#check_manager_url").hide();
         $("#input_manager_url_ro").show();
         $("#input_manager_url_ro").text(url);
+        $("#check_manager_login").show();
     }
 
     function changeManagerURL()
@@ -74,6 +79,8 @@ $(document).ready(function()
         $("#input_manager_url_ro").text("");
         $("#input_manager_url_ro").hide();
         $("input[@name='manager_url']").show();
+        $("#check_manager_url").show();
+        $("#check_manager_login").hide();
     }
 
     function resetManagerURL()
@@ -81,9 +88,20 @@ $(document).ready(function()
         $("input[@name='manager_url']").val("");
         $("#input_manager_url_ro").text("");
         $("#manager_url_row").hide();
+        $("#check_manager_login").hide();
     }
 
-    /* check url */
+    /* ACTIONS */
+
+    /* on error */
+
+    function onError()
+    {
+        alert('erro!');
+        /* window.location = "<?php $this->url('cms','add') ?>"; */
+    }
+
+    /* check url action */
 
     function checkURL()
     {
@@ -92,7 +110,7 @@ $(document).ready(function()
             return null;
         }
 
-        url = $("input[@name='input_url']").val();
+        var url = $("input[@name='input_url']").val();
 
         if(url == "")
         {
@@ -100,7 +118,7 @@ $(document).ready(function()
             return null;
         }
 
-        parameters = { url: url }
+        var parameters = { url: url }
 
         $.ajax
         ({
@@ -173,14 +191,181 @@ $(document).ready(function()
 
                     if(data.manager_status != "ok")
                     {
+                        $.ab_alert("O endereço padrão do gerenciador não é valido." +
+                                   "Verifique se o endereço realmente existe e " + 
+                                   "informe um endereço válido manualmente.");
                         changeManagerURL();
                     }
                 }
             }, 
-            error: function () 
+            error: function () { onError(); }
+        });
+    }
+
+    /* check manager url */
+
+    function checkManagerURL()
+    {
+        if(active_request == true)
+        {
+            return null;
+        }
+
+        var manager_url = $("input[@name='manager_url']").val();
+
+        if(manager_url == "")
+        {
+            $.ab_alert("informe o endereço do gerenciador");
+            return null;
+        }
+
+        var parameters = { manager: manager_url }
+
+        $.ajax
+        ({
+            type: "POST",
+            url: "<?php $this->url('cms', 'check') ?>",
+            dataType: "json",
+            data: parameters,
+            beforeSend: function ()
+            {
+                active_request = true;
+                showSpinner();
+            },
+            complete: function ()
+            {
+                active_request = false;
+                hideSpinner();
+            },
+            success: function (data) 
             { 
-                /* window.location = "<?php $this->url('dashboard') ?>"; */
-            }
+                commitManagerURL(data.manager_url);
+
+                if(data.manager_status != "ok")
+                {
+                    $.ab_alert("O endereço informado para o gerenciador " + 
+                               "não é valido. Verifique se o endereço " + 
+                               "realmente existe.");
+                    changeManagerURL();
+                }
+            }, 
+            error: function () { onError(); }
+        });
+    }
+
+    /* check manager login */
+
+    function checkManagerLogin()
+    {
+        if(active_request == true)
+        {
+            return null;
+        }
+
+        var username = $("input[@name='manager_username']").val();
+        var password = $("input[@name='manager_password']").val();
+
+        if(username == "" || password == "")
+        {
+            $.ab_alert("informe o usuário e senha do gerenciador");
+            return null;
+        }
+
+        var parameters = { username: username, password: password }
+
+        $.ajax
+        ({
+            type: "POST",
+            url: "<?php $this->url('cms', 'check') ?>",
+            dataType: "json",
+            data: parameters,
+            beforeSend: function ()
+            {
+                active_request = true;
+                showSpinner();
+            },
+            complete: function ()
+            {
+                active_request = false;
+                hideSpinner();
+            },
+            success: function (data) 
+            { 
+                if(data.login_status = "ok")
+                {
+                    $.ab_alert("Usuário e senha verificados com sucesso");
+                }
+                else
+                {
+                    $.ab_alert("O usuário ou senha informados não são válidos");
+                }
+            }, 
+            error: function () { onError(); }
+        });
+    }
+
+    /* submit */
+
+    function addSubmit()
+    {
+        if(active_request == true)
+        {
+            return null;
+        }
+
+        name = $("input[@name='name']").val();
+        manager_username = $("input[@name='manager_username']").val();
+        manager_password = $("input[@name='manager_password']").val();
+
+        if(name == "" || manager_username == "" || manager_password == "")
+        {
+            $.ab_alert("Preencha o formulário corretamente");
+            return null;
+        }
+
+        parameters = { name: name, 
+                       manager_username: manager_username, 
+                       manager_password: manager_password }
+
+        $.ajax
+        ({
+            type: "POST",
+            url: "<?php $this->url('cms', 'add') ?>",
+            dataType: "json",
+            data: parameters,
+            beforeSend: function ()
+            {
+                active_request = true;
+                showSpinner();
+            },
+            complete: function ()
+            {
+                active_request = false;
+                hideSpinner();
+            },
+            success: function (data) 
+            { 
+                var result = data.result;
+
+                if(result == "ok") 
+                {
+                    window.location = "<?php $this->url('dashboard') ?>";
+                }
+                else if(result == "no_data")
+                {
+                    $.ab_alert("Não foi possível recuperar as informações sobre a URL");
+                    changeURL();
+                }
+                else if(result == "failed")
+                {
+                    $.ab_alert("Não foi possível adicionar um novo CMS");
+                }
+                else
+                {
+                    onError();
+                }
+            }, 
+            error: function () { onError(); }
         });
     }
 
@@ -203,69 +388,23 @@ $(document).ready(function()
         changeURL();
     });
 
-    /* cancel */
+    $("#check_manager_url").click(function()
+    {
+        checkManagerURL();
+    });
+
+    $("#check_manager_login").click(function()
+    {
+        checkManagerLogin();
+    });
+
+    $("input[@name='addsubmit']").click(function() 
+    {
+        addSubmit();
+    });
 
     $("input[@name='addcancel']").click(function() 
     {
         window.location = "<?php $this->url('dashboard') ?>";
-    });
-
-    /* submit */
-
-    $("input[@name='addsubmit']").click(function() 
-    {
-        if(active_request == true)
-        {
-            return null;
-        }
-
-        name = $("input[@name='name']").val();
-        manager_username = $("input[@name='manager_username']").val();
-        manager_password = $("input[@name='manager_password']").val();
-
-        if(name == "" || manager_username == "" || manager_password == "")
-        {
-            $.ab_alert("Preencha o formulário corretamente");
-            return null;
-        }
-
-        parameters = { name: name, 
-                       pwdchange: pwdchange, 
-                       current_password: current_password, 
-                       new_password: new_password, 
-                       new_password_confirm: new_password_confirm }
-
-        $.ajax
-        ({
-            type: "POST",
-            url: "<?php $this->url('cms', 'addSave') ?>",
-            dataType: "json",
-            data: parameters,
-            beforeSend: function ()
-            {
-                active_request = true;
-                showSpinner();
-            },
-            complete: function ()
-            {
-                active_request = false;
-                hideSpinner();
-            },
-            success: function (data) 
-            { 
-                if(data == "add_save_ok") 
-                {
-                    window.location = "<?php $this->url('dashboard') ?>";
-                }
-                else if(data == "add_save_failed")
-                {
-                    $.ab_alert("Não foi possível adicionar um novo CMS");
-                }
-            }, 
-            error: function () 
-            { 
-                window.location = "<?php $this->url('dashboard') ?>";
-            }
-        });
     });
 });

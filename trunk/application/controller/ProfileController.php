@@ -9,40 +9,23 @@
  */
 class ProfileController extends AbstractController
 {
-    /**
-     * Request/Response constants
-     */
-    const LOGIN_OK = "login_ok";
-    const LOGIN_INVALID = "login_invalid";
-    const LOGIN_REGISTER_UNCONFIRMED = "login_register_unconfirmed";
-
-    const REGISTER_OK = "register_ok";
-    const REGISTER_FAILED = "register_failed";
-    const REGISTER_INCOMPLETE = "register_incomplete";
-    const REGISTER_PASSWORD_NOT_MATCHED = "register_password_not_matched";
-    const REGISTER_INSTRUCTION_FAILED = "register_instruction_failed";
-
-    const RECOVERY_OK = "recovery_ok";
-    const RECOVERY_INSTRUCTION_FAILED = "recovery_instruction_failed";
+    const STATUS_OK = "ok";
+    const STATUS_LOGGED = "logged";
+    const STATUS_REGISTERED = "registered";
+    const STATUS_FAILED = "failed";
+    const STATUS_INVALID = "invalid";
+    const STATUS_INCOMPLETE = "incomplete";
+    const STATUS_UNCONFIRMED = "unconfirmed";
+    const STATUS_WRONG_PASSWORD = "wrong_password";
+    const STATUS_UNMATCHED_PASSWORD = "unmatched_password";
+    const STATUS_INSTRUCTION_FAILED = "instruction_failed";
 
     const CONFIRM_OK = "confirm_ok";
     const CONFIRM_FAILED = "confirm_failed";
     const CONFIRM_DONE_BEFORE = "confirm_done_before";
-    const CONFIRM_TYPE_NEW_PROFILE = "newprofile";
-    const CONFIRM_TYPE_EMAIL_CHANGE = "emailchange";
+    const CONFIRM_TYPE_NEW = "new";
+    const CONFIRM_TYPE_CHANGE = "change";
 
-    const PASSWORD_CHANGE_OK = "password_change_ok";
-    const PASSWORD_CHANGE_FAILED = "password_change_failed";
-    const PASSWORD_CHANGE_NOT_MATCHED = "password_change_not_matched";
-
-    const EDIT_SAVE_OK = "edit_save_ok";
-    const EDIT_SAVE_FAILED = "edit_save_failed";
-    const EDIT_SAVE_PASSWORD_NOT_MATCHED = "edit_save_password_not_matched";
-    const EDIT_SAVE_WRONG_PASSWORD = "edit_save_wrong_password";
-
-    /**
-     * Mailer constants
-     */
     const MAIL_NEW_PROFILE_SUBJECT = "[blotomate] novo perfil";
     const MAIL_NEW_PROFILE_TEMPLATE = "mail_register_new.html";
     const MAIL_EXISTING_PROFILE_SUBJECT = "[blotomate] perfil existente";
@@ -78,17 +61,15 @@ class ProfileController extends AbstractController
     {
         $this->setViewLayout(null);
         $this->setViewTemplate(null);
-
         $email = $this->getRequestParameter('email');
         $password = $this->getRequestParameter('password');
-
-        $this->setViewDataJson(self::LOGIN_INVALID);
+        $result = self::STATUS_INVALID;
 
         /* check for existing profile */
 
         $profile = null;
 
-        if(!empty($email) && !empty($password))
+        if(strlen($email) > 0 && strlen($password) > 0)
         {
             $profile = UserProfile::findByLogin($email, md5($password));
         }
@@ -105,7 +86,7 @@ class ProfileController extends AbstractController
                 $this->user_profile_login_email = $profile->login_email;
                 $this->sessionLock();
 
-                $this->setViewDataJson(self::LOGIN_OK);
+                $result = self::STATUS_LOGGED;
 
                 $_d = array ('method' => __METHOD__,
                              'user_profile_id' => $this->user_profile_id);
@@ -116,9 +97,11 @@ class ProfileController extends AbstractController
 
             else
             {
-                $this->setViewDataJson(self::LOGIN_REGISTER_UNCONFIRMED);
+                $result = self::STATUS_UNCONFIRMED;
             }
         }
+
+        $this->setViewDataJson(compact(array('result')));
     }
 
     /**
@@ -130,23 +113,22 @@ class ProfileController extends AbstractController
     {
         $this->setViewLayout(null);
         $this->setViewTemplate(null);
-        $this->setViewDataJson(self::REGISTER_FAILED);
-
         $email = $this->getRequestParameter('email');
         $password = $this->getRequestParameter('password');
         $confirm = $this->getRequestParameter('confirm');
+        $result = self::STATUS_FAILED;
 
         /* check for existing profile */
 
         $profile = null;
 
-        if(empty($email) || empty($password) || empty($confirm))
+        if(strlen($email) == 0 || strlen($password) == 0 || strlen($confirm) == 0)
         {
-            $this->setViewDataJson(self::REGISTER_INCOMPLETE);
+            $result = self::STATUS_INCOMPLETE;
         }
-        elseif(!empty($password) && !empty($confirm) && $password != $confirm)
+        elseif(strlen($password) > 0 && strlen($confirm) > 0 && $password != $confirm)
         {
-            $this->setViewDataJson(self::REGISTER_PASSWORD_NOT_MATCHED);
+            $result = self::STATUS_UNMATCHED_PASSWORD;
         }
         else
         {
@@ -161,8 +143,8 @@ class ProfileController extends AbstractController
                 $profile->login_password_md5 = md5($password);
                 $profile->save();
 
-                $_d = array ('method' => __METHOD__,
-                             'user_profile_id' => $profile->user_profile_id);
+                $id = intval($profile->user_profile_id);
+                $_d = array ('method' => __METHOD__, 'user_profile_id' => $id);
                 self::notice("registered new", $_d);
             }
         }
@@ -184,7 +166,7 @@ class ProfileController extends AbstractController
                     $profile->save();
                 }
 
-                $this->setViewDataJson(self::REGISTER_OK);
+                $result = self::STATUS_REGISTERED;
             }
             catch(AB_Exception $exception)
             {
@@ -196,12 +178,14 @@ class ProfileController extends AbstractController
                     $profile->save();
                 }
 
+                $id = intval($profile->user_profile_id);
                 $_m = "failed to register;\n" . $exception->getMessage();
-                $_d = array('method' => __METHOD__,
-                            'user_profile_id' => intval($profile->user_profile_id));
+                $_d = array('method' => __METHOD__, 'user_profile_id' => $id);
                 AB_Log::write($_m, $exception->getCode(), $_d);
             }
         }
+
+        $this->setViewDataJson(compact(array('result')));
     }
 
     /**
@@ -226,10 +210,9 @@ class ProfileController extends AbstractController
     {
         $this->setViewLayout(null);
         $this->setViewTemplate(null);
-        $this->setViewDataJson(self::RECOVERY_OK);
-
         $email = $this->getRequestParameter('email');
         $profile = UserProfile::findByEmail($email);
+        $result = self::STATUS_OK;
 
         /* recovery instructions */
 
@@ -243,10 +226,10 @@ class ProfileController extends AbstractController
             }
             catch(AB_Exception $exception)
             {
-                $this->setViewDataJson(self::RECOVERY_INSTRUCTION_FAILED);
+                $result = self::STATUS_FAILED;
+                $id = intval($profile->user_profile_id);
                 $_m = "failed to recovery;\n" . $exception->getMessage();
-                $_d = array('method' => __METHOD__,
-                            'user_profile_id' => intval($profile->user_profile_id));
+                $_d = array('method' => __METHOD__, 'user_profile_id' => $id);
                 AB_Log::write($_m, $exception->getCode(), $_d);
             }
         }
@@ -261,13 +244,15 @@ class ProfileController extends AbstractController
             }
             catch(AB_Exception $exception)
             {
-                $this->setViewDataJson(self::RECOVERY_INSTRUCTION_FAILED);
-                $_m = "failed to send dummy instructions to email (" . $email . ")" .
-                      ";\n" . $exception->getMessage();
+                $result = self::STATUS_FAILED;
+                $_m = "failed to send dummy instructions to email (" . $email . ");\n";
+                $_m.= $exception->getMessage();
                 $_d = array('method' => __METHOD__);
                 AB_Log::write($_m, $exception->getCode(), $_d);
             }
         }
+
+        $this->setViewDataJson(compact(array('result')));
     }
 
     /**
@@ -278,10 +263,9 @@ class ProfileController extends AbstractController
     public function confirmAction()
     {
         $this->setViewLayout('index');
-        $this->setViewParameter('result', self::CONFIRM_FAILED);
-
         $uid = $this->getRequestParameter('uid');
         $type = $this->getRequestParameter('type');
+        $result = self::CONFIRM_FAILED;
 
         $profile = null;
 
@@ -292,21 +276,21 @@ class ProfileController extends AbstractController
 
         if(is_object($profile))
         {
-            if($type == self::CONFIRM_TYPE_NEW_PROFILE)
+            if($type == self::CONFIRM_TYPE_NEW)
             {
                 if($profile->register_confirmation == false)
                 {
                     $profile->register_confirmation = true;
                     $profile->register_confirmation_time = date("Y-m-d H:i:s");
                     $profile->save();
-                    $this->setViewParameter('result', self::CONFIRM_OK);
+                    $result = self::CONFIRM_OK;
                 }
                 else
                 {
-                    $this->setViewParameter('result', self::CONFIRM_DONE_BEFORE);
+                    $result = self::CONFIRM_DONE_BEFORE;
                 }
             }
-            elseif($type == self::CONFIRM_TYPE_EMAIL_CHANGE) // TODO
+            elseif($type == self::CONFIRM_TYPE_CHANGE) // TODO
             {
 throw new UnexpectedValueException("see todo in (" . __FILE__ .":". __LINE__ . ")");
                 if($profile->email_change == false)
@@ -314,14 +298,16 @@ throw new UnexpectedValueException("see todo in (" . __FILE__ .":". __LINE__ . "
                     $profile->email_change = true;
                     $profile->email_change_time = date("Y-m-d H:i:s");
                     $profile->save();
-                    $this->setViewParameter('result', self::CONFIRM_OK);
+                    $result = self::CONFIRM_OK;
                 }
                 else
                 {
-                    $this->setViewParameter('result', self::CONFIRM_DONE_BEFORE);
+                    $result = self::CONFIRM_DONE_BEFORE;
                 }
             }
         }
+
+        $this->setViewParameter('result', $result);
     }
 
     /**
@@ -368,11 +354,10 @@ throw new UnexpectedValueException("see todo in (" . __FILE__ .":". __LINE__ . "
     {
         $this->setViewLayout(null);
         $this->setViewTemplate(null);
-        $this->setViewDataJson(self::PASSWORD_CHANGE_FAILED);
-
         $uid = $this->getRequestParameter('uid');
         $password = $this->getRequestParameter('password');
         $confirm = $this->getRequestParameter('confirm');
+        $result = self::STATUS_FAILED;
 
         $profile = null;
 
@@ -390,20 +375,23 @@ throw new UnexpectedValueException("see todo in (" . __FILE__ .":". __LINE__ . "
                     $profile->login_password_md5 = md5($password);
                     $profile->save();
 
-                    $_d = array ('method' => __METHOD__,
-                                 'user_profile_id' => $profile->user_profile_id);
+                    $id = intval($profile->user_profile_id);
+                    $_d = array ('method' => __METHOD__, 'user_profile_id' => $id);
                     self::notice("password changed", $_d);
 
-                    $this->setViewDataJson(self::PASSWORD_CHANGE_OK);
+                    $result = self::STATUS_OK;
+
                     self::sendPasswordNotice($profile);
                     $this->sessionDestroy();
                 }
                 else
                 {
-                    $this->setViewDataJson(self::PASSWORD_CHANGE_NOT_MATCHED);
+                    $result = self::STATUS_UNMATCHED_PASSWORD;
                 }
             }
         }
+
+        $this->setViewDataJson(compact(array('result')));
     }
 
     /**
@@ -457,7 +445,8 @@ throw new UnexpectedValueException("see todo in (" . __FILE__ .":". __LINE__ . "
     {
         $this->setViewLayout(null);
         $this->setViewTemplate(null);
-        $this->setViewDataJson(self::EDIT_SAVE_FAILED);
+        $result = self::STATUS_FAILED;
+        $id = 0;
 
         if(!self::sessionAlive())
         {
@@ -468,9 +457,7 @@ throw new UnexpectedValueException("see todo in (" . __FILE__ .":". __LINE__ . "
         }
 
         $id = intval($this->user_profile_id);
-        $profile = null;
-
-        if($id > 0) $profile = UserProfile::findByPrimaryKeyEnabled($id);
+        $profile = ($id > 0) ? UserProfile::findByPrimaryKeyEnabled($id) : null;
 
         if(!is_object($profile))
         {
@@ -491,13 +478,15 @@ throw new UnexpectedValueException("see todo in (" . __FILE__ .":". __LINE__ . "
         {
             if($profile->login_password_md5 != md5($current_password))
             {
-                $this->setViewDataJson(self::EDIT_SAVE_WRONG_PASSWORD);
+                $result = self::STATUS_WRONG_PASSWORD;
+                $this->setViewDataJson(compact(array('result')));
                 return null;
             }
 
             if($new_password != $new_password_confirm)
             {
-                $this->setViewDataJson(self::EDIT_SAVE_PASSWORD_NOT_MATCHED);
+                $result = self::STATUS_UNMATCHED_PASSWORD;
+                $this->setViewDataJson(compact(array('result')));
                 return null;
             }
 
@@ -519,13 +508,12 @@ throw new UnexpectedValueException("see todo in (" . __FILE__ .":". __LINE__ . "
                 $this->user_profile_login_email = $profile->login_email;
                 $this->sessionLock();
 
-                $this->setViewDataJson(self::EDIT_SAVE_OK);
+                $result = self::STATUS_OK;
             }
             catch(AB_Exception $exception)
             {
                 $_m = "failed to save user profile after password editing";
-                $_d = array('method' => __METHOD__,
-                            'user_profile_id' => $profile->user_profile_id);
+                $_d = array('method' => __METHOD__, 'user_profile_id' => $id);
                 AB_Exception::forward($_m, E_USER_WARNING, $exception, $_d);
             }
         }
@@ -545,15 +533,16 @@ throw new UnexpectedValueException("see todo in (" . __FILE__ .":". __LINE__ . "
         try
         {
             $information->save();
-            $this->setViewDataJson(self::EDIT_SAVE_OK);
+            $result = self::STATUS_OK;
         }
         catch(AB_Exception $exception)
         {
             $_m = "failed to save information after editing";
-            $_d = array('method' => __METHOD__,
-                        'user_profile_id' => $profile->user_profile_id);
+            $_d = array('method' => __METHOD__, 'user_profile_id' => $id);
             AB_Exception::forward($_m, E_USER_WARNING, $exception, $_d);
         }
+
+        $this->setViewDataJson(compact(array('result')));
     }
 
     /**
@@ -594,7 +583,7 @@ throw new UnexpectedValueException("see todo in (" . __FILE__ .":". __LINE__ . "
         $confirm_url = AB_Request::url(
             "profile", "confirm", array(
                 "uid" => $profile->getUID(),
-                "type" => self::CONFIRM_TYPE_NEW_PROFILE));
+                "type" => self::CONFIRM_TYPE_NEW));
 
         $body = str_replace("{CONFIRM_URL}", $confirm_url, $body);
 
@@ -680,7 +669,7 @@ throw new BadMethodCallException("see todo in (" . __FILE__ .":". __LINE__ . ")"
         $confirm_url = AB_Request::url(
             "profile", "confirm", array(
                 "uid" => $profile->getUID(),
-                "type" => self::CONFIRM_TYPE_EMAIL_CHANGE));
+                "type" => self::CONFIRM_TYPE_CHANGE));
 
         $body = str_replace("{CONFIRM_URL}", $confirm_url, $body);
 
@@ -770,9 +759,7 @@ throw new BadMethodCallException("see todo in (" . __FILE__ .":". __LINE__ . ")"
     {
         $_m = $_m . " by ";
 
-        foreach(array('HTTP_CLIENT_IP',
-                      'HTTP_X_FORWARDED_FOR',
-                      'REMOTE_ADDR') as $i)
+        foreach(array('HTTP_CLIENT_IP', 'HTTP_X_FORWARDED_FOR', 'REMOTE_ADDR') as $i)
         {
             if(array_key_exists($i, $_SERVER))
             {

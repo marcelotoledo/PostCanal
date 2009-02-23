@@ -51,12 +51,9 @@ abstract class AbstractController extends AB_Controller
         {
             /* add user profile information to exception */
 
-            $message = "an error occurred while trying to execute action";
-
-            $_a = ($id = intval($this->user_profile_id) > 0) ?
-                array('user_profile_id' => $id) : 
-                array();
-
+            $id = intval($this->user_profile_id);
+            $_m= "an error occurred while trying to execute action";
+            $_d = ($id > 0) ? array('user_profile_id' => $id) : array();
             AB_Exception::forward($message, E_USER_NOTICE, $exception, $_a);
         }
     }   
@@ -148,9 +145,9 @@ abstract class AbstractController extends AB_Controller
         if($alive == false)
         {
             $this->setResponseRedirect($redirect, AB_Response::STATUS_UNAUTHORIZED);
-            $message = "session unauthorized";
-            $data = array('method' => __METHOD__);
-            throw new AB_Exception($message, E_USER_NOTICE, $data);
+            $_m = "session unauthorized";
+            $_d = array('method' => __METHOD__);
+            throw new AB_Exception($_m, E_USER_NOTICE, $_d);
         }
 
         return $alive;
