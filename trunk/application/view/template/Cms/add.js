@@ -3,6 +3,7 @@ $(document).ready(function()
     /* DEFAULTS */
 
     var active_request = false;
+    var complete = false;
 
 
     /* SWITCHES */
@@ -71,6 +72,7 @@ $(document).ready(function()
         $("#input_manager_url_ro").show();
         $("#input_manager_url_ro").text(url);
         $("#check_manager_login").show();
+        complete = true;
     }
 
     function changeManagerURL()
@@ -81,6 +83,7 @@ $(document).ready(function()
         $("input[@name='manager_url']").show();
         $("#check_manager_url").show();
         $("#check_manager_login").hide();
+        complete = false;
     }
 
     function resetManagerURL()
@@ -89,6 +92,7 @@ $(document).ready(function()
         $("#input_manager_url_ro").text("");
         $("#manager_url_row").hide();
         $("#check_manager_login").hide();
+        complete = false;
     }
 
     /* ACTIONS */
@@ -323,6 +327,12 @@ $(document).ready(function()
             return null;
         }
 
+        if(complete == false)
+        {
+            $.ab_alert("O endereço do CMS precisa ser verificado");
+            return null;
+        }
+
         parameters = { name: name, 
                        manager_username: manager_username, 
                        manager_password: manager_password }
@@ -350,11 +360,6 @@ $(document).ready(function()
                 if(result == "ok") 
                 {
                     window.location = "<?php $this->url('dashboard') ?>";
-                }
-                else if(result == "no_data")
-                {
-                    $.ab_alert("Não foi possível recuperar as informações sobre a URL");
-                    changeURL();
                 }
                 else if(result == "failed")
                 {

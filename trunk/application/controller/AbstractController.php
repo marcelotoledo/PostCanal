@@ -52,9 +52,10 @@ abstract class AbstractController extends AB_Controller
             /* add user profile information to exception */
 
             $id = intval($this->user_profile_id);
-            $_m= "an error occurred while trying to execute action";
-            $_d = ($id > 0) ? array('user_profile_id' => $id) : array();
-            AB_Exception::forward($message, E_USER_NOTICE, $exception, $_a);
+            $_m= "an error occurred during the execution of current action";
+            $_d = array('method' => __METHOD__);
+            if($id > 0) $_d = array_merge($_d, array('user_profile_id' => $id));
+            AB_Exception::forward($_m, E_USER_NOTICE, $exception, $_d);
         }
     }   
 

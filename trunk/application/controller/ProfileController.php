@@ -414,12 +414,8 @@ throw new UnexpectedValueException("see todo in (" . __FILE__ .":". __LINE__ . "
     private function editMethodGET()
     {
         $this->setViewLayout('dashboard');
-
-        if(!$this->sessionAuthorize())
-        {
-            return null;
-        }
-
+        $this->sessionAuthorize();
+        
         $id = intval($this->user_profile_id);
         $profile = UserProfile::findByPrimaryKeyEnabled($id);
 
@@ -445,19 +441,11 @@ throw new UnexpectedValueException("see todo in (" . __FILE__ .":". __LINE__ . "
     {
         $this->setViewLayout(null);
         $this->setViewTemplate(null);
-        $result = self::STATUS_FAILED;
-        $id = 0;
-
-        if(!self::sessionAlive())
-        {
-            $this->setResponseStatus(AB_Response::STATUS_UNAUTHORIZED);
-            $_m = "session is not alive";
-            $_d = array('method' => __METHOD__);
-            throw new AB_Exception($_m, E_USER_NOTICE, $_d);
-        }
+        $this->sessionAuthorize();
 
         $id = intval($this->user_profile_id);
         $profile = ($id > 0) ? UserProfile::findByPrimaryKeyEnabled($id) : null;
+        $result = self::STATUS_FAILED;
 
         if(!is_object($profile))
         {

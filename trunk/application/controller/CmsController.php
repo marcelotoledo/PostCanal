@@ -16,7 +16,6 @@ class CmsController extends AbstractController
     const STATUS_FAILED      = "failed";
     const STATUS_UNKNOWN     = "unknown";
     const STATUS_MAINTENANCE = "maintenance";
-    const STATUS_NO_DATA     = "no_data";
 
     const CMS_ADD_SESSION    = "cms_add_session";
 
@@ -73,23 +72,40 @@ class CmsController extends AbstractController
         $this->setViewTemplate(null);
         $result = self::STATUS_FAILED;
 
-        $name = $this->getRequestParameter('name');
-        $username = $this->getRequestParameter('username');
-        $password = $this->getRequestParameter('password');
-
-        $cms = null;
-
         $ss = new Zend_Session_Namespace(self::CMS_ADD_SESSION);
         $data = ((array) $ss->data);
 
-        if(count($data) == 0)
+
+        if(!array_key_exists('url', $data) ||
+           !array_key_exists('manager_url', $data) ||
+           !array_key_exists('cms_type', $data))
         {
-            $result = self::STATUS_NO_DATA;
-            $this->setViewDataJson(compact(array('result')));
-            return null;
+            $_m = "required data is not available in session";
+            $_d = array('method' => __METHOD__);
+            throw new AB_Exception($_m, E_USER_NOTICE, $_d);
         }
 
-        /* TODO ... */
+        $cms = new UserCMS();
+        $cms->user_profile_id = $this->user_profile_id;
+        $cms->cms_type_id = $data['cms_type'];
+        $cms->name = $this->getRequestParameter('name');
+        $cms->url = $data['url'];
+        $cms->manager_url = $data['manager_url'];
+        $cms->manager_username = $this->getRequestParameter('username');
+        $cms->manager_password = $this->getRequestParameter('password');
+        $cms->status = UserCMS::STATUS_OK;
+
+        try
+        {
+            $cms->save();
+            $result = self::STATUS_OK;
+        }
+        catch(AB_Exception $exception)
+        {
+            $_m = "failed to add new cms";
+            $_d = array('method' => __METHOD__);
+            AB_Exception::forward($_m, E_USER_WARNING, $exception, $_d);
+        }
 
         $this->setViewDataJson(compact(array('result')));
     }
@@ -188,19 +204,18 @@ class CmsController extends AbstractController
 
         /* log requested url */
 
-        $m = "url (" . $url . ") requested by ";
+        $_m = "url (" . $url . ") requested by ";
+        $_d = array('method' => __METHOD__);
 
         foreach(array('HTTP_CLIENT_IP', 'HTTP_X_FORWARDED_FOR', 'REMOTE_ADDR') as $i)
         {
             if(array_key_exists($i, $_SERVER))
             {
-                $m .= strtolower($i) . " (" . $_SERVER[$i] . ") ";
+                $_m .= strtolower($i) . " (" . $_SERVER[$i] . ") ";
             }
         }
-    
-        $a = array('method' => __METHOD__, 'user_profile_id' => $this->user_profile_id);
 
-        AB_Log::write($m, E_USER_NOTICE, $a);
+        AB_Log::write($_m, E_USER_NOTICE, $_d);
 
         /* discovery cms type */
 

@@ -9,6 +9,12 @@
  */
 class UserCMS extends AB_Model
 {
+    const STATUS_OK           = "ok";
+    const STATUS_FAILED_URL   = "failed_url";
+    const STATUS_FAILED_LOGIN = "failed_login";
+    const STATUS_FAILED_POST  = "failed_post";
+
+
     /**
      * Table name
      *
