@@ -374,7 +374,7 @@ $(document).ready(function()
         });
     }
 
-    /* triggers */
+    /* TRIGGERS */
 
     /* 
     $("input[@name='input_url']").blur(function()

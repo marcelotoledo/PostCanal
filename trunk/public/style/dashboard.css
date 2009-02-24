@@ -15,22 +15,28 @@ div#dashboardcontent
 
 /* draft */
 
-h1
-{
-    color: gray;
-    font-size: small;
-}
-h2
-{
-}
 #main-panel
 {
 }
+
+.panel-title
+{
+    color: gray;
+    font-size: medium;
+    font-weight: bold;
+}
+
 #right-panel
 {
     background-color: wheat;
     padding: 5px;
 }
+
+.panel-list
+{
+    margin-top: 5px;
+}
+
 #cms-panel
 {
     vertical-align: top;
@@ -38,27 +44,32 @@ h2
     padding: 10px;
     border-right: 1px solid gray;
 }
+
 #cms-panel table
 {
     width: 200px;
     border-top: 1px solid gray;
 }
+
 #rss-chanels-panel
 {
     vertical-align: top;
     padding: 10px;
 }
+
 #rss-chanels-panel table
 {
     width: 200px;
     border-top: 1px solid gray;
 }
+
 #rss-items-panel
 {
     padding: 10px;
     vertical-align: top;
     background-color: white;
 }
+
 #rss-items-panel h2
 {
     background-color: gray;
@@ -66,17 +77,20 @@ h2
     margin-left: -2px;
     color: white;
 }
+
 #rss-items-panel table
 {
     padding-top: 5px;
     width: 500px;
     margin-left: -2px;
 }
+
 #queue-panel
 {
     padding: 10px;
     background-color: white;
 }
+
 #queue-panel h2
 {
     background-color: gray;
@@ -84,12 +98,14 @@ h2
     margin-left: -2px;
     color: white;
 }
+
 #queue-panel table
 {
     padding-top: 5px;
     width: 500px;
     margin-left: -2px;
 }
+
 .cms-item
 {
     font-size: small;
@@ -99,18 +115,28 @@ h2
     padding-bottom: 5px;
     padding-right: 2px;
 }
+
+.cms-item-hover
+{
+    background-color: wheat;
+    margin-right:-16px;
+    padding-right:16px;
+    cursor: pointer;
+    cursor: hand;
+}
+
 .cms-item-selected
 {
-    background-color: yellow;
-    margin-right:-15px;
-    padding-right:15px;
+    font-weight: bold;
 }
+
 .channel-item
 {
     padding-top: 2px;
     padding-bottom: 2px;
     margin-left: -2px;
 }
+
 .channel-item-selected
 {
     background-color: white;
@@ -122,6 +148,7 @@ h2
 {
     float: left;
 }
+
 .rss-item-date
 {
     float: right;

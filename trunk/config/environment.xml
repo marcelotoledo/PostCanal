@@ -18,9 +18,9 @@
             <port>465</port>
             <sender>
                 <default>
-                    <username>cdz0vfk61y@gmail.com</username>
-                    <password>fdm0juk2gn</password>
-                    <email>cdz0vfk61y@gmail.com</email>
+                    <username>john.doe@castilho.biz</username>
+                    <password>fulano</password>
+                    <email>john.die@castilho.biz</email>
                 </default>
             </sender>
             <relay>

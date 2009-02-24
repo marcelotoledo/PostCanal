@@ -82,14 +82,14 @@ class ProfileController extends AbstractController
             {
                 $this->sessionCreate();
                 $this->user_profile_id = $profile->user_profile_id;
-                $this->user_profile_uid = $profile->getUID();
+                $this->user_profile_uid_md5 = $profile->uid_md5;
                 $this->user_profile_login_email = $profile->login_email;
                 $this->sessionLock();
 
                 $result = self::STATUS_LOGGED;
 
-                $_d = array ('method' => __METHOD__,
-                             'user_profile_id' => $this->user_profile_id);
+                $id = $this->user_profile_id;
+                $_d = array ('method' => __METHOD__, 'user_profile_id' => $id);
                 self::notice("session created", $_d);
             }
 
@@ -263,15 +263,16 @@ class ProfileController extends AbstractController
     public function confirmAction()
     {
         $this->setViewLayout('index');
+        $email = $this->getRequestParameter('email');
         $uid = $this->getRequestParameter('uid');
         $type = $this->getRequestParameter('type');
         $result = self::CONFIRM_FAILED;
 
         $profile = null;
 
-        if(!empty($uid))
+        if(strlen($email) > 0 && strlen($uid) > 0)
         {
-            $profile = UserProfile::findByUID($uid);
+            $profile = UserProfile::findByUID($email, $uid);
         }
 
         if(is_object($profile))
@@ -331,15 +332,16 @@ throw new UnexpectedValueException("see todo in (" . __FILE__ .":". __LINE__ . "
     {
         $this->setViewLayout('index');
 
+        $email = $this->getRequestParameter('email');
         $uid = $this->getRequestParameter('uid');
         $password = $this->getRequestParameter('password');
         $confirm = $this->getRequestParameter('confirm');
 
         $profile = null;
 
-        if(!empty($uid))
+        if(strlen($email) > 0 && strlen($uid) > 0)
         {
-            $profile = UserProfile::findByUID($uid);
+            $profile = UserProfile::findByUID($email, $uid);
         }
 
         $this->setViewParameter('profile', $profile);
@@ -354,6 +356,7 @@ throw new UnexpectedValueException("see todo in (" . __FILE__ .":". __LINE__ . "
     {
         $this->setViewLayout(null);
         $this->setViewTemplate(null);
+        $email = $this->getRequestParameter('email');
         $uid = $this->getRequestParameter('uid');
         $password = $this->getRequestParameter('password');
         $confirm = $this->getRequestParameter('confirm');
@@ -361,9 +364,9 @@ throw new UnexpectedValueException("see todo in (" . __FILE__ .":". __LINE__ . "
 
         $profile = null;
 
-        if(!empty($uid))
+        if(strlen($email) > 0 && strlen($uid) > 0)
         {
-            $profile = UserProfile::findByUID($uid);
+            $profile = UserProfile::findByUID($email, $uid);
         }
 
         if(is_object($profile))
@@ -372,6 +375,7 @@ throw new UnexpectedValueException("see todo in (" . __FILE__ .":". __LINE__ . "
             {
                 if($password == $confirm)
                 {
+                    $profile->uid_md5 = md5(uniqid($password, true));
                     $profile->login_password_md5 = md5($password);
                     $profile->save();
 
@@ -478,6 +482,7 @@ throw new UnexpectedValueException("see todo in (" . __FILE__ .":". __LINE__ . "
                 return null;
             }
 
+            $profile->uid_md5 = md5(uniqid($new_password, true));
             $profile->login_password_md5 = md5($new_password);
 
             try
@@ -492,7 +497,7 @@ throw new UnexpectedValueException("see todo in (" . __FILE__ .":". __LINE__ . "
                 $this->sessionDestroy();
                 $this->sessionCreate();
                 $this->user_profile_id = $id;
-                $this->user_profile_uid = $profile->getUID();
+                $this->user_profile_uid_md5 = $profile->uid_md5;
                 $this->user_profile_login_email = $profile->login_email;
                 $this->sessionLock();
 
@@ -570,7 +575,8 @@ throw new UnexpectedValueException("see todo in (" . __FILE__ .":". __LINE__ . "
 
         $confirm_url = AB_Request::url(
             "profile", "confirm", array(
-                "uid" => $profile->getUID(),
+                "email" => $profile->login_email,
+                "uid" => $profile->uid_md5,
                 "type" => self::CONFIRM_TYPE_NEW));
 
         $body = str_replace("{CONFIRM_URL}", $confirm_url, $body);
@@ -598,9 +604,9 @@ throw new UnexpectedValueException("see todo in (" . __FILE__ .":". __LINE__ . "
             
         $body = str_replace("{BASE_URL}", BASE_URL, $body);
 
-        $password_url = AB_Request::url("profile", 
-                                        "password", 
-                                        array("uid" => $profile->getUID()));
+        $password_url = AB_Request::url(
+            "profile", "password", array(
+                "email" => $profile->login_email, "uid" => $profile->uid_md5));
 
         $body = str_replace("{PASSWORD_URL}", $password_url, $body);
 
@@ -626,10 +632,10 @@ throw new UnexpectedValueException("see todo in (" . __FILE__ .":". __LINE__ . "
         $subject = self::MAIL_RECOVERY_SUBJECT;
         $body = self::readInstruction(self::MAIL_RECOVERY_TEMPLATE);
 
-        $password_url = AB_Request::url("profile", 
-                                        "password", 
-                                        array("uid" => $profile->getUID()));
-
+        $password_url = AB_Request::url(
+            "profile", "password", array(
+                "email" => $profile->login_email, "uid" => $profile->uid_md5));
+       
         $body = str_replace("{PASSWORD_URL}", $password_url, $body);
 
         self::sendEmail($profile->login_email, __METHOD__, $subject, $body);
@@ -656,7 +662,8 @@ throw new BadMethodCallException("see todo in (" . __FILE__ .":". __LINE__ . ")"
 
         $confirm_url = AB_Request::url(
             "profile", "confirm", array(
-                "uid" => $profile->getUID(),
+                "email" => $profile->login_email,
+                "uid" => $profile->uid_md5,
                 "type" => self::CONFIRM_TYPE_CHANGE));
 
         $body = str_replace("{CONFIRM_URL}", $confirm_url, $body);

@@ -1,8 +1,5 @@
 <?php
 
-include APPLICATION_PATH . "/library/ApplicationUtility.php";
-
-
 /**
  * CMSType model class
  * 
@@ -238,6 +235,8 @@ class CMSType extends AB_Model
      */
     public static function discovery(&$url, $headers, &$html)
     {
+        AB_Loader::loadApplicationLibrary("ApplicationUtility");
+
         $cms_type = null;
 
         $types = array();
@@ -419,6 +418,8 @@ class CMSType extends AB_Model
      */
     public static function managerCheckHTML(&$html, &$config)
     {
+        AB_Loader::loadApplicationLibrary("ApplicationUtility");
+
         ApplicationUtility::compactHTML($html);
 
         $r = array();

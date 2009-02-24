@@ -41,6 +41,7 @@ CREATE TABLE application_log
     CONSTRAINT application_log_pk PRIMARY KEY (application_log_id)
 );
 
+CREATE INDEX application_log_priority_index ON application_log (priority);
 
 /* mailer */
 
@@ -53,6 +54,9 @@ CREATE TABLE application_mailer_relay
     identifier_md5 character varying(32) DEFAULT NULL,
     created_at timestamp without time zone NOT NULL DEFAULT NOW()
 );
+
+CREATE INDEX application_mailer_relay_index 
+    ON application_mailer_relay (recipient, identifier_md5, created_at);
 
 /* cms type */
 
@@ -81,6 +85,8 @@ CREATE TABLE cms_type_discovery
         REFERENCES cms_type (cms_type_id) ON DELETE CASCADE
 );
 
+CREATE INDEX cms_type_discovery_index ON cms_type_discovery (cms_type_id, name);
+
 CREATE SEQUENCE cms_type_configuration_seq;
 CREATE TABLE cms_type_configuration
 (
@@ -95,6 +101,7 @@ CREATE TABLE cms_type_configuration
         REFERENCES cms_type (cms_type_id) ON DELETE CASCADE
 );
 
+CREATE INDEX cms_type_configuration_index ON cms_type_configuration (cms_type_id);
 
 /* aggregator */
 
@@ -133,6 +140,7 @@ CREATE SEQUENCE user_profile_seq;
 CREATE TABLE user_profile
 (
     user_profile_id integer NOT NULL DEFAULT nextval('user_profile_seq'),
+    uid_md5 character varying(32) NOT NULL,
     login_email character varying(100) NOT NULL,
     login_password_md5 character varying(32) NOT NULL,
     register_message_time timestamp without time zone DEFAULT NULL,
@@ -144,6 +152,15 @@ CREATE TABLE user_profile
     enabled boolean NOT NULL DEFAULT true,
     CONSTRAINT user_profile_pk PRIMARY KEY (user_profile_id)
 );
+
+CREATE INDEX user_profile_enabled_index 
+    ON user_profile (user_profile_id) WHERE enabled is TRUE;
+CREATE INDEX user_profile_email_index
+    ON user_profile (login_email) WHERE enabled is TRUE;
+CREATE INDEX user_profile_login_index
+    ON user_profile (login_email, login_password_md5) WHERE enabled is TRUE;
+CREATE INDEX user_profile_uid_index
+    ON user_profile (login_email, uid_md5) WHERE enabled is TRUE;
 
 CREATE TABLE user_profile_information
 (
@@ -162,6 +179,7 @@ CREATE TABLE user_cms
     user_cms_id integer NOT NULL DEFAULT nextval('user_cms_seq'),
     user_profile_id integer NOT NULL,
     cms_type_id integer NOT NULL,
+    cid_md5 character varying(32) NOT NULL,
     name character varying(100) NOT NULL,
     url character varying(200) NOT NULL,
     manager_url character varying(200) NOT NULL,
@@ -177,6 +195,8 @@ CREATE TABLE user_cms
     CONSTRAINT cms_type_fk FOREIGN KEY (cms_type_id) 
         REFERENCES cms_type (cms_type_id) ON DELETE RESTRICT
 );
+
+CREATE INDEX user_cms_cid_index ON user_cms (user_profile_id, cid_md5);
 
 CREATE SEQUENCE user_cms_channel_seq;
 CREATE TABLE user_cms_channel

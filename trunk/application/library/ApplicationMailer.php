@@ -60,7 +60,7 @@ class ApplicationMailer
     public function __construct($mailer='default', $sender='default')
     {
         $registry = AB_Registry::singleton();
-        $mailer_config = $registry->mailer->{$mailer};
+        $mailer_config = $registry->application->mailer->{$mailer};
         $sender_config = $mailer_config->sender->{$sender};
 
         $server = $mailer_config->server;

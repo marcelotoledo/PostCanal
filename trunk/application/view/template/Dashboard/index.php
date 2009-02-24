@@ -9,18 +9,18 @@
 <tr>
 
 <td id="cms-panel">
-<h1>CMS</h1>
+<span class="panel-title">CMS</span>
 
 <?php if(count($this->cms) == 0) : ?>
 
-<span>Nenhum CMS cadastrado</span> 
+<span>Nenhum item cadastrado</span> 
 
 <?php else : ?>
 
-<table>
+<table class="panel-list">
 
 <?php foreach($this->cms as $cms) : ?>
-<tr><td><div class="cms-item"><?php echo $cms->name ?></div></tr></td>
+<tr><td><div class="cms-item"><?php echo $cms->name ?><input type="hidden" name="cms_item" value="<?php echo $cms->user_cms_id ?>"></div></tr></td>
 <?php endforeach ?>
 
 </table>
@@ -70,8 +70,8 @@
                     </table>
                 </td>
                 <td id="rss-chanels-panel">
-                    <h1>RSS</h1>
-                    <table>
+                    <span class="panel-title">RSS</span>
+                    <table class="panel-list">
                         <tr>
                             <td>
                                 <div class="channel-item">Sushi of the day</div>

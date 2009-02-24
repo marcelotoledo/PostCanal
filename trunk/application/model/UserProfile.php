@@ -95,23 +95,17 @@ class UserProfile extends AB_Model
     }
 
     /**
-     * Get UID
+     * Save model
      *
-     * @return  string|null
+     * @return  boolean
      */
-    public function getUID()
+    public function save()
     {
-        $uid = null;
+        /* generate UID */
 
-        if(!$this->isNew())
-        {
-            $_md5 = md5($this->user_profile_id . ":" .
-                        $this->login_email . ":" .
-                        $this->login_password_md5);
-            $uid = self::encodeUID($_md5);
-        }   
+        if($this->isNew()) $this->uid_md5 = md5(uniqid($this->login_password_md5, true));
 
-        return $uid;
+        return parent::save();
     }
 
     /**
@@ -173,21 +167,20 @@ class UserProfile extends AB_Model
     }
 
     /**
-     * Find UserProfile by primary key and enabled
-     *
+     * Find UserProfile by primary key and enabled (user_profile_enabled_index)
+     * 
      * @param   integer $id    Primary key value
      *
      * @return  UserProfile|null 
      */
     public static function findByPrimaryKeyEnabled($id)
     {
-        return current(self::find(array(
-            self::$primary_key_name => $id, 
-            'enabled'               => true)));
+        return current(self::find(
+            array(self::$primary_key_name => $id, 'enabled' => true)));
     }
 
     /**
-     * Get UserProfile from email
+     * Find UserProfile from email (user_profile_email_index)
      *
      * @param   string  $email
      * @return  UserProfile|null
@@ -200,7 +193,7 @@ class UserProfile extends AB_Model
     }
 
     /**
-     * Get UserProfile from login
+     * Find UserProfile from login (user_profile_login_index)
      *
      * @param   string  $email
      * @param   string  $password_md5   md5($password)
@@ -215,92 +208,17 @@ class UserProfile extends AB_Model
     }
 
     /**
-     * Get UserProfile from UID
+     * Find UserProfile from UID (user_profile_uid_index)
      *
-     * @param   string  $uid
+     * @param   string  $email
+     * @param   string  $uid_md5
      * @return  UserProfile|null
      */
-    public static function findByUID($uid)
+    public static function findByUID($email, $uid_md5)
     {
-        if(empty($uid)) return null;
-
-        $_md5 = self::decodeUID($uid);
-
-        if(empty($_md5)) return null;
-
-        $sql = "SELECT * FROM " . self::$table_name . " " . 
-               "WHERE MD5(user_profile_id || ':' ||
-                          login_email || ':' ||
-                          login_password_md5) = ?";
-        
-        return current(self::selectModel($sql, array($_md5)));
-    }
-
-    /**
-     * Encode UID
-     *
-     * @param   string  $_md5
-     * @return  string|null
-     */
-    private static function encodeUID($_md5)
-    {
-        if(!eregi('^[0-9a-f]{32}$', $_md5)) return null;
-
-        $s = $_md5;
-
-        for($i = 0; $i < 8; $i++) $s.= $s[($i * 4)];
-
-        $x = "";
-
-        for($i = 0; $i < 40; $i += 4)
-        {
-            $p = substr($s, $i, 4);
-            $p = str_pad(base_convert($p, 16, 36), 4, "0", STR_PAD_LEFT);
-            $x.= strrev($p);
-        }
-
-        $registry = AB_Registry::singleton();
-        $b = $registry->model->user_profile->uid_base;
-        $out = "";
-
-        for($i = 0; $i < 40; $i++) $out.= $b[base_convert($x[$i], 36, 10)];
-
-        return $out;
-    }
-
-    /**
-     * Decode UID
-     *
-     * @param   string  $uid
-     * @return  string|null
-     */
-    private static function decodeUID($uid)
-    {
-        if(!eregi('^[0-9a-z]{40}$', $uid)) return null;
-
-        $s = $uid;
-        $registry = AB_Registry::singleton();
-        $b = $registry->model->user_profile->uid_base;
-        $x = "";
-
-        for($i = 0; $i < 40; $i++)
-        {
-            $k = base_convert(strpos($b, $s[$i]), 10, 36);
-            $x.= $k;
-        }
-
-        $h = "";
-
-        for($i = 0; $i < 40; $i += 4)
-        {
-            $p = strrev(substr($x, $i, 4));
-            $h.= str_pad(base_convert($p, 36, 16), 4, "0", STR_PAD_LEFT);
-        }
-
-        $c = true;
-
-        for($i=0;$i<8;$i++) if($h[($i*4)] != $h[$i + 32]) $c = false;
-
-        return ($c == true) ? substr($h, 0, 32) : null;
+        return current(self::find(array(
+            'login_email' => strtolower($email), 
+            'uid_md5'     => $uid_md5,
+            'enabled'     => true)));
     }
 }

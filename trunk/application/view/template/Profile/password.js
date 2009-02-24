@@ -39,6 +39,7 @@ $(document).ready(function()
             return null;
         }
 
+        email = $("input[@name='email']").val();
         uid = $("input[@name='uid']").val();
         password = $("input[@name='password']").val();
         confirm_ = $("input[@name='confirm']").val();
@@ -55,7 +56,7 @@ $(document).ready(function()
             return null;
         }
 
-        parameters = { uid: uid, password: password, confirm: confirm_ }
+        parameters = { email: email, uid: uid, password: password, confirm: confirm_ }
 
         $.ajax
         ({

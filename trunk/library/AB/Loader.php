@@ -102,6 +102,27 @@ class AB_Loader
     }
 
     /**
+     * Application library loader (not in auto loader)
+     *
+     * @param   string  $name   Class name
+     * @return  void
+     */
+    public static function loadApplicationLibrary($name)
+    {
+        $path = APPLICATION_PATH . "/library/" . $name . ".php";
+
+        if(class_exists($name) == false)
+        {
+            if(file_exists($path))
+            {
+                include $path;
+            }
+        }
+    }
+
+
+
+    /**
      * Zend loader
      *
      * @param   string  $name   Class name

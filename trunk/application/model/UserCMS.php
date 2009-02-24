@@ -1,5 +1,8 @@
 <?php
 
+AB_Loader::loadApplicationLibrary("ApplicationUtility");
+
+
 /**
  * UserCMS model class
  * 
@@ -85,6 +88,20 @@ class UserCMS extends AB_Model
     }
 
     /**
+     * Save model
+     *
+     * @return  boolean
+     */
+    public function save()
+    {
+        /* generate CID */
+
+        if($this->isNew()) $this->cid_md5 = md5(uniqid($this->url, true));
+
+        return parent::save();
+    }
+
+    /**
      * Find UserCMS with an encapsulated SELECT command
      *
      * @param   array   $conditions WHERE parameters
@@ -152,5 +169,19 @@ class UserCMS extends AB_Model
     {
         return self::find(array('user_profile_id' => $user_profile_id),
                           array('name ASC, created_at ASC'));
+    }
+
+    /**
+     * Find CMS from CID (user_cms_cid_index)
+     *
+     * @param   integer $user_profile_id
+     * @param   string  $cid_md5
+     * @return  UserCMS|null
+     */
+    public static function findByCID($user_profile_id, $cid_md5)
+    {
+        return current(self::find(array(
+            'user_profile_id' => $user_profile_id,
+            'cid_md5' => $cid_md5)));
     }
 }

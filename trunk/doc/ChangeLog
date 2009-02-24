@@ -131,3 +131,14 @@ HORAS TRABALHADAS: 4h
 - Rascunho de layout do dashboard
 
 HORAS TRABALHADAS: 4h
+
+==========
+24/02/2008
+==========
+
+- Criação de interface do Dashboard
+- Ajustes no cadastro de usuário, alteração do método para geração de UID
+(identificador de usuário)
+- Ajustes no cadastro de CMS, criação de parâmetro CID (identificador de CMS)
+
+HORAS TRABALHADAS: 4h

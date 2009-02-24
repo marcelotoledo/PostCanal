@@ -55,7 +55,7 @@ $registry->response->headers = array
 
 /* model */
 
-$registry->model->user_profile->uid_base = 'KDqFXGT6HCN9ZbS3R4mAxJ8EckLVPtMz7BQr';
+$registry->application->utility->encodebase = 'KDqFXGT6HCN9ZbS3R4mAxJ8EckLVPtMz7BQr';
 
 
 /* login session */
@@ -67,13 +67,13 @@ $registry->session->unauthorized->redirect = BASE_URL;
 
 /* mailer */
 
-$registry->mailer = $xml->mailer;
+$registry->application->mailer = $xml->mailer;
 
 
 /* http client */
 
-$registry->http_client->max_headers = 30;
-$registry->http_client->max_body_lenght = 5242880; // 5242880 bytes = 5Mb
+$registry->application->httpclient->maxheaders = 30;
+$registry->application->httpclient->maxbodylenght = 5242880; // 5242880 bytes = 5Mb
 
 
 /* python */

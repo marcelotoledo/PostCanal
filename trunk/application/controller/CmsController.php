@@ -117,7 +117,7 @@ class CmsController extends AbstractController
      */
     public function checkAction()
     {
-        include APPLICATION_PATH . "/library/ApplicationHTTPClient.php";
+        AB_Loader::loadApplicationLibrary("ApplicationHTTPClient");
 
         $this->setViewLayout(null);
         $this->setViewTemplate(null);

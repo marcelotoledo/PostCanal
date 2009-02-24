@@ -1,7 +1,8 @@
 <?php if(is_object($this->profile)) : ?>
 
 <h1>Mudança de Senha de Acesso</h1>
-<input type="hidden" name="uid" value="<?php echo $this->profile->getUID() ?>">
+<input type="hidden" name="email" value="<?php echo $this->profile->login_email ?>">
+<input type="hidden" name="uid" value="<?php echo $this->profile->uid_md5 ?>">
 <table id="pwdform">
     <tr>
         <td class="formlabel">E-mail:</td>

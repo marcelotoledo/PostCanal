@@ -129,7 +129,7 @@ class ApplicationHTTPClient
 
         $total = count($headers);
         $registry = AB_Registry::singleton();
-        $max_headers = $registry->http_client->max_headers;
+        $max_headers = $registry->application->httpclient->maxheaders;
 
         if(!empty($max_headers) && $total > $max_headers)
         {
@@ -160,7 +160,7 @@ class ApplicationHTTPClient
             $body = $this->response->getBody();
             $lenght = strlen($body);
             $registry = AB_Registry::singleton();
-            $max_body_lenght = $registry->http_client->max_body_lenght;
+            $max_body_lenght = $registry->application->httpclient->maxbodylenght;
 
             if(!empty($max_body_lenght) && $lenght > $max_body_lenght)
             {
