@@ -13,6 +13,12 @@ div#dashboardcontent
     padding-left: 25px;
 }
 
+div.nocms
+{
+    margin-top: 20px;
+    font-style: italic;
+}
+
 #main-panel
 {
 }
@@ -76,11 +82,18 @@ div#dashboardcontent
     color: white;
 }
 
-#rss-items-panel table
+#rss-items-list
 {
     padding-top: 5px;
     width: 500px;
     margin-left: -2px;
+    height: 150px;
+    overflow: auto;
+}
+
+#rss-items-list table
+{
+    width: 475px;
 }
 
 #queue-panel
@@ -97,11 +110,18 @@ div#dashboardcontent
     color: white;
 }
 
-#queue-panel table
+#queue-items-list
 {
     padding-top: 5px;
     width: 500px;
     margin-left: -2px;
+    height: 150px;
+    overflow: auto;
+}
+
+#queue-items-list table
+{
+    width: 475px;
 }
 
 .cms-item
