@@ -19,8 +19,8 @@ class DashboardController extends AbstractController
     public function __construct($request, $response)
     {
         parent::__construct($request, $response);
-        $this->setViewLayout('dashboard');
         $this->sessionAuthorize();
+        $this->setViewLayout(null);
     }
 
     /**
@@ -30,6 +30,8 @@ class DashboardController extends AbstractController
      */
     public function indexAction()
     {
+        $this->setViewLayout('dashboard');
+
         $id = intval($this->user_profile_id);
         $profile = null;
 
@@ -52,6 +54,24 @@ class DashboardController extends AbstractController
 
         $this->setViewParameter('profile', $profile);
         $this->setViewParameter('information', $information);
+        $this->setViewParameter('cms', $cms);
+    }
+
+    /**
+     * Load CMS data
+     *
+     */
+    public function cmsAction()
+    {
+        $user_profile_id = intval($this->user_profile_id);
+        $cid = $this->getRequestParameter('cid');
+        $cms = null;
+
+        if($user_profile_id > 0 && strlen($cid) > 0)
+        {
+            $cms = UserCMS::findByCID($user_profile_id, $cid);
+        }
+
         $this->setViewParameter('cms', $cms);
     }
 }

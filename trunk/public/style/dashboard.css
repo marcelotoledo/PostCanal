@@ -13,8 +13,6 @@ div#dashboardcontent
     padding-left: 25px;
 }
 
-/* draft */
-
 #main-panel
 {
 }
@@ -128,6 +126,9 @@ div#dashboardcontent
 .cms-item-selected
 {
     font-weight: bold;
+    background-color: wheat;
+    margin-right:-16px;
+    padding-right:16px;
 }
 
 .channel-item

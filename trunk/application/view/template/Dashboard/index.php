@@ -20,7 +20,7 @@
 <table class="panel-list">
 
 <?php foreach($this->cms as $cms) : ?>
-<tr><td><div class="cms-item"><?php echo $cms->name ?><input type="hidden" name="cms_item" value="<?php echo $cms->user_cms_id ?>"></div></tr></td>
+<tr><td><div class="cms-item" cid="<?php echo $cms->cid_md5 ?>"><?php echo $cms->name ?></div></tr></td>
 <?php endforeach ?>
 
 </table>

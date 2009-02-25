@@ -142,3 +142,12 @@ HORAS TRABALHADAS: 4h
 - Ajustes no cadastro de CMS, criação de parâmetro CID (identificador de CMS)
 
 HORAS TRABALHADAS: 4h
+
+==========
+25/02/2008
+==========
+
+- Criação de interface do Dashboard. Incluída ação de carregar CMS, ao clicar
+sobre um item de CMS.
+
+HORAS TRABALHADAS: 2h
