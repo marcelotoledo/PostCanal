@@ -2,7 +2,7 @@
 <environment>
     <database>
         <default>
-            <driver>pgsql</driver>
+            <driver>mysql</driver>
             <host>localhost</host>
             <username>blotomate</username>
             <password>blotomate</password>

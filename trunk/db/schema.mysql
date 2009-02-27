@@ -1,0 +1,186 @@
+-- drop --
+
+DROP TABLE IF EXISTS user_cms_channel CASCADE;
+DROP TABLE IF EXISTS user_cms CASCADE;
+DROP TABLE IF EXISTS user_profile_information CASCADE;
+DROP TABLE IF EXISTS user_profile CASCADE;
+DROP TABLE IF EXISTS aggregator_item CASCADE;
+DROP TABLE IF EXISTS aggregator_channel CASCADE;
+DROP TABLE IF EXISTS cms_type_configuration CASCADE;
+DROP TABLE IF EXISTS cms_type_discovery CASCADE;
+DROP TABLE IF EXISTS cms_type CASCADE;
+DROP TABLE IF EXISTS application_mailer_relay CASCADE;
+DROP TABLE IF EXISTS application_log CASCADE;
+
+-- log --
+
+CREATE TABLE application_log
+(
+    application_log_id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+    priority INTEGER UNSIGNED NOT NULL DEFAULT 0,
+    message TEXT NOT NULL,
+    method VARCHAR(100) NOT NULL DEFAULT '',
+    controller VARCHAR(100) NOT NULL DEFAULT '',
+    action VARCHAR(100) NOT NULL DEFAULT '',
+    user_profile_id INTEGER UNSIGNED NOT NULL DEFAULT 0,
+    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    PRIMARY KEY (application_log_id)
+) ENGINE=InnoDB DEFAULT CHARSET='utf8';
+
+CREATE INDEX al_priority_index ON application_log (priority);
+
+-- mailer --
+
+CREATE TABLE application_mailer_relay
+(
+    application_mailer_relay_id INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
+    recipient VARCHAR(100) NOT NULL,
+    identifier_md5 VARCHAR(32) DEFAULT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    PRIMARY KEY (application_mailer_relay_id)
+) ENGINE=InnoDB DEFAULT CHARSET='utf8';
+
+CREATE INDEX amr_recipient_identifier_created_index ON application_mailer_relay (recipient, identifier_md5, created_at);
+
+-- cms type --
+
+CREATE TABLE cms_type
+(
+    cms_type_id SMALLINT UNSIGNED NOT NULL AUTO_INCREMENT,
+    name VARCHAR(50) NOT NULL,
+    version VARCHAR(50) NOT NULL,
+    maintenance TINYINT(1) NOT NULL DEFAULT 0,
+    enabled TINYINT(1) NOT NULL DEFAULT 0,
+    PRIMARY KEY (cms_type_id),
+    CONSTRAINT cms_type_id_unique UNIQUE (cms_type_id)
+) ENGINE=InnoDB DEFAULT CHARSET='utf8';
+
+CREATE TABLE cms_type_discovery
+(
+    cms_type_discovery_id MEDIUMINT UNSIGNED NOT NULL AUTO_INCREMENT,
+    cms_type_id SMALLINT UNSIGNED NOT NULL,
+    name VARCHAR(50) NOT NULL,
+    value TEXT NOT NULL,
+    PRIMARY KEY (cms_type_discovery_id),
+    CONSTRAINT ctd_cms_type_fk FOREIGN KEY (cms_type_id) 
+        REFERENCES cms_type (cms_type_id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET='utf8';
+
+CREATE INDEX ctd_id_name_index ON cms_type_discovery (cms_type_id, name);
+
+CREATE TABLE cms_type_configuration
+(
+    cms_type_configuration_id MEDIUMINT UNSIGNED NOT NULL AUTO_INCREMENT,
+    cms_type_id SMALLINT UNSIGNED NOT NULL,
+    name VARCHAR(50) NOT NULL,
+    value TEXT NOT NULL,
+    PRIMARY KEY (cms_type_configuration_id),
+    CONSTRAINT ctc_cms_type_fk FOREIGN KEY (cms_type_id) 
+        REFERENCES cms_type (cms_type_id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET='utf8';
+
+CREATE INDEX ctc_type_index ON cms_type_configuration (cms_type_id);
+
+-- aggregator --
+
+CREATE TABLE aggregator_channel
+(
+    aggregator_channel_id INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
+    title VARCHAR(100) NOT NULL,
+    link VARCHAR(200) NOT NULL,
+    description TEXT NOT NULL DEFAULT '',
+    status VARCHAR(50) NOT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
+    enabled TINYINT(1) NOT NULL DEFAULT 1,
+    PRIMARY KEY (aggregator_channel_id)
+) ENGINE=InnoDB DEFAULT CHARSET='utf8';
+
+CREATE TABLE aggregator_item
+(
+    aggregator_item_id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+    aggregator_channel_id INTEGER UNSIGNED NOT NULL, 
+    title TEXT NOT NULL, 
+    link TEXT NOT NULL,
+    description TEXT NOT NULL DEFAULT '',
+    created_at TIMESTAMP NOT NULL DEFAULT NOW(), 
+    PRIMARY KEY (aggregator_item_id),
+    CONSTRAINT ai_aggregator_channel_fk FOREIGN KEY (aggregator_channel_id) 
+        REFERENCES aggregator_channel (aggregator_channel_id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET='utf8';
+
+
+-- user --
+
+CREATE TABLE user_profile
+(
+    user_profile_id INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
+    uid_md5 VARCHAR(32) NOT NULL,
+    login_email VARCHAR(100) NOT NULL,
+    login_password_md5 VARCHAR(32) NOT NULL,
+    register_message_time TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
+    register_confirmation TINYINT(1) NOT NULL DEFAULT 0,
+    register_confirmation_time TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
+    recovery_message_time TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
+    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
+    enabled TINYINT(1) NOT NULL DEFAULT 1,
+    PRIMARY KEY (user_profile_id)
+) ENGINE=InnoDB DEFAULT CHARSET='utf8';
+
+CREATE INDEX up_id_enabled_index ON user_profile (user_profile_id, enabled);
+CREATE INDEX up_email_enabled_index ON user_profile (login_email, enabled);
+CREATE INDEX up_email_password_enabled_index ON user_profile (login_email, login_password_md5, enabled);
+CREATE INDEX up_email_uid_index ON user_profile (login_email, uid_md5);
+
+CREATE TABLE user_profile_information
+(
+    user_profile_id INTEGER UNSIGNED NOT NULL,
+    name VARCHAR(100) NOT NULL DEFAULT '',
+    -- TODO: location, language, etc. --
+    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
+    CONSTRAINT upi_user_profile_fk FOREIGN KEY (user_profile_id) 
+        REFERENCES user_profile (user_profile_id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET='utf8';
+
+CREATE TABLE user_cms
+(
+    user_cms_id INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
+    user_profile_id INTEGER UNSIGNED NOT NULL,
+    cms_type_id SMALLINT UNSIGNED NOT NULL,
+    cid_md5 VARCHAR(32) NOT NULL,
+    name VARCHAR(100) NOT NULL,
+    url VARCHAR(200) NOT NULL,
+    manager_url VARCHAR(200) NOT NULL,
+    manager_username VARCHAR(100) NOT NULL,
+    manager_password VARCHAR(100) NOT NULL,
+    status VARCHAR(50) NOT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
+    enabled TINYINT(1) NOT NULL DEFAULT 1,
+    PRIMARY KEY (user_cms_id),
+    CONSTRAINT uc_user_profile_fk FOREIGN KEY (user_profile_id) 
+        REFERENCES user_profile (user_profile_id) ON DELETE CASCADE,
+    CONSTRAINT uc_cms_type_fk FOREIGN KEY (cms_type_id) 
+        REFERENCES cms_type (cms_type_id) ON DELETE RESTRICT
+) ENGINE=InnoDB DEFAULT CHARSET='utf8';
+
+CREATE INDEX uc_id_cid_index ON user_cms (user_profile_id, cid_md5);
+
+CREATE TABLE user_cms_channel
+(
+    user_cms_channel_id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+    user_cms_id INTEGER UNSIGNED NOT NULL,
+    aggregator_channel_id INTEGER UNSIGNED NOT NULL,
+    title VARCHAR(100) NOT NULL,
+    description TEXT NOT NULL DEFAULT '',
+    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
+    enabled TINYINT(1) NOT NULL DEFAULT 1,
+    PRIMARY KEY (user_cms_channel_id),
+    CONSTRAINT ucc_user_cms_fk FOREIGN KEY (user_cms_id) 
+        REFERENCES user_cms (user_cms_id) ON DELETE CASCADE,
+    CONSTRAINT ucc_aggregator_channel_fk FOREIGN KEY (aggregator_channel_id) 
+        REFERENCES aggregator_channel (aggregator_channel_id) ON DELETE RESTRICT
+) ENGINE=InnoDB DEFAULT CHARSET='utf8';

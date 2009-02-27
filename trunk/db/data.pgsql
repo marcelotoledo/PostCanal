@@ -4,8 +4,8 @@
 
 /* user */
 
-INSERT INTO user_profile (uid_md5, login_email, login_password_md5, register_confirmation) VALUES (MD5('rafael@castilho.biz'), 'rafael@castilho.biz', MD5('castilho'), true);
-INSERT INTO user_profile_information (user_profile_id) VALUES (CURRVAL('user_profile_seq'));
+-- INSERT INTO user_profile (uid_md5, login_email, login_password_md5, register_confirmation) VALUES (MD5('rafael@castilho.biz'), 'rafael@castilho.biz', MD5('castilho'), true);
+-- INSERT INTO user_profile_information (user_profile_id) VALUES (CURRVAL('user_profile_seq'));
 
 /* cms type */
 
@@ -13,7 +13,7 @@ INSERT INTO cms_type (name, version, enabled) VALUES ('WordPress', 'WordPress.co
 
 -- !!! VERY IMPORTANT !!!
 -- the field value on cms_type_discovery table are filled with serialized arrays;
--- also you need to escape "\" with "\\" on serialized string.
+-- before write sql above, also you need to escape "\" with "\\" on serialized string.
 
 INSERT INTO cms_type_discovery (cms_type_id, name, value) VALUES (CURRVAL('cms_type_seq'), 'url_replace', 'a:1:{i:0;a:2:{i:0;s:45:"/^[^\\w]*([\\w]+:\\/\\/)*(.+\\.wordpress\\.com).*$/";i:1;s:9:"http://\\2";}}');
 INSERT INTO cms_type_discovery (cms_type_id, name, value) VALUES (CURRVAL('cms_type_seq'), 'url_match', 'a:1:{i:0;a:1:{i:0;s:31:"/^http:\\/\\/.+\\.wordpress\\.com$/";}}');

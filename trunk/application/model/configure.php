@@ -11,6 +11,98 @@ require "../../library/AB/Loader.php";
 AB_Loader::register();
 
 require "../../config/environment.php";
+$registry = AB_Registry::singleton();
+
+
+/* ROUTINES */
+
+function pgsqlIntrospection($_table)
+{
+    $_structure = null;
+
+    $sql = <<<EOS
+SELECT
+    attrs.attname as attribute,
+    "type",
+    attrs.attnotnull as nn,
+    "default"
+FROM (
+    SELECT c.oid, n.nspname, c.relname
+    FROM pg_catalog.pg_class c 
+    LEFT JOIN pg_catalog.pg_namespace n ON n.oid = c.relnamespace
+    WHERE pg_catalog.pg_table_is_visible(c.oid)) rel 
+JOIN (
+    SELECT 
+        a.attname, 
+        a.attrelid, 
+        pg_catalog.format_type(a.atttypid, a.atttypmod) AS "type",
+    (SELECT substring(d.adsrc for 128) FROM pg_catalog.pg_attrdef d 
+        WHERE d.adrelid = a.attrelid AND d.adnum = a.attnum AND a.atthasdef) as "default",
+        a.attnotnull, 
+        a.attnum
+    FROM pg_catalog.pg_attribute a WHERE a.attnum > 0 AND NOT a.attisdropped) attrs 
+    ON (attrs.attrelid = rel.oid )
+    WHERE relname = '<table>' ORDER BY attrs.attnum;
+EOS;
+
+    /* known types */
+
+    $type_b = "boolean";
+    $type_s = "varbit|varchar|text|(bit|character)(varying)*";
+    $type_i = "integer|(small|big)*(int|serial)[248]*";
+    $type_f = "real|double|float[48]*";
+    $type_d = "date|timestamp";
+
+    /* table structure */
+
+    $structure = array();
+
+    /* iterate over fields */
+
+    foreach(AB_Model::select(str_replace("<table>", $_table, $sql)) as $r)
+    {
+        $f = array();
+
+        if    (preg_match("/(" . $type_b . ")+/i", $r->type) > 0) 
+            $k = AB_Model::TYPE_BOOLEAN;
+        elseif(preg_match("/(" . $type_d . ")+/i", $r->type) > 0) 
+            $k = AB_Model::TYPE_DATE;
+        elseif(preg_match("/(" . $type_f . ")+/i", $r->type) > 0) 
+            $k = AB_Model::TYPE_FLOAT;
+        elseif(preg_match("/(" . $type_i . ")+/i", $r->type) > 0) 
+            $k = AB_Model::TYPE_INTEGER;
+        else                                                      
+            $k = AB_Model::TYPE_STRING;
+
+        /* field type */
+
+        $f[AB_Model::STRUCTURE_TYPE] = $k;
+
+        /* field size (only for string); 0 = inf */
+
+        $f[AB_Model::STRUCTURE_SIZE] = ($k == AB_Model::TYPE_STRING) ? 
+            ((int) preg_replace("/^.+\(([0-9]+)\)+.*$/", "\\1", $r->type)) : 
+            0;
+
+        $f[AB_Model::STRUCTURE_REQUIRED] = ($r->nn && strlen($r->default) == 0);
+
+        $structure[$r->attribute] = $f;
+    }
+
+    $_structure = var_export($structure, true);
+    $_structure = preg_replace("/[[:space:]]+/", "", $_structure);
+    $_structure = preg_replace("/,\)/", ")", $_structure);
+
+    return $_structure;
+}
+
+function mysqlIntrospection($_table) /* TODO */
+{
+    return null;
+}
+
+
+/* MAIN */
 
 @$_class     = $argv[1];
 @$_table     = $argv[2];
@@ -46,73 +138,16 @@ if(file_exists($_class . ".php"))
 
 /* structure introspection */
 
-$sql = <<<EOS
-SELECT
-    attrs.attname as attribute,
-    "type",
-    attrs.attnotnull as nn,
-    "default"
-FROM (
-    SELECT c.oid, n.nspname, c.relname
-    FROM pg_catalog.pg_class c 
-    LEFT JOIN pg_catalog.pg_namespace n ON n.oid = c.relnamespace
-    WHERE pg_catalog.pg_table_is_visible(c.oid)) rel 
-JOIN (
-    SELECT 
-        a.attname, 
-        a.attrelid, 
-        pg_catalog.format_type(a.atttypid, a.atttypmod) AS "type",
-    (SELECT substring(d.adsrc for 128) FROM pg_catalog.pg_attrdef d 
-        WHERE d.adrelid = a.attrelid AND d.adnum = a.attnum AND a.atthasdef) as "default",
-        a.attnotnull, 
-        a.attnum
-    FROM pg_catalog.pg_attribute a WHERE a.attnum > 0 AND NOT a.attisdropped) attrs 
-    ON (attrs.attrelid = rel.oid )
-    WHERE relname = '<table>' ORDER BY attrs.attnum;
-EOS;
+$driver = $registry->database->default->driver;
 
-/* known types */
-
-$type_b = "boolean";
-$type_s = "varbit|varchar|text|(bit|character)(varying)*";
-$type_i = "integer|(small|big)*(int|serial)[248]*";
-$type_f = "real|double|float[48]*";
-$type_d = "date|timestamp";
-
-/* table structure */
-
-$structure = array();
-
-/* iterate over fields */
-
-foreach(AB_Model::select(str_replace("<table>", $_table, $sql)) as $r)
+if($driver == "pgsql")
 {
-    $f = array();
-
-    if    (preg_match("/(" . $type_b . ")+/i", $r->type) > 0) $k = AB_Model::TYPE_BOOLEAN;
-    elseif(preg_match("/(" . $type_d . ")+/i", $r->type) > 0) $k = AB_Model::TYPE_DATE;
-    elseif(preg_match("/(" . $type_f . ")+/i", $r->type) > 0) $k = AB_Model::TYPE_FLOAT;
-    elseif(preg_match("/(" . $type_i . ")+/i", $r->type) > 0) $k = AB_Model::TYPE_INTEGER;
-    else                                                      $k = AB_Model::TYPE_STRING;
-
-    /* field type */
-
-    $f[AB_Model::STRUCTURE_TYPE] = $k;
-
-    /* field size (only for string); 0 = inf */
-
-    $f[AB_Model::STRUCTURE_SIZE] = ($k == AB_Model::TYPE_STRING) ? 
-        ((int) preg_replace("/^.+\(([0-9]+)\)+.*$/", "\\1", $r->type)) : 
-        0;
-
-    $f[AB_Model::STRUCTURE_REQUIRED] = ($r->nn && strlen($r->default) == 0);
-
-    $structure[$r->attribute] = $f;
+    $_structure = pgsqlIntrospection($_table);
 }
-
-$_structure = var_export($structure, true);
-$_structure = preg_replace("/[[:space:]]+/", "", $_structure);
-$_structure = preg_replace("/,\)/", ")", $_structure);
+elseif($driver == "mysql")
+{
+    $_structure = mysqlIntrospection($_table);
+}
 
 
 /* output */

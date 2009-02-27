@@ -152,3 +152,11 @@ sobre um item de CMS.
 - Ajustes no layout, scrollbar para exibição de feeds e items do queue
 
 HORAS TRABALHADAS: 4h
+
+==========
+27/02/2008
+==========
+
+- Alteração para suporte à MySQL (InnoDB)
+
+HORAS TRABALHADAS: 4h
