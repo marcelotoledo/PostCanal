@@ -35,12 +35,12 @@ CREATE TABLE application_mailer_relay
 (
     application_mailer_relay_id INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
     recipient VARCHAR(100) NOT NULL,
-    identifier_md5 VARCHAR(32) DEFAULT NULL,
+    identifier VARCHAR(8) DEFAULT NULL,
     created_at TIMESTAMP NOT NULL DEFAULT NOW(),
     PRIMARY KEY (application_mailer_relay_id)
 ) ENGINE=InnoDB DEFAULT CHARSET='utf8';
 
-CREATE INDEX amr_recipient_identifier_created_index ON application_mailer_relay (recipient, identifier_md5, created_at);
+CREATE INDEX amr_recipient_identifier_created_index ON application_mailer_relay (recipient, identifier, created_at);
 
 -- cms type --
 
@@ -115,13 +115,10 @@ CREATE TABLE aggregator_item
 CREATE TABLE user_profile
 (
     user_profile_id INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
-    uid_md5 VARCHAR(32) NOT NULL,
+    uid VARCHAR(8) NOT NULL,
     login_email VARCHAR(100) NOT NULL,
     login_password_md5 VARCHAR(32) NOT NULL,
-    register_message_time TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
     register_confirmation TINYINT(1) NOT NULL DEFAULT 0,
-    register_confirmation_time TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
-    recovery_message_time TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
     created_at TIMESTAMP NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
     enabled TINYINT(1) NOT NULL DEFAULT 1,
@@ -131,13 +128,19 @@ CREATE TABLE user_profile
 CREATE INDEX up_id_enabled_index ON user_profile (user_profile_id, enabled);
 CREATE INDEX up_email_enabled_index ON user_profile (login_email, enabled);
 CREATE INDEX up_email_password_enabled_index ON user_profile (login_email, login_password_md5, enabled);
-CREATE INDEX up_email_uid_index ON user_profile (login_email, uid_md5);
+CREATE INDEX up_email_uid_index ON user_profile (login_email, uid);
 
 CREATE TABLE user_profile_information
 (
     user_profile_id INTEGER UNSIGNED NOT NULL,
     name VARCHAR(100) NOT NULL DEFAULT '',
     -- TODO: location, language, etc. --
+    email_update VARCHAR(100) NOT NULL,
+    register_message_time TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
+    register_confirmation_time TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
+    last_login_time TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
+    recovery_message_time TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
+    email_update_message_time TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
     created_at TIMESTAMP NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
     CONSTRAINT upi_user_profile_fk FOREIGN KEY (user_profile_id) 
@@ -149,7 +152,7 @@ CREATE TABLE user_cms
     user_cms_id INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
     user_profile_id INTEGER UNSIGNED NOT NULL,
     cms_type_id SMALLINT UNSIGNED NOT NULL,
-    cid_md5 VARCHAR(32) NOT NULL,
+    cid VARCHAR(8) NOT NULL,
     name VARCHAR(100) NOT NULL,
     url VARCHAR(200) NOT NULL,
     manager_url VARCHAR(200) NOT NULL,
@@ -166,7 +169,7 @@ CREATE TABLE user_cms
         REFERENCES cms_type (cms_type_id) ON DELETE RESTRICT
 ) ENGINE=InnoDB DEFAULT CHARSET='utf8';
 
-CREATE INDEX uc_id_cid_index ON user_cms (user_profile_id, cid_md5);
+CREATE INDEX uc_id_cid_index ON user_cms (user_profile_id, cid);
 
 CREATE TABLE user_cms_channel
 (

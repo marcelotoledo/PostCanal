@@ -161,7 +161,7 @@ class ApplicationMailer
     {
         $relay = new ApplicationMailerRelay();
         $relay->recipient = $recipient;
-        $relay->identifier_md5 = md5($identifier);
+        $relay->identifier = substr(md5($identifier), 0, 8);
         $relay->save();
     }
 
@@ -189,8 +189,9 @@ class ApplicationMailer
         $sql.= "WHERE recipient = ? ";
         $data[] = $recipient;
 
-        $sql.= "AND identifier_md5 = ? ";
-        $data[] = md5($identifier);
+        $sql.= "AND identifier = ? ";
+        $identifier = substr(md5($identifier), 0, 8);
+        $data[] = $identifier;
 
         $sql.= "AND created_at > ? ";
         $time = mktime(date('H'), date('i'), ($time * -1));

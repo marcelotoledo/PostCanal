@@ -18,13 +18,12 @@ class ProfileController extends AbstractController
     const STATUS_UNCONFIRMED = "unconfirmed";
     const STATUS_WRONG_PASSWORD = "wrong_password";
     const STATUS_UNMATCHED_PASSWORD = "unmatched_password";
+    const STATUS_UNCHANGED_EMAIL = "unchanged_email";
     const STATUS_INSTRUCTION_FAILED = "instruction_failed";
 
     const CONFIRM_OK = "confirm_ok";
     const CONFIRM_FAILED = "confirm_failed";
     const CONFIRM_DONE_BEFORE = "confirm_done_before";
-    const CONFIRM_TYPE_NEW = "new";
-    const CONFIRM_TYPE_CHANGE = "change";
 
     const MAIL_NEW_PROFILE_SUBJECT = "[blotomate] novo perfil";
     const MAIL_NEW_PROFILE_TEMPLATE = "mail_register_new.html";
@@ -32,8 +31,8 @@ class ProfileController extends AbstractController
     const MAIL_EXISTING_PROFILE_TEMPLATE = "mail_register_existing.html";
     const MAIL_RECOVERY_SUBJECT = "[blotomate] recuperar senha";
     const MAIL_RECOVERY_TEMPLATE = "mail_recovery.html";
-    const MAIL_PASSWORD_SUBJECT = "[blotomate] senha alterada";
-    const MAIL_PASSWORD_TEMPLATE = "mail_password.html";
+    const MAIL_PROFILE_SUBJECT = "[blotomate] perfil alterado";
+    const MAIL_PROFILE_TEMPLATE = "mail_profile.html";
     const MAIL_DUMMY_SUBJECT = "[blotomate] perfil inexistente";
     const MAIL_DUMMY_TEMPLATE = "mail_dummy.html";
     const MAIL_EMAIL_CHANGE_SUBJECT = "[blotomate] mudança de e-mail";
@@ -82,13 +81,21 @@ class ProfileController extends AbstractController
             {
                 $this->sessionCreate();
                 $this->user_profile_id = $profile->user_profile_id;
-                $this->user_profile_uid_md5 = $profile->uid_md5;
+                $this->user_profile_uid = $profile->uid;
                 $this->user_profile_login_email = $profile->login_email;
                 $this->sessionLock();
 
                 $result = self::STATUS_LOGGED;
 
                 $id = $this->user_profile_id;
+                $information = UserProfileInformation::findByPrimaryKey($id);
+                
+                if(is_object($information))
+                {
+                    $information->last_login_time = time();
+                    $information->save();
+                }
+
                 $_d = array ('method' => __METHOD__, 'user_profile_id' => $id);
                 self::notice("session created", $_d);
             }
@@ -121,6 +128,7 @@ class ProfileController extends AbstractController
         /* check for existing profile */
 
         $profile = null;
+        $information = null;
 
         if(strlen($email) == 0 || strlen($password) == 0 || strlen($confirm) == 0)
         {
@@ -136,12 +144,21 @@ class ProfileController extends AbstractController
 
             /* register new user profile */
 
-            if(!is_object($profile))
+            if(is_object($profile))
+            {
+                $id = $profile->user_profile_id;
+                $information = UserProfileInformation::findByPrimaryKey($id);
+            }
+            else
             {
                 $profile = new UserProfile();
                 $profile->login_email = $email;
                 $profile->login_password_md5 = md5($password);
                 $profile->save();
+
+                $information = new UserProfileInformation();
+                $information->user_profile_id = $profile->user_profile_id;
+                $information->save();
 
                 $id = intval($profile->user_profile_id);
                 $_d = array ('method' => __METHOD__, 'user_profile_id' => $id);
@@ -162,8 +179,12 @@ class ProfileController extends AbstractController
                 else
                 {
                     self::sendNewInstruction($profile);
-                    $profile->register_message_time = date("Y-m-d H:i:s");
-                    $profile->save();
+
+                    if(is_object($information))
+                    {
+                        $information->register_message_time = time();
+                        $information->save();
+                    }
                 }
 
                 $result = self::STATUS_REGISTERED;
@@ -178,7 +199,7 @@ class ProfileController extends AbstractController
                     $profile->save();
                 }
 
-                $id = intval($profile->user_profile_id);
+                $id = $profile->user_profile_id;
                 $_m = "failed to register;\n" . $exception->getMessage();
                 $_d = array('method' => __METHOD__, 'user_profile_id' => $id);
                 AB_Log::write($_m, $exception->getCode(), $_d);
@@ -221,13 +242,20 @@ class ProfileController extends AbstractController
             try
             {
                 self::sendRecoveryInstruction($profile);
-                $profile->recovery_message_time = date("Y-m-d H:i:s");
-                $profile->save();
+
+                $id = $profile->user_profile_id;
+                $information = UserProfileInformation::findByPrimaryKey($id);
+                
+                if(is_object($information))
+                {
+                    $information->recovery_message_time = time();
+                    $information->save();
+                }
             }
             catch(AB_Exception $exception)
             {
                 $result = self::STATUS_FAILED;
-                $id = intval($profile->user_profile_id);
+                $id = $profile->user_profile_id;
                 $_m = "failed to recovery;\n" . $exception->getMessage();
                 $_d = array('method' => __METHOD__, 'user_profile_id' => $id);
                 AB_Log::write($_m, $exception->getCode(), $_d);
@@ -265,7 +293,6 @@ class ProfileController extends AbstractController
         $this->setViewLayout('index');
         $email = $this->getRequestParameter('email');
         $uid = $this->getRequestParameter('uid');
-        $type = $this->getRequestParameter('type');
         $result = self::CONFIRM_FAILED;
 
         $profile = null;
@@ -277,34 +304,25 @@ class ProfileController extends AbstractController
 
         if(is_object($profile))
         {
-            if($type == self::CONFIRM_TYPE_NEW)
+            if($profile->register_confirmation == false)
             {
-                if($profile->register_confirmation == false)
+                $profile->register_confirmation = true;
+                $profile->save();
+
+                $id = $profile->user_profile_id;
+                $information = UserProfileInformation::findByPrimaryKey($id);
+
+                if(is_object($information))
                 {
-                    $profile->register_confirmation = true;
-                    $profile->register_confirmation_time = date("Y-m-d H:i:s");
-                    $profile->save();
-                    $result = self::CONFIRM_OK;
+                    $information->register_confirmation_time = time();
+                    $information->save();
                 }
-                else
-                {
-                    $result = self::CONFIRM_DONE_BEFORE;
-                }
+
+                $result = self::CONFIRM_OK;
             }
-            elseif($type == self::CONFIRM_TYPE_CHANGE) // TODO
+            else
             {
-throw new UnexpectedValueException("see todo in (" . __FILE__ .":". __LINE__ . ")");
-                if($profile->email_change == false)
-                {
-                    $profile->email_change = true;
-                    $profile->email_change_time = date("Y-m-d H:i:s");
-                    $profile->save();
-                    $result = self::CONFIRM_OK;
-                }
-                else
-                {
-                    $result = self::CONFIRM_DONE_BEFORE;
-                }
+                $result = self::CONFIRM_DONE_BEFORE;
             }
         }
 
@@ -331,12 +349,8 @@ throw new UnexpectedValueException("see todo in (" . __FILE__ .":". __LINE__ . "
     private function passwordMethodGET()
     {
         $this->setViewLayout('index');
-
         $email = $this->getRequestParameter('email');
         $uid = $this->getRequestParameter('uid');
-        $password = $this->getRequestParameter('password');
-        $confirm = $this->getRequestParameter('confirm');
-
         $profile = null;
 
         if(strlen($email) > 0 && strlen($uid) > 0)
@@ -358,44 +372,281 @@ throw new UnexpectedValueException("see todo in (" . __FILE__ .":". __LINE__ . "
         $this->setViewTemplate(null);
         $email = $this->getRequestParameter('email');
         $uid = $this->getRequestParameter('uid');
+        $current = $this->getRequestParameter('current');
         $password = $this->getRequestParameter('password');
         $confirm = $this->getRequestParameter('confirm');
         $result = self::STATUS_FAILED;
 
+        /* online password change (authenticated) */
+
+        if(strlen($current) > 0 && ($id = intval($this->user_profile_id)) > 0)
+        {
+            $this->sessionAuthorize();
+            $result = $this->passwordChangeOnline($id, $current, $password, $confirm);
+        }
+ 
+        /* offline password change (not authenticated) */
+
+        if(strlen($email) > 0 && strlen($uid) > 0 && 
+           strlen($password) && strlen($confirm))
+        {
+            $result = $this->passwordChangeOffline($email, $uid, $password, $confirm);
+        }
+
+        $this->setViewDataJson(compact(array('result')));
+    }
+
+    /**
+     * Online password change (authenticated)
+     *
+     * @param   integer $id         User profile ID
+     * @param   string  $current    Current password
+     * @param   string  $password
+     * @param   string  $confirm
+     * @return  string
+     */
+    private function passwordChangeOnline($id, $current, $password, $confirm)
+    {
+        $result = self::STATUS_FAILED;
+
+        if(is_object($profile = $profile = UserProfile::findByPrimaryKey($id)))
+        {
+
+            if($password != $confirm)
+            {
+                $result = self::STATUS_UNMATCHED_PASSWORD;
+            }
+            elseif($profile->login_password_md5 != md5($current))
+            {
+                $result = self::STATUS_WRONG_PASSWORD;
+            }
+
+            /* all ok ! */
+
+            else
+            {
+                AB_Loader::loadApplicationLibrary("ApplicationUtility");
+                $profile->login_password_md5 = md5($password);
+                $profile->save();
+
+                $id = intval($profile->user_profile_id);
+                $_d = array ('method' => __METHOD__, 'user_profile_id' => $id);
+                self::notice("password changed", $_d);
+
+                $result = self::STATUS_OK;
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * Offline password change (not authenticated)
+     *
+     * @param   string  $email
+     * @param   string  $uid
+     * @param   string  $password
+     * @param   string  $confirm
+     * @return  string
+     */
+    private function passwordChangeOffline($email, $uid, $password, $confirm)
+    {
+        $result = self::STATUS_FAILED;
+
+        if(is_object($profile = $profile = UserProfile::findByUID($email, $uid)))
+        {
+            if($password == $confirm)
+            {
+                AB_Loader::loadApplicationLibrary("ApplicationUtility");
+                $profile->uid = ApplicationUtility::randomString(8);
+                $profile->login_password_md5 = md5($password);
+                $profile->save();
+
+                $id = intval($profile->user_profile_id);
+                $_d = array ('method' => __METHOD__, 'user_profile_id' => $id);
+                self::notice("password changed", $_d);
+
+                $result = self::STATUS_OK;
+
+                self::sendProfileNotice($profile);
+                $this->sessionDestroy();
+            }
+            else
+            {
+                $result = self::STATUS_UNMATCHED_PASSWORD;
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * Email change action
+     * 
+     * @return  array
+     */
+    public function emailAction()
+    {
+        $this->getRequestMethod() == AB_Request::METHOD_POST ?
+            $this->emailMethodPOST() :
+            $this->emailMethodGET();
+    }
+
+    /**
+     * Email change form
+     * 
+     * @return  array
+     */
+    private function emailMethodGET()
+    {
+        $this->setViewLayout('index');
+        $email = $this->getRequestParameter('email');
+        $uid = $this->getRequestParameter('uid');
         $profile = null;
+        $new_email = null;
 
         if(strlen($email) > 0 && strlen($uid) > 0)
         {
             $profile = UserProfile::findByUID($email, $uid);
-        }
 
-        if(is_object($profile))
-        {
-            if(!empty($password) && !empty($confirm))
+            if(is_object($profile))
             {
-                if($password == $confirm)
-                {
-                    $profile->uid_md5 = md5(uniqid($password, true));
-                    $profile->login_password_md5 = md5($password);
-                    $profile->save();
-
-                    $id = intval($profile->user_profile_id);
-                    $_d = array ('method' => __METHOD__, 'user_profile_id' => $id);
-                    self::notice("password changed", $_d);
-
-                    $result = self::STATUS_OK;
-
-                    self::sendPasswordNotice($profile);
-                    $this->sessionDestroy();
-                }
-                else
-                {
-                    $result = self::STATUS_UNMATCHED_PASSWORD;
-                }
+                $id = $profile->user_profile_id;
+                $information = UserProfileInformation::findByPrimaryKey($id);
+                if(is_object($information)) $new_email = $information->email_update;
             }
         }
 
+        $this->setViewParameter('profile', $profile);
+        $this->setViewParameter('new_email', $new_email);
+    }
+
+    /**
+     * Email change request/save
+     * 
+     * @return void
+     */
+    private function emailMethodPOST()
+    {
+        $this->setViewLayout(null);
+        $this->setViewTemplate(null);
+        $new_email = $this->getRequestParameter('new_email');
+        $email = $this->getRequestParameter('email');
+        $uid = $this->getRequestParameter('uid');
+        $password = $this->getRequestParameter('password');
+        $result = self::STATUS_FAILED;
+        $profile = null;
+
+        /* change request (authenticated) */
+
+        if(strlen($new_email) > 0 && ($id = intval($this->user_profile_id)) > 0)
+        {
+            $this->sessionAuthorize();
+            $result = $this->emailChangeRequest($id, $new_email);
+        }
+        
+        /* change save */
+
+        if(strlen($email) > 0 && strlen($uid) > 0 && strlen($password) > 0)
+        {
+            $result = $this->emailChangeSave($email, $uid, $password);
+        }
+
         $this->setViewDataJson(compact(array('result')));
+    }
+
+    /**
+     * Email change request
+     * 
+     * @param   integer $id         User profile ID
+     * @param   string  $new_email  New user profile login email
+     * @return  string
+     */
+    private function emailChangeRequest($id, $new_email)
+    {
+        $result = self::STATUS_FAILED;
+
+        if(is_object($profile = UserProfile::findByPrimaryKey($id)))
+        {
+            if($profile->login_email != $new_email)
+            {
+                try
+                {
+                    self::sendEmailUpdateInstruction($profile, $new_email);
+
+                    $information = UserProfileInformation::findByPrimaryKey($id);
+        
+                    if(is_object($information))
+                    {
+                        $information->email_update = $new_email;
+                        $information->email_update_message_time = time();
+                        $information->save();
+                        }
+
+                    $result = self::STATUS_OK;
+                }
+                catch(AB_Exception $exception)
+                {
+                    $_m = "failed to send email change instructions " . 
+                          "to email (" . $new_email . ");\n";
+                    $_m.= $exception->getMessage();
+                    $_d = array('method' => __METHOD__);
+                    AB_Log::write($_m, $exception->getCode(), $_d);
+                }
+            }
+            else
+            {
+                $result = self::STATUS_UNCHANGED_EMAIL;
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * Email change save
+     * 
+     * @param   string  $email      New user profile login email
+     * @param   string  $uid        Profile UID
+     * @param   string  $password   Profile password
+     * @return  string
+     */
+    private function emailChangeSave($email, $uid, $password)
+    {
+        $result = self::STATUS_FAILED;
+
+        if(is_object($profile = UserProfile::findByUID($email, $uid)))
+        {
+            if($profile->login_password_md5 == md5($password))
+            {
+                $id = $profile->user_profile_id;
+                $information = UserProfileInformation::findByPrimaryKey($id);
+
+                if(is_object($information))
+                {
+                    if(strlen(($new_email = $information->email_update)) > 0)
+                    {
+                        AB_Loader::loadApplicationLibrary("ApplicationUtility");
+                        $profile->login_email = $new_email;
+                        $profile->uid = ApplicationUtility::randomString(8);
+                        $profile->save();
+
+                        $result = self::STATUS_OK;
+
+                        $id = $profile->user_profile_id;
+                        $_d = array ('method' => __METHOD__, 'user_profile_id' => $id);
+                        self::notice("email changed", $_d);
+                        self::sendProfileNotice($profile);
+                    }
+                }
+            }
+            else
+            {
+                $result = self::STATUS_UNMATCHED_PASSWORD;
+            }
+        }
+
+        return $result;
     }
 
     /**
@@ -405,6 +656,8 @@ throw new UnexpectedValueException("see todo in (" . __FILE__ .":". __LINE__ . "
      */
     public function editAction()
     {
+        $this->sessionAuthorize();
+
         $this->getRequestMethod() == AB_Request::METHOD_POST ?
             $this->editMethodPOST() :
             $this->editMethodGET();
@@ -418,7 +671,6 @@ throw new UnexpectedValueException("see todo in (" . __FILE__ .":". __LINE__ . "
     private function editMethodGET()
     {
         $this->setViewLayout('dashboard');
-        $this->sessionAuthorize();
         
         $id = intval($this->user_profile_id);
         $profile = UserProfile::findByPrimaryKeyEnabled($id);
@@ -430,7 +682,7 @@ throw new UnexpectedValueException("see todo in (" . __FILE__ .":". __LINE__ . "
         }
 
         $information = UserProfileInformation::findByPrimaryKey($id);
-        if(empty($information)) $information = new UserProfileInformation();
+        if(!is_object($information)) $information = new UserProfileInformation();
 
         $this->setViewParameter('profile', $profile);
         $this->setViewParameter('information', $information);
@@ -445,7 +697,6 @@ throw new UnexpectedValueException("see todo in (" . __FILE__ .":". __LINE__ . "
     {
         $this->setViewLayout(null);
         $this->setViewTemplate(null);
-        $this->sessionAuthorize();
 
         $id = intval($this->user_profile_id);
         $profile = ($id > 0) ? UserProfile::findByPrimaryKeyEnabled($id) : null;
@@ -458,64 +709,11 @@ throw new UnexpectedValueException("see todo in (" . __FILE__ .":". __LINE__ . "
             throw new AB_Exception($_m, E_USER_WARNING, $_d);
         }
 
-        $pwdchange = $this->getRequestParameter('pwdchange');
         $name = $this->getRequestParameter('name');
-        $current_password = $this->getRequestParameter('current_password');
-        $new_password = $this->getRequestParameter('new_password');
-        $new_password_confirm = $this->getRequestParameter('new_password_confirm');
-
-        /* password change */
-
-        if($pwdchange == "yes")
-        {
-            if($profile->login_password_md5 != md5($current_password))
-            {
-                $result = self::STATUS_WRONG_PASSWORD;
-                $this->setViewDataJson(compact(array('result')));
-                return null;
-            }
-
-            if($new_password != $new_password_confirm)
-            {
-                $result = self::STATUS_UNMATCHED_PASSWORD;
-                $this->setViewDataJson(compact(array('result')));
-                return null;
-            }
-
-            $profile->uid_md5 = md5(uniqid($new_password, true));
-            $profile->login_password_md5 = md5($new_password);
-
-            try
-            {
-                $profile->save();
-                $_d = array ('method' => __METHOD__, 'user_profile_id' => $id);
-                self::notice("password edited", $_d);
-
-                /* regenerate session */
-
-                $id = $profile->user_profile_id;
-                $this->sessionDestroy();
-                $this->sessionCreate();
-                $this->user_profile_id = $id;
-                $this->user_profile_uid_md5 = $profile->uid_md5;
-                $this->user_profile_login_email = $profile->login_email;
-                $this->sessionLock();
-
-                $result = self::STATUS_OK;
-            }
-            catch(AB_Exception $exception)
-            {
-                $_m = "failed to save user profile after password editing";
-                $_d = array('method' => __METHOD__, 'user_profile_id' => $id);
-                AB_Exception::forward($_m, E_USER_WARNING, $exception, $_d);
-            }
-        }
-
-        /* information change */
 
         $information = UserProfileInformation::findByPrimaryKey($id);
 
-        if(empty($information))
+        if(!is_object($information))
         {
             $information = new UserProfileInformation();
             $information->user_profile_id = $id;
@@ -576,8 +774,7 @@ throw new UnexpectedValueException("see todo in (" . __FILE__ .":". __LINE__ . "
         $confirm_url = AB_Request::url(
             "profile", "confirm", array(
                 "email" => $profile->login_email,
-                "uid" => $profile->uid_md5,
-                "type" => self::CONFIRM_TYPE_NEW));
+                "uid" => $profile->uid));
 
         $body = str_replace("{CONFIRM_URL}", $confirm_url, $body);
 
@@ -606,7 +803,7 @@ throw new UnexpectedValueException("see todo in (" . __FILE__ .":". __LINE__ . "
 
         $password_url = AB_Request::url(
             "profile", "password", array(
-                "email" => $profile->login_email, "uid" => $profile->uid_md5));
+                "email" => $profile->login_email, "uid" => $profile->uid));
 
         $body = str_replace("{PASSWORD_URL}", $password_url, $body);
 
@@ -634,7 +831,7 @@ throw new UnexpectedValueException("see todo in (" . __FILE__ .":". __LINE__ . "
 
         $password_url = AB_Request::url(
             "profile", "password", array(
-                "email" => $profile->login_email, "uid" => $profile->uid_md5));
+                "email" => $profile->login_email, "uid" => $profile->uid));
        
         $body = str_replace("{PASSWORD_URL}", $password_url, $body);
 
@@ -644,31 +841,27 @@ throw new UnexpectedValueException("see todo in (" . __FILE__ .":". __LINE__ . "
     }
 
     /**
-     * Send email change instruction (TODO)
+     * Send email update instruction
      *
      * @param   UserProfile $profile
+     * @param   string      $email
      * @return  boolean
      */
-    public static function sendEmailChangeInstruction($profile)
+    public static function sendEmailUpdateInstruction($profile, $email)
     {
-throw new BadMethodCallException("see todo in (" . __FILE__ .":". __LINE__ . ")");
-        if(!is_object($profile))
-        {
-            return false;
-        }
+        if(!is_object($profile)) return false;
 
         $subject = self::MAIL_EMAIL_CHANGE_SUBJECT;
         $body = self::readInstruction(self::MAIL_EMAIL_CHANGE_TEMPLATE);
 
-        $confirm_url = AB_Request::url(
-            "profile", "confirm", array(
+        $email_url = AB_Request::url(
+            "profile", "email", array(
                 "email" => $profile->login_email,
-                "uid" => $profile->uid_md5,
-                "type" => self::CONFIRM_TYPE_CHANGE));
+                "uid" => $profile->uid));
 
-        $body = str_replace("{CONFIRM_URL}", $confirm_url, $body);
+        $body = str_replace("{EMAIL_URL}", $email_url, $body);
 
-        self::sendEmail($profile->login_email_change, __METHOD__, $subject, $body);
+        self::sendEmail($email, __METHOD__, $subject, $body);
 
         return true;
     }
@@ -681,15 +874,15 @@ throw new BadMethodCallException("see todo in (" . __FILE__ .":". __LINE__ . ")"
      * @param   UserProfile $profile
      * @return  boolean
      */
-    public static function sendPasswordNotice($profile)
+    public static function sendProfileNotice($profile)
     {
         if(!is_object($profile))
         {
             return false;
         }
 
-        $subject = self::MAIL_PASSWORD_SUBJECT;
-        $body = self::readInstruction(self::MAIL_PASSWORD_TEMPLATE);
+        $subject = self::MAIL_PROFILE_SUBJECT;
+        $body = self::readInstruction(self::MAIL_PROFILE_TEMPLATE);
 
         $body = str_replace("{BASE_URL}", BASE_URL, $body);
 

@@ -96,7 +96,11 @@ class UserCMS extends AB_Model
     {
         /* generate CID */
 
-        if($this->isNew()) $this->cid_md5 = md5(uniqid($this->url, true));
+        if($this->isNew()) 
+        {
+            AB_Loader::loadApplicationLibrary("ApplicationUtility");
+            $this->cid = ApplicationUtility::randomString(8);
+        }
 
         return parent::save();
     }
@@ -175,13 +179,13 @@ class UserCMS extends AB_Model
      * Find CMS from CID (user_cms_cid_index)
      *
      * @param   integer $user_profile_id
-     * @param   string  $cid_md5
+     * @param   string  $cid
      * @return  UserCMS|null
      */
-    public static function findByCID($user_profile_id, $cid_md5)
+    public static function findByCID($user_profile_id, $cid)
     {
         return current(self::find(array(
             'user_profile_id' => $user_profile_id,
-            'cid_md5' => $cid_md5)));
+            'cid' => $cid)));
     }
 }

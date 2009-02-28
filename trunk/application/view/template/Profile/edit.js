@@ -3,7 +3,6 @@ $(document).ready(function()
     /* DEFAULTS */
 
     var active_request = false;
-    var password_change = false;
 
 
     /* SWITCHES */
@@ -25,6 +24,25 @@ $(document).ready(function()
         $.ab_spinner_stop();
     }
 
+    /* email change */
+
+    function setEmailChange(emlchange)
+    {
+        if(emlchange)
+        {
+            $("input[@name='login_email']").attr("disabled", false);
+            $("input[@name='emlchangecancel']").attr("disabled", false);
+            $("input[@name='emlchangesubmit']").attr("disabled", false);
+            $("input[@name='login_email']").focus();
+        }
+        else
+        {
+            $("input[@name='login_email']").attr("disabled", true);
+            $("input[@name='emlchangecancel']").attr("disabled", true);
+            $("input[@name='emlchangesubmit']").attr("disabled", true);
+        }
+    }
+
     /* password change */
 
     function setPasswordChange(pwdchange)
@@ -33,23 +51,23 @@ $(document).ready(function()
         {
             $("input[@name='current_password']").attr("disabled", false);
             $("input[@name='new_password']").attr("disabled", false);
-            $("input[@name='new_password_confirm']").attr("disabled", false);
+            $("input[@name='confirm_password']").attr("disabled", false);
+            $("input[@name='pwdchangecancel']").attr("disabled", false);
+            $("input[@name='pwdchangesubmit']").attr("disabled", false);
             $("input[@name='current_password']").focus();
-            $("input[@name='pwdchange']").val("yes");
         }
         else
         {
-            $("input[@name='current_password']").attr("disabled", true);
             $("input[@name='current_password']").val("");
-            $("input[@name='new_password']").attr("disabled", true);
+            $("input[@name='current_password']").attr("disabled", true);
             $("input[@name='new_password']").val("");
-            $("input[@name='new_password_confirm']").attr("disabled", true);
-            $("input[@name='new_password_confirm']").val("");
-            $("input[@name='pwdchange']").val("no");
+            $("input[@name='new_password']").attr("disabled", true);
+            $("input[@name='confirm_password']").val("");
+            $("input[@name='confirm_password']").attr("disabled", true);
+            $("input[@name='pwdchangecancel']").attr("disabled", true);
+            $("input[@name='pwdchangesubmit']").attr("disabled", true);
         }
     }
-
-    setPasswordChange(password_change);
 
 
     /* ACTIONS */
@@ -59,6 +77,8 @@ $(document).ready(function()
         window.location = "<?php $this->url('profile','edit') ?>";
     }
 
+    /* edit submit */
+
     function editSubmit()
     {
         if(active_request == true)
@@ -67,30 +87,8 @@ $(document).ready(function()
         }
 
         name = $("input[@name='name']").val();
-        pwdchange = $("input[@name='pwdchange']").val();
-        current_password = $("input[@name='current_password']").val();
-        new_password = $("input[@name='new_password']").val();
-        new_password_confirm = $("input[@name='new_password_confirm']").val();
 
-        if(pwdchange == "yes" && 
-            (current_password == "" || new_password == "" || 
-             new_password_confirm == ""))
-        {
-            $.ab_alert("Preencha o formulário corretamente");
-            return null;
-        }
-
-        if(pwdchange == "yes" && new_password != new_password_confirm)
-        {
-            $.ab_alert("Senha e confirmação NÃO CORRESPONDEM");
-            return null;
-        }
-
-        parameters = { name: name, 
-                       pwdchange: pwdchange, 
-                       current_password: current_password, 
-                       new_password: new_password, 
-                       new_password_confirm: new_password_confirm }
+        parameters = { name: name }
 
         $.ajax
         ({
@@ -106,7 +104,6 @@ $(document).ready(function()
             complete: function ()
             {
                 active_request = false;
-                setPasswordChange(false);
                 hideSpinner();
             },
             success: function (data) 
@@ -120,6 +117,74 @@ $(document).ready(function()
                 else if(result == "failed")
                 {
                     $.ab_alert("Alteração do perfil FALHOU!");
+                }
+                else
+                {
+                    onError();
+                }
+            }, 
+            error: function () { onError(); }
+        });
+    }
+
+    /* password change submit */
+
+    function passwordChangeSubmit()
+    {
+        if(active_request == true)
+        {
+            return null;
+        }
+
+        current = $("input[@name='current_password']").val();
+        password = $("input[@name='new_password']").val();
+        _confirm = $("input[@name='confirm_password']").val();
+
+        if((current == "" || password == "" || _confirm == ""))
+        {
+            $.ab_alert("Preencha o formulário corretamente");
+            return null;
+        }
+
+        if(password != _confirm)
+        {
+            $.ab_alert("Senha e confirmação NÃO CORRESPONDEM");
+            return null;
+        }
+
+        parameters = { current:  current, 
+                       password: password, 
+                       confirm:  _confirm }
+
+        $.ajax
+        ({
+            type: "POST",
+            url: "<?php $this->url('profile', 'password') ?>",
+            dataType: "json",
+            data: parameters,
+            beforeSend: function ()
+            {
+                active_request = true;
+                showSpinner();
+            },
+            complete: function ()
+            {
+                active_request = false;
+                hideSpinner();
+            },
+            success: function (data) 
+            { 
+                result = data.result;
+
+                if(result == "ok") 
+                {
+                    $.ab_alert("Senha alterada com sucesso");
+                    setPasswordChange(false);
+                }
+                else if(result == "failed")
+                {
+                    $.ab_alert("Alteração de senha FALHOU!");
+                    setPasswordChange(false);
                 }
                 else if(result == "unmatched_password")
                 {
@@ -138,25 +203,108 @@ $(document).ready(function()
         });
     }
 
+    /* email change submit */
+
+    function emailChangeSubmit()
+    {
+        if(active_request == true)
+        {
+            return null;
+        }
+
+        new_email = $("input[@name='login_email']").val();
+
+        if(new_email == "")
+        {
+            $.ab_alert("Preencha o formulário corretamente");
+            return null;
+        }
+
+        parameters = { new_email: new_email }
+
+        $.ajax
+        ({
+            type: "POST",
+            url: "<?php $this->url('profile', 'email') ?>",
+            dataType: "json",
+            data: parameters,
+            beforeSend: function ()
+            {
+                active_request = true;
+                showSpinner();
+            },
+            complete: function ()
+            {
+                active_request = false;
+                hideSpinner();
+                setEmailChange(false);
+            },
+            success: function (data) 
+            { 
+                result = data.result;
+
+                if(result == "ok") 
+                {
+                    $.ab_alert("Um pedido de confirmação foi enviado ao novo email");
+                }
+                else if(result == "failed")
+                {
+                    $.ab_alert("Alteração de e-mail falhou!");
+                }
+                else if(result == "unchanged_email")
+                {
+                    $.ab_alert("O e-mail informado é igual ao atual.");
+                }
+                else
+                {
+                    onError();
+                }
+            }, 
+            error: function () { onError(); }
+        });
+    }
+
     
     /* TRIGGERS */
+
+    /* edit */
+
+    $("input[@name='editsubmit']").click(function() 
+    {
+        editSubmit();
+    });
+
+    /* password change */
 
     $("#pwdchangelnk").click(function() 
     {
         setPasswordChange(true);
     });
 
-    /* cancel */
+    $("input[@name='pwdchangesubmit']").click(function() 
+    {
+        passwordChangeSubmit();
+    });
 
-    $("input[@name='editcancel']").click(function() 
+    $("input[@name='pwdchangecancel']").click(function() 
     {
         setPasswordChange(false);
     });
 
-    /* submit */
+    /* email change */
 
-    $("input[@name='editsubmit']").click(function() 
+    $("#emlchangelnk").click(function() 
     {
-        editSubmit();
+        setEmailChange(true);
+    });
+
+    $("input[@name='emlchangesubmit']").click(function() 
+    {
+        emailChangeSubmit();
+    });
+
+    $("input[@name='emlchangecancel']").click(function() 
+    {
+        setEmailChange(false);
     });
 });

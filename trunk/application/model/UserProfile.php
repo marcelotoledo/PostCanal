@@ -21,7 +21,7 @@ class UserProfile extends AB_Model
      *
      * @var array
      */
-    protected static $table_structure = array('user_profile_id'=>array('type'=>'integer','size'=>0,'required'=>false),'login_email'=>array('type'=>'string','size'=>100,'required'=>true),'login_password_md5'=>array('type'=>'string','size'=>32,'required'=>true),'register_message_time'=>array('type'=>'date','size'=>0,'required'=>false),'register_confirmation'=>array('type'=>'boolean','size'=>0,'required'=>false),'register_confirmation_time'=>array('type'=>'date','size'=>0,'required'=>false),'recovery_message_time'=>array('type'=>'date','size'=>0,'required'=>false),'created_at'=>array('type'=>'date','size'=>0,'required'=>false),'updated_at'=>array('type'=>'date','size'=>0,'required'=>false),'enabled'=>array('type'=>'boolean','size'=>0,'required'=>false));
+    protected static $table_structure = array('user_profile_id'=>array('type'=>'integer','size'=>0,'required'=>false),'login_email'=>array('type'=>'string','size'=>100,'required'=>true),'login_password_md5'=>array('type'=>'string','size'=>32,'required'=>true),'register_confirmation'=>array('type'=>'boolean','size'=>0,'required'=>false),'created_at'=>array('type'=>'date','size'=>0,'required'=>false),'updated_at'=>array('type'=>'date','size'=>0,'required'=>false),'enabled'=>array('type'=>'boolean','size'=>0,'required'=>false));
 
     /**
      * Sequence name
@@ -103,7 +103,11 @@ class UserProfile extends AB_Model
     {
         /* generate UID */
 
-        if($this->isNew()) $this->uid_md5 = md5(uniqid($this->login_password_md5, true));
+        if($this->isNew()) 
+        {
+            AB_Loader::loadApplicationLibrary("ApplicationUtility");
+            $this->uid = ApplicationUtility::randomString(8);
+        }
 
         return parent::save();
     }
@@ -211,14 +215,14 @@ class UserProfile extends AB_Model
      * Find UserProfile from UID (user_profile_uid_index)
      *
      * @param   string  $email
-     * @param   string  $uid_md5
+     * @param   string  $uid
      * @return  UserProfile|null
      */
-    public static function findByUID($email, $uid_md5)
+    public static function findByUID($email, $uid)
     {
         return current(self::find(array(
             'login_email' => strtolower($email), 
-            'uid_md5'     => $uid_md5,
+            'uid'         => $uid,
             'enabled'     => true)));
     }
 }

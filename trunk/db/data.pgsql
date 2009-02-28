@@ -4,7 +4,7 @@
 
 /* user */
 
--- INSERT INTO user_profile (uid_md5, login_email, login_password_md5, register_confirmation) VALUES (MD5('rafael@castilho.biz'), 'rafael@castilho.biz', MD5('castilho'), true);
+-- INSERT INTO user_profile (uid, login_email, login_password_md5, register_confirmation) VALUES ('KgwYcSnK', 'rafael@castilho.biz', MD5('castilho'), true);
 -- INSERT INTO user_profile_information (user_profile_id) VALUES (CURRVAL('user_profile_seq'));
 
 /* cms type */

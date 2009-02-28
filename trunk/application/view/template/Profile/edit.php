@@ -6,25 +6,23 @@
         <td><input type="text" name="name" 
             value="<?php echo $this->information->name ?>"></td>
     </tr>
-</table>
-<br>
-<table>
-    <tr>
-        <td class="formlabel">&nbsp;</td>
-        <td><a id="mailchangelnk">trocar e-mail</a></td>
-    </tr>        
-    <tr>
-        <td class="formlabel">E-mail:</td>
-        <td><input type="login_email" name="login_email"
-            value="<?php echo $this->profile->login_email ?>" disabled></td>
+    <tr class="formbutton">
+        <td style="text-align:right">
+            <div id="spinner" style="float:right">&nbsp;</div>
+        </td>
+        <td>
+        <input name="editcancel" type="reset" value="Cancelar">
+        <input name="editsubmit" type="button" value="Alterar">
+        </td>
     </tr>
 </table>
+</form>
 <br>
-<input type="hidden" name="pwdchange" value="no">
+<form id="pwdchangeform">
 <table>
     <tr>
         <td class="formlabel">&nbsp;</td>
-        <td><a id="pwdchangelnk">trocar senha</a></td>
+        <td><a id="pwdchangelnk">alterar senha</a></td>
     </tr>
     <tr>
         <td class="formlabel">Senha atual:</td>
@@ -36,15 +34,38 @@
     </tr>
     <tr>
         <td class="formlabel">Confirmar senha:</td>
-        <td><input type="password" name="new_password_confirm" disabled></td>
+        <td><input type="password" name="confirm_password" disabled></td>
     </tr>
     <tr class="formbutton">
         <td style="text-align:right">
             <div id="spinner" style="float:right">&nbsp;</div>
         </td>
         <td>
-        <input name="editcancel" type="reset" value="Cancelar">
-        <input name="editsubmit" type="button" value="Alterar">
+        <input name="pwdchangecancel" type="button" value="Cancelar" disabled>
+        <input name="pwdchangesubmit" type="button" value="Alterar" disabled>
+        </td>
+    </tr>
+</table>
+</form>
+<br>
+<form id="emlchangeform">
+<table>
+    <tr>
+        <td class="formlabel">&nbsp;</td>
+        <td><a id="emlchangelnk">alterar e-mail</a></td>
+    </tr>        
+    <tr>
+        <td class="formlabel">E-mail:</td>
+        <td><input type="login_email" name="login_email"
+            value="<?php echo $this->profile->login_email ?>" disabled></td>
+    </tr>
+    <tr class="formbutton">
+        <td style="text-align:right">
+            <div id="spinner" style="float:right">&nbsp;</div>
+        </td>
+        <td>
+        <input name="emlchangecancel" type="reset" value="Cancelar" disabled>
+        <input name="emlchangesubmit" type="button" value="Alterar" disabled>
         </td>
     </tr>
 </table>

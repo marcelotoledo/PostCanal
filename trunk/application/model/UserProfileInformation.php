@@ -21,7 +21,7 @@ class UserProfileInformation extends AB_Model
      *
      * @var array
      */
-    protected static $table_structure = array('user_profile_id'=>array('type'=>'integer','size'=>0,'required'=>true),'name'=>array('type'=>'string','size'=>100,'required'=>false),'created_at'=>array('type'=>'date','size'=>0,'required'=>false),'updated_at'=>array('type'=>'date','size'=>0,'required'=>false));
+    protected static $table_structure = array('user_profile_id'=>array('type'=>'integer','size'=>0,'required'=>true),'name'=>array('type'=>'string','size'=>100,'required'=>false),'email_update'=>array('type'=>'string','size'=>100,'required'=>true),'register_message_time'=>array('type'=>'date','size'=>0,'required'=>false),'register_confirmation_time'=>array('type'=>'date','size'=>0,'required'=>false),'recovery_message_time'=>array('type'=>'date','size'=>0,'required'=>false),'created_at'=>array('type'=>'date','size'=>0,'required'=>false),'updated_at'=>array('type'=>'date','size'=>0,'required'=>false));
 
     /**
      * Sequence name

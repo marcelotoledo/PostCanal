@@ -68,4 +68,18 @@ class ApplicationUtility
         $html = preg_replace("/[[:space:]]+/", " ", $html); // extra spaces
         $html = preg_replace("/<!(--([^\-]|-[^\-])*--)>/", "", $html); // comments
     }
+
+    /**
+     * Generate random string
+     *
+     * @param   integer $length
+     * @return  string
+     */
+    public static function randomString($length=8)
+    {
+        $d="123456789BCDFGHJKLMNPQRSTVWXYZbcdfghjklmnpqrstvwxyz";
+        $s="";
+        for($i=0;$i<$length;$i++) $s.=$d[mt_rand(0,50)];
+        return $s;
+    }
 }

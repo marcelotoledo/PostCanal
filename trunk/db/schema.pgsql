@@ -51,12 +51,12 @@ CREATE TABLE application_mailer_relay
     application_mailer_relay_id integer NOT NULL
         DEFAULT nextval('application_mailer_relay_seq'),
     recipient character varying(100) NOT NULL,
-    identifier_md5 character varying(32) DEFAULT NULL,
+    identifier character varying(8) DEFAULT NULL,
     created_at timestamp without time zone NOT NULL DEFAULT NOW()
 );
 
 CREATE INDEX application_mailer_relay_index 
-    ON application_mailer_relay (recipient, identifier_md5, created_at);
+    ON application_mailer_relay (recipient, identifier, created_at);
 
 /* cms type */
 
@@ -140,13 +140,10 @@ CREATE SEQUENCE user_profile_seq;
 CREATE TABLE user_profile
 (
     user_profile_id integer NOT NULL DEFAULT nextval('user_profile_seq'),
-    uid_md5 character varying(32) NOT NULL,
+    uid character varying(8) NOT NULL,
     login_email character varying(100) NOT NULL,
     login_password_md5 character varying(32) NOT NULL,
-    register_message_time timestamp without time zone DEFAULT NULL,
     register_confirmation boolean NOT NULL DEFAULT false,
-    register_confirmation_time timestamp without time zone DEFAULT NULL,
-    recovery_message_time timestamp without time zone DEFAULT NULL,
     created_at timestamp without time zone NOT NULL DEFAULT NOW(),
     updated_at timestamp without time zone DEFAULT NULL,
     enabled boolean NOT NULL DEFAULT true,
@@ -160,13 +157,19 @@ CREATE INDEX user_profile_email_index
 CREATE INDEX user_profile_login_index
     ON user_profile (login_email, login_password_md5) WHERE enabled is TRUE;
 CREATE INDEX user_profile_uid_index
-    ON user_profile (login_email, uid_md5) WHERE enabled is TRUE;
+    ON user_profile (login_email, uid) WHERE enabled is TRUE;
 
 CREATE TABLE user_profile_information
 (
     user_profile_id integer NOT NULL,
     name character varying(100) NOT NULL DEFAULT '',
     /* TODO: location, language, etc. */
+    email_update character varying(100) NOT NULL,
+    register_message_time timestamp without time zone DEFAULT NULL,
+    register_confirmation_time timestamp without time zone DEFAULT NULL,
+    last_login_time timestamp without time zone DEFAULT NULL,
+    recovery_message_time timestamp without time zone DEFAULT NULL,
+    email_update_message_time timestamp without time zone DEFAULT NULL,
     created_at timestamp without time zone NOT NULL DEFAULT NOW(),
     updated_at timestamp without time zone DEFAULT NULL,
     CONSTRAINT user_profile_fk FOREIGN KEY (user_profile_id) 
@@ -179,7 +182,7 @@ CREATE TABLE user_cms
     user_cms_id integer NOT NULL DEFAULT nextval('user_cms_seq'),
     user_profile_id integer NOT NULL,
     cms_type_id integer NOT NULL,
-    cid_md5 character varying(32) NOT NULL,
+    cid character varying(8) NOT NULL,
     name character varying(100) NOT NULL,
     url character varying(200) NOT NULL,
     manager_url character varying(200) NOT NULL,
@@ -196,7 +199,7 @@ CREATE TABLE user_cms
         REFERENCES cms_type (cms_type_id) ON DELETE RESTRICT
 );
 
-CREATE INDEX user_cms_cid_index ON user_cms (user_profile_id, cid_md5);
+CREATE INDEX user_cms_cid_index ON user_cms (user_profile_id, cid);
 
 CREATE SEQUENCE user_cms_channel_seq;
 CREATE TABLE user_cms_channel
