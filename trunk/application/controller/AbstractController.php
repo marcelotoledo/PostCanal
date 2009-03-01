@@ -62,14 +62,22 @@ abstract class AbstractController extends AB_Controller
     /* JSON */
 
     /**
-     * Set view data encoded on Json format
+     * Set view data 
+     * Encode tn Json format when is Ajax
      *
      * @param   mixed   $data
      * @return  void
      */
-    public function setViewDataJson($data)
+    public function setViewData($data)
     {
-        parent::setViewData(Zend_Json::encode($data));
+        if($this->getResponseIsAjax() == true)
+        {
+            parent::setViewData(Zend_Json::encode($data));
+        }
+        else
+        {
+            parent::setViewData($data);
+        }
     }
 
     /* SESSION */

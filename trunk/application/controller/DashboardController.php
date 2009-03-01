@@ -20,7 +20,6 @@ class DashboardController extends AbstractController
     {
         parent::__construct($request, $response);
         $this->sessionAuthorize();
-        $this->setViewLayout(null);
     }
 
     /**
@@ -63,6 +62,8 @@ class DashboardController extends AbstractController
      */
     public function cmsAction()
     {
+        $this->setViewLayout(null);
+
         $user_profile_id = intval($this->user_profile_id);
         $cid = $this->getRequestParameter('cid');
         $cms = null;

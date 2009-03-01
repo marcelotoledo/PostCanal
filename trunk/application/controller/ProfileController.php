@@ -58,8 +58,8 @@ class ProfileController extends AbstractController
      */
     public function loginAction()
     {
-        $this->setViewLayout(null);
-        $this->setViewTemplate(null);
+        $this->setResponseIsAjax(true);
+
         $email = $this->getRequestParameter('email');
         $password = $this->getRequestParameter('password');
         $result = self::STATUS_INVALID;
@@ -108,7 +108,7 @@ class ProfileController extends AbstractController
             }
         }
 
-        $this->setViewDataJson(compact(array('result')));
+        $this->setViewData(compact(array('result')));
     }
 
     /**
@@ -118,8 +118,7 @@ class ProfileController extends AbstractController
      */
     public function registerAction()
     {
-        $this->setViewLayout(null);
-        $this->setViewTemplate(null);
+        $this->setResponseIsAjax(true);
         $email = $this->getRequestParameter('email');
         $password = $this->getRequestParameter('password');
         $confirm = $this->getRequestParameter('confirm');
@@ -206,7 +205,7 @@ class ProfileController extends AbstractController
             }
         }
 
-        $this->setViewDataJson(compact(array('result')));
+        $this->setViewData(compact(array('result')));
     }
 
     /**
@@ -229,8 +228,8 @@ class ProfileController extends AbstractController
      */
     public function recoveryAction()
     {
-        $this->setViewLayout(null);
-        $this->setViewTemplate(null);
+        $this->setResponseIsAjax(true);
+
         $email = $this->getRequestParameter('email');
         $profile = UserProfile::findByEmail($email);
         $result = self::STATUS_OK;
@@ -280,7 +279,7 @@ class ProfileController extends AbstractController
             }
         }
 
-        $this->setViewDataJson(compact(array('result')));
+        $this->setViewData(compact(array('result')));
     }
 
     /**
@@ -368,8 +367,8 @@ class ProfileController extends AbstractController
      */
     private function passwordMethodPOST()
     {
-        $this->setViewLayout(null);
-        $this->setViewTemplate(null);
+        $this->setResponseIsAjax(true);
+
         $email = $this->getRequestParameter('email');
         $uid = $this->getRequestParameter('uid');
         $current = $this->getRequestParameter('current');
@@ -393,7 +392,7 @@ class ProfileController extends AbstractController
             $result = $this->passwordChangeOffline($email, $uid, $password, $confirm);
         }
 
-        $this->setViewDataJson(compact(array('result')));
+        $this->setViewData(compact(array('result')));
     }
 
     /**
@@ -528,8 +527,8 @@ class ProfileController extends AbstractController
      */
     private function emailMethodPOST()
     {
-        $this->setViewLayout(null);
-        $this->setViewTemplate(null);
+        $this->setResponseIsAjax(true);
+
         $new_email = $this->getRequestParameter('new_email');
         $email = $this->getRequestParameter('email');
         $uid = $this->getRequestParameter('uid');
@@ -552,7 +551,7 @@ class ProfileController extends AbstractController
             $result = $this->emailChangeSave($email, $uid, $password);
         }
 
-        $this->setViewDataJson(compact(array('result')));
+        $this->setViewData(compact(array('result')));
     }
 
     /**
@@ -695,8 +694,7 @@ class ProfileController extends AbstractController
      */
     private function editMethodPOST()
     {
-        $this->setViewLayout(null);
-        $this->setViewTemplate(null);
+        $this->setResponseIsAjax(true);
 
         $id = intval($this->user_profile_id);
         $profile = ($id > 0) ? UserProfile::findByPrimaryKeyEnabled($id) : null;
@@ -733,7 +731,7 @@ class ProfileController extends AbstractController
             AB_Exception::forward($_m, E_USER_WARNING, $exception, $_d);
         }
 
-        $this->setViewDataJson(compact(array('result')));
+        $this->setViewData(compact(array('result')));
     }
 
     /**

@@ -68,8 +68,8 @@ class CmsController extends AbstractController
      */
     private function addMethodPOST()
     {
-        $this->setViewLayout(null);
-        $this->setViewTemplate(null);
+        $this->setResponseIsAjax(true);
+
         $result = self::STATUS_FAILED;
 
         $ss = new Zend_Session_Namespace(self::CMS_ADD_SESSION);
@@ -107,7 +107,7 @@ class CmsController extends AbstractController
             AB_Exception::forward($_m, E_USER_WARNING, $exception, $_d);
         }
 
-        $this->setViewDataJson(compact(array('result')));
+        $this->setViewData(compact(array('result')));
     }
 
     /**
@@ -117,10 +117,9 @@ class CmsController extends AbstractController
      */
     public function checkAction()
     {
-        AB_Loader::loadApplicationLibrary("ApplicationHTTPClient");
+        $this->setResponseIsAjax(true);
 
-        $this->setViewLayout(null);
-        $this->setViewTemplate(null);
+        AB_Loader::loadApplicationLibrary("ApplicationHTTPClient");
         
         $ss = new Zend_Session_Namespace(self::CMS_ADD_SESSION);
 
@@ -176,7 +175,7 @@ class CmsController extends AbstractController
 
         /* send response */
 
-        $this->setViewDataJson($data);
+        $this->setViewData($data);
     }
 
     /**
