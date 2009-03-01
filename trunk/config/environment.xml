@@ -20,7 +20,7 @@
                 <default>
                     <username>john.doe@castilho.biz</username>
                     <password>fulano</password>
-                    <email>john.die@castilho.biz</email>
+                    <email>john.doe@castilho.biz</email>
                 </default>
             </sender>
             <relay>

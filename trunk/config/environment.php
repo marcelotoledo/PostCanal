@@ -53,11 +53,6 @@ $registry->response->headers = array
 
 /* APPLICATION */
 
-/* model */
-
-$registry->application->utility->encodebase = 'KDqFXGT6HCN9ZbS3R4mAxJ8EckLVPtMz7BQr';
-
-
 /* login session */
 
 $registry->session->namespace = "login";
