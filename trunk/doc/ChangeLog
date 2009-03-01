@@ -162,3 +162,13 @@ HORAS TRABALHADAS: 4h
 - Alteração de Email através da edição de perfil
 
 HORAS TRABALHADAS: 8h
+
+==========
+28/02/2008
+==========
+
+- Classe session adicionada
+- Melhorias no arquivo de Log
+- Melhorias na exibicao de erros e redirects p/ ajax
+
+HORAS TRABALHADAS: 6h
