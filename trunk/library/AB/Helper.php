@@ -56,7 +56,7 @@ class AB_Helper
                                                  $action, 
                                                  $parameters));
 
-        echo empty($url) ? "/" : $url;
+        echo strlen($url) > 0 ? $url : "/";
     }
 
     /**

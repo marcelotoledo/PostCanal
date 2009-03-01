@@ -588,6 +588,7 @@ abstract class AB_Model
                 }
                 elseif($driver == "mysql")
                 {
+                    // not working. fix TODO
                     // $connection->exec("SET time_zone = '" . $timezone . "'");
                 }
                 else

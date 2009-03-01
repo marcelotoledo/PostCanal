@@ -132,6 +132,29 @@ class AB_Controller
     }
 
     /**
+     * Set response is AJAX
+     *
+     * @param   boolean     $b
+     * @return  void
+     */
+    public function setResponseIsAjax($b)
+    {
+        $this->response->isAjax($b);
+        $this->setViewLayout(null);
+        $this->setViewTemplate(null);
+    }
+
+    /**
+     * Get response is AJAX
+     *
+     * @return  boolean
+     */
+    public function getResponseIsAjax()
+    {
+        return $this->response->isAjax();
+    }
+
+    /**
      * Run controller action
      *
      * @param   string      $name   Action name

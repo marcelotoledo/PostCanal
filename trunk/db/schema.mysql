@@ -10,9 +10,10 @@ DROP TABLE IF EXISTS cms_type_configuration CASCADE;
 DROP TABLE IF EXISTS cms_type_discovery CASCADE;
 DROP TABLE IF EXISTS cms_type CASCADE;
 DROP TABLE IF EXISTS application_mailer_relay CASCADE;
+DROP TABLE IF EXISTS application_session CASCADE;
 DROP TABLE IF EXISTS application_log CASCADE;
 
--- log --
+-- application --
 
 CREATE TABLE application_log
 (
@@ -25,11 +26,18 @@ CREATE TABLE application_log
     user_profile_id INTEGER UNSIGNED NOT NULL DEFAULT 0,
     created_at TIMESTAMP NOT NULL DEFAULT NOW(),
     PRIMARY KEY (application_log_id)
-) ENGINE=InnoDB DEFAULT CHARSET='utf8';
+) ENGINE=MyISAM DEFAULT CHARSET='utf8';
 
 CREATE INDEX al_priority_index ON application_log (priority);
 
--- mailer --
+CREATE TABLE application_session 
+(
+  session VARCHAR(255) CHARACTER SET 'utf8' COLLATE 'utf8_bin' NOT NULL,
+  session_expires INTEGER unsigned NOT NULL default '0',
+  session_data TEXT COLLATE 'utf8_unicode_ci'
+) ENGINE=MyISAM DEFAULT CHARSET='utf8' COLLATE='utf8_unicode_ci';
+
+CREATE INDEX as_session_index ON application_session (session);
 
 CREATE TABLE application_mailer_relay
 (
@@ -38,7 +46,7 @@ CREATE TABLE application_mailer_relay
     identifier VARCHAR(8) DEFAULT NULL,
     created_at TIMESTAMP NOT NULL DEFAULT NOW(),
     PRIMARY KEY (application_mailer_relay_id)
-) ENGINE=InnoDB DEFAULT CHARSET='utf8';
+) ENGINE=MyISAM DEFAULT CHARSET='utf8';
 
 CREATE INDEX amr_recipient_identifier_created_index ON application_mailer_relay (recipient, identifier, created_at);
 

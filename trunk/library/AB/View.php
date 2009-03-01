@@ -156,9 +156,9 @@ class AB_View
      */
     public function render()
     {
-        if(empty($this->layout))
+        if(strlen($this->layout) == 0)
         {
-            if(empty($this->template))
+            if(strlen($this->template) == 0)
             {
                 /* render text */
 

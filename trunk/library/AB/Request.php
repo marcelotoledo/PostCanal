@@ -169,11 +169,11 @@ class AB_Request
     {
         $url = $base ? $base : BASE_URL;
 
-        if(!empty($controller))
+        if(strlen($controller) > 0)
         {
             $url .= "/" . $controller;
 
-            if(!empty($action))
+            if(strlen($action) > 0)
             {
                 $url .= "/" . $action;
             }

@@ -10,45 +10,47 @@
 class AB_Log
 {
     /**
+     * Log table name
+     *
+     * @var string
+     */
+    private static $table_name = 'application_log';
+
+
+    /**
      * Write log
      *
      * @param   string  $message    Log message
      * @param   integer $priority   Priority
      * @param   array   $attributes Extra attributes
-     * @param   string  $model      Model name
      * @return  void
      */
     public static function write ($message,
                                   $priority=E_USER_NOTICE,
-                                  $attributes=array(),
-                                  $model='ApplicationLog')
+                                  $attributes=array())
     {
-        if(class_exists($model) == false)
+        $columns = array('message', 'priority');
+        $values = array($message, $priority);
+
+        /* set extra attributes */
+
+        foreach($attributes as $name => $value)
         {
-            self::writeErrorLog("model (" . $model . ") not found");
+            $columns[] = $name;
+            $values[] = $value;
         }
-        else
+
+        try
         {
-            $m = new $model();
-            $m->message = $message;
-            $m->priority = $priority;
-
-            /* set extra attributes */
-
-            foreach($attributes as $name => $value)
-            {
-                $m->{$name} = $value;
-            }
-            
-            try
-            {
-                $m->save();
-            }
-            catch(Exception $exception)
-            {
-                $message = $exception->getMessage() . "; " . $message;
-                self::writeErrorLog($message);
-            }
+            AB_Model::execute("INSERT INTO " . self::$table_name . " " .
+                              "(" . implode(", ", $columns) . ") VALUES " .
+                              "(?" . str_repeat(", ?", count($columns) - 1) . ")",
+                              $values);
+        }
+        catch(Exception $exception)
+        {
+            $message = $exception->getMessage() . "; " . $message;
+            self::writeErrorLog($message);
         }
     }
 

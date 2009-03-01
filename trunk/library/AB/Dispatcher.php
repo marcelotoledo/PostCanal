@@ -120,30 +120,23 @@ class AB_Dispatcher
 
         if($has_error)
         {
-            (error_reporting() > 0) ? 
-                /* show error message in browser */
+            /* run error controller actions */
 
-                $this->response->setBody($error) :
+            if($this->response->isAjax() == false)
+            {
+                $status = $this->response->getStatus();
+                $this->controllerFactory('Error')->runAction('status' . $status);
+            }
 
-                /* run error controller actions */
+            /* show error message in browser */
 
-                $this->errorAction($this->response->getStatus());
+            if(error_reporting() > 0) $this->response->setBody($error);
+
         }
 
         /* send response */
 
         $this->response->send();
-    }
-
-    /**
-     * Show error action (production)
-     *
-     * @param   integer $status
-     * @return  void 
-     */
-    private function errorAction($status)
-    {
-        $this->controllerFactory('Error')->runAction('status' . $status);
     }
 
     /**
@@ -155,10 +148,7 @@ class AB_Dispatcher
      */
     private function controllerFactory($name=null)
     {
-        if(empty($name))
-        {
-            $name = $this->request->getController();
-        }
+        if(strlen($name) == 0) $name = $this->request->getController();
 
         $class_name = $name . "Controller";
         $controller = null;

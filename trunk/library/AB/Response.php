@@ -41,6 +41,13 @@ class AB_Response
     private $is_redirect = false;
 
     /**
+     * Response is AJAX?
+     *
+     * @var boolean
+     */
+    private $is_ajax = false;
+
+    /**
      * Response body
      *
      * @var string
@@ -68,6 +75,18 @@ class AB_Response
     public function setHeader($label, $value)
     {
         $this->headers[$label] = $value;
+    }
+
+    /**
+     * Remove item from header list
+     *
+     * @param   string  $label  Item label
+     * @return  void
+     */
+    public function unsetHeader($label)
+    {
+        if(array_key_exists($label, $this->headers)) 
+            unset($this->headers[$label]);
     }
 
     /**
@@ -139,6 +158,18 @@ class AB_Response
     }
 
     /**
+     * Is AJAX ?
+     *
+     * @param   boolean|null     $ajax
+     * @return  boolean
+     */
+    public function isAjax($b=null)
+    {
+        if($b!==null) $this->is_ajax = ((boolean) $b);
+        return $this->is_ajax;
+    }
+
+    /**
      * Set content type
      *
      * @return  void
@@ -176,6 +207,17 @@ class AB_Response
      */
     public function send()
     {
+        if($this->is_ajax)
+        {
+            /* ajax will not understand redirects, right ?! */
+
+            if($this->status == self::STATUS_REDIRECT)
+            {
+                $this->status = self::STATUS_ERROR;
+                $this->unsetHeader('Location');
+            }
+        }
+
         $this->sendHeaders();
         $this->sendBody();
     }

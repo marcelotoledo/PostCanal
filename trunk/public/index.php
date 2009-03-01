@@ -18,6 +18,11 @@ AB_Loader::register();
 require "../config/environment.php";
 
 
+/* session setup */
+
+AB_Session::register();
+
+
 /* dispatch */
 
 AB_Dispatcher::singleton()->dispatch();
