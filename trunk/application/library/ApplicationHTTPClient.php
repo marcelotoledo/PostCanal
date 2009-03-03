@@ -127,20 +127,18 @@ class ApplicationHTTPClient
             $headers = $this->response->getHeaders();
         }
 
-        $total = count($headers);
         $registry = AB_Registry::singleton();
-        $max_headers = $registry->application->httpclient->maxheaders;
+        $max = intval($registry->application->httpClient->maxHeaders);
+        $total = count($headers);
 
-        if(!empty($max_headers) && $total > $max_headers)
+        if($max > 0 && $total > $max)
         {
-            $headers = array_slice($headers, 0, $max_headers, true);
+            $headers = array_slice($headers, 0, $max, true);
 
-            $message = "the response has a total of " .
-                       "(" . $total . ") headers " .
-                       "and was reduced to " .
-                       "(" . $max_headers . ") headers";
-            $attributes = array('method' => __METHOD__);
-            AB_Log::write($message, E_USER_WARNING, $attributes);
+            $_m= "the response has a total of (" . $total . ") headers " .
+                 "and was reduced to (" . $max . ") headers";
+            $_d = array('method' => __METHOD__);
+            AB_Log::write($_m, E_USER_WARNING, $_d);
         }
 
         return $headers;
@@ -158,20 +156,17 @@ class ApplicationHTTPClient
         if(is_object($this->response))
         {
             $body = $this->response->getBody();
-            $lenght = strlen($body);
             $registry = AB_Registry::singleton();
-            $max_body_lenght = $registry->application->httpclient->maxbodylenght;
+            $max = intval($registry->application->httpClient->maxBodyLenght);
+            $lenght = strlen($body);
 
-            if(!empty($max_body_lenght) && $lenght > $max_body_lenght)
+            if($max > 0 && $lenght > $max)
             {
-                $body = substr($body, 0, $max_body_lenght);
-
-                $message = "the response body has a size of " .
-                           "(" . $lenght . ") bytes " .
-                           "and was truncated to " .
-                           "(" . $max_body_lenght . ") bytes";
-                $attributes = array('method' => __METHOD__);
-                AB_Log::write($message, E_USER_WARNING, $attributes);
+                $body = substr($body, 0, $max);
+                $_m = "the response body has a size of (" . $lenght . ") bytes " .
+                      "and was truncated to (" . $max . ") bytes";
+                $_d = array('method' => __METHOD__);
+                AB_Log::write($_m, E_USER_WARNING, $_d);
             }
         }
 

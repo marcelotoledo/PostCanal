@@ -51,6 +51,12 @@ class ApplicationMailer
      */
     private $relay_count;
 
+    /**
+     * Relay table
+     * @var string
+     */
+    private static $relay_table = 'application_mailer_relay';
+
 
     /**
      * Application mailer constructor
@@ -159,10 +165,9 @@ class ApplicationMailer
      */
     private static function setRelay($recipient, $identifier)
     {
-        $relay = new ApplicationMailerRelay();
-        $relay->recipient = $recipient;
-        $relay->identifier = substr(md5($identifier), 0, 8);
-        $relay->save();
+        return AB_Model::execute("INSERT INTO " . self::$table_name . " " .
+                                 "(recipient, identifier) VALUES (?, ?)",
+                                 array($recipient, substr(md5($identifier), 0, 8)));
     }
 
     /**

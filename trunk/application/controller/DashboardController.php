@@ -29,9 +29,9 @@ class DashboardController extends AbstractController
      */
     public function indexAction()
     {
-        $this->setViewLayout('dashboard');
+        $this->view->setLayout('dashboard');
 
-        $id = intval($this->user_profile_id);
+        $id = intval($this->session->user_profile_id);
         $profile = null;
 
         if($id > 0) $profile = UserProfile::findByPrimaryKeyEnabled($id);
@@ -51,9 +51,9 @@ class DashboardController extends AbstractController
             $cms = UserCMS::findByUserProfileId($id);
         }
 
-        $this->setViewParameter('profile', $profile);
-        $this->setViewParameter('information', $information);
-        $this->setViewParameter('cms', $cms);
+        $this->view->profile = $profile;
+        $this->view->information = $information;
+        $this->view->cms = $cms;
     }
 
     /**
@@ -62,10 +62,10 @@ class DashboardController extends AbstractController
      */
     public function cmsAction()
     {
-        $this->setViewLayout(null);
+        $this->view->setLayout(null);
 
         $user_profile_id = intval($this->user_profile_id);
-        $cid = $this->getRequestParameter('cid');
+        $cid = $this->request->cid;
         $cms = null;
 
         if($user_profile_id > 0 && strlen($cid) > 0)
@@ -73,6 +73,6 @@ class DashboardController extends AbstractController
             $cms = UserCMS::findByCID($user_profile_id, $cid);
         }
 
-        $this->setViewParameter('cms', $cms);
+        $this->view->cms = $cms;
     }
 }

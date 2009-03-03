@@ -68,7 +68,7 @@ class CmsController extends AbstractController
      */
     private function addMethodPOST()
     {
-        $this->setResponseIsAjax(true);
+        $this->responseIsAjax(true);
 
         $result = self::STATUS_FAILED;
 
@@ -117,7 +117,7 @@ class CmsController extends AbstractController
      */
     public function checkAction()
     {
-        $this->setResponseIsAjax(true);
+        $this->responseIsAjax(true);
 
         AB_Loader::loadApplicationLibrary("ApplicationHTTPClient");
         

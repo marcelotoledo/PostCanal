@@ -12,36 +12,70 @@ abstract class AbstractController extends AB_Controller
     /**
      * Session
      *
-     * @var Zend_Session_Namespace
+     * @var string
      */
-    private $session;
+    protected $session = null;
+
+    /**
+     * Session name
+     *
+     * @var string
+     */
+    protected static $session_name = 'application';
+
+    /**
+     * Translation
+     *
+     * @var string
+     */
+    protected $translation = null;
 
 
     /**
      * Base controller constructor
      *
-     * @param   AB_Request  $request
-     * @param   AB_Response $response
-     * @return void
+     * @see AB_Controller::__construct
      */
     public function __construct($request, $response)
     {
-        /* session start */
-
-        Zend_Session::start();
-
         parent::__construct($request, $response);
+        $this->__session();
+        $this->__translation();
+    }
+
+    /**
+     * Session initializer
+     *
+     * @return  void
+     */
+    protected function __session()
+    {
+        $this->session = new AB_Session(self::$session_name);
+        $registry = AB_Registry::singleton();
+        $registry->session->object = $this->session;
+    }
+
+    /**
+     * Translation initializer
+     *
+     * @return  void
+     */
+    protected function __translation()
+    {
+        $registry = AB_Registry::singleton();
+        $culture = $registry->translation->culture;
+        $this->translation = new AB_Translation($culture);
+        $template = $registry->view->template;
+        $this->translation->load($template);
+        $registry->translation->object = $this->translation;
     }
 
     /**
      * Run controller action
      *
-     * @param   string      $name   Action name
-     * @throws  AB_Exception
-     * @return  void
+     * @see AB_Controller::runAction
      */
-
-    public function runAction($name=null)
+    public function runAction($name)
     {
         try
         {
@@ -51,94 +85,13 @@ abstract class AbstractController extends AB_Controller
         {
             /* add user profile information to exception */
 
-            $id = intval($this->user_profile_id);
-            $_m= "an error occurred during the execution of current action";
+            $id = intval($this->session->user_profile_id);
+            $_m = "an error occurred during the execution of action (" . $name . ")";
             $_d = array('method' => __METHOD__);
             if($id > 0) $_d = array_merge($_d, array('user_profile_id' => $id));
             AB_Exception::forward($_m, E_USER_NOTICE, $exception, $_d);
         }
     }   
-
-    /* JSON */
-
-    /**
-     * Set view data 
-     * Encode tn Json format when is Ajax
-     *
-     * @param   mixed   $data
-     * @return  void
-     */
-    public function setViewData($data)
-    {
-        if($this->getResponseIsAjax() == true)
-        {
-            parent::setViewData(Zend_Json::encode($data));
-        }
-        else
-        {
-            parent::setViewData($data);
-        }
-    }
-
-    /* SESSION */
-
-    /**
-     * Get overloading
-     * Get session attribute
-     *
-     * @param   string  $name
-     * @return  mixed
-     */
-    protected function __get($name)
-    {
-        $session = $this->getSession();
-        $value = null;
-
-        if(is_object($session)) $value = $session->{$name};
-
-        return $value;
-    }
-
-    /**
-     * Set overloading
-     * Set session attribute
-     *
-     * @param   string  $name
-     * @param   mixed   $value
-     * @return  void
-     */
-    protected function __set($name, $value)
-    {
-        $session = $this->getSession();
-
-        if(is_object($session)) $session->{$name} = $value;
-    }
-
-    /**
-     * Create login session
-     *
-     * @return  void
-     */
-    protected function sessionCreate()
-    {
-        $registry = AB_Registry::singleton();
-        $expiration = $registry->session->expiration;
-
-        $session = $this->getSession();
-        $session->setExpirationSeconds($expiration);
-    }
-
-    /**
-     * Session lock
-     *
-     * @return  void
-     */
-    public function sessionLock()
-    {
-        $session = $this->getSession();
-        $session->__alive__ = true;
-        $session->lock();
-    }
 
     /**
      * Check login session
@@ -147,78 +100,18 @@ abstract class AbstractController extends AB_Controller
      */
     protected function sessionAuthorize()
     {
-        $registry = AB_Registry::singleton();
-        $redirect = $registry->session->unauthorized->redirect;
-        $alive = self::sessionAlive();
-
-        if($alive == false)
+        if(($active = $this->session->getActive()) == false)
         {
+            $registry = AB_Registry::singleton();
+            $item = $registry->session->unauthorized->redirect;
+            $redirect = empty($item) ? BASE_URL : $item;
+
             $this->setResponseRedirect($redirect, AB_Response::STATUS_UNAUTHORIZED);
             $_m = "session unauthorized";
             $_d = array('method' => __METHOD__);
             throw new AB_Exception($_m, E_USER_NOTICE, $_d);
         }
 
-        return $alive;
-    }
-
-    /**
-     * Destroy login session
-     *
-     * @param   string  $login
-     * @param   string  $password
-     * @return  void
-     */
-    protected function sessionDestroy()
-    {
-        $session = $this->getSession();
-        $session->unLock();
-        $session->unsetAll();
-        $this->session = null;
-    }
-
-    /**
-     * Get session
-     *
-     * @return  Zend_Session_Namespace
-     */
-    private function getSession()
-    {
-        if(empty($this->session))
-        {
-            $this->session = self::recoverSession();
-        }
-
-        return $this->session;
-    }
-
-    /**
-     * Check if session alive
-     *
-     * @return boolean
-     */
-    public static function sessionAlive()
-    {
-        $session = self::recoverSession();
-        $alive = false;
-
-        if(is_object($session))
-        {
-            $alive = ($session->__alive__ === true);
-        }
-
-        return $alive;
-    }
-
-    /**
-     * Recover sesssion
-     *
-     * @return  Zend_Session_Namespace
-     */
-    public static function recoverSession()
-    {
-        $registry = AB_Registry::singleton();
-        $namespace = $registry->session->namespace;
-        return new Zend_Session_Namespace($namespace);
+        return $active;
     }
 }

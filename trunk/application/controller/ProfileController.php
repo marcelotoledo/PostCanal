@@ -10,16 +10,7 @@
 class ProfileController extends AbstractController
 {
     const STATUS_OK = "ok";
-    const STATUS_LOGGED = "logged";
-    const STATUS_REGISTERED = "registered";
     const STATUS_FAILED = "failed";
-    const STATUS_INVALID = "invalid";
-    const STATUS_INCOMPLETE = "incomplete";
-    const STATUS_UNCONFIRMED = "unconfirmed";
-    const STATUS_WRONG_PASSWORD = "wrong_password";
-    const STATUS_UNMATCHED_PASSWORD = "unmatched_password";
-    const STATUS_UNCHANGED_EMAIL = "unchanged_email";
-    const STATUS_INSTRUCTION_FAILED = "instruction_failed";
 
     const CONFIRM_OK = "confirm_ok";
     const CONFIRM_FAILED = "confirm_failed";
@@ -58,11 +49,12 @@ class ProfileController extends AbstractController
      */
     public function loginAction()
     {
-        $this->setResponseIsAjax(true);
+        $this->isXML(true);
 
-        $email = $this->getRequestParameter('email');
-        $password = $this->getRequestParameter('password');
-        $result = self::STATUS_INVALID;
+        $email = $this->request->email;
+        $password = $this->request->password;
+        $this->view->login = self::STATUS_FAILED;
+        $this->view->message = $this->translation->login_invalid;
 
         /* check for existing profile */
 
@@ -79,15 +71,15 @@ class ProfileController extends AbstractController
 
             if($profile->register_confirmation)
             {
-                $this->sessionCreate();
-                $this->user_profile_id = $profile->user_profile_id;
-                $this->user_profile_uid = $profile->uid;
-                $this->user_profile_login_email = $profile->login_email;
-                $this->sessionLock();
+                $this->session->setActive(true);
+                $this->session->user_profile_id = $profile->user_profile_id;
+                $this->session->user_profile_uid = $profile->uid;
+                $this->session->user_profile_login_email = $profile->login_email;
 
-                $result = self::STATUS_LOGGED;
+                $this->view->login = self::STATUS_OK;
+                $this->view->message = '';
 
-                $id = $this->user_profile_id;
+                $id = $this->session->user_profile_id;
                 $information = UserProfileInformation::findByPrimaryKey($id);
                 
                 if(is_object($information))
@@ -104,11 +96,10 @@ class ProfileController extends AbstractController
 
             else
             {
-                $result = self::STATUS_UNCONFIRMED;
+                $this->view->result = self::STATUS_UNCONFIRMED;
+                $this->view->message = $this->translation->register_unconfirmed;
             }
         }
-
-        $this->setViewData(compact(array('result')));
     }
 
     /**
@@ -118,26 +109,22 @@ class ProfileController extends AbstractController
      */
     public function registerAction()
     {
-        $this->setResponseIsAjax(true);
-        $email = $this->getRequestParameter('email');
-        $password = $this->getRequestParameter('password');
-        $confirm = $this->getRequestParameter('confirm');
-        $result = self::STATUS_FAILED;
+        $this->isXML(true);
+
+        $email = $this->request->email;
+        $password = $this->request->password;
+        $confirm = $this->request->confirm;
+        $this->view->register = self::STATUS_FAILED;
+        $this->view->message = $this->translation->register_invalid;
 
         /* check for existing profile */
 
         $profile = null;
         $information = null;
 
-        if(strlen($email) == 0 || strlen($password) == 0 || strlen($confirm) == 0)
-        {
-            $result = self::STATUS_INCOMPLETE;
-        }
-        elseif(strlen($password) > 0 && strlen($confirm) > 0 && $password != $confirm)
-        {
-            $result = self::STATUS_UNMATCHED_PASSWORD;
-        }
-        else
+        if(strlen($email) > 0 && 
+           strlen($password) > 0 && strlen($confirm) > 0 &&
+           $password == $confirm)
         {
             $profile = UserProfile::findByEmail($email);
 
@@ -186,10 +173,13 @@ class ProfileController extends AbstractController
                     }
                 }
 
-                $result = self::STATUS_REGISTERED;
+                $this->view->register = self::STATUS_OK;
+                $this->view->message = $this->translation->register_accepted;
             }
             catch(AB_Exception $exception)
             {
+                $this->view->message = $this->translation->register_invalid_email;
+
                 /* disable unconfirmed profile */
 
                 if(!$profile->register_confirmation)
@@ -204,8 +194,6 @@ class ProfileController extends AbstractController
                 AB_Log::write($_m, $exception->getCode(), $_d);
             }
         }
-
-        $this->setViewData(compact(array('result')));
     }
 
     /**
@@ -215,10 +203,10 @@ class ProfileController extends AbstractController
      */
     public function logoutAction()
     {
-        $this->setViewLayout(null);
-        $this->setViewTemplate(null);
-        $this->sessionDestroy();
-        $this->setResponseRedirect(BASE_URL);
+        $this->view->setLayout(null);
+        $this->view->setTemplate(null);
+        $this->session->setActive(false);
+        $this->response->setRedirect(BASE_URL);
     }
 
     /**
@@ -228,11 +216,12 @@ class ProfileController extends AbstractController
      */
     public function recoveryAction()
     {
-        $this->setResponseIsAjax(true);
+        $this->isXML(true);
 
-        $email = $this->getRequestParameter('email');
+        $email = $this->request->email;
         $profile = UserProfile::findByEmail($email);
-        $result = self::STATUS_OK;
+        $this->view->recovery = self::STATUS_FAILED;
+        $this->view->message = $this->translation->recovery_failed;
 
         /* recovery instructions */
 
@@ -250,10 +239,14 @@ class ProfileController extends AbstractController
                     $information->recovery_message_time = time();
                     $information->save();
                 }
+
+                $this->view->recovery = self::STATUS_OK;
+                $this->view->message = $this->translation->recovery_sent;
             }
             catch(AB_Exception $exception)
             {
-                $result = self::STATUS_FAILED;
+                $this->view->message = $this->translation->recovery_failed;
+
                 $id = $profile->user_profile_id;
                 $_m = "failed to recovery;\n" . $exception->getMessage();
                 $_d = array('method' => __METHOD__, 'user_profile_id' => $id);
@@ -268,18 +261,20 @@ class ProfileController extends AbstractController
             try
             {
                 self::sendDummyInstruction($email);
+
+                $this->view->recovery = self::STATUS_OK;
+                $this->view->message = $this->translation->recovery_sent;
             }
             catch(AB_Exception $exception)
             {
-                $result = self::STATUS_FAILED;
+                $this->view->result = self::STATUS_FAILED;
+
                 $_m = "failed to send dummy instructions to email (" . $email . ");\n";
                 $_m.= $exception->getMessage();
                 $_d = array('method' => __METHOD__);
                 AB_Log::write($_m, $exception->getCode(), $_d);
             }
         }
-
-        $this->setViewData(compact(array('result')));
     }
 
     /**
@@ -289,10 +284,11 @@ class ProfileController extends AbstractController
      */
     public function confirmAction()
     {
-        $this->setViewLayout('index');
-        $email = $this->getRequestParameter('email');
-        $uid = $this->getRequestParameter('uid');
-        $result = self::CONFIRM_FAILED;
+        $this->view->setLayout('index');
+
+        $email = $this->request->email;
+        $uid = $this->request->uid;
+        $this->view->result = self::CONFIRM_FAILED;
 
         $profile = null;
 
@@ -317,15 +313,13 @@ class ProfileController extends AbstractController
                     $information->save();
                 }
 
-                $result = self::CONFIRM_OK;
+                $this->view->result = self::CONFIRM_OK;
             }
             else
             {
-                $result = self::CONFIRM_DONE_BEFORE;
+                $this->view->result = self::CONFIRM_DONE_BEFORE;
             }
         }
-
-        $this->setViewParameter('result', $result);
     }
 
     /**
@@ -335,7 +329,7 @@ class ProfileController extends AbstractController
      */
     public function passwordAction()
     {
-        $this->getRequestMethod() == AB_Request::METHOD_POST ?
+        $this->request->getMethod() == AB_Request::METHOD_POST ?
             $this->passwordMethodPOST() :
             $this->passwordMethodGET();
     }
@@ -347,9 +341,10 @@ class ProfileController extends AbstractController
      */
     private function passwordMethodGET()
     {
-        $this->setViewLayout('index');
-        $email = $this->getRequestParameter('email');
-        $uid = $this->getRequestParameter('uid');
+        $this->view->setLayout('index');
+
+        $email = $this->request->email;
+        $uid = $this->request->uid;
         $profile = null;
 
         if(strlen($email) > 0 && strlen($uid) > 0)
@@ -357,7 +352,7 @@ class ProfileController extends AbstractController
             $profile = UserProfile::findByUID($email, $uid);
         }
 
-        $this->setViewParameter('profile', $profile);
+        $this->view->profile = $profile;
     }
 
     /**
@@ -367,21 +362,21 @@ class ProfileController extends AbstractController
      */
     private function passwordMethodPOST()
     {
-        $this->setResponseIsAjax(true);
+        $this->isXML(true);
 
-        $email = $this->getRequestParameter('email');
-        $uid = $this->getRequestParameter('uid');
-        $current = $this->getRequestParameter('current');
-        $password = $this->getRequestParameter('password');
-        $confirm = $this->getRequestParameter('confirm');
-        $result = self::STATUS_FAILED;
+        $email = $this->request->email;
+        $uid = $this->request->uid;
+        $current = $this->request->current;
+        $password = $this->request->password;
+        $confirm = $this->request->confirm;
+        $this->view->result = self::STATUS_FAILED;
 
         /* online password change (authenticated) */
 
-        if(strlen($current) > 0 && ($id = intval($this->user_profile_id)) > 0)
+        if(strlen($current) > 0 && ($id = intval($this->session->user_profile_id)) > 0)
         {
             $this->sessionAuthorize();
-            $result = $this->passwordChangeOnline($id, $current, $password, $confirm);
+            $this->view->result = $this->passwordA($id, $current, $password, $confirm);
         }
  
         /* offline password change (not authenticated) */
@@ -389,10 +384,8 @@ class ProfileController extends AbstractController
         if(strlen($email) > 0 && strlen($uid) > 0 && 
            strlen($password) && strlen($confirm))
         {
-            $result = $this->passwordChangeOffline($email, $uid, $password, $confirm);
+            $this->view->result = $this->passwordN($email, $uid, $password, $confirm);
         }
-
-        $this->setViewData(compact(array('result')));
     }
 
     /**
@@ -404,7 +397,7 @@ class ProfileController extends AbstractController
      * @param   string  $confirm
      * @return  string
      */
-    private function passwordChangeOnline($id, $current, $password, $confirm)
+    private function passwordA($id, $current, $password, $confirm)
     {
         $result = self::STATUS_FAILED;
 
@@ -448,7 +441,7 @@ class ProfileController extends AbstractController
      * @param   string  $confirm
      * @return  string
      */
-    private function passwordChangeOffline($email, $uid, $password, $confirm)
+    private function passwordN($email, $uid, $password, $confirm)
     {
         $result = self::STATUS_FAILED;
 
@@ -486,7 +479,7 @@ class ProfileController extends AbstractController
      */
     public function emailAction()
     {
-        $this->getRequestMethod() == AB_Request::METHOD_POST ?
+        $this->request->getMethod() == AB_Request::METHOD_POST ?
             $this->emailMethodPOST() :
             $this->emailMethodGET();
     }
@@ -498,9 +491,10 @@ class ProfileController extends AbstractController
      */
     private function emailMethodGET()
     {
-        $this->setViewLayout('index');
-        $email = $this->getRequestParameter('email');
-        $uid = $this->getRequestParameter('uid');
+        $this->view->setLayout('index');
+
+        $email = $this->request->email;
+        $uid = $this->request->uid;
         $profile = null;
         $new_email = null;
 
@@ -516,8 +510,8 @@ class ProfileController extends AbstractController
             }
         }
 
-        $this->setViewParameter('profile', $profile);
-        $this->setViewParameter('new_email', $new_email);
+        $this->view->profile = $profile;
+        $this->view->new_email = $new_email;
     }
 
     /**
@@ -527,31 +521,29 @@ class ProfileController extends AbstractController
      */
     private function emailMethodPOST()
     {
-        $this->setResponseIsAjax(true);
+        $this->isXML(true);
 
-        $new_email = $this->getRequestParameter('new_email');
-        $email = $this->getRequestParameter('email');
-        $uid = $this->getRequestParameter('uid');
-        $password = $this->getRequestParameter('password');
-        $result = self::STATUS_FAILED;
+        $new_email = $this->request->new_email;
+        $email = $this->request->email;
+        $uid = $this->request->uid;
+        $password = $this->request->password;
+        $this->view->result = self::STATUS_FAILED;
         $profile = null;
 
         /* change request (authenticated) */
 
-        if(strlen($new_email) > 0 && ($id = intval($this->user_profile_id)) > 0)
+        if(strlen($new_email) > 0 && ($id = intval($this->session->user_profile_id)) > 0)
         {
             $this->sessionAuthorize();
-            $result = $this->emailChangeRequest($id, $new_email);
+            $this->view->result = $this->emailChangeRequest($id, $new_email);
         }
         
         /* change save */
 
         if(strlen($email) > 0 && strlen($uid) > 0 && strlen($password) > 0)
         {
-            $result = $this->emailChangeSave($email, $uid, $password);
+            $this->view->result = $this->emailChangeSave($email, $uid, $password);
         }
-
-        $this->setViewData(compact(array('result')));
     }
 
     /**
@@ -635,6 +627,7 @@ class ProfileController extends AbstractController
                         $id = $profile->user_profile_id;
                         $_d = array ('method' => __METHOD__, 'user_profile_id' => $id);
                         self::notice("email changed", $_d);
+
                         self::sendProfileNotice($profile);
                     }
                 }
@@ -657,7 +650,7 @@ class ProfileController extends AbstractController
     {
         $this->sessionAuthorize();
 
-        $this->getRequestMethod() == AB_Request::METHOD_POST ?
+        $this->request->getMethod() == AB_Request::METHOD_POST ?
             $this->editMethodPOST() :
             $this->editMethodGET();
     }
@@ -669,22 +662,22 @@ class ProfileController extends AbstractController
      */
     private function editMethodGET()
     {
-        $this->setViewLayout('dashboard');
+        $this->view->setLayout('dashboard');
         
-        $id = intval($this->user_profile_id);
+        $id = intval($this->session->user_profile_id);
         $profile = UserProfile::findByPrimaryKeyEnabled($id);
 
         if(empty($profile)) 
         {
-            $this->setResponseRedirect(BASE_URL);
+            $this->response->setRedirect(BASE_URL);
             return null;
         }
 
         $information = UserProfileInformation::findByPrimaryKey($id);
         if(!is_object($information)) $information = new UserProfileInformation();
 
-        $this->setViewParameter('profile', $profile);
-        $this->setViewParameter('information', $information);
+        $this->view->profile = $profile;
+        $this->view->information = $information;
     }
 
     /**
@@ -694,11 +687,11 @@ class ProfileController extends AbstractController
      */
     private function editMethodPOST()
     {
-        $this->setResponseIsAjax(true);
+        $this->isXML(true);
 
-        $id = intval($this->user_profile_id);
+        $id = intval($this->session->user_profile_id);
         $profile = ($id > 0) ? UserProfile::findByPrimaryKeyEnabled($id) : null;
-        $result = self::STATUS_FAILED;
+        $this->view->result = self::STATUS_FAILED;
 
         if(!is_object($profile))
         {
@@ -707,7 +700,7 @@ class ProfileController extends AbstractController
             throw new AB_Exception($_m, E_USER_WARNING, $_d);
         }
 
-        $name = $this->getRequestParameter('name');
+        $name = $this->request->name;
 
         $information = UserProfileInformation::findByPrimaryKey($id);
 
@@ -722,7 +715,7 @@ class ProfileController extends AbstractController
         try
         {
             $information->save();
-            $result = self::STATUS_OK;
+            $this->view->result = self::STATUS_OK;
         }
         catch(AB_Exception $exception)
         {
@@ -730,8 +723,6 @@ class ProfileController extends AbstractController
             $_d = array('method' => __METHOD__, 'user_profile_id' => $id);
             AB_Exception::forward($_m, E_USER_WARNING, $exception, $_d);
         }
-
-        $this->setViewData(compact(array('result')));
     }
 
     /**

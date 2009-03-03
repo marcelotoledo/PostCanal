@@ -7,7 +7,7 @@
  * @package     Controller
  * @author      Rafael Castilho <rafael@castilho.biz>
  */
-class IndexController extends AB_Controller
+class IndexController extends AbstractController
 {
     /**
      * Index controller constructor
@@ -19,7 +19,7 @@ class IndexController extends AB_Controller
     public function __construct($request, $response)
     {
         parent::__construct($request, $response);
-        $this->setViewLayout('index');
+        $this->view->setLayout('index');
     }
 
     /**
@@ -29,9 +29,9 @@ class IndexController extends AB_Controller
      */
     public function indexAction()
     {
-        if(AbstractController::sessionAlive())
+        if($this->session->getActive() == true)
         {
-            $this->setResponseRedirect(AB_Request::url("dashboard"));
+            $this->response->setRedirect(AB_Request::url("dashboard"));
         }
     }
 }
