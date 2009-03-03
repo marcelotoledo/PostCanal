@@ -10,24 +10,6 @@
 class AB_Helper
 {
     /**
-     * View
-     * 
-     * @var AB_View
-     */
-    private $view;
-
-    /**
-     * View helper constructor
-     *
-     * @param   AB_View $view
-     * @return void
-     */
-    public function __construct($view)
-    {   
-        $this->view = $view;
-    }
-
-    /**
      * URL (without initial /)
      *
      * @param   string  $controller
@@ -35,11 +17,9 @@ class AB_Helper
      * @param   array   $parameters
      * @return  string
      */
-    public function url($controller=null, $action=null, $parameters=array())
+    public static function url($controller=null, $action=null, $parameters=array())
     {
-        echo self::relativeURL(AB_Request::url($controller, 
-                                               $action, 
-                                               $parameters));
+        echo self::relativeURL(AB_Request::url($controller, $action, $parameters));
     }
 
     /**
@@ -50,11 +30,9 @@ class AB_Helper
      * @param   array   $parameters
      * @return  string
      */
-    public function href($controller=null, $action=null, $parameters=array())
+    public static function href($controller=null, $action=null, $parameters=array())
     {
-        $url = self::relativeURL(AB_Request::url($controller, 
-                                                 $action, 
-                                                 $parameters));
+        $url = self::relativeURL(AB_Request::url($controller, $action, $parameters));
 
         echo strlen($url) > 0 ? $url : "/";
     }
@@ -68,11 +46,10 @@ class AB_Helper
      * @param   array   $parameters
      * @return  void
      */
-    public function a($label, $controller=null, $action=null, 
-                      $parameters=array())
+    public static function a($label, $controller=null, $action=null, $parameters=array())
     {
         echo "<a href=\"";
-        $this->href($controller, $action, $parameters);
+        self::href($controller, $action, $parameters);
         echo "\">";
         echo $label;
         echo "</a>";
@@ -84,7 +61,7 @@ class AB_Helper
      * @param   string  $name
      * @return  void
      */
-    public function script_src($name)
+    public static function script_src($name)
     {
         echo self::relativeURL(BASE_URL) . "/script/" . $name;
     }
@@ -96,10 +73,10 @@ class AB_Helper
      * @param   string  $type     Script type
      * @return  void
      */
-    public function script($name, $type="text/javascript")
+    public static function script($name, $type="text/javascript")
     {
         echo "<script type=\"" . $type . "\" src=\"";
-        $this->script_src($name);
+        self::script_src($name);
         echo "\"></script>\n";
     }
 
@@ -109,7 +86,7 @@ class AB_Helper
      * @param   string  $name
      * @return  void
      */
-    public function style_url($name)
+    public static function style_url($name)
     {
         echo self::relativeURL(BASE_URL) . "/style/" . $name;
     }
@@ -121,11 +98,11 @@ class AB_Helper
      * @param   string  $media    CSS media
      * @return  void
      */
-    public function style($name, $type="text/css", $media="screen")
+    public static function style($name, $type="text/css", $media="screen")
     {
         echo "<style type=\"" . $type . "\" media=\"" . $media . "\">";
         echo "@import url(\"";
-        $this->style_url($name);
+        self::style_url($name);
         echo "\");</style>\n";
     }
 
@@ -135,7 +112,7 @@ class AB_Helper
      * @param   string  $path
      * @return  void
      */
-    public function img_src($path)
+    public static function img_src($path)
     {
         echo self::relativeURL(BASE_URL) . "/image/" . $path;
     }
@@ -146,23 +123,22 @@ class AB_Helper
      * @param   string  $path   Image path
      * @return  void
      */
-    public function img($path, $alt="")
+    public static function img($path, $alt="")
     {
         echo "<img src=\"";
-        echo $this->img_src($path);
+        echo self::img_src($path);
         echo "\" alt=\"" . $alt . "\">\n";
     }
-
-
 
     /**
      * Javascript including
      *
      * @return  void
      */
-    public function include_javascript()
+    public static function include_javascript()
     {
-        $template = $this->view->getTemplate();
+        $registry = AB_Registry::singleton();
+        $template = $registry->view->template;
         $path = APPLICATION_PATH . "/view/template/" . $template . ".js";
 
         if(file_exists($path) == true)
@@ -178,9 +154,10 @@ class AB_Helper
      *
      * @return  void
      */
-    public function include_stylesheet()
+    public static function include_stylesheet()
     {
-        $template = $this->view->getTemplate();
+        $registry = AB_Registry::singleton();
+        $template = $registry->view->template;
         $path = APPLICATION_PATH . "/view/template/" . $template . ".css";
 
         if(file_exists($path) == true)
@@ -189,6 +166,37 @@ class AB_Helper
             include $path;
             echo "</style>\n";
         }
+    }
+
+    /**
+     * Session
+     *
+     * @param   string  $name
+     * @return  string  
+     */
+    public static function session($name)
+    {
+        $registry = AB_Registry::singleton();
+        $session = $registry->session->object;
+        echo (isset($session) && is_object($session)) ? $session->{$name} : '';
+    }
+
+    /**
+     * Translation
+     *
+     * @param   string  $name
+     * @return  string  
+     */
+    public static function translation($name)
+    {
+        $registry = AB_Registry::singleton();
+        $translation = $registry->translation->object;
+        
+        $value = null;
+        if(isset($translation) && is_object($translation)) $value = $translation->{$name};
+        if(strlen($value) == 0) $value = $name;
+
+        echo $value;
     }
 
     /**

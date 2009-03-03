@@ -41,11 +41,11 @@ class AB_Response
     private $is_redirect = false;
 
     /**
-     * Response is AJAX?
+     * Response XML
      *
      * @var boolean
      */
-    private $is_ajax = false;
+    private $is_xml = false;
 
     /**
      * Response body
@@ -158,15 +158,24 @@ class AB_Response
     }
 
     /**
-     * Is AJAX ?
+     * Is XML
      *
-     * @param   boolean|null     $ajax
+     * @param   boolean     $b
      * @return  boolean
      */
-    public function isAjax($b=null)
+    public function isXML($b=null)
     {
-        if($b!==null) $this->is_ajax = ((boolean) $b);
-        return $this->is_ajax;
+        if($b !== null)
+        {
+            $this->is_xml = ((boolean) $b);
+
+            if($this->is_xml === true) 
+            {
+                $this->setContentType('text/xml');
+            }
+        }
+
+        return $this->is_xml;
     }
 
     /**
@@ -207,9 +216,9 @@ class AB_Response
      */
     public function send()
     {
-        if($this->is_ajax)
+        if($this->is_xml === true)
         {
-            /* ajax will not understand redirects, right ?! */
+            /* do not redirect xml */
 
             if($this->status == self::STATUS_REDIRECT)
             {

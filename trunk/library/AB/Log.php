@@ -14,7 +14,7 @@ class AB_Log
      *
      * @var string
      */
-    private static $table_name = 'application_log';
+    private static $table_name = 'ab_log';
 
 
     /**
@@ -22,21 +22,21 @@ class AB_Log
      *
      * @param   string  $message    Log message
      * @param   integer $priority   Priority
-     * @param   array   $attributes Extra attributes
+     * @param   array   $data       Data (data_* columns)
      * @return  void
      */
     public static function write ($message,
                                   $priority=E_USER_NOTICE,
-                                  $attributes=array())
+                                  $data=array())
     {
         $columns = array('message', 'priority');
         $values = array($message, $priority);
 
-        /* set extra attributes */
+        /* set extra data */
 
-        foreach($attributes as $name => $value)
+        foreach($data as $name => $value)
         {
-            $columns[] = $name;
+            $columns[] = "data_" . $name;
             $values[] = $value;
         }
 

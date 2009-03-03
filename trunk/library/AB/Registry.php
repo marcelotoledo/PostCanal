@@ -3,6 +3,8 @@
 /**
  * Data registry
  *
+ * Generic storage class helps to manage global data
+ *
  * @category    Blotomate
  * @package     AB
  * @author      Rafael Castilho <rafael@castilho.biz>
@@ -17,31 +19,14 @@ class AB_Registry
     private static $instance;
 
     /**
-     * Registry data
-     *
+     * Data
+     * 
      * @var array
      */
-    protected $data = array();
+    private $data = array();
 
-    /**
-     * Registry level
-     *
-     * @var integer
-     */
-    protected $level;
-
-
-    /**
-     * Registry constructor
-     *
-     * @param   integer $level
-     * @return  void
-     */
-    private function __construct($level=0)
-    {
-        $this->level = $level;
-    }
-
+    
+    private function __construct() { }
     private function __clone() { }
 
     /**
@@ -60,22 +45,6 @@ class AB_Registry
     }
 
     /**
-     * Get overloading
-     *
-     * @param   string  $name
-     * @return  mixed
-     */
-    public function __get ($name)
-    {
-        if(array_key_exists($name, $this->data) == false)
-        {
-            $this->data[$name] = new self($this->level + 1);
-        }
-
-        return $this->data[$name];
-    }
-
-    /**
      * Set overloading
      *
      * @param   string  $name
@@ -88,42 +57,101 @@ class AB_Registry
     }
 
     /**
-     * To String
-     *
-     * @return  string
+     * Get overloading
+     * 
+     * @param   string  $name
+     * @return  mixed
      */
-    public function __toString()
+    public function __get ($name)
     {
-        $output = "\n";
-
-        foreach($this->data as $name => $value)
+        if(array_key_exists($name, $this->data) == false)
         {
-            $output.= str_repeat(" ", $this->level);
-            $output.= $name . ": " . $value . "\n";
+            $this->data[$name] = new self();
         }
 
-        return $output;
+        return $this->data[$name];
     }
 
     /**
-     * Is set
+     * Check if a node is set
      *
      * @param   string  $name
      * @return  boolean
      */
     public function __isset($name)
     {
-        return empty($this->data[$name]) ^ true;
+        $result = false;
+
+        if(array_key_exists($name, $this->data))
+        {
+            $result = true;
+
+            if(is_object($this->data[$name]))
+            {
+                if(get_class($this->data[$name]) == __CLASS__)
+                {
+                    $result = false;
+                }
+            }
+        }
+
+        return $result;
     }
 
     /**
-     * Unset
+     * Return null string to AB_Registry objects
      *
-     * @param   string  $name
+     * @return  string
+     */
+    public function __toString()
+    {
+        return ((string) null);
+    }
+
+    /**
+     * Load data from file
+     *
+     * @param   string  $filename
+     * @param   string  $type
      * @return  void
      */
-    public function __unset($name)
+    public function load($filename, $type='xml')
     {
-        unset($this->data[$name]);
+        if(file_exists($filename))
+        {
+            switch (strtolower($type))
+            {
+                case 'xml' : 
+                    $xml = simplexml_load_file($filename); 
+
+                    if(is_object($xml)) 
+                        if(count($xml) > 0) 
+                            self::fromXML($xml->children(), $this->data);
+                break;
+            }
+        }
+    }
+    
+    /**
+     * Load data from XML
+     *
+     * @param   SimpleXMLElement    $xml
+     * @param   array               $data
+     * @return  void
+     */
+    protected static function fromXML($xml, &$data)
+    {
+        foreach($xml as $k => $v)
+        {
+            if(count($v) > 0) 
+            {
+                $data[$k] = new self();
+                self::fromXML($v, $data[$k]->data);
+            }
+            else
+            {
+                $data[$k] = ((string) $v);
+            }
+        }
     }
 }

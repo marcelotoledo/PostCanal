@@ -14,21 +14,21 @@ class AB_Controller
      *
      * @var AB_Request
      */
-    private $request;
+    public $request = null;
 
     /**
      * Response
      *
      * @var AB_Response
      */
-    private $response;
+    public $response = null;
 
     /**
      * View
      * 
      * @var AB_View
      */
-    private $view;
+    public $view = null;
 
 
     /**
@@ -42,116 +42,35 @@ class AB_Controller
     {
         $this->request = $request;
         $this->response = $response;
-        $this->view = new AB_View($request);
+
+        $request_controller = $request->getController();
+        $request_action = $request->getAction();
+        $view_template = $request_controller . "/" . $request_action;
+
+        $registry = AB_Registry::singleton();
+        $registry->request->controller = $request_controller;
+        $registry->request->controller = $request_controller;
+        $registry->view->template = $view_template;
+
+        $this->view = new AB_View($view_template);
     }
 
     /**
-     * Get request method
-     *
-     * @return  string
-     */
-    public function getRequestMethod()
-    {
-        return $this->request->getMethod();
-    }
-
-    /**
-     * Get request parameter
-     *
-     * @param   string  $name
-     * @return  mixed
-     */
-    public function getRequestParameter($name)
-    {
-        return $this->request->{$name};
-    }
-
-    /**
-     * Set view layout
-     *
-     * @param   string  $layout
-     * @return  void
-     */
-    public function setViewLayout($layout)
-    {
-        $this->view->setLayout($layout);
-    }
-
-    /**
-     * Set view template
-     *
-     * @param   string  $template
-     * @return  void
-     */
-    public function setViewTemplate($template)
-    {
-        $this->view->setTemplate($template);
-    }
-
-    /**
-     * Set view parameter
-     *
-     * @param   string  $name
-     * @param   mixed   $value
-     * @return  void
-     */
-    public function setViewParameter($name, $value)
-    {
-        $this->view->{$name} = $value;
-    }
-
-    /**
-     * Set view data (override parameters)
-     *
-     * @param   string  $value
-     * @return  void
-     */
-    public function setViewData($value)
-    {
-        $this->view->setData($value);
-    }
-
-    /**
-     * Set response status
-     *
-     * @return  void
-     */
-    public function setResponseStatus($status)
-    {
-        $this->response->setStatus($status);
-    }
-
-    /**
-     * Set response redirect
-     *
-     * @return  void
-     */
-    public function setResponseRedirect($url, $status=null)
-    {
-        $this->response->setRedirect($url, $status);
-    }
-
-    /**
-     * Set response is AJAX
+     * Is XML
      *
      * @param   boolean     $b
      * @return  void
      */
-    public function setResponseIsAjax($b)
+    public function isXML($b=null)
     {
-        $this->response->isAjax($b);
-        $this->setViewLayout(null);
-        $this->setViewTemplate(null);
-    }
+        if($b != null)
+        {
+            $this->response->isXML($b);
+            $this->view->setLayout(null);
+            $this->view->setTemplate(null);
+        }
 
-    /**
-     * Get response is AJAX
-     *
-     * @return  boolean
-     */
-    public function getResponseIsAjax()
-    {
-        return $this->response->isAjax();
+        return $this->response->isXML();
     }
 
     /**
@@ -161,14 +80,13 @@ class AB_Controller
      * @throws  AB_Exception
      * @return  void
      */
-    public function runAction($name=null)
+    public function runAction($name)
     {
-        $action = $name ? $name : $this->request->getAction();
-        $action_method = $action . "Action";
+        $action = $name . "Action";
 
-        if(is_callable(array($this, $action_method)) == true)
+        if(is_callable(array($this, $action)) == true)
         {
-            $this->{$action_method}();
+            $this->{$action}();
 
             if($this->response->isRedirect() == false)
             {

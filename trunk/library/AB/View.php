@@ -10,13 +10,6 @@
 class AB_View
 {
     /**
-     * View helpers
-     *
-     * @var array
-     */
-    private $helpers = array();
-
-    /**
      * View data
      *
      * @var mixed
@@ -37,17 +30,23 @@ class AB_View
      */
     private $template;
 
+    /**
+     * Is XML
+     *
+     * @var boolean
+     */
+    private $is_xml;
+
 
     /**
      * View constructor
      *
-     * @param   AB_Request  $request
+     * @param   AB_Request  $template
      * @return  void
      */
-    public function __construct($request)
+    public function __construct($template)
     {
-        $this->template = $request->getController() . "/" . 
-                          $request->getAction();
+        $this->template = $template;
     }
 
     /**
@@ -89,31 +88,26 @@ class AB_View
     }
 
     /**
-     * Call helper class 
+     * To (string) XML
      *
-     * @param   string  $name
-     * @param   array   $arguments
      * @return  string
      */
-    public function __call($name, $args)
+    public function __toString()
     {
-        if(!array_key_exists($name, $this->helpers))
-        {
-            $this->helpers[$name] = new $name($this);
-        }
-
-        return $this->helpers[$name];
+        $xml = new XmlWriter();
+        $xml->openMemory();
+        foreach ($this->data as $k => $v) $xml->writeElement($k, $v);
+        return $xml->outputMemory();
     }
 
     /**
-     * Set view data
+     * Get layout
      *
-     * @param   mixed   $data
-     * @return  void
+     * @return  string
      */
-    public function setData($data)
+    public function getLayout()
     {
-        $this->data = $data;
+        return $this->layout;
     }
 
     /**
@@ -128,6 +122,16 @@ class AB_View
     }
 
     /**
+     * Get template
+     *
+     * @return  string
+     */
+    public function getTemplate()
+    {
+        return $this->template;
+    }
+
+    /**
      * Set template
      *
      * @param   string  $template
@@ -136,16 +140,6 @@ class AB_View
     public function setTemplate($template)
     {
         $this->template = $template;
-    }
-
-    /**
-     * Get template
-     *
-     * @return  string
-     */
-    public function getTemplate()
-    {
-        return $this->template;
     }
 
     /**
@@ -160,12 +154,7 @@ class AB_View
         {
             if(strlen($this->template) == 0)
             {
-                /* render text */
-
-                if(is_string($this->data))
-                {
-                    echo $this->data;
-                }
+                echo ((string) $this); /* render view data as xml */
             }
 
             /* render view template */

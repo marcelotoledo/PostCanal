@@ -73,7 +73,7 @@ class AB_Dispatcher
 
         try
         {
-            $this->controllerFactory()->runAction();
+            $this->controllerFactory($controller)->runAction($action);
         }
         catch(AB_Exception $exception)
         {
@@ -122,7 +122,7 @@ class AB_Dispatcher
         {
             /* run error controller actions */
 
-            if($this->response->isAjax() == false)
+            if($this->response->isXML() == false)
             {
                 $status = $this->response->getStatus();
                 $this->controllerFactory('Error')->runAction('status' . $status);
@@ -146,10 +146,8 @@ class AB_Dispatcher
      * @throws  AB_Exception
      * @return  AB_Controller
      */
-    private function controllerFactory($name=null)
+    private function controllerFactory($name)
     {
-        if(strlen($name) == 0) $name = $this->request->getController();
-
         $class_name = $name . "Controller";
         $controller = null;
 

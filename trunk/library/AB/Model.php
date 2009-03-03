@@ -238,11 +238,18 @@ abstract class AB_Model
         $structure = $this->getTableStructure();
         $columns = array_keys($structure);
 
-        /* auto set (if exists) updated_at when model is not new */
+        /* auto set created_at */
+
+        if($this->isNew() && in_array('created_at', $columns))
+        {
+            if(intval($this->created_at) == 0) $this->created_at = time();
+        }
+
+        /* auto set updated_at */
 
         if(!$this->isNew() && in_array('updated_at', $columns))
         {
-            $this->updated_at = time();
+            if(intval($this->updated_at) == 0) $this->updated_at = time();
         }
 
         /* check data for errors */
@@ -512,9 +519,9 @@ abstract class AB_Model
     public static function getConnection($database='default')
     {
         $registry = AB_Registry::singleton();
-        $configuration = $registry->database->{$database};
+        $db = $registry->database->{$database};
 
-        if(empty($configuration))
+        if(!isset($db))
         {
             $_m = "database (" . $database . ") does not exists in registry";
             $_d = array('method' => __METHOD__);
@@ -522,7 +529,7 @@ abstract class AB_Model
         }
         
         $has_connection = false;
-        $connection = $registry->connection->{$database};
+        $connection = $db->connection;
 
         if(get_class($connection) == "PDO")
         {
@@ -533,19 +540,12 @@ abstract class AB_Model
         {
             try
             {
-                $connection = new PDO
-                (
-                    $configuration->driver . ":host=" . 
-                    $configuration->host . ";dbname=" . 
-                    $configuration->db, 
-                    $configuration->username,
-                    $configuration->password
-                );
+                $connection = new PDO ($db->driver . 
+                                       ":host=" . $db->host . ";dbname=" . $db->db, 
+                                       $db->username, $db->password);
 
-                $connection->setAttribute(
-                    PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
-                $registry->connection->{$database} = $connection;
+                $connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+                #$registry->database->{$database}->connection = $connection;
             }
             catch(PDOException $exception)
             {
@@ -570,25 +570,23 @@ abstract class AB_Model
     private static function setTimeZone($database)
     {
         $registry = AB_Registry::singleton();
-        $connection = $registry->connection->{$database};
-        $configuration = $registry->database->{$database};
 
-        if(!empty($connection) && 
-           !empty($configuration->driver) && 
-           !empty($configuration->timezone))
+        $db = $registry->database->{$database};
+        $connection = isset($db->connection) ? $db->connection : null; 
+        $driver = strtolower($db->driver);
+        $timezone = $db->timezone;
+
+        if(is_object($connection) && strlen($driver) > 0 && strlen($timezone) > 0)
         {
             try
             {
-                $driver = strtolower($configuration->driver);
-                $timezone = $configuration->timezone;
-
                 if($driver == "pgsql")
                 {
                     $connection->exec("SET TIME ZONE '" . $timezone . "'");
                 }
                 elseif($driver == "mysql")
                 {
-                    // not working. fix TODO
+                    // need fix (TODO)
                     // $connection->exec("SET time_zone = '" . $timezone . "'");
                 }
                 else
