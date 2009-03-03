@@ -6,7 +6,7 @@
 
 <?php if(count($this->cms) == 0) : ?>
 
-<div class="nocms">Nenhum CMS cadastrado. <?php $this->DefaultHelper()->a("Adicionar novo CMS", "cms", "add") ?></span> 
+<div class="nocms">Nenhum CMS cadastrado. <?php _a_("Adicionar novo CMS", "cms", "add") ?></span> 
 
 <?php else : ?>
 
@@ -21,7 +21,7 @@
 <?php endforeach ?>
 
         </table>
-        <div><?php $this->DefaultHelper()->a("adicionar", "cms", "add") ?></span>
+        <div><?php _a_("adicionar", "cms", "add") ?></span>
     </td>
     <td id="right-panel"><!-- dashboard/cms loaded by ajax --></td>
 </tr>

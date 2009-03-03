@@ -14,7 +14,7 @@ $(document).ready(function()
         $.ab_spinner
         ({
             height: 32, width: 32,
-            image: "<?php $this->img_src('spinner/linux_spinner.png') ?>",
+            image: "<?php img_src('spinner/linux_spinner.png') ?>",
             message: "... carregando"
         });
     }
@@ -61,7 +61,7 @@ $(document).ready(function()
         $.ajax
         ({
             type: "POST",
-            url: "<?php $this->url('profile','password') ?>",
+            url: "<?php url('profile','password') ?>",
             dataType: "json",
             data: parameters,
             beforeSend: function()

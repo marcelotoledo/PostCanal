@@ -14,7 +14,7 @@ $(document).ready(function()
         $.ab_spinner
         ({
             height: 32, width: 32,
-            image: "<?php $this->img_src('spinner/linux_spinner.png') ?>",
+            image: "<?php img_src('spinner/linux_spinner.png') ?>",
             message: "... carregando"
         });
     }
@@ -74,7 +74,7 @@ $(document).ready(function()
 
     function onError()
     {
-        window.location = "<?php $this->url('profile','edit') ?>";
+        window.location = "<?php url('profile','edit') ?>";
     }
 
     /* edit submit */
@@ -93,7 +93,7 @@ $(document).ready(function()
         $.ajax
         ({
             type: "POST",
-            url: "<?php $this->url('profile', 'edit') ?>",
+            url: "<?php url('profile', 'edit') ?>",
             dataType: "json",
             data: parameters,
             beforeSend: function ()
@@ -159,8 +159,8 @@ $(document).ready(function()
         $.ajax
         ({
             type: "POST",
-            url: "<?php $this->url('profile', 'password') ?>",
-            dataType: "json",
+            url: "<?php url('profile', 'password') ?>",
+            dataType: "xml",
             data: parameters,
             beforeSend: function ()
             {
@@ -225,7 +225,7 @@ $(document).ready(function()
         $.ajax
         ({
             type: "POST",
-            url: "<?php $this->url('profile', 'email') ?>",
+            url: "<?php url('profile', 'email') ?>",
             dataType: "json",
             data: parameters,
             beforeSend: function ()

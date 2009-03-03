@@ -3,8 +3,7 @@ $(document).ready(function()
     /* DEFAULTS */
 
     var active_request = false;
-
-    $("input[@name='register']").val("no");
+    var register = false;
 
 
     /* SWITCHES */
@@ -16,7 +15,7 @@ $(document).ready(function()
         $.ab_spinner
         ({
             height: 32, width: 32,
-            image: "<?php $this->img_src('spinner/linux_spinner.png') ?>",
+            image: "<?php img_src('spinner/linux_spinner.png') ?>",
             message: "... carregando"
         });
     }
@@ -26,18 +25,16 @@ $(document).ready(function()
         $.ab_spinner_stop();
     }
 
-    /* toggle between authentication and register form */
+    /* toggle between login and register form */
 
-    function toggleAuthForm()
+    function toggleForm()
     {
-        register = $("input[@name='register']").val();
-
-        $("#authtitle").toggle();
+        $("#logintitle").toggle();
         $("#regtitle").toggle();
         $("#regrow").toggle();
         $("#pwdconfrow").toggle();
         $("input[@name='regcancel']").toggle();
-        $("input[@name='register']").val(register == "yes" ? "no" : "yes");
+        register = register ^ true;
     }
 
 
@@ -47,7 +44,7 @@ $(document).ready(function()
 
     function onError()
     {
-        alert('erro no servidor!');
+        alert("<?php tr('server_error') ?>");
     }
 
     /* password recovery */
@@ -61,7 +58,7 @@ $(document).ready(function()
 
         if($("input[@name='email']").val() == "")
         {
-            $.ab_alert("digite um EMAIL");
+            $.ab_alert("<?php tr('recovery_email') ?>");
             return null;
         }
 
@@ -70,8 +67,8 @@ $(document).ready(function()
         $.ajax
         ({
             type: "POST",
-            url: "<?php echo $this->url('profile', 'recovery') ?>",
-            dataType: "json",
+            url: "<?php echo url('profile', 'recovery') ?>",
+            dataType: "xml",
             data: parameters,
             beforeSend: function()
             {
@@ -83,59 +80,51 @@ $(document).ready(function()
                 active_request = false;
                 hideSpinner();
             },
-            success: function (data) 
+            success: function (xml) 
             { 
-                var result = data.result;
+                var message = $(xml).find('message').text()
 
-                if(result == "ok") 
-                {
-                    $.ab_alert("Um EMAIL foi enviado para o endereço informado");
-                }
-                else
-                {
-                    $.ab_alert("Não foi possível enviar instruções " + 
-                               "para o endereço de e-mail especificado!");
-                }
+                if(message != "") $.ab_alert(message);
             }, 
             error: function () { onError(); } 
         });
     };
 
-    /* login / register */
+    /* form submit */
 
-    function authSubmit()
+    function formSubmit()
     {
-        if(active_request == true)
-        {
-            return null;
-        }
+        if(active_request == true) return null;
+        if(register == true) { registerSubmit(); } else { loginSubmit(); }
+    }
 
-        register = $("input[@name='register']").val();
+    /* register */
+
+    function registerSubmit()
+    {
         email = $("input[@name='email']").val();
         password = $("input[@name='password']").val();
         confirm_ = $("input[@name='confirm']").val();
 
-        if(email == "" || password == "" || 
-          (register == "yes" && confirm_ == ""))
+        if(email == "" || password == "" || confirm_ == "")
         {
-            $.ab_alert("Preencha o formulário corretamente");
+            $.ab_alert("<?php tr('form_incomplete') ?>");
             return null;
         }
 
-        if(register == "yes" && password != confirm_)
+        if(password != confirm_)
         {
-            $.ab_alert("Senha e confirmação NÃO CORRESPONDEM");
+            $.ab_alert("<?php tr('form_not_match') ?>");
             return null;
         }
 
-        action = (register == "yes") ? "register" : "login";
         parameters = { email: email, password: password, confirm: confirm_ }
 
         $.ajax
         ({
             type: "POST",
-            url: "<?php $this->url('profile') ?>/" + action,
-            dataType: "json",
+            url: "<?php url('profile', 'register') ?>",
+            dataType: "xml",
             data: parameters,
             beforeSend: function ()
             {
@@ -147,55 +136,54 @@ $(document).ready(function()
                 active_request = false;
                 hideSpinner();
             },
-            success: function (data) 
+            success: function (xml) 
             { 
-                var result = data.result;
+                var message = $(xml).find('message').text()
 
-                /* login */
+                if(message != "") $.ab_alert(message);
+            }, 
+            error: function () { onError(); } 
+        });
+    };
 
-                if(result == "logged") 
-                {
-                    window.location = "<?php $this->url('dashboard') ?>";
-                }
-                else if(result == "invalid") 
-                {
-                    $.ab_alert("Autenticação INVÁLIDA");
-                }
-                else if(result == "unconfirmed") 
-                {
-                    $.ab_alert("Cadastro NÃO CONFIRMADO.<br>" + 
-                               "Verifique o pedido de confirmação enviado por e-mail.");
-                }
+    /* login */
 
-                /* register */
+    function loginSubmit()
+    {
+        email = $("input[@name='email']").val();
+        password = $("input[@name='password']").val();
 
-                else if(result == "registered") 
-                {
-                    $.ab_alert("Cadastro realizado com sucesso.\n" + 
-                        "Um EMAIL foi enviado para o endereço informado");
-                    toggleAuthForm();
-                }
-                else if(result == "failed") 
-                {
-                    $.ab_alert("Não foi possível efetuar um novo cadastro");
-                }
-                else if(result == "incomplete") 
-                {
-                    $.ab_alert("Cadastro INCOMPLETO");
-                }
-                else if(result == "unmatched_password") 
-                {
-                    $.ab_alert("Senha e Confirmação NÃO CORRESPONDEM");
-                }
-                else if(result == "instruction_failed") 
-                {
-                    $.ab_alert("Não foi possível enviar instruções " + 
-                               "para o endereço de e-mail especificado!");
-                }
-                else
-                {
-                    onError();
-                }
+        if(email == "" || password == "")
+        {
+            $.ab_alert("<?php tr('form_incomplete') ?>");
+            return null;
+        }
+
+        parameters = { email: email, password: password }
+
+        $.ajax
+        ({
+            type: "POST",
+            url: "<?php url('profile', 'login') ?>",
+            dataType: "xml",
+            data: parameters,
+            beforeSend: function ()
+            {
+                active_request = true;
+                showSpinner();
+            },
+            complete: function()
+            {
+                active_request = false;
+                hideSpinner();
+            },
+            success: function (xml) 
+            { 
+                var login = $(xml).find('login').text()
+                var message = $(xml).find('message').text()
+
+                if(login == "ok") window.location = "<?php url('dashboard') ?>";
+                if(message != "") $.ab_alert(message);
             }, 
             error: function () { onError(); } 
         });
@@ -206,12 +194,12 @@ $(document).ready(function()
 
     $("#reglnk").click(function()
     {
-        toggleAuthForm();
+        toggleForm();
     });
 
     $("input[@name='regcancel']").click(function() 
     {
-        toggleAuthForm();
+        toggleForm();
     });
 
     $("#pwdlnk").click(function()
@@ -219,8 +207,8 @@ $(document).ready(function()
         passwordRecovery();
     });
 
-    $("input[@name='authsubmit']").click(function() 
+    $("input[@name='frmsubmit']").click(function() 
     {
-        authSubmit();
+        formSubmit();
     });
 });

@@ -128,7 +128,7 @@ $(document).ready(function()
         ({
             type: "POST",
             url: "<?php $this->url('cms', 'check') ?>",
-            dataType: "json",
+            dataType: "xml",
             data: parameters,
             beforeSend: function ()
             {
@@ -140,26 +140,27 @@ $(document).ready(function()
                 active_request = false;
                 hideSpinner();
             },
-            success: function (data) 
+            success: function (xml) 
             { 
                 /* url status */
 
-                if(data.url_status == "status_ok") 
+                var url_status = $(xml).find('url_status').text();
+
+                if(url_status == "status_ok") 
                 {
                     commitURL(data.url);
                 }
-                else if(data.url_status == "status_failed")
+                else if(url_status == "status_failed")
                 {
                     changeURL();
                     $.ab_alert("Verifique se o endereço informado é valido");
                 }
-                else if(data.url_status == "status_4xx")
+                else if(url_status == "status_4xx")
                 {
                     changeURL();
                     $.ab_alert("Endereço não encontrado");
                 }
-                else if(data.url_status == "status_3xx" || 
-                        data.url_status == "status_5xx")
+                else if(url_status == "status_3xx" || url_status == "status_5xx")
                 {
                     changeURL();
                     $.ab_alert("O endereço informado possui erros ou está" +
@@ -168,32 +169,37 @@ $(document).ready(function()
 
                 /* cms type */
 
-                if(data.cms_type_status == "ok")
+                var cms_type_status = $(xml).find('cms_type_status').text();
+                var cms_type_name = $(xml).find('cms_type_name').text();
+                var cms_type_version = $(xml).find('cms_type_version').text();
+
+                if(cms_type_status == "ok")
                 {
-                    commitCMSType(data.cms_type_name + " (" + 
-                                  data.cms_type_version + ")");
+                    commitCMSType(cms_type_name + " (" + cms_type_version + ")");
                 }
-                else if(data.cms_type_status == "unknown")
+                else if(cms_type_status == "unknown")
                 {
                     changeURL();
                     $.ab_alert("Não foi possível determinar o tipo de CMS " + 
                                "para o endereço informado");
                 }
-                else if(data.cms_type_status == "maintenance")
+                else if(cms_type_status == "maintenance")
                 {
                     $.ab_alert("O tipo de CMS " + 
-                               data.cms_type_name + " (" + 
-                               data.cms_type_version + ") " +
-                               " está em manutenção. Tente novamente mais tarde");
+                               cms_type_name + " (" + cms_type_version + ") " +
+                               "está em manutenção. Tente novamente mais tarde");
                 }
 
                 /* manager url */
 
-                if(data.cms_type_status == "ok")
+                if(cms_type_status == "ok")
                 {
-                    commitManagerURL(data.manager_url);
+                    var manager_url = $(xml).find('manager_url').text();
+                    var manager_status = $(xml).find('manager_status').text();
 
-                    if(data.manager_status != "ok")
+                    commitManagerURL(manager_url);
+
+                    if(manager_status != "ok")
                     {
                         $.ab_alert("O endereço padrão do gerenciador não é valido." +
                                    "Verifique se o endereço realmente existe e " + 
@@ -229,7 +235,7 @@ $(document).ready(function()
         ({
             type: "POST",
             url: "<?php $this->url('cms', 'check') ?>",
-            dataType: "json",
+            dataType: "xml",
             data: parameters,
             beforeSend: function ()
             {
@@ -241,11 +247,14 @@ $(document).ready(function()
                 active_request = false;
                 hideSpinner();
             },
-            success: function (data) 
+            success: function (xml) 
             { 
-                commitManagerURL(data.manager_url);
+                var manager_url = $(xml).find('manager_url').text();
+                var manager_status = $(xml).find('manager_status').text();
 
-                if(data.manager_status != "ok")
+                commitManagerURL(manager_url);
+
+                if(manager_status != "ok")
                 {
                     $.ab_alert("O endereço informado para o gerenciador " + 
                                "não é valido. Verifique se o endereço " + 
@@ -281,7 +290,7 @@ $(document).ready(function()
         ({
             type: "POST",
             url: "<?php $this->url('cms', 'check') ?>",
-            dataType: "json",
+            dataType: "xml",
             data: parameters,
             beforeSend: function ()
             {
@@ -293,9 +302,11 @@ $(document).ready(function()
                 active_request = false;
                 hideSpinner();
             },
-            success: function (data) 
+            success: function (xml) 
             { 
-                if(data.login_status = "ok")
+                var login_status = $(xml).find('login_status').text();
+
+                if(login_status = "ok")
                 {
                     $.ab_alert("Usuário e senha verificados com sucesso");
                 }
