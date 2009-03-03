@@ -1,5 +1,5 @@
 ==========
-05/01/2008
+05/01/2009
 ==========
 
 - Desenvolvimento do codigo base para a aplicação (framework)
@@ -7,7 +7,7 @@
 HORAS TRABALHADAS: 8h
 
 ==========
-06/01/2008
+06/01/2009
 ==========
 
 - Desenvolvimento do codigo base para a aplicação (framework)
@@ -15,7 +15,7 @@ HORAS TRABALHADAS: 8h
 HORAS TRABALHADAS: 8h
 
 ==========
-07/01/2008
+07/01/2009
 ==========
 
 - Desenvolvimento do codigo base para a aplicação (framework)
@@ -23,7 +23,7 @@ HORAS TRABALHADAS: 8h
 HORAS TRABALHADAS: 6h
 
 ==========
-08/01/2008
+08/01/2009
 ==========
 
 - Desenvolvimento do codigo base para a aplicação (framework)
@@ -31,7 +31,7 @@ HORAS TRABALHADAS: 6h
 HORAS TRABALHADAS: 6h
 
 ==========
-09/01/2008
+09/01/2009
 ==========
 
 - Desenvolvimento do codigo base para a aplicação (framework)
@@ -40,7 +40,7 @@ HORAS TRABALHADAS: 6h
 HORAS TRABALHADAS: 6h
 
 ==========
-12/01/2008
+12/01/2009
 ==========
 
 - Tela de Autenticação / Cadastro
@@ -48,7 +48,7 @@ HORAS TRABALHADAS: 6h
 HORAS TRABALHADAS: 8h
 
 ==========
-13/01/2008
+13/01/2009
 ==========
 
 - Tela de Autenticação / Cadastro
@@ -56,7 +56,7 @@ HORAS TRABALHADAS: 8h
 HORAS TRABALHADAS: 7h
 
 ==========
-14/01/2008
+14/01/2009
 ==========
 
 - Tela de Autenticação / Cadastro / Sessao de Usuario
@@ -64,7 +64,7 @@ HORAS TRABALHADAS: 7h
 HORAS TRABALHADAS: 6h
 
 ==========
-15/01/2008
+15/01/2009
 ==========
 
 - Inclusão das seções: Notas de implementação e Instalação na documentação
@@ -72,7 +72,7 @@ HORAS TRABALHADAS: 6h
 HORAS TRABALHADAS: 3h
 
 ==========
-16/01/2008
+16/01/2009
 ==========
 
 - Inclusão da função de confirmação de cadastro
@@ -81,7 +81,7 @@ HORAS TRABALHADAS: 3h
 HORAS TRABALHADAS: 11h
 
 ==========
-19/01/2008
+19/01/2009
 ==========
 
 - Correção de bugs e melhorias no sistema de autenticação / cadastro
@@ -89,7 +89,7 @@ HORAS TRABALHADAS: 11h
 HORAS TRABALHADAS: 5h
 
 ==========
-20/01/2008
+20/01/2009
 ==========
 
 - Correção de bugs e melhorias no sistema de autenticação / cadastro
@@ -97,7 +97,7 @@ HORAS TRABALHADAS: 5h
 HORAS TRABALHADAS: 3h
 
 ==========
-21/01/2008
+21/01/2009
 ==========
 
 - Criação de biblioteca para envio de mensagens e relay (ApplicationMailer)
@@ -106,7 +106,7 @@ HORAS TRABALHADAS: 3h
 HORAS TRABALHADAS: 7h
 
 ==========
-22/01/2008
+22/01/2009
 ==========
 
 - Edição de perfil
@@ -114,7 +114,7 @@ HORAS TRABALHADAS: 7h
 HORAS TRABALHADAS: 6h
 
 ==========
-23/01/2008
+23/01/2009
 ==========
 
 - Melhorias na UI (loading, popup)
@@ -123,7 +123,7 @@ HORAS TRABALHADAS: 6h
 HORAS TRABALHADAS: 4h
 
 ==========
-27/01/2008
+27/01/2009
 ==========
 
 - Cadastro de CMS
@@ -131,7 +131,7 @@ HORAS TRABALHADAS: 4h
 HORAS TRABALHADAS: 4h
 
 ==========
-29/01/2008
+29/01/2009
 ==========
 
 - Correção de BUGS
@@ -141,7 +141,7 @@ HORAS TRABALHADAS: 4h
 HORAS TRABALHADAS: 5h
 
 ==========
-30/01/2008
+30/01/2009
 ==========
 
 - Correção de BUGS
@@ -150,7 +150,7 @@ HORAS TRABALHADAS: 5h
 HORAS TRABALHADAS: 9h
 
 ==========
-31/01/2008
+31/01/2009
 ==========
 
 - Correção no MODEL (setTimeZone) e config/environment

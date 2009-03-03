@@ -1,0 +1,30 @@
+-- translation --
+
+INSERT INTO ab_translation VALUES (NULL, 'Index/index', 'us_EN', 'form_login', 'Login');
+INSERT INTO ab_translation VALUES (NULL, 'Index/index', 'us_EN', 'form_register', 'Register');
+INSERT INTO ab_translation VALUES (NULL, 'Index/index', 'us_EN', 'form_email', 'E-mail');
+INSERT INTO ab_translation VALUES (NULL, 'Index/index', 'us_EN', 'form_password', 'Password');
+INSERT INTO ab_translation VALUES (NULL, 'Index/index', 'us_EN', 'form_confirm', 'Confirm');
+INSERT INTO ab_translation VALUES (NULL, 'Index/index', 'us_EN', 'form_not_registered', 'not registered');
+INSERT INTO ab_translation VALUES (NULL, 'Index/index', 'us_EN', 'form_forgot_password', 'password?');
+INSERT INTO ab_translation VALUES (NULL, 'Index/index', 'us_EN', 'form_cancel', 'Cancel');
+INSERT INTO ab_translation VALUES (NULL, 'Index/index', 'us_EN', 'form_submit', 'Submit');
+INSERT INTO ab_translation VALUES (NULL, 'Index/index', 'us_EN', 'form_incomplete', 'Form incomplete');
+INSERT INTO ab_translation VALUES (NULL, 'Index/index', 'us_EN', 'form_incomplete', 'Form incomplete');
+INSERT INTO ab_translation VALUES (NULL, 'Index/index', 'us_EN', 'form_not_match', 'Password and confirm does not match');
+INSERT INTO ab_translation VALUES (NULL, 'Index/index', 'us_EN', 'server_error', 'Server error');
+INSERT INTO ab_translation VALUES (NULL, 'Index/index', 'us_EN', 'recovery_email', 'Enter an e-mail');
+
+
+INSERT INTO ab_translation VALUES (NULL, 'Profile/login', 'us_EN', 'login_invalid', 'Invalid login');
+INSERT INTO ab_translation VALUES (NULL, 'Profile/login', 'us_EN', 'register_unconfirmed', 'Registration not confirmed. Please check the email sent and follow the instructions.');
+
+
+INSERT INTO ab_translation VALUES (NULL, 'Profile/register', 'us_EN', 'register_invalid', 'Unable to register.');
+INSERT INTO ab_translation VALUES (NULL, 'Profile/register', 'us_EN', 'register_invalid_email', 'Unable to send a message to the email address specified.');
+INSERT INTO ab_translation VALUES (NULL, 'Profile/register', 'us_EN', 'register_accepted', 'Registration accepted. A message has been sent to the e-mail information.');
+
+
+INSERT INTO ab_translation VALUES (NULL, 'Profile/recovery', 'us_EN', 'recovery_failed', 'Unable to recover the password.');
+INSERT INTO ab_translation VALUES (NULL, 'Profile/recovery', 'us_EN', 'recovery_invalid_email', 'Unable to send a message to the email address specified.');
+INSERT INTO ab_translation VALUES (NULL, 'Profile/recovery', 'us_EN', 'recovery_sent', 'Please check the email sent and follow the instructions.');

@@ -6,13 +6,13 @@
  * @author      Rafael Castilho <rafael@castilho.biz>
  */
 
-/* php */
+/* PHP */
 
 date_default_timezone_set ("UTC");
 error_reporting (E_ALL);
 
 
-/* path */
+/* PATH */
 
 define('BASE_PATH', "/var/www/blotomate");
 define('BASE_URL', "http://127.0.0.1:8001");
@@ -21,25 +21,18 @@ define('LIBRARY_PATH', BASE_PATH . "/library");
 
 set_include_path (LIBRARY_PATH . PATH_SEPARATOR . get_include_path());
 
-
-/* load configuration from xml */
-
-$xml = new Zend_Config_Xml(BASE_PATH . '/config/environment.xml');
-
-
-/* start registry */
-
 $registry = AB_Registry::singleton();
+$registry->load(BASE_PATH . '/config/environment.xml');
 
 
-/* FRAMEWORK */
+/* BASE */
 
-/* database */
+/* request */
 
-$registry->database = $xml->database;
+$registry->request->controller = null;
+$registry->request->action = null;
 
-
-/* response headers */
+/* response */
 
 $registry->response->headers = array
 (
@@ -50,26 +43,27 @@ $registry->response->headers = array
     )
 );
 
+/* view */
 
-/* APPLICATION */
+$registry->view->template = null;
 
-/* login session */
+/* session */
 
-$registry->session->namespace = "login";
+$registry->session->object = null;
 $registry->session->expiration = 43200;
 $registry->session->unauthorized->redirect = BASE_URL;
 
+/* translation */
 
-/* mailer */
+$registry->translation->object = null;
+$registry->translation->culture = 'us_EN';
 
-$registry->application->mailer = $xml->mailer;
-
+/* APPLICATION */
 
 /* http client */
 
-$registry->application->httpclient->maxheaders = 30;
-$registry->application->httpclient->maxbodylenght = 5242880; // 5242880 bytes = 5Mb
-
+$registry->application->httpClient->maxHeaders = 30;
+$registry->application->httpClient->maxBodyLenght = 5242880; // 5242880 bytes = 5Mb
 
 /* python */
 

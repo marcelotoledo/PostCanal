@@ -10,45 +10,63 @@ DROP TABLE IF EXISTS cms_type_configuration CASCADE;
 DROP TABLE IF EXISTS cms_type_discovery CASCADE;
 DROP TABLE IF EXISTS cms_type CASCADE;
 DROP TABLE IF EXISTS application_mailer_relay CASCADE;
-DROP TABLE IF EXISTS application_session CASCADE;
-DROP TABLE IF EXISTS application_log CASCADE;
+DROP TABLE IF EXISTS ab_translation CASCADE;
+DROP TABLE IF EXISTS ab_session CASCADE;
+DROP TABLE IF EXISTS ab_log CASCADE;
+
+/* base */
+
+CREATE TABLE ab_log
+(
+    id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+    priority INTEGER UNSIGNED NOT NULL DEFAULT 0,
+    message TEXT NOT NULL,
+    data_method VARCHAR(100) NOT NULL DEFAULT '',
+    data_controller VARCHAR(100) NOT NULL DEFAULT '',
+    data_action VARCHAR(100) NOT NULL DEFAULT '',
+    data_user_profile_id INTEGER UNSIGNED NOT NULL DEFAULT 0,
+    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    PRIMARY KEY (id)
+) ENGINE=MyISAM DEFAULT CHARSET='utf8';
+
+CREATE INDEX al_priority_idx ON ab_log (priority);
+
+CREATE TABLE ab_session
+(
+    id VARCHAR(255) CHARACTER SET 'utf8' COLLATE 'utf8_bin' NOT NULL,
+    session_expires INTEGER unsigned NOT NULL default '0',
+    session_data TEXT COLLATE 'utf8_unicode_ci',
+    active TINYINT(1) NOT NULL DEFAULT 0
+) ENGINE=MyISAM DEFAULT CHARSET='utf8' COLLATE='utf8_unicode_ci';
+
+CREATE INDEX as_id_idx ON ab_session (id);
+CREATE INDEX as_id_active_idx ON ab_session (id, active);
+CREATE INDEX as_expires_active_idx ON ab_session (session_expires, active);
+
+CREATE TABLE ab_translation
+(
+    id INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
+    template VARCHAR(200) NOT NULL,
+    culture VARCHAR(20) NOT NULL,
+    name VARCHAR(100) NOT NULL,
+    value TEXT NOT NULL,
+    PRIMARY KEY (id)
+) ENGINE=MyISAM DEFAULT CHARSET='utf8';
+
+CREATE INDEX at_template_culture_idx ON ab_translation (template, culture);
 
 -- application --
 
-CREATE TABLE application_log
-(
-    application_log_id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
-    priority INTEGER UNSIGNED NOT NULL DEFAULT 0,
-    message TEXT NOT NULL,
-    method VARCHAR(100) NOT NULL DEFAULT '',
-    controller VARCHAR(100) NOT NULL DEFAULT '',
-    action VARCHAR(100) NOT NULL DEFAULT '',
-    user_profile_id INTEGER UNSIGNED NOT NULL DEFAULT 0,
-    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
-    PRIMARY KEY (application_log_id)
-) ENGINE=MyISAM DEFAULT CHARSET='utf8';
-
-CREATE INDEX al_priority_index ON application_log (priority);
-
-CREATE TABLE application_session 
-(
-  session VARCHAR(255) CHARACTER SET 'utf8' COLLATE 'utf8_bin' NOT NULL,
-  session_expires INTEGER unsigned NOT NULL default '0',
-  session_data TEXT COLLATE 'utf8_unicode_ci'
-) ENGINE=MyISAM DEFAULT CHARSET='utf8' COLLATE='utf8_unicode_ci';
-
-CREATE INDEX as_session_index ON application_session (session);
-
 CREATE TABLE application_mailer_relay
 (
-    application_mailer_relay_id INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
+    id INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
     recipient VARCHAR(100) NOT NULL,
     identifier VARCHAR(8) DEFAULT NULL,
     created_at TIMESTAMP NOT NULL DEFAULT NOW(),
-    PRIMARY KEY (application_mailer_relay_id)
+    PRIMARY KEY (id)
 ) ENGINE=MyISAM DEFAULT CHARSET='utf8';
 
-CREATE INDEX amr_recipient_identifier_created_index ON application_mailer_relay (recipient, identifier, created_at);
+CREATE INDEX amr_recipient_identifier_created_idx ON application_mailer_relay (recipient, identifier, created_at);
 
 -- cms type --
 
@@ -74,7 +92,7 @@ CREATE TABLE cms_type_discovery
         REFERENCES cms_type (cms_type_id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET='utf8';
 
-CREATE INDEX ctd_id_name_index ON cms_type_discovery (cms_type_id, name);
+CREATE INDEX ctd_id_name_idx ON cms_type_discovery (cms_type_id, name);
 
 CREATE TABLE cms_type_configuration
 (
@@ -87,36 +105,35 @@ CREATE TABLE cms_type_configuration
         REFERENCES cms_type (cms_type_id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET='utf8';
 
-CREATE INDEX ctc_type_index ON cms_type_configuration (cms_type_id);
+CREATE INDEX ctc_type_idx ON cms_type_configuration (cms_type_id);
 
 -- aggregator --
 
-CREATE TABLE aggregator_channel
-(
-    aggregator_channel_id INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
-    title VARCHAR(100) NOT NULL,
-    link VARCHAR(200) NOT NULL,
-    description TEXT NOT NULL DEFAULT '',
-    status VARCHAR(50) NOT NULL,
-    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
-    updated_at TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
-    enabled TINYINT(1) NOT NULL DEFAULT 1,
-    PRIMARY KEY (aggregator_channel_id)
-) ENGINE=InnoDB DEFAULT CHARSET='utf8';
-
-CREATE TABLE aggregator_item
-(
-    aggregator_item_id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
-    aggregator_channel_id INTEGER UNSIGNED NOT NULL, 
-    title TEXT NOT NULL, 
-    link TEXT NOT NULL,
-    description TEXT NOT NULL DEFAULT '',
-    created_at TIMESTAMP NOT NULL DEFAULT NOW(), 
-    PRIMARY KEY (aggregator_item_id),
-    CONSTRAINT ai_aggregator_channel_fk FOREIGN KEY (aggregator_channel_id) 
-        REFERENCES aggregator_channel (aggregator_channel_id) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET='utf8';
-
+-- CREATE TABLE aggregator_channel
+-- (
+--     aggregator_channel_id INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
+--     title VARCHAR(100) NOT NULL,
+--     link VARCHAR(200) NOT NULL,
+--     description TEXT NOT NULL DEFAULT '',
+--     status VARCHAR(50) NOT NULL,
+--     created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+--     updated_at TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
+--     enabled TINYINT(1) NOT NULL DEFAULT 1,
+--     PRIMARY KEY (aggregator_channel_id)
+-- ) ENGINE=InnoDB DEFAULT CHARSET='utf8';
+-- 
+-- CREATE TABLE aggregator_item
+-- (
+--     aggregator_item_id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+--     aggregator_channel_id INTEGER UNSIGNED NOT NULL, 
+--     title TEXT NOT NULL, 
+--     link TEXT NOT NULL,
+--     description TEXT NOT NULL DEFAULT '',
+--     created_at TIMESTAMP NOT NULL DEFAULT NOW(), 
+--     PRIMARY KEY (aggregator_item_id),
+--     CONSTRAINT ai_aggregator_channel_fk FOREIGN KEY (aggregator_channel_id) 
+--         REFERENCES aggregator_channel (aggregator_channel_id) ON DELETE CASCADE
+-- ) ENGINE=InnoDB DEFAULT CHARSET='utf8';
 
 -- user --
 
@@ -133,10 +150,10 @@ CREATE TABLE user_profile
     PRIMARY KEY (user_profile_id)
 ) ENGINE=InnoDB DEFAULT CHARSET='utf8';
 
-CREATE INDEX up_id_enabled_index ON user_profile (user_profile_id, enabled);
-CREATE INDEX up_email_enabled_index ON user_profile (login_email, enabled);
-CREATE INDEX up_email_password_enabled_index ON user_profile (login_email, login_password_md5, enabled);
-CREATE INDEX up_email_uid_index ON user_profile (login_email, uid);
+CREATE INDEX up_id_enabled_idx ON user_profile (user_profile_id, enabled);
+CREATE INDEX up_email_enabled_idx ON user_profile (login_email, enabled);
+CREATE INDEX up_email_password_enabled_idx ON user_profile (login_email, login_password_md5, enabled);
+CREATE INDEX up_email_uid_idx ON user_profile (login_email, uid);
 
 CREATE TABLE user_profile_information
 (
@@ -177,21 +194,21 @@ CREATE TABLE user_cms
         REFERENCES cms_type (cms_type_id) ON DELETE RESTRICT
 ) ENGINE=InnoDB DEFAULT CHARSET='utf8';
 
-CREATE INDEX uc_id_cid_index ON user_cms (user_profile_id, cid);
+CREATE INDEX uc_id_cid_idx ON user_cms (user_profile_id, cid);
 
-CREATE TABLE user_cms_channel
-(
-    user_cms_channel_id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
-    user_cms_id INTEGER UNSIGNED NOT NULL,
-    aggregator_channel_id INTEGER UNSIGNED NOT NULL,
-    title VARCHAR(100) NOT NULL,
-    description TEXT NOT NULL DEFAULT '',
-    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
-    updated_at TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
-    enabled TINYINT(1) NOT NULL DEFAULT 1,
-    PRIMARY KEY (user_cms_channel_id),
-    CONSTRAINT ucc_user_cms_fk FOREIGN KEY (user_cms_id) 
-        REFERENCES user_cms (user_cms_id) ON DELETE CASCADE,
-    CONSTRAINT ucc_aggregator_channel_fk FOREIGN KEY (aggregator_channel_id) 
-        REFERENCES aggregator_channel (aggregator_channel_id) ON DELETE RESTRICT
-) ENGINE=InnoDB DEFAULT CHARSET='utf8';
+-- CREATE TABLE user_cms_channel
+-- (
+--     user_cms_channel_id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+--     user_cms_id INTEGER UNSIGNED NOT NULL,
+--     aggregator_channel_id INTEGER UNSIGNED NOT NULL,
+--     title VARCHAR(100) NOT NULL,
+--     description TEXT NOT NULL DEFAULT '',
+--     created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+--     updated_at TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
+--     enabled TINYINT(1) NOT NULL DEFAULT 1,
+--     PRIMARY KEY (user_cms_channel_id),
+--     CONSTRAINT ucc_user_cms_fk FOREIGN KEY (user_cms_id) 
+--         REFERENCES user_cms (user_cms_id) ON DELETE CASCADE,
+--     CONSTRAINT ucc_aggregator_channel_fk FOREIGN KEY (aggregator_channel_id) 
+--         REFERENCES aggregator_channel (aggregator_channel_id) ON DELETE RESTRICT
+-- ) ENGINE=InnoDB DEFAULT CHARSET='utf8';
