@@ -10,97 +10,90 @@
 class AB_Controller
 {
     /**
-     * Request
+     * Registry
      *
-     * @var AB_Request
+     * @var AB_Registry
      */
-    public $request = null;
-
-    /**
-     * Response
-     *
-     * @var AB_Response
-     */
-    public $response = null;
+    public $registry;
 
     /**
      * View
-     * 
+     *
      * @var AB_View
      */
-    public $view = null;
+    public $view;
 
 
     /**
-     * Controller constructor
-     *
-     * @param   AB_Request  $request
-     * @param   AB_Response $response
-     * @return  void
+     * Access to registry data
+     * 
+     * @param   string  $name
+     * @return  mixed
      */
-    public function __construct($request, $response)
+    public function __get ($name)
     {
-        $this->request = $request;
-        $this->response = $response;
-
-        $request_controller = $request->getController();
-        $request_action = $request->getAction();
-        $view_template = $request_controller . "/" . $request_action;
-
-        $registry = AB_Registry::singleton();
-        $registry->request->controller = $request_controller;
-        $registry->request->controller = $request_controller;
-        $registry->view->template = $view_template;
-
-        $this->view = new AB_View($view_template);
+        return $this->registry->{$name}->object;
     }
 
-    /**
-     * Is XML
-     *
-     * @param   boolean     $b
-     * @return  void
-     */
-    public function isXML($b=null)
-    {
-        if($b != null)
-        {
-            $this->response->isXML($b);
-            $this->view->setLayout(null);
-            $this->view->setTemplate(null);
-        }
+    public function __set ($name, $value) { } // read-only
 
-        return $this->response->isXML();
+    /**
+     * Check action
+     * 
+     * @param   string      $name   Action name
+     * @return  boolean
+     */
+    public function checkAction($name)
+    {
+        return is_callable(array($this, ($name . "Action")));
     }
 
     /**
      * Run controller action
-     *
-     * @param   string      $name   Action name
-     * @throws  AB_Exception
+     * 
+     * @param   string      $name
      * @return  void
      */
     public function runAction($name)
     {
-        $action = $name . "Action";
+        $this->{($name . "Action")}();
 
-        if(is_callable(array($this, $action)) == true)
+        /* unset layout and template for xml response */
+
+        if($this->response->isXML() == true)
         {
-            $this->{$action}();
-
-            if($this->response->isRedirect() == false)
-            {
-                ob_start();
-                $this->view->render();
-                $this->response->setBody(ob_get_clean());
-            }
+            $this->view->setLayout(null);
+            $this->view->setTemplate(null);
         }
-        else
+
+        /* render only for non redirect request */
+
+        if($this->response->isRedirect() == false)
         {
-            $this->response->setStatus(AB_Response::STATUS_NOT_FOUND);
-            $_m = "action (" . $action . ") not found";
+            ob_start();
+            $this->view->render();
+            $this->response->setBody(ob_get_clean());
+        }
+    }
+
+    /**
+     * Session authorize
+     *
+     * @return  boolean
+     */
+    protected function sessionAuthorize()
+    {
+        if(($active = $this->session->getActive()) == false)
+        {
+            $redirect = $this->registry->session->unauthorized->redirect;
+            if(isset($redirect) == false) $redirect = BASE_URL;
+
+            $this->response->setRedirect($redirect, AB_Response::STATUS_UNAUTHORIZED);
+            $_m = "session unauthorized";
             $_d = array('method' => __METHOD__);
             throw new AB_Exception($_m, E_USER_NOTICE, $_d);
         }
+
+        return $active;
     }
 }

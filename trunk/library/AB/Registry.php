@@ -99,6 +99,33 @@ class AB_Registry
     }
 
     /**
+     * Check if a node is set (from array path)
+     *
+     * @param   array   $path
+     * @return  boolean
+     */
+    public function check($path)
+    {
+        $b = false;
+        $n = $this;
+
+        foreach($path as $i)
+        {
+            if(array_key_exists($i, $n->data))
+            {
+                $n = $n->data[$i];
+            }
+            else
+            {
+                $n = null;
+                break;
+            }
+        }
+        
+        return isset($n);
+    }
+
+    /**
      * Return null string to AB_Registry objects
      *
      * @return  string

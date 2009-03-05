@@ -119,14 +119,12 @@ class CmsController extends AbstractController
     {
         $this->responseIsAjax(true);
 
-        AB_Loader::loadApplicationLibrary("ApplicationHTTPClient");
-        
         $ss = new Zend_Session_Namespace(self::CMS_ADD_SESSION);
 
         $url = null;
         $manager_url = null;
         $data = array();
-        $client = new ApplicationHTTPClient();
+        $client = new APP_HTTPClient();
 
         /* check url (and manager url internally) */
 
@@ -182,7 +180,7 @@ class CmsController extends AbstractController
      * Check URL
      *
      * @params  string                  $url
-     * @params  ApplicationHTTPClient   $client
+     * @params  APP_HTTPClient   $client
      * @return  array
      */
     private function checkURL(&$url, $client)
@@ -221,7 +219,7 @@ class CmsController extends AbstractController
         $url_status = $client->getStatus();
         $type = null;
 
-        if($url_status == ApplicationHTTPClient::STATUS_OK)
+        if($url_status == APP_HTTPClient::STATUS_OK)
         {
             $type = CMSType::discovery($url, $client->getHeaders(), $client->getBody());
             $cms_type_status = is_object($type) ? self::STATUS_OK : self::STATUS_UNKNOWN;
@@ -278,7 +276,7 @@ class CmsController extends AbstractController
      * Check manager URL
      *
      * @params  string                  $manager_url
-     * @params  ApplicationHTTPClient   $client
+     * @params  APP_HTTPClient   $client
      * @params  CMSType                 $type
      * @return  array
      */
@@ -294,7 +292,7 @@ class CmsController extends AbstractController
 
         /* check manager response */
 
-        if($url_status == ApplicationHTTPClient::STATUS_OK)
+        if($url_status == APP_HTTPClient::STATUS_OK)
         {
             if(CMSType::managerCheckHTML(
                 $client->getBody(), $type->getConfiguration()) == true)

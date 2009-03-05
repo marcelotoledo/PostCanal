@@ -72,6 +72,8 @@ class AB_Request
 
         return $value;
     }
+
+    public function __set($name, $value) { } /* request is read-only */
     
     /**
      * Request initializer

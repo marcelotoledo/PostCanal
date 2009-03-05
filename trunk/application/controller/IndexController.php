@@ -10,19 +10,6 @@
 class IndexController extends AbstractController
 {
     /**
-     * Index controller constructor
-     *
-     * @param   AB_Request  $request
-     * @param   AB_Response $response
-     * @return void
-     */
-    public function __construct($request, $response)
-    {
-        parent::__construct($request, $response);
-        $this->view->setLayout('index');
-    }
-
-    /**
      * Default action
      *
      * @return void

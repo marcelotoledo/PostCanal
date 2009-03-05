@@ -25,4 +25,4 @@ AB_Session::register();
 
 /* dispatch */
 
-AB_Dispatcher::singleton()->dispatch();
+AB_Main::run();

@@ -158,23 +158,24 @@ class AB_Response
     }
 
     /**
+     * Set XML
+     *
+     * @param   boolean     $is_xml
+     * @return  void
+     */
+    public function setXML($is_xml)
+    {
+        $this->is_xml = $is_xml;
+        $this->setContentType($is_xml ? 'text/xml' : 'text/html');
+    }
+
+    /**
      * Is XML
      *
-     * @param   boolean     $b
      * @return  boolean
      */
-    public function isXML($b=null)
+    public function isXML()
     {
-        if($b !== null)
-        {
-            $this->is_xml = ((boolean) $b);
-
-            if($this->is_xml === true) 
-            {
-                $this->setContentType('text/xml');
-            }
-        }
-
         return $this->is_xml;
     }
 

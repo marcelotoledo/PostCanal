@@ -33,7 +33,6 @@ class AB_Helper
     public static function href($controller=null, $action=null, $parameters=array())
     {
         $url = self::relativeURL(AB_Request::url($controller, $action, $parameters));
-
         echo strlen($url) > 0 ? $url : "/";
     }
 
@@ -50,9 +49,7 @@ class AB_Helper
     {
         echo "<a href=\"";
         self::href($controller, $action, $parameters);
-        echo "\">";
-        echo $label;
-        echo "</a>";
+        echo "\">" . $label . "</a>";
     }
 
     /**
@@ -126,77 +123,8 @@ class AB_Helper
     public static function img($path, $alt="")
     {
         echo "<img src=\"";
-        echo self::img_src($path);
+        self::img_src($path);
         echo "\" alt=\"" . $alt . "\">\n";
-    }
-
-    /**
-     * Javascript including
-     *
-     * @return  void
-     */
-    public static function include_javascript()
-    {
-        $registry = AB_Registry::singleton();
-        $template = $registry->view->template;
-        $path = APPLICATION_PATH . "/view/template/" . $template . ".js";
-
-        if(file_exists($path) == true)
-        {
-            echo "<script type=\"text/javascript\">\n";
-            include $path;
-            echo "</script>\n";
-        }
-    }
-
-    /**
-     * Style sheet including
-     *
-     * @return  void
-     */
-    public static function include_stylesheet()
-    {
-        $registry = AB_Registry::singleton();
-        $template = $registry->view->template;
-        $path = APPLICATION_PATH . "/view/template/" . $template . ".css";
-
-        if(file_exists($path) == true)
-        {
-            echo "<style type=\"text/css\">\n";
-            include $path;
-            echo "</style>\n";
-        }
-    }
-
-    /**
-     * Session
-     *
-     * @param   string  $name
-     * @return  string  
-     */
-    public static function session($name)
-    {
-        $registry = AB_Registry::singleton();
-        $session = $registry->session->object;
-        echo (isset($session) && is_object($session)) ? $session->{$name} : '';
-    }
-
-    /**
-     * Translation
-     *
-     * @param   string  $name
-     * @return  string  
-     */
-    public static function translation($name)
-    {
-        $registry = AB_Registry::singleton();
-        $translation = $registry->translation->object;
-        
-        $value = null;
-        if(isset($translation) && is_object($translation)) $value = $translation->{$name};
-        if(strlen($value) == 0) $value = $name;
-
-        echo $value;
     }
 
     /**

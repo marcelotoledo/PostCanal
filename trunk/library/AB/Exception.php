@@ -25,15 +25,11 @@ class AB_Exception extends Exception
      * @param   array   $data
      * @return void
      */
-    public function __construct($message, 
-                                $code=E_USER_NOTICE, 
-                                $data=array())
+    public function __construct($message, $code=E_USER_NOTICE, $data=array())
     {
         /* force use of predefined codes */
 
-        if(!in_array($code, array(E_USER_NOTICE,
-                                  E_USER_WARNING,
-                                  E_USER_ERROR)))
+        if(!in_array($code, array(E_USER_NOTICE, E_USER_WARNING, E_USER_ERROR)))
         {
             $code = E_USER_ERROR;
         }
@@ -120,12 +116,11 @@ class AB_Exception extends Exception
     /**
      * Write to log
      *
-     * @param   string          $model      Model name
      * @return  void
      */
-    public function log($model='ApplicationLog')
+    public function writeLog()
     {
-        AB_Log::write($this->getMessage(), $this->getCode(), $this->data, $model);
+        AB_Log::write($this->getMessage(), $this->getCode(), $this->data);
     }
 
     /**

@@ -14,14 +14,14 @@ class AB_View
      *
      * @var mixed
      */
-    private $data;
+    private $data = array();
 
     /**
      * View layout
      *
      * @var string
      */
-    private $layout = 'default';
+    private $layout;
 
     /**
      * View template
@@ -31,23 +31,12 @@ class AB_View
     private $template;
 
     /**
-     * Is XML
+     * Registry
      *
-     * @var boolean
+     * @var AB_Registry
      */
-    private $is_xml;
+    public $registry;
 
-
-    /**
-     * View constructor
-     *
-     * @param   AB_Request  $template
-     * @return  void
-     */
-    public function __construct($template)
-    {
-        $this->template = $template;
-    }
 
     /**
      * Get overloading
@@ -57,17 +46,32 @@ class AB_View
      */
     public function __get($name)
     {
-        $value = null;
+        $result = null;
 
-        if(is_array($this->data))
+        /* registry */
+
+        if(is_object($this->registry))
         {
-            if(array_key_exists($name, $this->data))
+            if($this->registry->check(array($name, 'object')))
             {
-                $value = $this->data[$name];
+                $result = $this->registry->{$name}->object;
             }
         }
 
-        return $value;
+        /* view data */
+
+        if(is_null($result) == false)
+        {
+            if(is_array($this->data))
+            {
+                if(array_key_exists($name, $this->data))
+                {
+                    $result = $this->data[$name];
+                }
+            }
+        }
+
+        return $result;
     }
 
     /**
@@ -79,6 +83,20 @@ class AB_View
      */
     public function __set($name, $value)
     {
+        /* registry */
+
+        if(is_object($this->registry))
+        {
+            if($this->registry->check(array($name, 'object')))
+            {
+                $_m = "view can not overwrite attribute (" . $name . ")";
+                $_d = array('method' => __METHOD__);
+                throw new AB_Exception($_m, E_USER_WARNING, $_d);
+            }
+        }
+
+        /* view data */
+
         if(is_array($this->data) == false)
         {
             $this->data = array();
@@ -96,7 +114,9 @@ class AB_View
     {
         $xml = new XmlWriter();
         $xml->openMemory();
+        $xml->startElement("data");
         foreach ($this->data as $k => $v) $xml->writeElement($k, $v);
+        $xml->endElement();
         return $xml->outputMemory();
     }
 
@@ -183,22 +203,33 @@ class AB_View
     }
 
     /**
-     * View template render
+     * Template render
      *
+     * @param   string          $type
+     * @param   string          $required
      * @throws  AB_Exception
      * @return  void
      */
-    private function renderTemplate()
+    private function renderTemplate($type='php', $required=true)
     {
-        if(($path = self::getTemplatePath($this->template)))
+        if(($path = self::getTemplatePath($this->template, $type)))
         {
+            if($type == 'js')  echo "<script type=\"text/javascript\">\n";
+            if($type == 'css') echo "<style type=\"text/css\">\n";
+
             include $path;
+
+            if($type == 'js')  echo "</script>\n";
+            if($type == 'css') echo "</style>\n";
         }
         else
         {
-            $_m = "template (" . $this->template . ") not found";
-            $_d = array('method' => __METHOD__);
-            throw new AB_Exception($_m, E_USER_ERROR, $_d);
+            if($required == true)
+            {
+                $_m = "template (" . $this->template . "." . $type . ") not found";
+                $_d = array('method' => __METHOD__);
+                throw new AB_Exception($_m, E_USER_ERROR, $_d);
+            }
         }
     }
 
@@ -220,9 +251,9 @@ class AB_View
      * @param   string  $template
      * @return  boolean
      */
-    public static function getTemplatePath($template)
+    public static function getTemplatePath($template, $type='php')
     {
-        $path = APPLICATION_PATH . "/view/template/" . $template . ".php";
+        $path = APPLICATION_PATH . "/view/template/" . $template . "." . $type;
         return file_exists($path) ? $path : null;
     }
 }

@@ -31,25 +31,13 @@ class ProfileController extends AbstractController
 
 
     /**
-     * Profile controller constructor
-     *
-     * @param   AB_Request  $request
-     * @param   AB_Response $response
-     * @return  void
-     */
-    public function __construct($request, $response)
-    {
-        parent::__construct($request, $response);
-    }
-
-    /**
      * Login
      *
      * @return  void
      */
     public function loginAction()
     {
-        $this->isXML(true);
+        $this->response->setXML(true);
 
         $email = $this->request->email;
         $password = $this->request->password;
@@ -109,7 +97,7 @@ class ProfileController extends AbstractController
      */
     public function registerAction()
     {
-        $this->isXML(true);
+        $this->response->setXML(true);
 
         $email = $this->request->email;
         $password = $this->request->password;
@@ -216,7 +204,7 @@ class ProfileController extends AbstractController
      */
     public function recoveryAction()
     {
-        $this->isXML(true);
+        $this->response->setXML(true);
 
         $email = $this->request->email;
         $profile = UserProfile::findByEmail($email);
@@ -362,7 +350,7 @@ class ProfileController extends AbstractController
      */
     private function passwordMethodPOST()
     {
-        $this->isXML(true);
+        $this->response->setXML(true);
 
         $email = $this->request->email;
         $uid = $this->request->uid;
@@ -417,7 +405,6 @@ class ProfileController extends AbstractController
 
             else
             {
-                AB_Loader::loadApplicationLibrary("ApplicationUtility");
                 $profile->login_password_md5 = md5($password);
                 $profile->save();
 
@@ -449,8 +436,7 @@ class ProfileController extends AbstractController
         {
             if($password == $confirm)
             {
-                AB_Loader::loadApplicationLibrary("ApplicationUtility");
-                $profile->uid = ApplicationUtility::randomString(8);
+                $profile->uid = APP_Utility::randomString(8);
                 $profile->login_password_md5 = md5($password);
                 $profile->save();
 
@@ -521,7 +507,7 @@ class ProfileController extends AbstractController
      */
     private function emailMethodPOST()
     {
-        $this->isXML(true);
+        $this->response->setXML(true);
 
         $new_email = $this->request->new_email;
         $email = $this->request->email;
@@ -617,9 +603,8 @@ class ProfileController extends AbstractController
                 {
                     if(strlen(($new_email = $information->email_update)) > 0)
                     {
-                        AB_Loader::loadApplicationLibrary("ApplicationUtility");
                         $profile->login_email = $new_email;
-                        $profile->uid = ApplicationUtility::randomString(8);
+                        $profile->uid = APP_Utility::randomString(8);
                         $profile->save();
 
                         $result = self::STATUS_OK;
@@ -687,7 +672,7 @@ class ProfileController extends AbstractController
      */
     private function editMethodPOST()
     {
-        $this->isXML(true);
+        $this->response->setXML(true);
 
         $id = intval($this->session->user_profile_id);
         $profile = ($id > 0) ? UserProfile::findByPrimaryKeyEnabled($id) : null;
@@ -736,9 +721,7 @@ class ProfileController extends AbstractController
      */
     private static function sendEmail($email, $identifier, $subject, $body)
     {
-        include APPLICATION_PATH . "/library/ApplicationMailer.php";
-
-        $mailer = new ApplicationMailer();
+        $mailer = new APP_Mailer();
         $mailer->setSubject($subject);
         $mailer->setBody($body);
         $mailer->send($email, $identifier);

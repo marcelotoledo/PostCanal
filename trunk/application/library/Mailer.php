@@ -7,7 +7,7 @@
  * @package     Application library
  * @author      Rafael Castilho <rafael@castilho.biz>
  */
-class ApplicationMailer
+class APP_Mailer
 {
     /**
      * From

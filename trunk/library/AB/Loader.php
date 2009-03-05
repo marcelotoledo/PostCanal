@@ -20,6 +20,7 @@ class AB_Loader
         if(class_exists($name) == false)
         {
             if(strpos($name, "AB_") === 0)          self::loadAB($name);
+            if(strpos($name, "APP_") === 0)         self::loadAPP($name);
             elseif(strpos($name, "Zend_") === 0)    self::loadZend($name);
             elseif(strpos($name, "Controller") > 0) self::loadController($name);
             elseif(strpos($name, "Helper") > 0)     self::loadHelper($name);
@@ -102,14 +103,14 @@ class AB_Loader
     }
 
     /**
-     * Application library loader (not in auto loader)
+     * Application library loader
      *
      * @param   string  $name   Class name
      * @return  void
      */
-    public static function loadApplicationLibrary($name)
+    public static function loadAPP($name)
     {
-        $path = APPLICATION_PATH . "/library/" . $name . ".php";
+        $path = APPLICATION_PATH . "/library/" . substr($name, 4) . ".php";
 
         if(class_exists($name) == false)
         {
@@ -119,8 +120,6 @@ class AB_Loader
             }
         }
     }
-
-
 
     /**
      * Zend loader

@@ -27,10 +27,10 @@ $registry->load(BASE_PATH . '/config/environment.xml');
 
 /* BASE */
 
-/* request */
-
-$registry->request->controller = null;
-$registry->request->action = null;
+$registry->request->object = null;
+$registry->response->object = null;
+$registry->session->object = null;
+$registry->translation->object = null;
 
 /* response */
 
@@ -43,19 +43,14 @@ $registry->response->headers = array
     )
 );
 
-/* view */
-
-$registry->view->template = null;
-
 /* session */
 
-$registry->session->object = null;
+$registry->session->name = 'blotomate';
 $registry->session->expiration = 43200;
 $registry->session->unauthorized->redirect = BASE_URL;
 
 /* translation */
 
-$registry->translation->object = null;
 $registry->translation->culture = 'us_EN';
 
 /* APPLICATION */

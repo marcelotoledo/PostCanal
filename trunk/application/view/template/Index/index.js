@@ -15,7 +15,7 @@ $(document).ready(function()
         $.ab_spinner
         ({
             height: 32, width: 32,
-            image: "<?php img_src('spinner/linux_spinner.png') ?>",
+            image: "<?php AB_Helper::img_src('spinner/linux_spinner.png') ?>",
             message: "... carregando"
         });
     }
@@ -44,7 +44,7 @@ $(document).ready(function()
 
     function onError()
     {
-        alert("<?php tr('server_error') ?>");
+        alert("<?php echo $this->translation->server_error ?>");
     }
 
     /* password recovery */
@@ -58,7 +58,7 @@ $(document).ready(function()
 
         if($("input[@name='email']").val() == "")
         {
-            $.ab_alert("<?php tr('recovery_email') ?>");
+            $.ab_alert("<?php echo $this->translation->recovery_email ?>");
             return null;
         }
 
@@ -67,7 +67,7 @@ $(document).ready(function()
         $.ajax
         ({
             type: "POST",
-            url: "<?php echo url('profile', 'recovery') ?>",
+            url: "<?php AB_Helper::url('profile', 'recovery') ?>",
             dataType: "xml",
             data: parameters,
             beforeSend: function()
@@ -108,13 +108,13 @@ $(document).ready(function()
 
         if(email == "" || password == "" || confirm_ == "")
         {
-            $.ab_alert("<?php tr('form_incomplete') ?>");
+            $.ab_alert("<?php echo $this->translation->form_incomplete ?>");
             return null;
         }
 
         if(password != confirm_)
         {
-            $.ab_alert("<?php tr('form_not_match') ?>");
+            $.ab_alert("<?php echo $this->translation->form_not_match ?>");
             return null;
         }
 
@@ -123,7 +123,7 @@ $(document).ready(function()
         $.ajax
         ({
             type: "POST",
-            url: "<?php url('profile', 'register') ?>",
+            url: "<?php AB_Helper::url('profile', 'register') ?>",
             dataType: "xml",
             data: parameters,
             beforeSend: function ()
@@ -155,7 +155,7 @@ $(document).ready(function()
 
         if(email == "" || password == "")
         {
-            $.ab_alert("<?php tr('form_incomplete') ?>");
+            $.ab_alert("<?php echo $this->translation->form_incomplete ?>");
             return null;
         }
 
@@ -164,7 +164,7 @@ $(document).ready(function()
         $.ajax
         ({
             type: "POST",
-            url: "<?php url('profile', 'login') ?>",
+            url: "<?php AB_Helper::url('profile', 'login') ?>",
             dataType: "xml",
             data: parameters,
             beforeSend: function ()
@@ -179,10 +179,11 @@ $(document).ready(function()
             },
             success: function (xml) 
             { 
-                var login = $(xml).find('login').text()
-                var message = $(xml).find('message').text()
+                var data = $(xml).find('data');
+                var login = data.find('login').text();
+                var message = data.find('message').text();
 
-                if(login == "ok") window.location = "<?php url('dashboard') ?>";
+                if(login == "ok") window.location = "<?php AB_Helper::url('dashboard') ?>";
                 if(message != "") $.ab_alert(message);
             }, 
             error: function () { onError(); } 
