@@ -60,8 +60,9 @@ class AB_View
 
         /* view data */
 
-        if(is_null($result) == false)
+        if(is_null($result))
         {
+
             if(is_array($this->data))
             {
                 if(array_key_exists($name, $this->data))
@@ -115,7 +116,13 @@ class AB_View
         $xml = new XmlWriter();
         $xml->openMemory();
         $xml->startElement("data");
-        foreach ($this->data as $k => $v) $xml->writeElement($k, $v);
+
+        foreach ($this->data as $k => $v) 
+        {
+            if(is_bool($v)) $v = ($v == true) ? "true" : "false";
+            $xml->writeElement($k, $v);
+        }
+
         $xml->endElement();
         return $xml->outputMemory();
     }

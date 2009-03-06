@@ -21,7 +21,7 @@ class AggregatorItem extends AB_Model
      *
      * @var string
      */
-    protected static $sequence_name = 'aggregator_item_seq';
+    protected static $sequence_name = '';
 
     /**
      * Primary key name

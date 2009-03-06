@@ -21,9 +21,11 @@ define('LIBRARY_PATH', BASE_PATH . "/library");
 
 set_include_path (LIBRARY_PATH . PATH_SEPARATOR . get_include_path());
 
+
+/* REGISTRY */
+
 $registry = AB_Registry::singleton();
 $registry->load(BASE_PATH . '/config/environment.xml');
-
 
 /* BASE */
 
@@ -31,8 +33,6 @@ $registry->request->object = null;
 $registry->response->object = null;
 $registry->session->object = null;
 $registry->translation->object = null;
-
-/* response */
 
 $registry->response->headers = array
 (
@@ -43,17 +43,15 @@ $registry->response->headers = array
     )
 );
 
-/* session */
-
 $registry->session->name = 'blotomate';
 $registry->session->expiration = 43200;
 $registry->session->unauthorized->redirect = BASE_URL;
 
-/* translation */
-
 $registry->translation->culture = 'us_EN';
 
 /* APPLICATION */
+
+/* mailer */
 
 /* http client */
 

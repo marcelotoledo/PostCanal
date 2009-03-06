@@ -2,7 +2,7 @@
 
 <h1>Mudança de Senha de Acesso</h1>
 <input type="hidden" name="email" value="<?php echo $this->profile->login_email ?>">
-<input type="hidden" name="uid" value="<?php echo $this->profile->uid_md5 ?>">
+<input type="hidden" name="uid" value="<?php echo $this->profile->uid ?>">
 <table id="pwdform">
     <tr>
         <td class="formlabel">E-mail:</td>
@@ -22,15 +22,10 @@
     </tr>
 </table>
 
-<p id="changenotice" style="display:none">
-Senha alterada com sucesso. 
-<?php $this->DefaultHelper()->a("clique aqui") ?> 
-para acessar a página de autenticação</p>
+<p id="changenotice" style="display:none">Senha alterada com sucesso. <?php AB_Helper::a("clique aqui") ?> para acessar a página de autenticação</p>
 
 <?php else : ?>
 
-<p>Este link expirou. Utilize a 
-<?php $this->DefaultHelper()->a("página principal") ?> para solicitar um
-novo pedido de recuperação de senha.</p>
+<p>Este link expirou. Utilize a <?php AB_Helper::a("página principal") ?> para solicitar um pedido de recuperação de senha.</p>
 
 <?php endif ?>

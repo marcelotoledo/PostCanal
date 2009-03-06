@@ -37,7 +37,7 @@ class APP_Mailer
      * Charset
      * @var string
      */
-    private $charset;
+    private $charset = "UTF-8";
 
     /**
      * Relay time
@@ -69,20 +69,23 @@ class APP_Mailer
         $mailer_config = $registry->application->mailer->{$mailer};
         $sender_config = $mailer_config->sender->{$sender};
 
-        $server = $mailer_config->server;
+        if($mailer_config->transport == "smtp")
+        {
+            $server = $mailer_config->server;
 
-        $config = array
-        (
-            'auth'     => $mailer_config->auth,
-            'ssl'      => $mailer_config->ssl,
-            'port'     => $mailer_config->port,
-            'username' => $sender_config->username,
-            'password' => $sender_config->password
-        );
+            $config = array
+            (
+                'auth'     => $mailer_config->auth,
+                'ssl'      => $mailer_config->ssl,
+                'port'     => $mailer_config->port,
+                'username' => $sender_config->username,
+                'password' => $sender_config->password
+            );
+
+            $this->transport = new Zend_Mail_Transport_Smtp($server, $config);
+        }
 
         $this->from = $sender_config->email;
-        $this->transport = new Zend_Mail_Transport_Smtp($server, $config);
-        $this->charset = "UTF-8";
         $this->relay_time = $mailer_config->relay->time;
         $this->relay_count = $mailer_config->relay->count;
     }
@@ -134,7 +137,7 @@ class APP_Mailer
 
             try
             {
-                $mail->send($this->transport);
+                $this->transport ? $mail->send($this->transport) : $mail->send();
                 self::setRelay($recipient, $identifier);
                 $sent = true;
             }
@@ -165,7 +168,7 @@ class APP_Mailer
      */
     private static function setRelay($recipient, $identifier)
     {
-        return AB_Model::execute("INSERT INTO " . self::$table_name . " " .
+        return AB_Model::execute("INSERT INTO " . self::$relay_table . " " .
                                  "(recipient, identifier) VALUES (?, ?)",
                                  array($recipient, substr(md5($identifier), 0, 8)));
     }

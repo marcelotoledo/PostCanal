@@ -136,7 +136,7 @@ abstract class AB_Model
      */
     public function save()
     {
-        $connection = self::getConnection();
+        $connection = self::connection();
         $saved = false;
 
         $this->sanitize();
@@ -354,7 +354,7 @@ abstract class AB_Model
         {
             try
             {
-                $statement = self::getConnection()->prepare($sql);
+                $statement = self::connection()->prepare($sql);
                 $statement->setFetchMode(PDO::FETCH_CLASS, $model);
                 $statement->execute($data);
             }
@@ -369,7 +369,7 @@ abstract class AB_Model
         {
             try
             {
-                $statement = self::getConnection()->query($sql, 
+                $statement = self::connection()->query($sql, 
                                                           PDO::FETCH_CLASS, 
                                                           $model);
             }
@@ -401,7 +401,7 @@ abstract class AB_Model
         {
             try
             {
-                $statement = self::getConnection()->prepare($sql);
+                $statement = self::connection()->prepare($sql);
                 $statement->execute($data);
                 $affected = $statement->rowCount();
             }
@@ -416,7 +416,7 @@ abstract class AB_Model
         {
             try
             {
-                $affected = (int) self::getConnection()->exec($sql);
+                $affected = (int) self::connection()->exec($sql);
             }
             catch(PDOException $exception)
             {
@@ -437,13 +437,16 @@ abstract class AB_Model
      * @param   array   $sequence       Sequence name
      * @return  integer
      */
-    protected static function _insert($sql, $data=array(), $sequence)
+    protected static function _insert($sql, $data=array(), $sequence=null)
     {
         $id = null;
 
         if(self::execute($sql, $data) > 0)
         {
-            $id = self::getConnection()->lastInsertId($sequence);
+            $connection = self::connection();
+            $id = ($sequence ? 
+                $connection->lastInsertId($sequence) : 
+                $connection->lastInsertId());
         }
 
         return $id;
@@ -466,7 +469,7 @@ abstract class AB_Model
         {
             try
             {
-                $statement = self::getConnection()->prepare($sql);
+                $statement = self::connection()->prepare($sql);
                 $statement->setFetchMode(PDO::FETCH_OBJ);
                 $statement->execute($data);
             }
@@ -481,7 +484,7 @@ abstract class AB_Model
         {
             try
             {
-                $statement = self::getConnection()->query($sql, PDO::FETCH_OBJ);
+                $statement = self::connection()->query($sql, PDO::FETCH_OBJ);
             }
             catch(PDOException $exception)
             {
@@ -516,7 +519,7 @@ abstract class AB_Model
      *
      * @return  PDO
      */
-    public static function getConnection($database='default')
+    public static function connection($database='default')
     {
         $registry = AB_Registry::singleton();
         $db = $registry->database->{$database};
@@ -528,80 +531,54 @@ abstract class AB_Model
             throw new AB_Exception($_m, E_USER_ERROR, $_d);
         }
         
-        $has_connection = false;
-        $connection = $db->connection;
+        if(get_class($db->connection) != "PDO") self::setupConnection($db);
 
-        if(get_class($connection) == "PDO")
-        {
-            $has_connection = true;
-        }
-
-        if($has_connection == false)
-        {
-            try
-            {
-                $connection = new PDO ($db->driver . 
-                                       ":host=" . $db->host . ";dbname=" . $db->db, 
-                                       $db->username, $db->password);
-
-                $connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-                #$registry->database->{$database}->connection = $connection;
-            }
-            catch(PDOException $exception)
-            {
-                $_m = "database connection failed";
-                $_d = array ('method' => __METHOD__);
-                AB_Exception::forward($_m, E_USER_ERROR, $exception, $_d);
-            }
-        }
-
-        /* set time zone */
-
-        self::setTimeZone($database);
-
-        return $connection;
+        return $db->connection;
     }
 
     /**
-     * Set database timezone
+     * Set up connection
      *
+     * @param   AB_Registry     $db
      * @return  void
      */
-    private static function setTimeZone($database)
+    private static function setupConnection($db)
     {
-        $registry = AB_Registry::singleton();
+        try
+        {
+            $uri = $db->driver . ":host=" . $db->host . ";dbname=" . $db->db;
+            $db->connection = new PDO ($uri, $db->username, $db->password);
+            $db->connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        }
+        catch(PDOException $exception)
+        {
+            $_m = "database connection failed";
+            $_d = array ('method' => __METHOD__);
+            AB_Exception::forward($_m, E_USER_ERROR, $exception, $_d);
+        }
 
-        $db = $registry->database->{$database};
-        $connection = isset($db->connection) ? $db->connection : null; 
+        /* setup timezone */
+
         $driver = strtolower($db->driver);
         $timezone = $db->timezone;
 
-        if(is_object($connection) && strlen($driver) > 0 && strlen($timezone) > 0)
+        try
         {
-            try
+            if($driver == "mysql")
             {
-                if($driver == "pgsql")
-                {
-                    $connection->exec("SET TIME ZONE '" . $timezone . "'");
-                }
-                elseif($driver == "mysql")
-                {
-                    // need fix (TODO)
-                    // $connection->exec("SET time_zone = '" . $timezone . "'");
-                }
-                else
-                {
-                    $_m = "no implementation to driver (" . $driver . ")";
-                    $_d = array('method' => __METHOD__);
-                    throw new AB_Exception($_m, E_USER_ERROR, $_d);
-                }
+                // not working
+                // $db->connection->exec("SET time_zone = '" . $timezone . "'");
             }
-            catch(Exception $exception)
+            elseif($driver == "pgsql")
             {
-                $_m = "failed to set the timezone";
-                $_d = array ('method' => __METHOD__);
-                AB_Exception::forward($_m, E_USER_ERROR, $exception, $_d);
+                $db->connection->exec("SET TIME ZONE '" . $timezone . "'");
             }
+        }
+        catch(Exception $exception)
+        {
+            $_m = "failed to set the timezone";
+            $_d = array ('method' => __METHOD__);
+            AB_Exception::forward($_m, E_USER_ERROR, $exception, $_d);
         }
     }
 }

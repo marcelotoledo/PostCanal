@@ -16,7 +16,7 @@ $(document).ready(function()
         ({
             height: 32, width: 32,
             image: "<?php AB_Helper::img_src('spinner/linux_spinner.png') ?>",
-            message: "... carregando"
+            message: "... <?php echo $this->translation->application_loading ?>"
         });
     }
 
@@ -51,11 +51,6 @@ $(document).ready(function()
 
     function passwordRecovery()
     {
-        if(active_request == true)
-        {
-            return null;
-        }
-
         if($("input[@name='email']").val() == "")
         {
             $.ab_alert("<?php echo $this->translation->recovery_email ?>");
@@ -82,8 +77,8 @@ $(document).ready(function()
             },
             success: function (xml) 
             { 
-                var message = $(xml).find('message').text()
-
+                var data = $(xml).find('data');
+                var message = data.find('message').text();
                 if(message != "") $.ab_alert(message);
             }, 
             error: function () { onError(); } 
@@ -94,7 +89,6 @@ $(document).ready(function()
 
     function formSubmit()
     {
-        if(active_request == true) return null;
         if(register == true) { registerSubmit(); } else { loginSubmit(); }
     }
 
@@ -138,8 +132,10 @@ $(document).ready(function()
             },
             success: function (xml) 
             { 
-                var message = $(xml).find('message').text()
-
+                var data = $(xml).find('data');
+                var register = data.find('register').text();
+                var message = data.find('message').text();
+                if(register == "true") toggleForm();
                 if(message != "") $.ab_alert(message);
             }, 
             error: function () { onError(); } 
@@ -182,8 +178,8 @@ $(document).ready(function()
                 var data = $(xml).find('data');
                 var login = data.find('login').text();
                 var message = data.find('message').text();
-
-                if(login == "ok") window.location = "<?php AB_Helper::url('dashboard') ?>";
+                var url = "<?php AB_Helper::url('dashboard') ?>";
+                if(login == "true") window.location = url;
                 if(message != "") $.ab_alert(message);
             }, 
             error: function () { onError(); } 
@@ -195,21 +191,21 @@ $(document).ready(function()
 
     $("#reglnk").click(function()
     {
-        toggleForm();
+        if(active_request == false) { toggleForm(); }
     });
 
     $("input[@name='regcancel']").click(function() 
     {
-        toggleForm();
+        if(active_request == false) { toggleForm(); }
     });
 
     $("#pwdlnk").click(function()
     {
-        passwordRecovery();
+        if(active_request == false) { passwordRecovery(); }
     });
 
     $("input[@name='frmsubmit']").click(function() 
     {
-        formSubmit();
+        if(active_request == false) { formSubmit(); }
     });
 });

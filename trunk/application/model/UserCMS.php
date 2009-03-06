@@ -37,7 +37,7 @@ class UserCMS extends AB_Model
      *
      * @var string
      */
-    protected static $sequence_name = 'user_cms_seq';
+    protected static $sequence_name = '';
 
     /**
      * Primary key name

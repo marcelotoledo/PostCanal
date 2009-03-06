@@ -18,6 +18,7 @@ abstract class AbstractController extends AB_Controller
     {
         /* load translation data */
 
+        $this->translation->load('Application');
         $this->translation->load($this->view->getTemplate());
 
         /* run parent action */

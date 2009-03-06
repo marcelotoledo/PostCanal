@@ -9,15 +9,7 @@
  */
 class ProfileController extends AbstractController
 {
-    const STATUS_OK = "ok";
-    const STATUS_FAILED = "failed";
-
-    const CONFIRM_OK = "confirm_ok";
-    const CONFIRM_FAILED = "confirm_failed";
-    const CONFIRM_DONE_BEFORE = "confirm_done_before";
-
-    const MAIL_NEW_PROFILE_SUBJECT = "[blotomate] novo perfil";
-    const MAIL_NEW_PROFILE_TEMPLATE = "mail_register_new.html";
+    // TODO update this to new method (translation)
     const MAIL_EXISTING_PROFILE_SUBJECT = "[blotomate] perfil existente";
     const MAIL_EXISTING_PROFILE_TEMPLATE = "mail_register_existing.html";
     const MAIL_RECOVERY_SUBJECT = "[blotomate] recuperar senha";
@@ -41,7 +33,7 @@ class ProfileController extends AbstractController
 
         $email = $this->request->email;
         $password = $this->request->password;
-        $this->view->login = self::STATUS_FAILED;
+        $this->view->login = false;
         $this->view->message = $this->translation->login_invalid;
 
         /* check for existing profile */
@@ -55,37 +47,31 @@ class ProfileController extends AbstractController
 
         if(is_object($profile))
         {
+            /* no register confirmation */
+
+            if($profile->register_confirmation == false)
+            {
+                $this->view->message = $this->translation->register_unconfirmed;
+            }
+
             /* valid login, create session */
 
-            if($profile->register_confirmation)
+            else
             {
                 $this->session->setActive(true);
                 $this->session->user_profile_id = $profile->user_profile_id;
                 $this->session->user_profile_uid = $profile->uid;
                 $this->session->user_profile_login_email = $profile->login_email;
 
-                $this->view->login = self::STATUS_OK;
-                $this->view->message = '';
+                $profile->last_login_time = time();
+                $profile->save();
 
-                $id = $this->session->user_profile_id;
-                $information = UserProfileInformation::findByPrimaryKey($id);
-                
-                if(is_object($information))
-                {
-                    $information->last_login_time = time();
-                    $information->save();
-                }
+                $this->view->login = true;
+                $this->view->message = "";
 
+                $id = $profile->user_profile_id;
                 $_d = array ('method' => __METHOD__, 'user_profile_id' => $id);
-                self::notice("session created", $_d);
-            }
-
-            /* no register confirmation */
-
-            else
-            {
-                $this->view->result = self::STATUS_UNCONFIRMED;
-                $this->view->message = $this->translation->register_unconfirmed;
+                self::log("session created", $_d);
             }
         }
     }
@@ -102,7 +88,7 @@ class ProfileController extends AbstractController
         $email = $this->request->email;
         $password = $this->request->password;
         $confirm = $this->request->confirm;
-        $this->view->register = self::STATUS_FAILED;
+        $this->view->register = false;
         $this->view->message = $this->translation->register_invalid;
 
         /* check for existing profile */
@@ -111,32 +97,22 @@ class ProfileController extends AbstractController
         $information = null;
 
         if(strlen($email) > 0 && 
-           strlen($password) > 0 && strlen($confirm) > 0 &&
-           $password == $confirm)
+           strlen($password) > 0 && strlen($confirm) > 0 && $password == $confirm)
         {
             $profile = UserProfile::findByEmail($email);
 
             /* register new user profile */
 
-            if(is_object($profile))
-            {
-                $id = $profile->user_profile_id;
-                $information = UserProfileInformation::findByPrimaryKey($id);
-            }
-            else
+            if(is_object($profile) == false)
             {
                 $profile = new UserProfile();
                 $profile->login_email = $email;
                 $profile->login_password_md5 = md5($password);
                 $profile->save();
 
-                $information = new UserProfileInformation();
-                $information->user_profile_id = $profile->user_profile_id;
-                $information->save();
-
                 $id = intval($profile->user_profile_id);
                 $_d = array ('method' => __METHOD__, 'user_profile_id' => $id);
-                self::notice("registered new", $_d);
+                self::log("registered new", $_d);
             }
         }
 
@@ -148,11 +124,11 @@ class ProfileController extends AbstractController
             {
                 if($profile->register_confirmation)
                 {
-                    self::sendExistingInstruction($profile);
+                    $this->notify($profile, "register_existing");
                 }
                 else
                 {
-                    self::sendNewInstruction($profile);
+                    $this->notify($profile, "register_new");
 
                     if(is_object($information))
                     {
@@ -161,7 +137,7 @@ class ProfileController extends AbstractController
                     }
                 }
 
-                $this->view->register = self::STATUS_OK;
+                $this->view->register = true;
                 $this->view->message = $this->translation->register_accepted;
             }
             catch(AB_Exception $exception)
@@ -208,7 +184,7 @@ class ProfileController extends AbstractController
 
         $email = $this->request->email;
         $profile = UserProfile::findByEmail($email);
-        $this->view->recovery = self::STATUS_FAILED;
+        $this->view->recovery = false;
         $this->view->message = $this->translation->recovery_failed;
 
         /* recovery instructions */
@@ -217,24 +193,14 @@ class ProfileController extends AbstractController
         {
             try
             {
-                self::sendRecoveryInstruction($profile);
-
-                $id = $profile->user_profile_id;
-                $information = UserProfileInformation::findByPrimaryKey($id);
-                
-                if(is_object($information))
-                {
-                    $information->recovery_message_time = time();
-                    $information->save();
-                }
-
-                $this->view->recovery = self::STATUS_OK;
+                $this->notify($profile, "recovery");
+                $profile->recovery_message_time = time();
+                $profile->save();
+                $this->view->recovery = true;
                 $this->view->message = $this->translation->recovery_sent;
             }
             catch(AB_Exception $exception)
             {
-                $this->view->message = $this->translation->recovery_failed;
-
                 $id = $profile->user_profile_id;
                 $_m = "failed to recovery;\n" . $exception->getMessage();
                 $_d = array('method' => __METHOD__, 'user_profile_id' => $id);
@@ -248,15 +214,12 @@ class ProfileController extends AbstractController
         {
             try
             {
-                self::sendDummyInstruction($email);
-
-                $this->view->recovery = self::STATUS_OK;
+                $this->notify($email, "dummy");
+                $this->view->recovery = true;
                 $this->view->message = $this->translation->recovery_sent;
             }
             catch(AB_Exception $exception)
             {
-                $this->view->result = self::STATUS_FAILED;
-
                 $_m = "failed to send dummy instructions to email (" . $email . ");\n";
                 $_m.= $exception->getMessage();
                 $_d = array('method' => __METHOD__);
@@ -276,7 +239,8 @@ class ProfileController extends AbstractController
 
         $email = $this->request->email;
         $uid = $this->request->uid;
-        $this->view->result = self::CONFIRM_FAILED;
+        $this->view->accepted = false;
+        $this->view->message = $this->translation->confirm_failed;
 
         $profile = null;
 
@@ -287,26 +251,21 @@ class ProfileController extends AbstractController
 
         if(is_object($profile))
         {
-            if($profile->register_confirmation == false)
+            if($profile->register_confirmation == true)
             {
-                $profile->register_confirmation = true;
-                $profile->save();
-
-                $id = $profile->user_profile_id;
-                $information = UserProfileInformation::findByPrimaryKey($id);
-
-                if(is_object($information))
-                {
-                    $information->register_confirmation_time = time();
-                    $information->save();
-                }
-
-                $this->view->result = self::CONFIRM_OK;
+                $this->view->message = $this->translation->confirm_done_before;
             }
             else
             {
-                $this->view->result = self::CONFIRM_DONE_BEFORE;
+                $profile->uid = APP_Utility::randomString(8);
+                $profile->register_confirmation = true;
+                $profile->register_confirmation_time = time();
+                $profile->save();
+
+                $this->view->message = $this->translation->confirm_accepted;
             }
+
+            $this->view->accepted = true;
         }
     }
 
@@ -333,14 +292,11 @@ class ProfileController extends AbstractController
 
         $email = $this->request->email;
         $uid = $this->request->uid;
-        $profile = null;
 
         if(strlen($email) > 0 && strlen($uid) > 0)
         {
-            $profile = UserProfile::findByUID($email, $uid);
+            $this->view->profile = UserProfile::findByUID($email, $uid);
         }
-
-        $this->view->profile = $profile;
     }
 
     /**
@@ -357,23 +313,28 @@ class ProfileController extends AbstractController
         $current = $this->request->current;
         $password = $this->request->password;
         $confirm = $this->request->confirm;
-        $this->view->result = self::STATUS_FAILED;
+        $this->view->updated = false;
+        $message = $this->translation->password_failed;
 
-        /* online password change (authenticated) */
+        /* password change (authenticated) */
 
         if(strlen($current) > 0 && ($id = intval($this->session->user_profile_id)) > 0)
         {
             $this->sessionAuthorize();
-            $this->view->result = $this->passwordA($id, $current, $password, $confirm);
+            $this->view->updated = $this->passwordAuthenticated
+                ($id, $current, $password, $confirm, $message);
         }
  
-        /* offline password change (not authenticated) */
+        /* password change (not authenticated) */
 
         if(strlen($email) > 0 && strlen($uid) > 0 && 
            strlen($password) && strlen($confirm))
         {
-            $this->view->result = $this->passwordN($email, $uid, $password, $confirm);
+            $this->view->updated = $this->passwordNotAuthenticated
+                ($email, $uid, $password, $confirm, $message);
         }
+
+        $this->view->message = $message;
     }
 
     /**
@@ -383,22 +344,23 @@ class ProfileController extends AbstractController
      * @param   string  $current    Current password
      * @param   string  $password
      * @param   string  $confirm
-     * @return  string
+     * @param   string  $message
+     * @return  boolean
      */
-    private function passwordA($id, $current, $password, $confirm)
+    private function passwordAuthenticated
+        ($id, $current, $password, $confirm, &$message)
     {
-        $result = self::STATUS_FAILED;
+        $updated = false;
 
         if(is_object($profile = $profile = UserProfile::findByPrimaryKey($id)))
         {
-
             if($password != $confirm)
             {
-                $result = self::STATUS_UNMATCHED_PASSWORD;
+                $message = $this->translation->password_not_match;
             }
             elseif($profile->login_password_md5 != md5($current))
             {
-                $result = self::STATUS_WRONG_PASSWORD;
+                $message = $this->translation->password_invalid;
             }
 
             /* all ok ! */
@@ -408,15 +370,16 @@ class ProfileController extends AbstractController
                 $profile->login_password_md5 = md5($password);
                 $profile->save();
 
+                $updated = true;
+                $message = $this->translation->password_updated;
+
                 $id = intval($profile->user_profile_id);
                 $_d = array ('method' => __METHOD__, 'user_profile_id' => $id);
-                self::notice("password changed", $_d);
-
-                $result = self::STATUS_OK;
+                self::log("password changed", $_d);
             }
         }
 
-        return $result;
+        return $updated;
     }
 
     /**
@@ -426,40 +389,42 @@ class ProfileController extends AbstractController
      * @param   string  $uid
      * @param   string  $password
      * @param   string  $confirm
-     * @return  string
+     * @param   string  $message
+     * @return  boolean
      */
-    private function passwordN($email, $uid, $password, $confirm)
+    private function passwordNotAuthenticated
+        ($email, $uid, $password, $confirm, &$message)
     {
-        $result = self::STATUS_FAILED;
+        $updated = false;
 
         if(is_object($profile = $profile = UserProfile::findByUID($email, $uid)))
         {
-            if($password == $confirm)
+            if($password != $confirm)
+            {
+                $message = $this->translation->password_not_match;
+            }
+            else
             {
                 $profile->uid = APP_Utility::randomString(8);
                 $profile->login_password_md5 = md5($password);
                 $profile->save();
 
+                $updated = true;
+                $message = $this->translation->password_updated;
+
                 $id = intval($profile->user_profile_id);
                 $_d = array ('method' => __METHOD__, 'user_profile_id' => $id);
-                self::notice("password changed", $_d);
-
-                $result = self::STATUS_OK;
-
-                self::sendProfileNotice($profile);
-                $this->sessionDestroy();
-            }
-            else
-            {
-                $result = self::STATUS_UNMATCHED_PASSWORD;
+                self::log("password changed", $_d);
+                # $this->notify($profile, "updated");
+                $this->session->setActive(false);
             }
         }
 
-        return $result;
+        return $updated;
     }
 
     /**
-     * Email change action
+     * Email update action
      * 
      * @return  array
      */
@@ -471,7 +436,7 @@ class ProfileController extends AbstractController
     }
 
     /**
-     * Email change form
+     * Email update form
      * 
      * @return  array
      */
@@ -481,27 +446,18 @@ class ProfileController extends AbstractController
 
         $email = $this->request->email;
         $uid = $this->request->uid;
-        $profile = null;
-        $new_email = null;
+        $this->view->profile = null;
 
         if(strlen($email) > 0 && strlen($uid) > 0)
         {
-            $profile = UserProfile::findByUID($email, $uid);
-
-            if(is_object($profile))
-            {
-                $id = $profile->user_profile_id;
-                $information = UserProfileInformation::findByPrimaryKey($id);
-                if(is_object($information)) $new_email = $information->email_update;
-            }
+            $this->view->profile = UserProfile::findByUID($email, $uid);
         }
 
         $this->view->profile = $profile;
-        $this->view->new_email = $new_email;
     }
 
     /**
-     * Email change request/save
+     * Email update request/save
      * 
      * @return void
      */
@@ -513,7 +469,8 @@ class ProfileController extends AbstractController
         $email = $this->request->email;
         $uid = $this->request->uid;
         $password = $this->request->password;
-        $this->view->result = self::STATUS_FAILED;
+        $this->view->accepted = false;
+        $this->view->message = $this->translation->email_failed;
         $profile = null;
 
         /* change request (authenticated) */
@@ -521,14 +478,16 @@ class ProfileController extends AbstractController
         if(strlen($new_email) > 0 && ($id = intval($this->session->user_profile_id)) > 0)
         {
             $this->sessionAuthorize();
-            $this->view->result = $this->emailChangeRequest($id, $new_email);
+            $this->view->accepted = $this->emailChangeRequest
+                ($id, $new_email, $this->view->message);
         }
         
         /* change save */
 
         if(strlen($email) > 0 && strlen($uid) > 0 && strlen($password) > 0)
         {
-            $this->view->result = $this->emailChangeSave($email, $uid, $password);
+            $this->view->accepted = $this->emailChangeSave
+                ($email, $uid, $password, $this->view->message);
         }
     }
 
@@ -537,30 +496,29 @@ class ProfileController extends AbstractController
      * 
      * @param   integer $id         User profile ID
      * @param   string  $new_email  New user profile login email
-     * @return  string
+     * @param   string  $message
+     * @return  boolean
      */
-    private function emailChangeRequest($id, $new_email)
+    private function emailChangeRequest($id, $new_email, &$message)
     {
-        $result = self::STATUS_FAILED;
+        $accepted = false;
 
         if(is_object($profile = UserProfile::findByPrimaryKey($id)))
         {
-            if($profile->login_email != $new_email)
+            if($profile->login_email == $new_email)
+            {
+                $message = $this->translation->email_unchanged;
+            }
+            else
             {
                 try
                 {
-                    self::sendEmailUpdateInstruction($profile, $new_email);
-
-                    $information = UserProfileInformation::findByPrimaryKey($id);
-        
-                    if(is_object($information))
-                    {
-                        $information->email_update = $new_email;
-                        $information->email_update_message_time = time();
-                        $information->save();
-                        }
-
-                    $result = self::STATUS_OK;
+                    $profile->email_update = $new_email;
+                    $profile->email_update_message_time = time();
+                    $profile->save();
+                    $this->notify($profile, "email_change");
+                    $message = $this->translation->change_request_accepted;
+                    $accepted = true;
                 }
                 catch(AB_Exception $exception)
                 {
@@ -571,13 +529,9 @@ class ProfileController extends AbstractController
                     AB_Log::write($_m, $exception->getCode(), $_d);
                 }
             }
-            else
-            {
-                $result = self::STATUS_UNCHANGED_EMAIL;
-            }
         }
 
-        return $result;
+        return $accepted;
     }
 
     /**
@@ -586,44 +540,39 @@ class ProfileController extends AbstractController
      * @param   string  $email      New user profile login email
      * @param   string  $uid        Profile UID
      * @param   string  $password   Profile password
-     * @return  string
+     * @param   string  $message
+     * @return  boolean
      */
-    private function emailChangeSave($email, $uid, $password)
+    private function emailChangeSave($email, $uid, $password, &$message)
     {
-        $result = self::STATUS_FAILED;
+        $accepted = false;
 
         if(is_object($profile = UserProfile::findByUID($email, $uid)))
         {
-            if($profile->login_password_md5 == md5($password))
+            if($profile->login_password_md5 != md5($password))
             {
-                $id = $profile->user_profile_id;
-                $information = UserProfileInformation::findByPrimaryKey($id);
-
-                if(is_object($information))
-                {
-                    if(strlen(($new_email = $information->email_update)) > 0)
-                    {
-                        $profile->login_email = $new_email;
-                        $profile->uid = APP_Utility::randomString(8);
-                        $profile->save();
-
-                        $result = self::STATUS_OK;
-
-                        $id = $profile->user_profile_id;
-                        $_d = array ('method' => __METHOD__, 'user_profile_id' => $id);
-                        self::notice("email changed", $_d);
-
-                        self::sendProfileNotice($profile);
-                    }
-                }
+                $message = $this->translation->email_unmatched_password;
             }
             else
             {
-                $result = self::STATUS_UNMATCHED_PASSWORD;
+                if(strlen(($new_email = $profile->email_update)) > 0)
+                {
+                    $profile->login_email = $new_email;
+                    $profile->uid = APP_Utility::randomString(8);
+                    $profile->save();
+
+                    $accepted = true;
+                    $message = $this->translation->email_change_accepted;
+
+                    $id = $profile->user_profile_id;
+                    $_d = array ('method' => __METHOD__, 'user_profile_id' => $id);
+                    self::log("email changed", $_d);
+                    $this->notify($profile, "updated");
+                }
             }
         }
 
-        return $result;
+        return $accepted;
     }
 
     /**
@@ -650,19 +599,12 @@ class ProfileController extends AbstractController
         $this->view->setLayout('dashboard');
         
         $id = intval($this->session->user_profile_id);
-        $profile = UserProfile::findByPrimaryKeyEnabled($id);
+        $this->view->profile = UserProfile::findByPrimaryKeyEnabled($id);
 
-        if(empty($profile)) 
+        if(is_object($this->view->profile) == false) 
         {
             $this->response->setRedirect(BASE_URL);
-            return null;
         }
-
-        $information = UserProfileInformation::findByPrimaryKey($id);
-        if(!is_object($information)) $information = new UserProfileInformation();
-
-        $this->view->profile = $profile;
-        $this->view->information = $information;
     }
 
     /**
@@ -676,7 +618,8 @@ class ProfileController extends AbstractController
 
         $id = intval($this->session->user_profile_id);
         $profile = ($id > 0) ? UserProfile::findByPrimaryKeyEnabled($id) : null;
-        $this->view->result = self::STATUS_FAILED;
+        $this->view->saved = false;
+        $this->view->message = $this->translation->edit_failed;
 
         if(!is_object($profile))
         {
@@ -685,22 +628,13 @@ class ProfileController extends AbstractController
             throw new AB_Exception($_m, E_USER_WARNING, $_d);
         }
 
-        $name = $this->request->name;
-
-        $information = UserProfileInformation::findByPrimaryKey($id);
-
-        if(!is_object($information))
-        {
-            $information = new UserProfileInformation();
-            $information->user_profile_id = $id;
-        }
-
-        $information->name = $name;
+        $profile->name = $this->request->name;
 
         try
         {
-            $information->save();
-            $this->view->result = self::STATUS_OK;
+            $profile->save();
+            $this->view->saved = true;
+            $this->view->message = $this->translation->edit_saved;
         }
         catch(AB_Exception $exception)
         {
@@ -711,201 +645,29 @@ class ProfileController extends AbstractController
     }
 
     /**
-     * Send email
+     * Send notification mail
      *
-     * @param   string  $email
-     * @param   string  $identifier
-     * @param   string  $subject
-     * @param   string  $body
-     * @return  void
+     * @param   mixed       $recipient
+     * @param   string      $template
+     * @return  boolean
      */
-    private static function sendEmail($email, $identifier, $subject, $body)
+    private function notify ($recipient, $template)
     {
         $mailer = new APP_Mailer();
-        $mailer->setSubject($subject);
-        $mailer->setBody($body);
-        $mailer->send($email, $identifier);
-    }
 
-    /**
-     * Send new profile instruction
-     *
-     * @param   UserProfile $profile
-     * @return  boolean
-     */
-    public static function sendNewInstruction($profile)
-    {
-        if(!is_object($profile))
-        {
-            return false;
-        }
+        $subject = "mail_" . $template . "_subject";
+        $mailer->setSubject($this->translation->{$subject});
+        $template = $this->request->getController() . "/mail_" . $template;
 
-        $subject = self::MAIL_NEW_PROFILE_SUBJECT;
-        $body = self::readInstruction(self::MAIL_NEW_PROFILE_TEMPLATE);
+        $profile = is_object($recipient) ? $recipient : null;
 
-        $confirm_url = AB_Request::url(
-            "profile", "confirm", array(
-                "email" => $profile->login_email,
-                "uid" => $profile->uid));
+        ob_start();
+        include AB_View::getTemplatePath($template);
+        $mailer->setBody(ob_get_clean());
 
-        $body = str_replace("{CONFIRM_URL}", $confirm_url, $body);
+        $email = $profile ? $profile->login_email : $recipient;
 
-        self::sendEmail($profile->login_email, __METHOD__, $subject, $body);
-
-        return true;
-    }
-
-    /**
-     * Send existing profile instruction
-     *
-     * @param   UserProfile $profile
-     * @return  boolean
-     */
-    public static function sendExistingInstruction($profile)
-    {
-        if(!is_object($profile))
-        {
-            return false;
-        }
-
-        $subject = self::MAIL_EXISTING_PROFILE_SUBJECT;
-        $body = self::readInstruction(self::MAIL_EXISTING_PROFILE_TEMPLATE);
-            
-        $body = str_replace("{BASE_URL}", BASE_URL, $body);
-
-        $password_url = AB_Request::url(
-            "profile", "password", array(
-                "email" => $profile->login_email, "uid" => $profile->uid));
-
-        $body = str_replace("{PASSWORD_URL}", $password_url, $body);
-
-        self::sendEmail($profile->login_email, __METHOD__, $subject, $body);
- 
-        return true;
-    }
-
-
-    /**
-     * Send recovery instruction
-     *
-     * @param   UserProfile $profile
-     * @return  boolean
-     */
-    public static function sendRecoveryInstruction($profile)
-    {
-        if(!is_object($profile))
-        {
-            return false;
-        }
-
-        $subject = self::MAIL_RECOVERY_SUBJECT;
-        $body = self::readInstruction(self::MAIL_RECOVERY_TEMPLATE);
-
-        $password_url = AB_Request::url(
-            "profile", "password", array(
-                "email" => $profile->login_email, "uid" => $profile->uid));
-       
-        $body = str_replace("{PASSWORD_URL}", $password_url, $body);
-
-        self::sendEmail($profile->login_email, __METHOD__, $subject, $body);
-
-        return true;
-    }
-
-    /**
-     * Send email update instruction
-     *
-     * @param   UserProfile $profile
-     * @param   string      $email
-     * @return  boolean
-     */
-    public static function sendEmailUpdateInstruction($profile, $email)
-    {
-        if(!is_object($profile)) return false;
-
-        $subject = self::MAIL_EMAIL_CHANGE_SUBJECT;
-        $body = self::readInstruction(self::MAIL_EMAIL_CHANGE_TEMPLATE);
-
-        $email_url = AB_Request::url(
-            "profile", "email", array(
-                "email" => $profile->login_email,
-                "uid" => $profile->uid));
-
-        $body = str_replace("{EMAIL_URL}", $email_url, $body);
-
-        self::sendEmail($email, __METHOD__, $subject, $body);
-
-        return true;
-    }
-
-
-
-    /**
-     * Send recovery notice
-     *
-     * @param   UserProfile $profile
-     * @return  boolean
-     */
-    public static function sendProfileNotice($profile)
-    {
-        if(!is_object($profile))
-        {
-            return false;
-        }
-
-        $subject = self::MAIL_PROFILE_SUBJECT;
-        $body = self::readInstruction(self::MAIL_PROFILE_TEMPLATE);
-
-        $body = str_replace("{BASE_URL}", BASE_URL, $body);
-
-        self::sendEmail($profile->login_email, __METHOD__, $subject, $body);
-
-        return true;
-    }
-
-    /**
-     * Send dummy instruction
-     *
-     * @param   string      $email
-     * @return  boolean
-     */
-    public static function sendDummyInstruction($email)
-    {
-        if(empty($email))
-        {
-            return false;
-        }
-
-        $subject = self::MAIL_DUMMY_SUBJECT;
-        $body = self::readInstruction(self::MAIL_DUMMY_TEMPLATE);
-
-        $body = str_replace("{EMAIL}", $email, $body);
-        $body = str_replace("{BASE_URL}", BASE_URL, $body);
-
-        self::sendEmail($email, __METHOD__, $subject, $body);
-
-        return true;
-    }
-
-    /**
-     * Read instruction template
-     *
-     * @param   string  $template
-     * @return  void
-     */
-    private static function readInstruction($template)
-    {
-        $path = APPLICATION_PATH . "/view/template/Profile/" . $template;
-        $body = "";
-
-        if(file_exists($path))
-        {
-            $f = fopen($path, "r");
-            while(!feof($f)) $body.= fgets($f);
-            fclose($f);
-        }
-
-        return $body;
+        return $mailer->send($email, $template);
     }
 
     /**
@@ -915,7 +677,7 @@ class ProfileController extends AbstractController
      * @param   integer $_d
      * @return  void
      */
-    private static function notice($_m, $_d=array())
+    private static function log($_m, $_d=array())
     {
         $_m = $_m . " by ";
 

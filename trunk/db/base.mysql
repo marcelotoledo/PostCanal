@@ -2,10 +2,6 @@
 
 INSERT INTO user_profile (uid, login_email, login_password_md5, register_confirmation) VALUES ('ZbcVCn8Y', 'rafael@castilho.biz', MD5('castilho'), 1);
 
-SET @x=LAST_INSERT_ID();
-
-INSERT INTO user_profile_information (user_profile_id) VALUES (@x);
-
 -- cms type --
 
 INSERT INTO cms_type (name, version, enabled) VALUES ('WordPress', 'WordPress.com', 1);

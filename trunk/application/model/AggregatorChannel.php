@@ -21,7 +21,7 @@ class AggregatorChannel extends AB_Model
      *
      * @var string
      */
-    protected static $sequence_name = 'aggregator_channel_seq';
+    protected static $sequence_name = '';
 
     /**
      * Primary key name

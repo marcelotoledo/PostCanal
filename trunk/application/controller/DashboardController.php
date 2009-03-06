@@ -47,12 +47,10 @@ class DashboardController extends AbstractController
 
         if($id > 0)
         {
-            $information = UserProfileInformation::findByPrimaryKey($id);
             $cms = UserCMS::findByUserProfileId($id);
         }
 
         $this->view->profile = $profile;
-        $this->view->information = $information;
         $this->view->cms = $cms;
     }
 

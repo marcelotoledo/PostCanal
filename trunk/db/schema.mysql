@@ -2,7 +2,6 @@
 
 DROP TABLE IF EXISTS user_cms_channel CASCADE;
 DROP TABLE IF EXISTS user_cms CASCADE;
-DROP TABLE IF EXISTS user_profile_information CASCADE;
 DROP TABLE IF EXISTS user_profile CASCADE;
 DROP TABLE IF EXISTS aggregator_item CASCADE;
 DROP TABLE IF EXISTS aggregator_channel CASCADE;
@@ -27,7 +26,7 @@ CREATE TABLE ab_log
     data_user_profile_id INTEGER UNSIGNED NOT NULL DEFAULT 0,
     created_at TIMESTAMP NOT NULL DEFAULT NOW(),
     PRIMARY KEY (id)
-) ENGINE=MyISAM DEFAULT CHARSET='utf8';
+) ENGINE=InnoDB DEFAULT CHARSET='utf8';
 
 CREATE INDEX al_priority_idx ON ab_log (priority);
 
@@ -37,7 +36,7 @@ CREATE TABLE ab_session
     session_expires INTEGER unsigned NOT NULL default '0',
     session_data TEXT COLLATE 'utf8_unicode_ci',
     active TINYINT(1) NOT NULL DEFAULT 0
-) ENGINE=MyISAM DEFAULT CHARSET='utf8' COLLATE='utf8_unicode_ci';
+) ENGINE=InnoDB DEFAULT CHARSET='utf8' COLLATE='utf8_unicode_ci';
 
 CREATE INDEX as_id_idx ON ab_session (id);
 CREATE INDEX as_id_active_idx ON ab_session (id, active);
@@ -51,7 +50,7 @@ CREATE TABLE ab_translation
     name VARCHAR(100) NOT NULL,
     value TEXT NOT NULL,
     PRIMARY KEY (id)
-) ENGINE=MyISAM DEFAULT CHARSET='utf8';
+) ENGINE=InnoDB DEFAULT CHARSET='utf8';
 
 CREATE INDEX at_template_culture_idx ON ab_translation (template, culture);
 
@@ -64,7 +63,7 @@ CREATE TABLE application_mailer_relay
     identifier VARCHAR(8) DEFAULT NULL,
     created_at TIMESTAMP NOT NULL DEFAULT NOW(),
     PRIMARY KEY (id)
-) ENGINE=MyISAM DEFAULT CHARSET='utf8';
+) ENGINE=InnoDB DEFAULT CHARSET='utf8';
 
 CREATE INDEX amr_recipient_identifier_created_idx ON application_mailer_relay (recipient, identifier, created_at);
 
@@ -143,7 +142,17 @@ CREATE TABLE user_profile
     uid VARCHAR(8) NOT NULL,
     login_email VARCHAR(100) NOT NULL,
     login_password_md5 VARCHAR(32) NOT NULL,
+    -- -------------------------------------------------------------------------
+    name VARCHAR(100) NOT NULL DEFAULT '',
+    -- -------------------------------------------------------------------------
     register_confirmation TINYINT(1) NOT NULL DEFAULT 0,
+    email_update VARCHAR(100) NOT NULL DEFAULT '',
+    register_message_time TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
+    register_confirmation_time TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
+    last_login_time TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
+    recovery_message_time TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
+    email_update_message_time TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
+    -- -------------------------------------------------------------------------
     created_at TIMESTAMP NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
     enabled TINYINT(1) NOT NULL DEFAULT 1,
@@ -154,23 +163,6 @@ CREATE INDEX up_id_enabled_idx ON user_profile (user_profile_id, enabled);
 CREATE INDEX up_email_enabled_idx ON user_profile (login_email, enabled);
 CREATE INDEX up_email_password_enabled_idx ON user_profile (login_email, login_password_md5, enabled);
 CREATE INDEX up_email_uid_idx ON user_profile (login_email, uid);
-
-CREATE TABLE user_profile_information
-(
-    user_profile_id INTEGER UNSIGNED NOT NULL,
-    name VARCHAR(100) NOT NULL DEFAULT '',
-    -- TODO: location, language, etc. --
-    email_update VARCHAR(100) NOT NULL,
-    register_message_time TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
-    register_confirmation_time TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
-    last_login_time TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
-    recovery_message_time TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
-    email_update_message_time TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
-    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
-    updated_at TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
-    CONSTRAINT upi_user_profile_fk FOREIGN KEY (user_profile_id) 
-        REFERENCES user_profile (user_profile_id) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET='utf8';
 
 CREATE TABLE user_cms
 (

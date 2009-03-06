@@ -50,7 +50,7 @@ class CMSType extends AB_Model
      *
      * @var string
      */
-    protected static $sequence_name = 'cms_type_seq';
+    protected static $sequence_name = '';
 
     /**
      * Primary key name
@@ -235,8 +235,6 @@ class CMSType extends AB_Model
      */
     public static function discovery(&$url, $headers, &$html)
     {
-        AB_Loader::loadApplicationLibrary("ApplicationUtility");
-
         $cms_type = null;
 
         $types = array();
@@ -273,7 +271,7 @@ class CMSType extends AB_Model
      */
     protected static function discoveryByURL(&$url, $types=array())
     {
-        ApplicationUtility::fixURL($url);
+        APP_Utility::fixURL($url);
 
         $r = self::discoveryRules(self::DISCOVERY_URL_REPLACE, $types);
         $m = self::discoveryRules(self::DISCOVERY_URL_MATCH, $types);
@@ -293,7 +291,7 @@ class CMSType extends AB_Model
             $c = array_key_exists($i, $m) ? $m[$i] : array();
             $n = count($c);
 
-            if(ApplicationUtility::preg($a, $b, $c) == $n && $n > 0)
+            if(APP_Utility::preg($a, $b, $c) == $n && $n > 0)
             {
                 $url = $a;
                 $results[] = $i;
@@ -325,7 +323,7 @@ class CMSType extends AB_Model
                 {
                     $n = count($r);
 
-                    if(ApplicationUtility::preg($h, array(), $r) == $n && $n > 0)
+                    if(APP_Utility::preg($h, array(), $r) == $n && $n > 0)
                     {
                         $a = array_merge($a, array($type));
                     }
@@ -345,7 +343,7 @@ class CMSType extends AB_Model
      */
     protected static function discoveryByHTML(&$html, $types=array())
     {
-        ApplicationUtility::compactHTML($html);
+        APP_Utility::compactHTML($html);
 
         $r = self::discoveryRules(self::DISCOVERY_HTML_REPLACE, $types);
         $m = self::discoveryRules(self::DISCOVERY_HTML_MATCH, $types);
@@ -365,7 +363,7 @@ class CMSType extends AB_Model
             $c = array_key_exists($i, $m) ? $m[$i] : array();
             $n = count($c);
 
-            if(ApplicationUtility::preg($a, $b, $c) == $n && $n > 0)
+            if(APP_Utility::preg($a, $b, $c) == $n && $n > 0)
             {
                 $results[] = $i;
             }
@@ -418,9 +416,7 @@ class CMSType extends AB_Model
      */
     public static function managerCheckHTML(&$html, &$config)
     {
-        AB_Loader::loadApplicationLibrary("ApplicationUtility");
-
-        ApplicationUtility::compactHTML($html);
+        APP_Utility::compactHTML($html);
 
         $r = array();
         $m = array();
@@ -433,7 +429,7 @@ class CMSType extends AB_Model
 
         $t = count($m);
 
-        return (ApplicationUtility::preg($html, $r, $m) == $t && $t > 0);
+        return (APP_Utility::preg($html, $r, $m) == $t && $t > 0);
     }
 
     /* CMS TYPE PLUGIN */
