@@ -6,7 +6,7 @@
 
 <?php if(count($this->cms) == 0) : ?>
 
-<div class="nocms">Nenhum CMS cadastrado. <?php _a_("Adicionar novo CMS", "cms", "add") ?></span> 
+<div class="nocms">Nenhum CMS cadastrado. <?php AB_Helper::a("Adicionar novo CMS", "cms", "add") ?></span> 
 
 <?php else : ?>
 
@@ -17,11 +17,11 @@
         <table class="panel-list">
 
 <?php foreach($this->cms as $cms) : ?>
-<tr><td><div class="cms-item" cid="<?php echo $cms->cid_md5 ?>"><?php echo $cms->name ?></div></tr></td>
+<tr><td><div class="cms-item" cid="<?php echo $cms->cid ?>"><?php echo $cms->name ?></div></tr></td>
 <?php endforeach ?>
 
         </table>
-        <div><?php _a_("adicionar", "cms", "add") ?></span>
+        <div><?php AB_Helper::a("adicionar", "cms", "add") ?></span>
     </td>
     <td id="right-panel"><!-- dashboard/cms loaded by ajax --></td>
 </tr>

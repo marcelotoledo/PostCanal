@@ -1,7 +1,5 @@
 <?php
 
-AB_Loader::loadApplicationLibrary("ApplicationUtility");
-
 
 /**
  * UserCMS model class
@@ -98,8 +96,7 @@ class UserCMS extends AB_Model
 
         if($this->isNew()) 
         {
-            AB_Loader::loadApplicationLibrary("ApplicationUtility");
-            $this->cid = ApplicationUtility::randomString(8);
+            $this->cid = APP_Utility::randomString(8);
         }
 
         return parent::save();

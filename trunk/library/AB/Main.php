@@ -94,7 +94,9 @@ class AB_Main
 
                 try
                 {
+                    $controller->beforeAction();
                     $controller->runAction($action_name);
+                    $controller->afterAction();
                 }
                 catch(AB_Exception $exception)
                 {

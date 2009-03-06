@@ -10,15 +10,10 @@
 class DashboardController extends AbstractController
 {
     /**
-     * Dashboard controller constructor
-     *
-     * @param   AB_Request  $request
-     * @param   AB_Response $response
-     * @return  void
+     * Before action
      */
-    public function __construct($request, $response)
+    public function beforeAction()
     {
-        parent::__construct($request, $response);
         $this->sessionAuthorize();
     }
 
@@ -29,26 +24,17 @@ class DashboardController extends AbstractController
      */
     public function indexAction()
     {
-        $this->view->setLayout('dashboard');
-
         $id = intval($this->session->user_profile_id);
-        $profile = null;
+        $profile = ($id > 0) ? UserProfile::findByPrimaryKeyEnabled($id) : null;
 
-        if($id > 0) $profile = UserProfile::findByPrimaryKeyEnabled($id);
-
-        if(empty($profile))
+        if(is_object($profile) == false)
         {
-            $this->sessionDestroy();
-            $this->setResponseRedirect(BASE_URL);
+            $_m = "unable to retrieve user profile with id (" . $id . ")";
+            $_d = array('method' => __METHOD__);
+            throw new AB_Exception($_m, E_USER_WARNING, $d);
         }
 
-        $information = null;
-        $cms = null;
-
-        if($id > 0)
-        {
-            $cms = UserCMS::findByUserProfileId($id);
-        }
+        $cms = UserCMS::findByUserProfileId($id);
 
         $this->view->profile = $profile;
         $this->view->cms = $cms;

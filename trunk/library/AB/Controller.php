@@ -23,7 +23,7 @@ class AB_Controller
      */
     public $view;
 
-
+ 
     /**
      * Access to registry data
      * 
@@ -36,6 +36,20 @@ class AB_Controller
     }
 
     public function __set ($name, $value) { } // read-only
+
+    /**
+     * Before action
+     */
+    public function beforeAction()
+    {
+    }
+
+    /**
+     * After action
+     */
+    public function afterAction()
+    {
+    }
 
     /**
      * Check action
