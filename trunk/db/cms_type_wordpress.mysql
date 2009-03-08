@@ -1,8 +1,4 @@
--- user profile --
-
-INSERT INTO user_profile (uid, login_email, login_password_md5, register_confirmation) VALUES ('ZbcVCn8Y', 'rafael@castilho.biz', MD5('castilho'), 1);
-
--- cms type --
+-- CMS TYPE WORDPRESS --
 
 INSERT INTO cms_type (name, version, enabled) VALUES ('WordPress', 'WordPress.com', 1);
 

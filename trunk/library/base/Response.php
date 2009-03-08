@@ -34,6 +34,13 @@ class B_Response
     private $status = self::STATUS_OK;
 
     /**
+     * Allow response redirect
+     *
+     * @var boolean
+     */
+    private $allow_redirect = true;
+
+    /**
      * Response redirect
      *
      * @var boolean
@@ -111,6 +118,14 @@ class B_Response
     }
 
     /**
+     * Allow redirect
+     */
+    public function allowRedirect($allow=true)
+    {
+        $this->allow_redirect = $allow;
+    }
+
+    /**
      * Set redirect
      *
      * @return  void
@@ -118,7 +133,7 @@ class B_Response
     public function setRedirect($url, $status=self::STATUS_REDIRECT)
     {
         $this->setHeader('Location', $url);
-        $this->setStatus($status);
+        $this->status = $status;
         $this->is_redirect = true;
     }
 
@@ -141,6 +156,7 @@ class B_Response
     public function setXML($is_xml)
     {
         $this->is_xml = $is_xml;
+        $this->allow_redirect = $is_xml ^ true;
         $this->setContentType($is_xml ? 'text/xml' : 'text/html');
     }
 
@@ -192,15 +208,12 @@ class B_Response
      */
     public function send()
     {
-        if($this->is_xml === true)
+        if($this->status == self::STATUS_REDIRECT && 
+           $this->allow_redirect === false)
         {
-            /* do not redirect xml */
-
-            if($this->status == self::STATUS_REDIRECT)
-            {
-                $this->status = self::STATUS_ERROR;
-                $this->unsetHeader('Location');
-            }
+            unsetHeader('Location');
+            $this->setBody(((string) null));
+            $this->status = self::STATUS_ERROR;
         }
 
         $this->sendHeaders();

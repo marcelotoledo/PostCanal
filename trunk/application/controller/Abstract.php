@@ -27,7 +27,7 @@ abstract class C_Abstract extends B_Controller
         {
             parent::run($name);
         }
-        catch(AB_Exception $exception)
+        catch(B_Exception $exception)
         {
             /* add user profile information to exception */
 
@@ -35,7 +35,7 @@ abstract class C_Abstract extends B_Controller
             $_m = "an error occurred during the execution of action (" . $name . ")";
             $_d = array('method' => __METHOD__);
             if($id > 0) $_d = array_merge($_d, array('user_profile_id' => $id));
-            AB_Exception::forward($_m, E_USER_NOTICE, $exception, $_d);
+            B_Exception::forward($_m, E_USER_NOTICE, $exception, $_d);
         }
     }   
 }

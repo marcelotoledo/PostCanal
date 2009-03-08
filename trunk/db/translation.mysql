@@ -1,6 +1,9 @@
+-- TRANSLATION --
+
 -- Application --
 
 INSERT INTO base_translation VALUES (NULL, 'Application', 'us_EN', 'application_loading', 'Loading');
+INSERT INTO base_translation VALUES (NULL, 'Application', 'us_EN', 'application_welcome', 'Welcome');
 
 -- Index/index --
 

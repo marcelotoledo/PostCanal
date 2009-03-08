@@ -95,12 +95,15 @@ class B_Controller
      *
      * @return  boolean
      */
-    protected function authorize()
+    protected function authorize($redirect=null)
     {
         if(($active = $this->session->getActive()) == false)
         {
-            $redirect = $this->registry->session->unauthorized->redirect;
-            if(isset($redirect) == false) $redirect = BASE_URL;
+            if($redirect == null)
+            {
+                $redirect = $this->registry->session->unauthorized->redirect;
+                if(isset($redirect) == false) $redirect = BASE_URL;
+            }
 
             $this->response->setRedirect($redirect, B_Response::STATUS_UNAUTHORIZED);
             $_m = "session unauthorized";

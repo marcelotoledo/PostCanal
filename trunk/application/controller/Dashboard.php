@@ -14,7 +14,13 @@ class C_Dashboard extends C_Abstract
      */
     public function before()
     {
-        $this->authorize();
+        if($this->request->getAction() != 'unauthorized')
+        {
+            $url = ($this->request->getAction() == "index") ? 
+                B_Request::url('index','index') : 
+                B_Request::url('dashboard', 'unauthorized');
+            $this->authorize($url);
+        }
     }
 
     /**
@@ -31,7 +37,7 @@ class C_Dashboard extends C_Abstract
         {
             $_m = "unable to retrieve user profile with id (" . $id . ")";
             $_d = array('method' => __METHOD__);
-            throw new AB_Exception($_m, E_USER_WARNING, $d);
+            throw new B_Exception($_m, E_USER_WARNING, $d);
         }
 
         $cms = UserCMS::findByUserProfileId($id);
@@ -58,5 +64,14 @@ class C_Dashboard extends C_Abstract
         }
 
         $this->view->cms = $cms;
+    }
+
+    /**
+     * Load CMS data
+     *
+     */
+    public function A_unauthorized()
+    {
+        $this->view->setLayout(null);
     }
 }

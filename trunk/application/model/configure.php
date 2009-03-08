@@ -7,11 +7,11 @@
  * @author      Rafael Castilho <rafael@castilho.biz>
  */
 
-require "../../library/AB/Loader.php";
-AB_Loader::register();
+require "../../library/base/Loader.php";
+B_Loader::register();
 
 require "../../config/environment.php";
-$registry = AB_Registry::singleton();
+$registry = B_Registry::singleton();
 
 
 /* ROUTINES */
@@ -59,32 +59,32 @@ EOS;
 
     /* iterate over fields */
 
-    foreach(AB_Model::select(str_replace("<table>", $_table, $sql)) as $r)
+    foreach(B_Model::select(str_replace("<table>", $_table, $sql)) as $r)
     {
         $f = array();
 
         if    (preg_match("/(" . $type_b . ")+/i", $r->type) > 0) 
-            $k = AB_Model::TYPE_BOOLEAN;
+            $k = B_Model::TYPE_BOOLEAN;
         elseif(preg_match("/(" . $type_d . ")+/i", $r->type) > 0) 
-            $k = AB_Model::TYPE_DATE;
+            $k = B_Model::TYPE_DATE;
         elseif(preg_match("/(" . $type_f . ")+/i", $r->type) > 0) 
-            $k = AB_Model::TYPE_FLOAT;
+            $k = B_Model::TYPE_FLOAT;
         elseif(preg_match("/(" . $type_i . ")+/i", $r->type) > 0) 
-            $k = AB_Model::TYPE_INTEGER;
+            $k = B_Model::TYPE_INTEGER;
         else                                                      
-            $k = AB_Model::TYPE_STRING;
+            $k = B_Model::TYPE_STRING;
 
         /* field type */
 
-        $f[AB_Model::STRUCTURE_TYPE] = $k;
+        $f[B_Model::STRUCTURE_TYPE] = $k;
 
         /* field size (only for string); 0 = inf */
 
-        $f[AB_Model::STRUCTURE_SIZE] = ($k == AB_Model::TYPE_STRING) ? 
+        $f[B_Model::STRUCTURE_SIZE] = ($k == B_Model::TYPE_STRING) ? 
             ((int) preg_replace("/^.+\(([0-9]+)\)+.*$/", "\\1", $r->type)) : 
             0;
 
-        $f[AB_Model::STRUCTURE_REQUIRED] = ($r->nn && strlen($r->default) == 0);
+        $f[B_Model::STRUCTURE_REQUIRED] = ($r->nn && strlen($r->default) == 0);
 
         $structure[$r->attribute] = $f;
     }
@@ -162,7 +162,7 @@ $output = <<<EOS
  * @package     Model
  * @author      Rafael Castilho <rafael@castilho.biz>
  */
-class <class> extends AB_Model
+class <class> extends B_Model
 {
     /**
      * Table name
