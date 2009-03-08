@@ -108,31 +108,32 @@ CREATE INDEX ctc_type_idx ON cms_type_configuration (cms_type_id);
 
 -- aggregator --
 
--- CREATE TABLE aggregator_channel
--- (
---     aggregator_channel_id INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
---     title VARCHAR(100) NOT NULL,
---     link VARCHAR(200) NOT NULL,
---     description TEXT NOT NULL DEFAULT '',
---     status VARCHAR(50) NOT NULL,
---     created_at TIMESTAMP NOT NULL DEFAULT NOW(),
---     updated_at TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
---     enabled TINYINT(1) NOT NULL DEFAULT 1,
---     PRIMARY KEY (aggregator_channel_id)
--- ) ENGINE=InnoDB DEFAULT CHARSET='utf8';
--- 
--- CREATE TABLE aggregator_item
--- (
---     aggregator_item_id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
---     aggregator_channel_id INTEGER UNSIGNED NOT NULL, 
---     title TEXT NOT NULL, 
---     link TEXT NOT NULL,
---     description TEXT NOT NULL DEFAULT '',
---     created_at TIMESTAMP NOT NULL DEFAULT NOW(), 
---     PRIMARY KEY (aggregator_item_id),
---     CONSTRAINT ai_aggregator_channel_fk FOREIGN KEY (aggregator_channel_id) 
---         REFERENCES aggregator_channel (aggregator_channel_id) ON DELETE CASCADE
--- ) ENGINE=InnoDB DEFAULT CHARSET='utf8';
+CREATE TABLE aggregator_channel
+(
+    aggregator_channel_id INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
+    type VARCHAR(50) NOT NULL,
+    title VARCHAR(100) NOT NULL,
+    link VARCHAR(200) NOT NULL,
+    description TEXT NOT NULL DEFAULT '',
+    status VARCHAR(50) NOT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
+    enabled TINYINT(1) NOT NULL DEFAULT 1,
+    PRIMARY KEY (aggregator_channel_id)
+) ENGINE=InnoDB DEFAULT CHARSET='utf8';
+
+CREATE TABLE aggregator_item
+(
+    aggregator_item_id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+    aggregator_channel_id INTEGER UNSIGNED NOT NULL, 
+    title TEXT NOT NULL, 
+    link TEXT NOT NULL,
+    description TEXT NOT NULL DEFAULT '',
+    created_at TIMESTAMP NOT NULL DEFAULT NOW(), 
+    PRIMARY KEY (aggregator_item_id),
+    CONSTRAINT ai_aggregator_channel_fk FOREIGN KEY (aggregator_channel_id) 
+        REFERENCES aggregator_channel (aggregator_channel_id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET='utf8';
 
 -- user --
 
@@ -189,19 +190,38 @@ CREATE TABLE user_cms
 
 CREATE INDEX uc_id_cid_idx ON user_cms (user_profile_id, cid);
 
--- CREATE TABLE user_cms_channel
--- (
---     user_cms_channel_id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
---     user_cms_id INTEGER UNSIGNED NOT NULL,
---     aggregator_channel_id INTEGER UNSIGNED NOT NULL,
---     title VARCHAR(100) NOT NULL,
---     description TEXT NOT NULL DEFAULT '',
---     created_at TIMESTAMP NOT NULL DEFAULT NOW(),
---     updated_at TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
---     enabled TINYINT(1) NOT NULL DEFAULT 1,
---     PRIMARY KEY (user_cms_channel_id),
---     CONSTRAINT ucc_user_cms_fk FOREIGN KEY (user_cms_id) 
---         REFERENCES user_cms (user_cms_id) ON DELETE CASCADE,
---     CONSTRAINT ucc_aggregator_channel_fk FOREIGN KEY (aggregator_channel_id) 
---         REFERENCES aggregator_channel (aggregator_channel_id) ON DELETE RESTRICT
--- ) ENGINE=InnoDB DEFAULT CHARSET='utf8';
+CREATE TABLE user_cms_channel
+(
+    user_cms_channel_id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+    user_cms_id INTEGER UNSIGNED NOT NULL,
+    ch VARCHAR(8) NOT NULL,
+    aggregator_channel_id INTEGER UNSIGNED NOT NULL,
+    title VARCHAR(100) NOT NULL,
+    description TEXT NOT NULL DEFAULT '',
+    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
+    enabled TINYINT(1) NOT NULL DEFAULT 1,
+    PRIMARY KEY (user_cms_channel_id),
+    CONSTRAINT ucc_user_cms_fk FOREIGN KEY (user_cms_id) 
+        REFERENCES user_cms (user_cms_id) ON DELETE CASCADE,
+    CONSTRAINT ucc_aggregator_channel_fk FOREIGN KEY (aggregator_channel_id) 
+        REFERENCES aggregator_channel (aggregator_channel_id) ON DELETE RESTRICT
+) ENGINE=InnoDB DEFAULT CHARSET='utf8';
+
+CREATE INDEX ucc_uci_idx ON user_cms_channel (user_cms_id);
+CREATE INDEX uc_uci_ch_idx ON user_cms (user_cms_id, ch);
+
+CREATE TABLE user_cms_queue
+(
+    user_cms_queue_id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+    user_cms_id INTEGER UNSIGNED NOT NULL,
+    title TEXT NOT NULL, 
+    description TEXT NOT NULL DEFAULT '',
+    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
+    PRIMARY KEY (user_cms_channel_id),
+    CONSTRAINT ucc_user_cms_fk FOREIGN KEY (user_cms_id) 
+        REFERENCES user_cms (user_cms_id) ON DELETE CASCADE,
+    CONSTRAINT ucc_aggregator_channel_fk FOREIGN KEY (aggregator_channel_id) 
+        REFERENCES aggregator_channel (aggregator_channel_id) ON DELETE RESTRICT
+) ENGINE=InnoDB DEFAULT CHARSET='utf8';

@@ -17,11 +17,18 @@ class UserCMSChannel extends B_Model
     protected static $table_name = 'user_cms_channel';
 
     /**
+     * Table structure
+     *
+     * @var array
+     */
+    protected static $table_structure = array();
+
+    /**
      * Sequence name
      *
      * @var string
      */
-    protected static $sequence_name = '';
+    protected static $sequence_name = null;
 
     /**
      * Primary key name
@@ -39,6 +46,16 @@ class UserCMSChannel extends B_Model
     public function getTableName()
     {
         return self::$table_name;
+    }
+
+    /**
+     * Get table structure
+     *
+     * @return  array
+     */
+    public function getTableStructure()
+    {
+        return self::$table_structure;
     }
 
     /**
@@ -68,7 +85,12 @@ class UserCMSChannel extends B_Model
      */
     public function save()
     {
-        if(!$this->isNew()) $this->updated_at = date("Y/m/d H:i:s");
+        /* generate CH */
+
+        if($this->isNew()) 
+        {
+            $this->ch = L_Utility::randomString(8);
+        }
 
         return parent::save();
     }
@@ -129,5 +151,17 @@ class UserCMSChannel extends B_Model
     public static function findByPrimaryKey($id)
     {
         return current(self::find(array(self::$primary_key_name => $id)));
+    }
+
+    /**
+     * Find by User CMS
+     *
+     * @param   integer     $id         UserCMS ID
+     *
+     * @return  UserCMSChannel|null 
+     */
+    public static function findByUserCMS($id)
+    {
+        return self::find(array('user_cms_id' => $id));
     }
 }

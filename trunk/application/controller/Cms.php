@@ -71,7 +71,7 @@ class C_Cms extends C_Abstract
         $cms->manager_url = $this->session->c_manager_url;
         $cms->manager_username = $this->request->username;
         $cms->manager_password = $this->request->password;
-        $cms->status = UserCMS::STATUS_OK;
+        $cms->status = UserCMS::STATUS_NEW;
 
         try
         {

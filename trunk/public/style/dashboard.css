@@ -55,26 +55,26 @@ div.nocms
     border-top: 1px solid gray;
 }
 
-#rss-chanels-panel
+#channel-chanels-panel
 {
     vertical-align: top;
     padding: 10px;
 }
 
-#rss-chanels-panel table
+#channel-chanels-panel table
 {
     width: 200px;
     border-top: 1px solid gray;
 }
 
-#rss-items-panel
+#channel-items-panel
 {
     padding: 10px;
     vertical-align: top;
     background-color: white;
 }
 
-#rss-items-panel h2
+#channel-items-panel h2
 {
     background-color: gray;
     padding: 2px;
@@ -82,7 +82,7 @@ div.nocms
     color: white;
 }
 
-#rss-items-list
+#channel-items-list
 {
     padding-top: 5px;
     width: 500px;
@@ -91,7 +91,7 @@ div.nocms
     overflow: auto;
 }
 
-#rss-items-list table
+#channel-items-list table
 {
     width: 475px;
 }
@@ -165,12 +165,12 @@ div.nocms
     padding-left:13px;
 }
 
-.rss-item-title
+.channel-item-title
 {
     float: left;
 }
 
-.rss-item-date
+.channel-item-date
 {
     float: right;
 }

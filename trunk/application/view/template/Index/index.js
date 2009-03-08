@@ -63,7 +63,7 @@ $(document).ready(function()
         ({
             type: "POST",
             url: "<?php B_Helper::url('profile', 'recovery') ?>",
-            dataType: "json",
+            dataType: "xml",
             data: parameters,
             beforeSend: function()
             {

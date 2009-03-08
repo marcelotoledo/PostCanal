@@ -10,10 +10,11 @@
  */
 class UserCMS extends B_Model
 {
-    const STATUS_OK           = "ok";
-    const STATUS_FAILED_URL   = "failed_url";
-    const STATUS_FAILED_LOGIN = "failed_login";
-    const STATUS_FAILED_POST  = "failed_post";
+    const STATUS_OK                  = "ok";
+    const STATUS_NEW                 = "new";
+    const STATUS_FAILED_URL          = "failed_url";
+    const STATUS_FAILED_LOGIN        = "failed_login";
+    const STATUS_FAILED_PUBLICATION  = "failed_publication";
 
 
     /**

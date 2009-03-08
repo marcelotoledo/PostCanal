@@ -20,7 +20,7 @@
 <?php endforeach ?>
 
         </table>
-        <div><?php B_Helper::a("adicionar", "cms", "add") ?></span>
+<div><?php B_Helper::a($this->translation->application_add, "cms", "add") ?></span>
     </td>
     <td id="right-panel"><!-- dashboard/cms loaded by ajax --></td>
 </tr>
