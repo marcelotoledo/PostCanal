@@ -22,10 +22,10 @@
     </tr>
 </table>
 
-<p id="changenotice" style="display:none">Senha alterada com sucesso. <?php AB_Helper::a("clique aqui") ?> para acessar a página de autenticação</p>
+<p id="changenotice" style="display:none">Senha alterada com sucesso. <?php B_Helper::a("clique aqui") ?> para acessar a página de autenticação</p>
 
 <?php else : ?>
 
-<p>Este link expirou. Utilize a <?php AB_Helper::a("página principal") ?> para solicitar um pedido de recuperação de senha.</p>
+<p>Este link expirou. Utilize a <?php B_Helper::a("página principal") ?> para solicitar um pedido de recuperação de senha.</p>
 
 <?php endif ?>

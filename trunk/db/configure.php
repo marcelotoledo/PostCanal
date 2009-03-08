@@ -7,8 +7,8 @@
  * @author      Rafael Castilho <rafael@castilho.biz>
  */
 
-require "../library/AB/Loader.php";
-AB_Loader::register();
+require "../library/base/Loader.php";
+B_Loader::register();
 
 require "../config/environment.php";
 
@@ -36,7 +36,7 @@ function read_and_run_sql ($filename)
     {
         echo "loading " . $filename . " ... ";
         $sql = read_sql ($filename);
-        AB_Model::execute($sql);
+        B_Model::execute($sql);
         echo $filename . " loaded\n";
     }
     catch(Exception $exception)

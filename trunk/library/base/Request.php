@@ -4,10 +4,10 @@
  * Request
  * 
  * @category    Blotomate
- * @package     AB
+ * @package     Base
  * @author      Rafael Castilho <rafael@castilho.biz>
  */
-class AB_Request
+class B_Request
 {
     /**
      * Method constants
@@ -200,7 +200,7 @@ class AB_Request
     /**
      * Path from server (tested only with Apache web server)
      *
-     * @throws  AB_Exception
+     * @throws  B_Exception
      * @return  string
      */
     public static function pathFromServer()
@@ -211,7 +211,7 @@ class AB_Request
         {
             $_m = "request uri is empty";
             $_d = array('method' => __METHOD__);
-            throw new AB_Exception($_m, E_USER_ERROR, $_d);
+            throw new B_Exception($_m, E_USER_ERROR, $_d);
         }
 
         $path = $request_uri;
@@ -252,7 +252,7 @@ class AB_Request
     /**
      * Method from server (tested only with Apache web server)
      *
-     * @throws  AB_Exception
+     * @throws  B_Exception
      * @return  string
      */
     public static function methodFromServer()
@@ -263,7 +263,7 @@ class AB_Request
         {
             $_m  = "request method is empty";
             $_d = array('method' => __METHOD__);
-            throw new AB_Exception($_m, E_USER_ERROR, $_d);
+            throw new B_Exception($_m, E_USER_ERROR, $_d);
         }
 
         return $request_method;

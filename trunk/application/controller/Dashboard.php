@@ -7,14 +7,14 @@
  * @package     Controller
  * @author      Rafael Castilho <rafael@castilho.biz>
  */
-class DashboardController extends AbstractController
+class C_Dashboard extends C_Abstract
 {
     /**
      * Before action
      */
-    public function beforeAction()
+    public function before()
     {
-        $this->sessionAuthorize();
+        $this->authorize();
     }
 
     /**
@@ -22,7 +22,7 @@ class DashboardController extends AbstractController
      *
      * @return void
      */
-    public function indexAction()
+    public function A_index()
     {
         $id = intval($this->session->user_profile_id);
         $profile = ($id > 0) ? UserProfile::findByPrimaryKeyEnabled($id) : null;
@@ -44,11 +44,11 @@ class DashboardController extends AbstractController
      * Load CMS data
      *
      */
-    public function cmsAction()
+    public function A_cms()
     {
         $this->view->setLayout(null);
 
-        $user_profile_id = intval($this->user_profile_id);
+        $user_profile_id = intval($this->session->user_profile_id);
         $cid = $this->request->cid;
         $cms = null;
 

@@ -4,7 +4,7 @@
     <tr>
         <td class="formlabel">Nome:</td>
         <td><input type="text" name="name" 
-            value="<?php echo $this->information->name ?>"></td>
+            value="<?php echo $this->profile->name ?>"></td>
     </tr>
     <tr class="formbutton">
         <td style="text-align:right">

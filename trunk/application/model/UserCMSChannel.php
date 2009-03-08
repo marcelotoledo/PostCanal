@@ -7,7 +7,7 @@
  * @package     Model
  * @author      Rafael Castilho <rafael@castilho.biz>
  */
-class UserCMSChannel extends AB_Model
+class UserCMSChannel extends B_Model
 {
     /**
      * Table name

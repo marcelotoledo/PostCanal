@@ -14,7 +14,7 @@ $(document).ready(function()
         $.ab_spinner
         ({
             height: 32, width: 32,
-            image: "<?php img_src('spinner/linux_spinner.png') ?>",
+            image: "<?php B_Helper::img_src('spinner/linux_spinner.png') ?>",
             message: "... carregando"
         });
     }
@@ -54,8 +54,8 @@ $(document).ready(function()
         $.ajax
         ({
             type: "POST",
-            url: "<?php url('profile','email') ?>",
-            dataType: "json",
+            url: "<?php B_Helper::url('profile','email') ?>",
+            dataType: "xml",
             data: parameters,
             beforeSend: function()
             {
@@ -67,26 +67,20 @@ $(document).ready(function()
                 active_request = false;
                 hideSpinner();
             },
-            success: function (data) 
+            success: function (xml) 
             { 
-                var result = data.result;
+                var data = $(xml).find('data');
+                var accepted = data.find('accepted').text();
+                var message = data.find('message').text();
 
-                if(result == "ok") 
+                if(accepted == "true") 
                 {
                     $("#emlform").toggle();
                     $("#changenotice").toggle();
                 }
-                else if(result == "failed") 
-                {
-                    $.ab_alert("Não foi possível alterar o e-mail de acesso");
-                }
-                else if(result == "unmatched_password") 
-                {
-                    $.ab_alert("Senha inválida");
-                }
                 else
                 {
-                    onError();
+                    if(message != "") $.ab_alert(message);
                 }
             }, 
             error: function (data) { onError(); }

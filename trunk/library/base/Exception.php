@@ -4,10 +4,10 @@
  * Exception
  *
  * @category    Blotomate
- * @package     AB
+ * @package     Base
  * @author      Rafael Castilho <rafael@castilho.biz>
  */
-class AB_Exception extends Exception
+class B_Exception extends Exception
 {
     /**
      * Data
@@ -120,7 +120,7 @@ class AB_Exception extends Exception
      */
     public function writeLog()
     {
-        AB_Log::write($this->getMessage(), $this->getCode(), $this->data);
+        B_Log::write($this->getMessage(), $this->getCode(), $this->data);
     }
 
     /**
@@ -155,6 +155,6 @@ class AB_Exception extends Exception
             }
         }
 
-        throw new AB_Exception ($message, $code, $data);
+        throw new B_Exception ($message, $code, $data);
     }
 }

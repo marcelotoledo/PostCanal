@@ -6,15 +6,15 @@
  * Generic storage class helps to manage global data
  *
  * @category    Blotomate
- * @package     AB
+ * @package     Base
  * @author      Rafael Castilho <rafael@castilho.biz>
  */
-class AB_Registry
+class B_Registry
 {
     /**
      * Singleton instance
      * 
-     * @var AB_Registry
+     * @var B_Registry
      */
     private static $instance;
 
@@ -32,7 +32,7 @@ class AB_Registry
     /**
      * Singleton constructor
      * 
-     * @return AB_Dispatcher
+     * @return B_Dispatcher
      */
     public static function singleton()
     {
@@ -126,7 +126,7 @@ class AB_Registry
     }
 
     /**
-     * Return null string to AB_Registry objects
+     * Return null string to B_Registry objects
      *
      * @return  string
      */

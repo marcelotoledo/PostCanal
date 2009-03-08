@@ -8,7 +8,7 @@
  * @package     Model
  * @author      Rafael Castilho <rafael@castilho.biz>
  */
-class UserCMS extends AB_Model
+class UserCMS extends B_Model
 {
     const STATUS_OK           = "ok";
     const STATUS_FAILED_URL   = "failed_url";
@@ -96,7 +96,7 @@ class UserCMS extends AB_Model
 
         if($this->isNew()) 
         {
-            $this->cid = APP_Utility::randomString(8);
+            $this->cid = L_Utility::randomString(8);
         }
 
         return parent::save();

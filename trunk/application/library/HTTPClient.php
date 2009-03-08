@@ -4,10 +4,10 @@
  * Application HTTP Client
  * 
  * @category    Blotomate
- * @package     Application library
+ * @package     library
  * @author      Rafael Castilho <rafael@castilho.biz>
  */
-class APP_HTTPClient
+class L_HTTPClient
 {
     /**
      * Status constants 
@@ -71,7 +71,7 @@ class APP_HTTPClient
             {
                 $message = "failed to get response from url (" . $url . ")";
                 $data = array('method' => __METHOD__);
-                AB_Exception::forward($message, E_USER_NOTICE, $exception, $data);
+                B_Exception::forward($message, E_USER_NOTICE, $exception, $data);
             }
         }
 
@@ -127,7 +127,7 @@ class APP_HTTPClient
             $headers = $this->response->getHeaders();
         }
 
-        $registry = AB_Registry::singleton();
+        $registry = B_Registry::singleton();
         $max = intval($registry->application->httpClient->maxHeaders);
         $total = count($headers);
 
@@ -138,7 +138,7 @@ class APP_HTTPClient
             $_m= "the response has a total of (" . $total . ") headers " .
                  "and was reduced to (" . $max . ") headers";
             $_d = array('method' => __METHOD__);
-            AB_Log::write($_m, E_USER_WARNING, $_d);
+            B_Log::write($_m, E_USER_WARNING, $_d);
         }
 
         return $headers;
@@ -156,7 +156,7 @@ class APP_HTTPClient
         if(is_object($this->response))
         {
             $body = $this->response->getBody();
-            $registry = AB_Registry::singleton();
+            $registry = B_Registry::singleton();
             $max = intval($registry->application->httpClient->maxBodyLenght);
             $lenght = strlen($body);
 
@@ -166,7 +166,7 @@ class APP_HTTPClient
                 $_m = "the response body has a size of (" . $lenght . ") bytes " .
                       "and was truncated to (" . $max . ") bytes";
                 $_d = array('method' => __METHOD__);
-                AB_Log::write($_m, E_USER_WARNING, $_d);
+                B_Log::write($_m, E_USER_WARNING, $_d);
             }
         }
 

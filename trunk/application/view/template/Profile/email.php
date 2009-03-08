@@ -2,7 +2,7 @@
 
 <h1>Mudança de E-mail de Acesso</h1>
 <input type="hidden" name="email" value="<?php echo $this->profile->login_email ?>">
-<input type="hidden" name="uid" value="<?php echo $this->profile->uid_md5 ?>">
+<input type="hidden" name="uid" value="<?php echo $this->profile->uid ?>">
 <table id="emlform">
     <tr>
         <td class="formlabel">E-mail atual:</td>
@@ -23,7 +23,7 @@
 </table>
 
 <p id="changenotice" style="display:none">
-E-mail alterado com sucesso. <?php $this->DefaultHelper()->a("clique aqui") ?> 
+E-mail alterado com sucesso. <?php B_Helper::a("clique aqui") ?> 
 para acessar a página de autenticação</p>
 
 <?php else : ?>

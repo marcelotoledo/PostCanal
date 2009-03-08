@@ -4,17 +4,17 @@
  * Log
  * 
  * @category    Blotomate
- * @package     AB
+ * @package     Base
  * @author      Rafael Castilho <rafael@castilho.biz>
  */
-class AB_Log
+class B_Log
 {
     /**
      * Log table name
      *
      * @var string
      */
-    private static $table_name = 'ab_log';
+    private static $table_name = 'base_log';
 
 
     /**
@@ -42,7 +42,7 @@ class AB_Log
 
         try
         {
-            AB_Model::execute("INSERT INTO " . self::$table_name . " " .
+            B_Model::execute("INSERT INTO " . self::$table_name . " " .
                               "(" . implode(", ", $columns) . ") VALUES " .
                               "(?" . str_repeat(", ?", count($columns) - 1) . ")",
                               $values);

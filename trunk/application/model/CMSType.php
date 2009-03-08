@@ -7,7 +7,7 @@
  * @package     Model
  * @author      Rafael Castilho <rafael@castilho.biz>
  */
-class CMSType extends AB_Model
+class CMSType extends B_Model
 {
     /**
      * Discovery constants
@@ -118,14 +118,14 @@ class CMSType extends AB_Model
      * Get CMSType plugin info (DEPRECATED)
      *
      * @param   string  $url    Base URL
-     * @throws  AB_Exception
+     * @throws  B_Exception
      * @return  array
      */
     public function getPluginInfo($url)
     {
         if($this->isNew())
         {
-#            throw new AB_Exception(
+#            throw new B_Exception(
 #                "a new cms type can not be used " . 
 #                "to obtain information from the plugin",
 #                E_USER_ERROR);
@@ -251,7 +251,7 @@ class CMSType extends AB_Model
             $_m = "types {" . implode(", ", $types) . "} have conflicting " . 
                   "discovery rules. only (" . $type . ") will be considered";
             $_d = array('method' => __METHOD__);
-            AB_Log::write($_m, E_USER_WARNING, $_d);
+            B_Log::write($_m, E_USER_WARNING, $_d);
         }
 
         if(!empty($type))
@@ -271,7 +271,7 @@ class CMSType extends AB_Model
      */
     protected static function discoveryByURL(&$url, $types=array())
     {
-        APP_Utility::fixURL($url);
+        L_Utility::fixURL($url);
 
         $r = self::discoveryRules(self::DISCOVERY_URL_REPLACE, $types);
         $m = self::discoveryRules(self::DISCOVERY_URL_MATCH, $types);
@@ -291,7 +291,7 @@ class CMSType extends AB_Model
             $c = array_key_exists($i, $m) ? $m[$i] : array();
             $n = count($c);
 
-            if(APP_Utility::preg($a, $b, $c) == $n && $n > 0)
+            if(L_Utility::preg($a, $b, $c) == $n && $n > 0)
             {
                 $url = $a;
                 $results[] = $i;
@@ -323,7 +323,7 @@ class CMSType extends AB_Model
                 {
                     $n = count($r);
 
-                    if(APP_Utility::preg($h, array(), $r) == $n && $n > 0)
+                    if(L_Utility::preg($h, array(), $r) == $n && $n > 0)
                     {
                         $a = array_merge($a, array($type));
                     }
@@ -343,7 +343,7 @@ class CMSType extends AB_Model
      */
     protected static function discoveryByHTML(&$html, $types=array())
     {
-        APP_Utility::compactHTML($html);
+        L_Utility::compactHTML($html);
 
         $r = self::discoveryRules(self::DISCOVERY_HTML_REPLACE, $types);
         $m = self::discoveryRules(self::DISCOVERY_HTML_MATCH, $types);
@@ -363,7 +363,7 @@ class CMSType extends AB_Model
             $c = array_key_exists($i, $m) ? $m[$i] : array();
             $n = count($c);
 
-            if(APP_Utility::preg($a, $b, $c) == $n && $n > 0)
+            if(L_Utility::preg($a, $b, $c) == $n && $n > 0)
             {
                 $results[] = $i;
             }
@@ -416,7 +416,7 @@ class CMSType extends AB_Model
      */
     public static function managerCheckHTML(&$html, &$config)
     {
-        APP_Utility::compactHTML($html);
+        L_Utility::compactHTML($html);
 
         $r = array();
         $m = array();
@@ -429,7 +429,7 @@ class CMSType extends AB_Model
 
         $t = count($m);
 
-        return (APP_Utility::preg($html, $r, $m) == $t && $t > 0);
+        return (L_Utility::preg($html, $r, $m) == $t && $t > 0);
     }
 
     /* CMS TYPE PLUGIN */
@@ -440,7 +440,7 @@ class CMSType extends AB_Model
      * @param   string          $name       Plugin Name
      * @oaram   string          $version    Plugin Version
      * @oaram   string          $url        Base URL
-     * @throws  AB_Exception
+     * @throws  B_Exception
      * @return  array
      */
     protected static function loadPluginInfo($name, $version, $url)
@@ -451,12 +451,12 @@ class CMSType extends AB_Model
 
         if(!file_exists(($plugin = $path . "/" . $filename)))
         {
-#            throw new AB_Exception(
+#            throw new B_Exception(
 #                "plugin (" . $plugin . ") does not exist",
 #                E_USER_ERROR);
         }
 
-        $registry = AB_Registry::singleton();
+        $registry = B_Registry::singleton();
         $python = $registry->python->interpreter->path;
 
         if(empty($python)) $python = "python";

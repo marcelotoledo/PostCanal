@@ -7,14 +7,14 @@
  * @package     Controller
  * @author      Rafael Castilho <rafael@castilho.biz>
  */
-abstract class AbstractController extends AB_Controller
+abstract class C_Abstract extends B_Controller
 {
     /**
      * Run controller action
      * 
-     * @see AB_Controller::runAction
+     * @see B_Controller::run
      */
-    public function runAction($name)
+    public function run($name)
     {
         /* load translation data */
 
@@ -25,7 +25,7 @@ abstract class AbstractController extends AB_Controller
 
         try
         {
-            parent::runAction($name);
+            parent::run($name);
         }
         catch(AB_Exception $exception)
         {

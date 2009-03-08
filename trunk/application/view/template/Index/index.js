@@ -15,7 +15,7 @@ $(document).ready(function()
         $.ab_spinner
         ({
             height: 32, width: 32,
-            image: "<?php AB_Helper::img_src('spinner/linux_spinner.png') ?>",
+            image: "<?php B_Helper::img_src('spinner/linux_spinner.png') ?>",
             message: "... <?php echo $this->translation->application_loading ?>"
         });
     }
@@ -62,8 +62,8 @@ $(document).ready(function()
         $.ajax
         ({
             type: "POST",
-            url: "<?php AB_Helper::url('profile', 'recovery') ?>",
-            dataType: "xml",
+            url: "<?php B_Helper::url('profile', 'recovery') ?>",
+            dataType: "json",
             data: parameters,
             beforeSend: function()
             {
@@ -117,7 +117,7 @@ $(document).ready(function()
         $.ajax
         ({
             type: "POST",
-            url: "<?php AB_Helper::url('profile', 'register') ?>",
+            url: "<?php B_Helper::url('profile', 'register') ?>",
             dataType: "xml",
             data: parameters,
             beforeSend: function ()
@@ -160,7 +160,7 @@ $(document).ready(function()
         $.ajax
         ({
             type: "POST",
-            url: "<?php AB_Helper::url('profile', 'login') ?>",
+            url: "<?php B_Helper::url('profile', 'login') ?>",
             dataType: "xml",
             data: parameters,
             beforeSend: function ()
@@ -178,7 +178,7 @@ $(document).ready(function()
                 var data = $(xml).find('data');
                 var login = data.find('login').text();
                 var message = data.find('message').text();
-                var url = "<?php AB_Helper::url('dashboard') ?>";
+                var url = "<?php B_Helper::url('dashboard') ?>";
                 if(login == "true") window.location = url;
                 if(message != "") $.ab_alert(message);
             }, 

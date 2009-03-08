@@ -4,10 +4,10 @@
  * Response
  * 
  * @category    Blotomate
- * @package     AB
+ * @package     Base
  * @author      Rafael Castilho <rafael@castilho.biz>
  */
-class AB_Response
+class B_Response
 {
     /**
      * Response status codes
@@ -87,31 +87,6 @@ class AB_Response
     {
         if(array_key_exists($label, $this->headers)) 
             unset($this->headers[$label]);
-    }
-
-    /**
-     * Get headers from registry and set them on response
-     *
-     * @param   integer $status Status code
-     * @return void
-     */
-    public function setHeadersFromRegistry($status)
-    {
-        $registry = AB_Registry::singleton();
-
-        if(is_array($registry->response->headers))
-        {
-            if(array_key_exists($status, $registry->response->headers))
-            {
-                if(is_array($headers = $registry->response->headers[$status]))
-                {
-                    foreach($headers as $name => $value)
-                    {
-                        $this->setHeader($name, $value);
-                    }
-                }
-            }
-        }
     }
 
     /**
@@ -230,6 +205,30 @@ class AB_Response
 
         $this->sendHeaders();
         $this->sendBody();
+    }
+
+    /**
+     * Set headers from registry
+     *
+     * @param   integer     $status
+     */
+    private function setHeadersFromRegistry($status)
+    {
+        $registry = B_Registry::singleton();
+
+        if(is_array($registry->response->headers))
+        {
+            if(array_key_exists($status, $registry->response->headers))
+            {
+                if(is_array($headers = $registry->response->headers[$status]))
+                {
+                    foreach($headers as $name => $value)
+                    {
+                        $this->setHeader($name, $value);
+                    }
+                }
+            }
+        }
     }
 
     /**

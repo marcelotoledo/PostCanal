@@ -4,10 +4,10 @@
  * Session
  * 
  * @category    Blotomate
- * @package     AB
+ * @package     Base
  * @author      Rafael Castilho <rafael@castilho.biz>
  */
-class AB_Session
+class B_Session
 {
     /**
      * Session name
@@ -21,7 +21,7 @@ class AB_Session
      *
      * @var string
      */
-    private static $table_name = 'ab_session';
+    private static $table_name = 'base_session';
 
     /**
      * Session constructor
@@ -111,7 +111,7 @@ class AB_Session
      */
     public static function read ($id)
     {
-        $result = AB_Model::selectRow("SELECT session_data " . 
+        $result = B_Model::selectRow("SELECT session_data " . 
                                       "FROM " . self::$table_name . " " .
                                       "WHERE id = ?", array($id));
         return is_object($result) ? $result->session_data : '';
@@ -126,11 +126,11 @@ class AB_Session
      */
     public static function write($id, $data)
     {
-        $result = AB_Model::selectRow("SELECT COUNT(*) AS total " . 
+        $result = B_Model::selectRow("SELECT COUNT(*) AS total " . 
                                       "FROM " . self::$table_name . " " .
                                       "WHERE id = ?", array($id));
 
-        return AB_Model::execute
+        return B_Model::execute
         (
             ($result->total > 0) ? 
                 "UPDATE " . self::$table_name . " SET " .
@@ -151,7 +151,7 @@ class AB_Session
      */
     public static function destroy ($id) 
     {
-        return AB_Model::execute("DELETE FROM " . self::$table_name . " WHERE id = ?",
+        return B_Model::execute("DELETE FROM " . self::$table_name . " WHERE id = ?",
                                  array($id));
     }
 
@@ -163,17 +163,17 @@ class AB_Session
      */
     public static function gc ($max) 
     {
-        $registry = AB_Registry::singleton();
+        $registry = B_Registry::singleton();
         $expiration = $registry->session->expiration;
 
         if(intval($expiration) <= 0)
         {
             $_m = "session expiration value must be greater than zero";
             $_d = array('method' => __METHOD__);
-            throw new AB_Exception($_m, E_USER_ERROR, $_d);
+            throw new B_Exception($_m, E_USER_ERROR, $_d);
         }
 
-        return AB_Model::execute("DELETE FROM " . self::$table_name . " " .
+        return B_Model::execute("DELETE FROM " . self::$table_name . " " .
                                  "WHERE (session_expires < ? AND session_active = 0) " .
                                  "OR (session_expires < ? AND session_active = 1)",
                                  array((time() - $max), (time() - $expiration)));
@@ -188,12 +188,12 @@ class AB_Session
     {
         ini_set('session.save_handler', 'user');
 
-        session_set_save_handler(array('AB_Session', 'open'),
-                                 array('AB_Session', 'close'),
-                                 array('AB_Session', 'read'),
-                                 array('AB_Session', 'write'),
-                                 array('AB_Session', 'destroy'),
-                                 array('AB_Session', 'gc')
+        session_set_save_handler(array('B_Session', 'open'),
+                                 array('B_Session', 'close'),
+                                 array('B_Session', 'read'),
+                                 array('B_Session', 'write'),
+                                 array('B_Session', 'destroy'),
+                                 array('B_Session', 'gc')
         );
     }
 
@@ -214,7 +214,7 @@ class AB_Session
             unset($_SESSION[$this->session_name]);
         }
 
-        return AB_Model::execute("UPDATE " . self::$table_name . " " .
+        return B_Model::execute("UPDATE " . self::$table_name . " " .
                                  "SET active = ? WHERE id = ?",
                                  array($active, session_id()));
     }
@@ -226,7 +226,7 @@ class AB_Session
      */
     public function getActive()
     {
-        $result = AB_Model::selectRow("SELECT COUNT(*) AS total " . 
+        $result = B_Model::selectRow("SELECT COUNT(*) AS total " . 
                                       "FROM " . self::$table_name . " " .
                                       "WHERE id = ? AND active = 1", 
                                       array(session_id()));

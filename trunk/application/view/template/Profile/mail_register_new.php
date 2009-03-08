@@ -1,4 +1,4 @@
-<?php $confirm_url = AB_Request::url("profile", "confirm", array("email" => $profile->login_email, "uid" => $profile->uid)) ?>
+<?php $confirm_url = B_Request::url("profile", "confirm", array("email" => $profile->login_email, "uid" => $profile->uid)) ?>
 
 <?php echo $this->translation->mail_regiter_new_body ?>
 

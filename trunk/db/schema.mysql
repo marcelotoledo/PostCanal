@@ -9,13 +9,13 @@ DROP TABLE IF EXISTS cms_type_configuration CASCADE;
 DROP TABLE IF EXISTS cms_type_discovery CASCADE;
 DROP TABLE IF EXISTS cms_type CASCADE;
 DROP TABLE IF EXISTS application_mailer_relay CASCADE;
-DROP TABLE IF EXISTS ab_translation CASCADE;
-DROP TABLE IF EXISTS ab_session CASCADE;
-DROP TABLE IF EXISTS ab_log CASCADE;
+DROP TABLE IF EXISTS base_translation CASCADE;
+DROP TABLE IF EXISTS base_session CASCADE;
+DROP TABLE IF EXISTS base_log CASCADE;
 
 /* base */
 
-CREATE TABLE ab_log
+CREATE TABLE base_log
 (
     id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
     priority INTEGER UNSIGNED NOT NULL DEFAULT 0,
@@ -28,9 +28,9 @@ CREATE TABLE ab_log
     PRIMARY KEY (id)
 ) ENGINE=InnoDB DEFAULT CHARSET='utf8';
 
-CREATE INDEX al_priority_idx ON ab_log (priority);
+CREATE INDEX al_priority_idx ON base_log (priority);
 
-CREATE TABLE ab_session
+CREATE TABLE base_session
 (
     id VARCHAR(255) CHARACTER SET 'utf8' COLLATE 'utf8_bin' NOT NULL,
     session_expires INTEGER unsigned NOT NULL default '0',
@@ -38,11 +38,11 @@ CREATE TABLE ab_session
     active TINYINT(1) NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET='utf8' COLLATE='utf8_unicode_ci';
 
-CREATE INDEX as_id_idx ON ab_session (id);
-CREATE INDEX as_id_active_idx ON ab_session (id, active);
-CREATE INDEX as_expires_active_idx ON ab_session (session_expires, active);
+CREATE INDEX as_id_idx ON base_session (id);
+CREATE INDEX as_id_active_idx ON base_session (id, active);
+CREATE INDEX as_expires_active_idx ON base_session (session_expires, active);
 
-CREATE TABLE ab_translation
+CREATE TABLE base_translation
 (
     id INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
     template VARCHAR(200) NOT NULL,
@@ -52,7 +52,7 @@ CREATE TABLE ab_translation
     PRIMARY KEY (id)
 ) ENGINE=InnoDB DEFAULT CHARSET='utf8';
 
-CREATE INDEX at_template_culture_idx ON ab_translation (template, culture);
+CREATE INDEX at_template_culture_idx ON base_translation (template, culture);
 
 -- application --
 
@@ -151,6 +151,7 @@ CREATE TABLE user_profile
     register_confirmation_time TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
     last_login_time TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
     recovery_message_time TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
+    recovery_allowed TINYINT(1) NOT NULL DEFAULT 0,
     email_update_message_time TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
     -- -------------------------------------------------------------------------
     created_at TIMESTAMP NOT NULL DEFAULT NOW(),

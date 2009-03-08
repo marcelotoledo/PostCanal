@@ -24,7 +24,7 @@ set_include_path (LIBRARY_PATH . PATH_SEPARATOR . get_include_path());
 
 /* REGISTRY */
 
-$registry = AB_Registry::singleton();
+$registry = B_Registry::singleton();
 $registry->load(BASE_PATH . '/config/environment.xml');
 
 /* BASE */
@@ -36,7 +36,7 @@ $registry->translation->object = null;
 
 $registry->response->headers = array
 (
-    AB_Response::STATUS_OK => array
+    B_Response::STATUS_OK => array
     (
         'Last-Modified' => gmdate("D, d M Y H:i:s") . " GMT",
         'Cache-Control' => "no-store, no-cache, must-revalidate"

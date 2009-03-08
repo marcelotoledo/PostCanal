@@ -7,7 +7,7 @@
  * @package     Model
  * @author      Rafael Castilho <rafael@castilho.biz>
  */
-class AggregatorItem extends AB_Model
+class AggregatorItem extends B_Model
 {
     /**
      * Table name

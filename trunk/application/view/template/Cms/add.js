@@ -15,7 +15,7 @@ $(document).ready(function()
         $.ab_spinner
         ({
             height: 32, width: 32,
-            image: "<?php $this->img_src('spinner/linux_spinner.png') ?>",
+            image: "<?php B_Helper::img_src('spinner/linux_spinner.png') ?>",
             message: "... carregando"
         });
     }
@@ -102,7 +102,7 @@ $(document).ready(function()
     function onError()
     {
         alert('erro!');
-        /* window.location = "<?php $this->url('cms','add') ?>"; */
+        /* window.location = "<?php B_Helper::url('cms','add') ?>"; */
     }
 
     /* check url action */
@@ -127,7 +127,7 @@ $(document).ready(function()
         $.ajax
         ({
             type: "POST",
-            url: "<?php $this->url('cms', 'check') ?>",
+            url: "<?php B_Helper::url('cms', 'check') ?>",
             dataType: "xml",
             data: parameters,
             beforeSend: function ()
@@ -142,68 +142,54 @@ $(document).ready(function()
             },
             success: function (xml) 
             { 
-                /* url status */
+                var data                 = $(xml).find('data');
+                var url                  = data.find('url').text();
+                var url_accepted         = data.find('url_accepted').text();
+                var cms_type_name        = data.find('cms_type_name').text();
+                var cms_type_version     = data.find('cms_type_version').text();
+                var cms_type_accepted    = data.find('cms_type_accepted').text();
+                var cms_type_maintenance = data.find('cms_type_maintenance').text();
+                var manager_url          = data.find('manager_url').text();
+                var manager_url_accepted = data.find('manager_url_accepted').text();
 
-                var url_status = $(xml).find('url_status').text();
+                /* url */
 
-                if(url_status == "status_ok") 
+                if(url_accepted == "true") 
                 {
-                    commitURL(data.url);
+                    commitURL(url);
                 }
-                else if(url_status == "status_failed")
+                else
                 {
                     changeURL();
-                    $.ab_alert("Verifique se o endereço informado é valido");
-                }
-                else if(url_status == "status_4xx")
-                {
-                    changeURL();
-                    $.ab_alert("Endereço não encontrado");
-                }
-                else if(url_status == "status_3xx" || url_status == "status_5xx")
-                {
-                    changeURL();
-                    $.ab_alert("O endereço informado possui erros ou está" +
-                               "sendo redirecionado para outro local");
+                    $.ab_alert("<?php echo $this->translation->url_not_accepted ?>");
                 }
 
                 /* cms type */
 
-                var cms_type_status = $(xml).find('cms_type_status').text();
-                var cms_type_name = $(xml).find('cms_type_name').text();
-                var cms_type_version = $(xml).find('cms_type_version').text();
-
-                if(cms_type_status == "ok")
+                if(cms_type_accepted == "true")
                 {
                     commitCMSType(cms_type_name + " (" + cms_type_version + ")");
                 }
-                else if(cms_type_status == "unknown")
+                else
                 {
                     changeURL();
-                    $.ab_alert("Não foi possível determinar o tipo de CMS " + 
-                               "para o endereço informado");
+                    $.ab_alert("<?php echo $this->translation->cms_type_not_accepted ?>");
                 }
-                else if(cms_type_status == "maintenance")
+
+                if(cms_type_maintenance == "true")
                 {
-                    $.ab_alert("O tipo de CMS " + 
-                               cms_type_name + " (" + cms_type_version + ") " +
-                               "está em manutenção. Tente novamente mais tarde");
+                    $.ab_alert("<?php echo $this->translation->cms_type_maintenance ?>");
                 }
 
                 /* manager url */
 
-                if(cms_type_status == "ok")
+                if(cms_type_accepted == "true")
                 {
-                    var manager_url = $(xml).find('manager_url').text();
-                    var manager_status = $(xml).find('manager_status').text();
-
                     commitManagerURL(manager_url);
 
-                    if(manager_status != "ok")
+                    if(manager_url_accepted == "false")
                     {
-                        $.ab_alert("O endereço padrão do gerenciador não é valido." +
-                                   "Verifique se o endereço realmente existe e " + 
-                                   "informe um endereço válido manualmente.");
+                        $.ab_alert("<?php echo $this->translation->url_manager_not_accepted ?>");
                         changeManagerURL();
                     }
                 }
@@ -234,7 +220,7 @@ $(document).ready(function()
         $.ajax
         ({
             type: "POST",
-            url: "<?php $this->url('cms', 'check') ?>",
+            url: "<?php B_Helper::url('cms', 'check') ?>",
             dataType: "xml",
             data: parameters,
             beforeSend: function ()
@@ -249,16 +235,15 @@ $(document).ready(function()
             },
             success: function (xml) 
             { 
-                var manager_url = $(xml).find('manager_url').text();
-                var manager_status = $(xml).find('manager_status').text();
+                var data                 = $(xml).find('data');
+                var manager_url          = data.find('manager_url').text();
+                var manager_url_accepted = data.find('manager_url_accepted').text();
 
                 commitManagerURL(manager_url);
 
-                if(manager_status != "ok")
+                if(manager_url_accepted == "false")
                 {
-                    $.ab_alert("O endereço informado para o gerenciador " + 
-                               "não é valido. Verifique se o endereço " + 
-                               "realmente existe.");
+                    $.ab_alert("<?php echo $this->translation->url_manager_not_accepted ?>");
                     changeManagerURL();
                 }
             }, 
@@ -289,7 +274,7 @@ $(document).ready(function()
         $.ajax
         ({
             type: "POST",
-            url: "<?php $this->url('cms', 'check') ?>",
+            url: "<?php B_Helper::url('cms', 'check') ?>",
             dataType: "xml",
             data: parameters,
             beforeSend: function ()
@@ -351,8 +336,8 @@ $(document).ready(function()
         $.ajax
         ({
             type: "POST",
-            url: "<?php $this->url('cms', 'add') ?>",
-            dataType: "json",
+            url: "<?php B_Helper::url('cms', 'add') ?>",
+            dataType: "xml",
             data: parameters,
             beforeSend: function ()
             {
@@ -364,21 +349,19 @@ $(document).ready(function()
                 active_request = false;
                 hideSpinner();
             },
-            success: function (data) 
+            success: function (xml) 
             { 
-                var result = data.result;
+                var data = $(xml).find('data');
+                var added = data.find('added').text();
+                var message = data.find('message').text();
 
-                if(result == "ok") 
+                if(added == "true")
                 {
-                    window.location = "<?php $this->url('dashboard') ?>";
-                }
-                else if(result == "failed")
-                {
-                    $.ab_alert("Não foi possível adicionar um novo CMS");
+                    window.location = "<?php B_Helper::url('dashboard') ?>";
                 }
                 else
                 {
-                    onError();
+                    if(message != "") $.ab_alert(message);
                 }
             }, 
             error: function () { onError(); }
@@ -421,6 +404,6 @@ $(document).ready(function()
 
     $("input[@name='addcancel']").click(function() 
     {
-        window.location = "<?php $this->url('dashboard') ?>";
+        window.location = "<?php B_Helper::url('dashboard') ?>";
     });
 });

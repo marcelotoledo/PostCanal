@@ -4,10 +4,10 @@
  * Translation
  * 
  * @category    Blotomate
- * @package     AB
+ * @package     Base
  * @author      Rafael Castilho <rafael@castilho.biz>
  */
-class AB_Translation
+class B_Translation
 {
     /**
      * Culture
@@ -28,7 +28,7 @@ class AB_Translation
      *
      * @var string
      */
-    private static $table_name = 'ab_translation';
+    private static $table_name = 'base_translation';
 
 
     /**
@@ -95,7 +95,7 @@ class AB_Translation
      */
     public function load($template)
     {
-        $result = AB_Model::select("SELECT name, value FROM " . self::$table_name . " " .
+        $result = B_Model::select("SELECT name, value FROM " . self::$table_name . " " .
                                    "WHERE template = ? AND culture = ?", 
                                    array($template, $this->culture));
 

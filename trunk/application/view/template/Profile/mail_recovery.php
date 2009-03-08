@@ -1,4 +1,4 @@
-<?php $password_url = AB_Request::url("profile", "password", array("email" => $profile->login_email, "uid" => $profile->uid)) ?>
+<?php $password_url = B_Request::url("profile", "password", array("email" => $profile->login_email, "uid" => $profile->uid)) ?>
 
 <?php echo $this->translation->mail_recovery_body ?>
 

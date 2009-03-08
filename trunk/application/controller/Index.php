@@ -7,18 +7,18 @@
  * @package     Controller
  * @author      Rafael Castilho <rafael@castilho.biz>
  */
-class IndexController extends AbstractController
+class C_Index extends C_Abstract
 {
     /**
      * Default action
      *
      * @return void
      */
-    public function indexAction()
+    public function A_index()
     {
         if($this->session->getActive() == true)
         {
-            $this->response->setRedirect(AB_Request::url("dashboard"));
+            $this->response->setRedirect(B_Request::url("dashboard"));
         }
     }
 }

@@ -4,10 +4,10 @@
  * Application utility class
  * 
  * @category    Blotomate
- * @package     Application library
+ * @package     Library
  * @author      Rafael Castilho <rafael@castilho.biz>
  */
-class APP_Utility
+class L_Utility
 {
     /**
      * PREG

@@ -4,10 +4,10 @@
  * Main application controller
  * 
  * @category    Blotomate
- * @package     AB
+ * @package     Base
  * @author      Rafael Castilho <rafael@castilho.biz>
  */
-class AB_Main
+class B_Main
 {
     /**
      * Run application
@@ -29,12 +29,13 @@ class AB_Main
         $has_error = false;
         $message = ((string) null); 
 
-        $registry = AB_Registry::singleton();
+        $registry = B_Registry::singleton();
+        $view = null;
 
         /* initialize request and response */
 
-        $request = new AB_Request();
-        $response = new AB_Response();
+        $request = new B_Request();
+        $response = new B_Response();
         $registry->request->object = $request;
         $registry->response->object = $response;
 
@@ -42,11 +43,11 @@ class AB_Main
 
         $controller_name = $request->getController();
 
-        if(($controller = self::controllerFactory($controller_name)) == null)
+        if(($controller = self::factory($controller_name)) == null)
         {
             $has_error = true;
             $message = "controller (" . $controller_name . ") not found";
-            $response->setStatus(AB_Response::STATUS_NOT_FOUND);
+            $response->setStatus(B_Response::STATUS_NOT_FOUND);
         }
         else
         {
@@ -58,17 +59,17 @@ class AB_Main
 
             $action_name = $request->getAction();
 
-            if($controller->checkAction($action_name) == false)
+            if($controller->check($action_name) == false)
             {
                 $has_error = true;
                 $message = "action (" . $action_name . ") not found";
-                $response->setStatus(AB_Response::STATUS_NOT_FOUND);
+                $response->setStatus(B_Response::STATUS_NOT_FOUND);
             }
             else
             {
                 /* initialize view */
 
-                $view = new AB_View();
+                $view = new B_View();
                 $view->registry = $registry;
                 $layout = strtolower($controller_name);
                 $view->setLayout($layout);
@@ -79,14 +80,14 @@ class AB_Main
                 /* initialize session */
 
                 $session_name = $registry->session->name;
-                $session = new AB_Session($session_name);
+                $session = new B_Session($session_name);
                 $controller->session = $session;
                 $registry->session->object = $session;
 
                 /* initialize translation */
 
                 $culture = $registry->translation->culture;
-                $translation = new AB_Translation($culture);
+                $translation = new B_Translation($culture);
                 $controller->translation = $translation;
                 $registry->translation->object = $translation;
 
@@ -94,11 +95,11 @@ class AB_Main
 
                 try
                 {
-                    $controller->beforeAction();
-                    $controller->runAction($action_name);
-                    $controller->afterAction();
+                    $controller->before();
+                    $controller->run($action_name);
+                    $controller->after();
                 }
-                catch(AB_Exception $exception)
+                catch(B_Exception $exception)
                 {
                     /* set error */
 
@@ -111,7 +112,7 @@ class AB_Main
 
                     if($exception->getCode() == E_USER_ERROR)
                     {
-                        $response->setStatus(AB_Response::STATUS_ERROR);
+                        $response->setStatus(B_Response::STATUS_ERROR);
                     }
 
                     /* log exception */
@@ -132,14 +133,14 @@ class AB_Main
 
                     /* unexpected exceptions are fatal errors */
 
-                    $response->setStatus(AB_Response::STATUS_ERROR);
+                    $response->setStatus(B_Response::STATUS_ERROR);
          
                     /* log exception */
 
                     $_d = array ('method' => __METHOD__, 
                                  'controller' => $controller_name, 
                                  'action' => $action_name);
-                    AB_Log::write($message, E_USER_ERROR, $_d);
+                    B_Log::write($message, E_USER_ERROR, $_d);
                 }
             }
         }
@@ -150,21 +151,8 @@ class AB_Main
         {
             if($response->isXML() == false)
             {
-                $controller_name = 'Error';
                 $status = $response->getStatus();
-                $action_name = 'status' . $status;
-
-                /* run error controller actions */
-
-                try
-                {
-                    $controller = self::controllerFactory($controller_name);
-                    $controller->runAction($action_name);
-                }
-                catch(Exception $exception)
-                {
-                    $response->setBody("<h2>error " . $status . "</h2>");
-                }
+                $response->setBody(self::error($status));
             }
 
             /* show error message in browser */
@@ -182,15 +170,36 @@ class AB_Main
     }
 
     /**
+     * Error response body
+     *
+     * @param   integer $status
+     */
+    private static function error($status)
+    {
+        $path = BASE_PATH . "/public/" . $status . ".html";
+        $s = "<h1>error " . $status . "</h2>";
+
+        if(file_exists($path))
+        {
+            $f = fopen($path, "r");
+            $s = fread($f, filesize($path));
+            fclose($f);
+        }
+
+        return $s;
+    }
+
+
+    /**
      * Initialize controller class
      *
      * @param   string          $name   Controller name
-     * @return  AB_Controller
+     * @return  B_Controller
      */
-    private static function controllerFactory($name)
+    private static function factory($name)
     {
         $controller = null;
-        $class_name = $name . "Controller";
+        $class_name = 'C_' . $name;
 
         if(class_exists($class_name))
         {

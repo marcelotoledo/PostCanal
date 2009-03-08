@@ -17,7 +17,7 @@ $(document).ready(function()
         $.ab_spinner
         ({
             height: 32, width: 32,
-            image: "<?php AB_Helper::img_src('spinner/linux_spinner.png') ?>",
+            image: "<?php B_Helper::img_src('spinner/linux_spinner.png') ?>",
             message: "... carregando"
         });
     }
@@ -78,7 +78,7 @@ $(document).ready(function()
         $.ajax
         ({
             type: "GET",
-            url: "<?php AB_Helper::url('dashboard', 'cms') ?>",
+            url: "<?php B_Helper::url('dashboard', 'cms') ?>",
             dataType: "html",
             data: parameters,
             beforeSend: function ()

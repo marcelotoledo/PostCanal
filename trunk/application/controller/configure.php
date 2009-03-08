@@ -18,9 +18,9 @@ if(empty($_controller))
     exit(1);
 }
 
-if(file_exists($_controller . "Controller.php"))
+if(file_exists($_controller . ".php"))
 {
-    echo "file \"" . $_controller . "Controller.php\" already exists\n";
+    echo "file \"" . $_controller . ".php\" already exists\n";
     echo "remove this file before generating a new\n";
 
     exit(1);
@@ -36,26 +36,14 @@ $output = <<<EOS
  * @category    Blotomate
  * @package     Controller
  */
-class <controller>Controller extends AB_Controller
+class C_<controller> extends B_Controller
 {
-    /**
-     * <controller> controller constructor
-     *
-     * @param   AB_Request  \$request
-     * @param   AB_Response \$response
-     * @return  void
-     */
-    public function __construct(\$request, \$response)
-    {
-        parent::__construct(\$request, \$response);
-    }
-
     /**
      * Default action
      *
      * @return void
      */
-    public function indexAction()
+    public function ACTION_index()
     {
     }
 }
@@ -66,7 +54,7 @@ $output = str_replace ("<controller>", $_controller, $output);
 
 try
 {
-    $f = fopen ($_controller . "Controller.php", "w");
+    $f = fopen ($_controller . ".php", "w");
     fwrite($f, $output);
     fclose ($f);
 }

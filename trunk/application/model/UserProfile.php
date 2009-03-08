@@ -7,7 +7,7 @@
  * @package     Model
  * @author      Rafael Castilho <rafael@castilho.biz>
  */
-class UserProfile extends AB_Model
+class UserProfile extends B_Model
 {
     /**
      * Table name
@@ -105,7 +105,7 @@ class UserProfile extends AB_Model
 
         if($this->isNew()) 
         {
-            $this->uid = APP_Utility::randomString(8);
+            $this->uid = L_Utility::randomString(8);
         }
 
         return parent::save();

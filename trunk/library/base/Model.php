@@ -4,10 +4,10 @@
  * Model
  * 
  * @category    Blotomate
- * @package     AB
+ * @package     Base
  * @author      Rafael Castilho <rafael@castilho.biz>
  */
-abstract class AB_Model
+abstract class B_Model
 {
     /** 
      * column structure constants 
@@ -117,8 +117,9 @@ abstract class AB_Model
             }
             elseif($type == self::TYPE_DATE)
             {
-                if(($time = intval($value)) > 0)
-                    $value = date("Y-m-d H:i:s", $time);
+                $value = is_integer($value) ? 
+                    date("Y-m-d H:i:s", $value) :
+                    date("Y-m-d H:i:s", strtotime($value));
             }
             else
             {
@@ -230,7 +231,7 @@ abstract class AB_Model
     /**
      * Sanitize model
      *
-     * @throws  AB_Exception
+     * @throws  B_Exception
      * @return  void
      */
     protected function sanitize()
@@ -242,14 +243,14 @@ abstract class AB_Model
 
         if($this->isNew() && in_array('created_at', $columns))
         {
-            if(intval($this->created_at) == 0) $this->created_at = time();
+            $this->created_at = time();
         }
 
         /* auto set updated_at */
 
         if(!$this->isNew() && in_array('updated_at', $columns))
         {
-            if(intval($this->updated_at) == 0) $this->updated_at = time();
+            $this->updated_at = time();
         }
 
         /* check data for errors */
@@ -274,7 +275,7 @@ abstract class AB_Model
                 {
                     $_m= "column (" . $column . ") is required";
                     $_d = array('method' => __METHOD__);
-                    throw new AB_Exception($_m, E_USER_WARNING, $_d);
+                    throw new B_Exception($_m, E_USER_WARNING, $_d);
                 }
             }
         }
@@ -343,7 +344,7 @@ abstract class AB_Model
      * @param   string  $sql        SQL query
      * @param   array   $data       values array
      * @param   string  $model      Model class name
-     * @throw   AB_Exception
+     * @throw   B_Exception
      * @return  array
      */
     protected static function _selectModel ($sql, $data=array(), $model)
@@ -362,7 +363,7 @@ abstract class AB_Model
             {
                 $_m = "select model (" . $model . ") with sql (" . $sql . ") failed";
                 $_d = array ('method' => __METHOD__);
-                AB_Exception::forward($_m, E_USER_ERROR, $exception, $_d);
+                B_Exception::forward($_m, E_USER_ERROR, $exception, $_d);
             }
         }
         else
@@ -377,7 +378,7 @@ abstract class AB_Model
             {
                 $_m = "select model (" . $model . ") with sql (" . $sql . ") failed";
                 $_d = array ('method' => __METHOD__);
-                AB_Exception::forward($_m, E_USER_ERROR, $exception, $_d);
+                B_Exception::forward($_m, E_USER_ERROR, $exception, $_d);
             }
         }
  
@@ -409,7 +410,7 @@ abstract class AB_Model
             {
                 $_m = "execute sql (" . $sql . ") failed";
                 $_d = array ('method' => __METHOD__);
-                AB_Exception::forward($_m, E_USER_ERROR, $exception, $_d);
+                B_Exception::forward($_m, E_USER_ERROR, $exception, $_d);
             }
         }
         else
@@ -422,7 +423,7 @@ abstract class AB_Model
             {
                 $_m = "execute sql (" . $sql . ") failed";
                 $_d = array ('method' => __METHOD__);
-                AB_Exception::forward($_m, E_USER_ERROR, $exception, $_d);
+                B_Exception::forward($_m, E_USER_ERROR, $exception, $_d);
             }
         }
 
@@ -477,7 +478,7 @@ abstract class AB_Model
             {
                 $_m = "select sql (" . $sql . ") failed";
                 $_d = array ('method' => __METHOD__);
-                AB_Exception::forward($_m, E_USER_ERROR, $exception, $_d);
+                B_Exception::forward($_m, E_USER_ERROR, $exception, $_d);
             }
         }
         else
@@ -490,7 +491,7 @@ abstract class AB_Model
             {
                 $_m = "select sql (" . $sql . ") failed";
                 $_d = array ('method' => __METHOD__);
-                AB_Exception::forward($_m, E_USER_ERROR, $exception, $_d);
+                B_Exception::forward($_m, E_USER_ERROR, $exception, $_d);
             }
         }
 
@@ -521,14 +522,14 @@ abstract class AB_Model
      */
     public static function connection($database='default')
     {
-        $registry = AB_Registry::singleton();
+        $registry = B_Registry::singleton();
         $db = $registry->database->{$database};
 
         if(!isset($db))
         {
             $_m = "database (" . $database . ") does not exists in registry";
             $_d = array('method' => __METHOD__);
-            throw new AB_Exception($_m, E_USER_ERROR, $_d);
+            throw new B_Exception($_m, E_USER_ERROR, $_d);
         }
         
         if(get_class($db->connection) != "PDO") self::setupConnection($db);
@@ -539,7 +540,7 @@ abstract class AB_Model
     /**
      * Set up connection
      *
-     * @param   AB_Registry     $db
+     * @param   B_Registry     $db
      * @return  void
      */
     private static function setupConnection($db)
@@ -554,7 +555,7 @@ abstract class AB_Model
         {
             $_m = "database connection failed";
             $_d = array ('method' => __METHOD__);
-            AB_Exception::forward($_m, E_USER_ERROR, $exception, $_d);
+            B_Exception::forward($_m, E_USER_ERROR, $exception, $_d);
         }
 
         /* setup timezone */
@@ -578,7 +579,7 @@ abstract class AB_Model
         {
             $_m = "failed to set the timezone";
             $_d = array ('method' => __METHOD__);
-            AB_Exception::forward($_m, E_USER_ERROR, $exception, $_d);
+            B_Exception::forward($_m, E_USER_ERROR, $exception, $_d);
         }
     }
 }

@@ -7,7 +7,7 @@
  * @package     Model
  * @author      Rafael Castilho <rafael@castilho.biz>
  */
-class AggregatorChannel extends AB_Model
+class AggregatorChannel extends B_Model
 {
     /**
      * Table name

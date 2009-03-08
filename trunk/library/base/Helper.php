@@ -4,10 +4,10 @@
  * Helper class
  * 
  * @category    Blotomate
- * @package     AB
+ * @package     Base
  * @author      Rafael Castilho <rafael@castilho.biz>
  */
-class AB_Helper
+class B_Helper
 {
     /**
      * URL (without initial /)
@@ -19,7 +19,7 @@ class AB_Helper
      */
     public static function url($controller=null, $action=null, $parameters=array())
     {
-        echo self::relativeURL(AB_Request::url($controller, $action, $parameters));
+        echo self::relativeURL(B_Request::url($controller, $action, $parameters));
     }
 
     /**
@@ -32,7 +32,7 @@ class AB_Helper
      */
     public static function href($controller=null, $action=null, $parameters=array())
     {
-        $url = self::relativeURL(AB_Request::url($controller, $action, $parameters));
+        $url = self::relativeURL(B_Request::url($controller, $action, $parameters));
         echo strlen($url) > 0 ? $url : "/";
     }
 

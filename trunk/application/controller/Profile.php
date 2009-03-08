@@ -7,27 +7,14 @@
  * @package     Controller
  * @author      Rafael Castilho <rafael@castilho.biz>
  */
-class ProfileController extends AbstractController
+class C_Profile extends C_Abstract
 {
-    // TODO update this to new method (translation)
-    const MAIL_EXISTING_PROFILE_SUBJECT = "[blotomate] perfil existente";
-    const MAIL_EXISTING_PROFILE_TEMPLATE = "mail_register_existing.html";
-    const MAIL_RECOVERY_SUBJECT = "[blotomate] recuperar senha";
-    const MAIL_RECOVERY_TEMPLATE = "mail_recovery.html";
-    const MAIL_PROFILE_SUBJECT = "[blotomate] perfil alterado";
-    const MAIL_PROFILE_TEMPLATE = "mail_profile.html";
-    const MAIL_DUMMY_SUBJECT = "[blotomate] perfil inexistente";
-    const MAIL_DUMMY_TEMPLATE = "mail_dummy.html";
-    const MAIL_EMAIL_CHANGE_SUBJECT = "[blotomate] mudança de e-mail";
-    const MAIL_EMAIL_CHANGE_TEMPLATE = "mail_email_change.html";
-
-
     /**
      * Login
      *
      * @return  void
      */
-    public function loginAction()
+    public function A_login()
     {
         $this->response->setXML(true);
 
@@ -81,7 +68,7 @@ class ProfileController extends AbstractController
      *
      * @return void
      */
-    public function registerAction()
+    public function A_register()
     {
         $this->response->setXML(true);
 
@@ -140,7 +127,7 @@ class ProfileController extends AbstractController
                 $this->view->register = true;
                 $this->view->message = $this->translation->register_accepted;
             }
-            catch(AB_Exception $exception)
+            catch(B_Exception $exception)
             {
                 $this->view->message = $this->translation->register_invalid_email;
 
@@ -155,7 +142,7 @@ class ProfileController extends AbstractController
                 $id = $profile->user_profile_id;
                 $_m = "failed to register;\n" . $exception->getMessage();
                 $_d = array('method' => __METHOD__, 'user_profile_id' => $id);
-                AB_Log::write($_m, $exception->getCode(), $_d);
+                B_Log::write($_m, $exception->getCode(), $_d);
             }
         }
     }
@@ -165,7 +152,7 @@ class ProfileController extends AbstractController
      *
      * @return  void
      */
-    public function logoutAction()
+    public function A_logout()
     {
         $this->view->setLayout(null);
         $this->view->setTemplate(null);
@@ -178,7 +165,7 @@ class ProfileController extends AbstractController
      *
      * @return void
      */
-    public function recoveryAction()
+    public function A_recovery()
     {
         $this->response->setXML(true);
 
@@ -195,16 +182,17 @@ class ProfileController extends AbstractController
             {
                 $this->notify($profile, "recovery");
                 $profile->recovery_message_time = time();
+                $profile->recovery_allowed = true;
                 $profile->save();
                 $this->view->recovery = true;
                 $this->view->message = $this->translation->recovery_sent;
             }
-            catch(AB_Exception $exception)
+            catch(B_Exception $exception)
             {
                 $id = $profile->user_profile_id;
                 $_m = "failed to recovery;\n" . $exception->getMessage();
                 $_d = array('method' => __METHOD__, 'user_profile_id' => $id);
-                AB_Log::write($_m, $exception->getCode(), $_d);
+                B_Log::write($_m, $exception->getCode(), $_d);
             }
         }
 
@@ -218,12 +206,12 @@ class ProfileController extends AbstractController
                 $this->view->recovery = true;
                 $this->view->message = $this->translation->recovery_sent;
             }
-            catch(AB_Exception $exception)
+            catch(B_Exception $exception)
             {
                 $_m = "failed to send dummy instructions to email (" . $email . ");\n";
                 $_m.= $exception->getMessage();
                 $_d = array('method' => __METHOD__);
-                AB_Log::write($_m, $exception->getCode(), $_d);
+                B_Log::write($_m, $exception->getCode(), $_d);
             }
         }
     }
@@ -233,7 +221,7 @@ class ProfileController extends AbstractController
      *
      * @return  array
      */
-    public function confirmAction()
+    public function A_confirm()
     {
         $this->view->setLayout('index');
 
@@ -257,7 +245,7 @@ class ProfileController extends AbstractController
             }
             else
             {
-                $profile->uid = APP_Utility::randomString(8);
+                $profile->uid = L_Utility::randomString(8);
                 $profile->register_confirmation = true;
                 $profile->register_confirmation_time = time();
                 $profile->save();
@@ -274,11 +262,11 @@ class ProfileController extends AbstractController
      * 
      * @return  array
      */
-    public function passwordAction()
+    public function A_password()
     {
-        $this->request->getMethod() == AB_Request::METHOD_POST ?
-            $this->passwordMethodPOST() :
-            $this->passwordMethodGET();
+        $this->request->getMethod() == B_Request::METHOD_POST ?
+            $this->P_password() :
+            $this->G_password();
     }
 
     /**
@@ -286,17 +274,23 @@ class ProfileController extends AbstractController
      * 
      * @return  array
      */
-    private function passwordMethodGET()
+    private function G_password()
     {
         $this->view->setLayout('index');
 
         $email = $this->request->email;
         $uid = $this->request->uid;
+        $expired = false;
+        $profile = null;
 
         if(strlen($email) > 0 && strlen($uid) > 0)
         {
-            $this->view->profile = UserProfile::findByUID($email, $uid);
+            $profile = UserProfile::findByUID($email, $uid);
+            $expired = is_object($profile) ? $profile->recovery_allowed : true;
         }
+
+        $this->view->expired = $expired;
+        $this->view->profile = $profile;
     }
 
     /**
@@ -304,7 +298,7 @@ class ProfileController extends AbstractController
      * 
      * @return void
      */
-    private function passwordMethodPOST()
+    private function P_password()
     {
         $this->response->setXML(true);
 
@@ -313,15 +307,14 @@ class ProfileController extends AbstractController
         $current = $this->request->current;
         $password = $this->request->password;
         $confirm = $this->request->confirm;
-        $this->view->updated = false;
         $message = $this->translation->password_failed;
 
         /* password change (authenticated) */
 
         if(strlen($current) > 0 && ($id = intval($this->session->user_profile_id)) > 0)
         {
-            $this->sessionAuthorize();
-            $this->view->updated = $this->passwordAuthenticated
+            $this->authorize();
+            $updated = $this->passwordAuthenticated
                 ($id, $current, $password, $confirm, $message);
         }
  
@@ -330,10 +323,11 @@ class ProfileController extends AbstractController
         if(strlen($email) > 0 && strlen($uid) > 0 && 
            strlen($password) && strlen($confirm))
         {
-            $this->view->updated = $this->passwordNotAuthenticated
+            $updated = $this->passwordNotAuthenticated
                 ($email, $uid, $password, $confirm, $message);
         }
 
+        $this->view->updated = $updated;
         $this->view->message = $message;
     }
 
@@ -405,8 +399,9 @@ class ProfileController extends AbstractController
             }
             else
             {
-                $profile->uid = APP_Utility::randomString(8);
+                $profile->uid = L_Utility::randomString(8);
                 $profile->login_password_md5 = md5($password);
+                $profile->recovery_allowed = false;
                 $profile->save();
 
                 $updated = true;
@@ -428,11 +423,11 @@ class ProfileController extends AbstractController
      * 
      * @return  array
      */
-    public function emailAction()
+    public function A_email()
     {
-        $this->request->getMethod() == AB_Request::METHOD_POST ?
-            $this->emailMethodPOST() :
-            $this->emailMethodGET();
+        $this->request->getMethod() == B_Request::METHOD_POST ?
+            $this->P_email() :
+            $this->G_email();
     }
 
     /**
@@ -440,20 +435,23 @@ class ProfileController extends AbstractController
      * 
      * @return  array
      */
-    private function emailMethodGET()
+    private function G_email()
     {
         $this->view->setLayout('index');
 
         $email = $this->request->email;
         $uid = $this->request->uid;
-        $this->view->profile = null;
+        $profile = null;
+        $new_email = "";
 
         if(strlen($email) > 0 && strlen($uid) > 0)
         {
-            $this->view->profile = UserProfile::findByUID($email, $uid);
+            $profile = UserProfile::findByUID($email, $uid);
+            $new_email = is_object($profile) ? $profile->email_update : "";
         }
 
         $this->view->profile = $profile;
+        $this->view->new_email = $new_email;
     }
 
     /**
@@ -461,7 +459,7 @@ class ProfileController extends AbstractController
      * 
      * @return void
      */
-    private function emailMethodPOST()
+    private function P_email()
     {
         $this->response->setXML(true);
 
@@ -469,26 +467,27 @@ class ProfileController extends AbstractController
         $email = $this->request->email;
         $uid = $this->request->uid;
         $password = $this->request->password;
-        $this->view->accepted = false;
-        $this->view->message = $this->translation->email_failed;
+        $accepted = false;
+        $message = $this->translation->email_failed;
         $profile = null;
 
         /* change request (authenticated) */
 
         if(strlen($new_email) > 0 && ($id = intval($this->session->user_profile_id)) > 0)
         {
-            $this->sessionAuthorize();
-            $this->view->accepted = $this->emailChangeRequest
-                ($id, $new_email, $this->view->message);
+            $this->authorize();
+            $accepted = $this->emailChangeRequest($id, $new_email, $message);
         }
         
         /* change save */
 
         if(strlen($email) > 0 && strlen($uid) > 0 && strlen($password) > 0)
         {
-            $this->view->accepted = $this->emailChangeSave
-                ($email, $uid, $password, $this->view->message);
+            $accepted = $this->emailChangeSave($email, $uid, $password, $message);
         }
+
+        $this->view->accepted = $accepted;
+        $this->view->message = $message;
     }
 
     /**
@@ -520,13 +519,13 @@ class ProfileController extends AbstractController
                     $message = $this->translation->change_request_accepted;
                     $accepted = true;
                 }
-                catch(AB_Exception $exception)
+                catch(B_Exception $exception)
                 {
                     $_m = "failed to send email change instructions " . 
                           "to email (" . $new_email . ");\n";
                     $_m.= $exception->getMessage();
                     $_d = array('method' => __METHOD__);
-                    AB_Log::write($_m, $exception->getCode(), $_d);
+                    B_Log::write($_m, $exception->getCode(), $_d);
                 }
             }
         }
@@ -558,7 +557,8 @@ class ProfileController extends AbstractController
                 if(strlen(($new_email = $profile->email_update)) > 0)
                 {
                     $profile->login_email = $new_email;
-                    $profile->uid = APP_Utility::randomString(8);
+                    $profile->email_update = "";
+                    $profile->uid = L_Utility::randomString(8);
                     $profile->save();
 
                     $accepted = true;
@@ -580,13 +580,13 @@ class ProfileController extends AbstractController
      *
      * @return array|null
      */
-    public function editAction()
+    public function A_edit()
     {
-        $this->sessionAuthorize();
+        $this->authorize();
 
-        $this->request->getMethod() == AB_Request::METHOD_POST ?
-            $this->editMethodPOST() :
-            $this->editMethodGET();
+        $this->request->getMethod() == B_Request::METHOD_POST ?
+            $this->P_edit() :
+            $this->G_edit();
     }
 
     /**
@@ -594,7 +594,7 @@ class ProfileController extends AbstractController
      *
      * @return array|null
      */
-    private function editMethodGET()
+    private function G_edit()
     {
         $this->view->setLayout('dashboard');
         
@@ -612,7 +612,7 @@ class ProfileController extends AbstractController
      *
      * @return void
      */
-    private function editMethodPOST()
+    private function P_edit()
     {
         $this->response->setXML(true);
 
@@ -625,7 +625,7 @@ class ProfileController extends AbstractController
         {
             $_m = "invalid user profile";
             $_d = array('method' => __METHOD__, 'user_profile_id' => $id);
-            throw new AB_Exception($_m, E_USER_WARNING, $_d);
+            throw new B_Exception($_m, E_USER_WARNING, $_d);
         }
 
         $profile->name = $this->request->name;
@@ -636,11 +636,11 @@ class ProfileController extends AbstractController
             $this->view->saved = true;
             $this->view->message = $this->translation->edit_saved;
         }
-        catch(AB_Exception $exception)
+        catch(B_Exception $exception)
         {
             $_m = "failed to save information after editing";
             $_d = array('method' => __METHOD__, 'user_profile_id' => $id);
-            AB_Exception::forward($_m, E_USER_WARNING, $exception, $_d);
+            B_Exception::forward($_m, E_USER_WARNING, $exception, $_d);
         }
     }
 
@@ -653,7 +653,7 @@ class ProfileController extends AbstractController
      */
     private function notify ($recipient, $template)
     {
-        $mailer = new APP_Mailer();
+        $mailer = new L_Mailer();
 
         $subject = "mail_" . $template . "_subject";
         $mailer->setSubject($this->translation->{$subject});
@@ -662,10 +662,10 @@ class ProfileController extends AbstractController
         $profile = is_object($recipient) ? $recipient : null;
 
         ob_start();
-        include AB_View::getTemplatePath($template);
+        include B_View::getTemplatePath($template);
         $mailer->setBody(ob_get_clean());
 
-        $email = $profile ? $profile->login_email : $recipient;
+        $email = $profile ? $profile->email_update : $recipient;
 
         return $mailer->send($email, $template);
     }
@@ -689,6 +689,6 @@ class ProfileController extends AbstractController
             }
         }
 
-        AB_Log::write($_m, E_USER_NOTICE, $_d);
+        B_Log::write($_m, E_USER_NOTICE, $_d);
     }
 }

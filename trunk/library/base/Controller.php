@@ -4,22 +4,22 @@
  * Controller
  * 
  * @category    Blotomate
- * @package     AB
+ * @package     Base
  * @author      Rafael Castilho <rafael@castilho.biz>
  */
-class AB_Controller
+class B_Controller
 {
     /**
      * Registry
      *
-     * @var AB_Registry
+     * @var B_Registry
      */
     public $registry;
 
     /**
      * View
      *
-     * @var AB_View
+     * @var B_View
      */
     public $view;
 
@@ -40,14 +40,14 @@ class AB_Controller
     /**
      * Before action
      */
-    public function beforeAction()
+    public function before()
     {
     }
 
     /**
      * After action
      */
-    public function afterAction()
+    public function after()
     {
     }
 
@@ -57,9 +57,9 @@ class AB_Controller
      * @param   string      $name   Action name
      * @return  boolean
      */
-    public function checkAction($name)
+    public function check($name)
     {
-        return is_callable(array($this, ($name . "Action")));
+        return is_callable(array($this, ("A_" . $name)));
     }
 
     /**
@@ -68,9 +68,9 @@ class AB_Controller
      * @param   string      $name
      * @return  void
      */
-    public function runAction($name)
+    public function run($name)
     {
-        $this->{($name . "Action")}();
+        $this->{('A_' . $name)}();
 
         /* unset layout and template for xml response */
 
@@ -95,17 +95,17 @@ class AB_Controller
      *
      * @return  boolean
      */
-    protected function sessionAuthorize()
+    protected function authorize()
     {
         if(($active = $this->session->getActive()) == false)
         {
             $redirect = $this->registry->session->unauthorized->redirect;
             if(isset($redirect) == false) $redirect = BASE_URL;
 
-            $this->response->setRedirect($redirect, AB_Response::STATUS_UNAUTHORIZED);
+            $this->response->setRedirect($redirect, B_Response::STATUS_UNAUTHORIZED);
             $_m = "session unauthorized";
             $_d = array('method' => __METHOD__);
-            throw new AB_Exception($_m, E_USER_NOTICE, $_d);
+            throw new B_Exception($_m, E_USER_NOTICE, $_d);
         }
 
         return $active;

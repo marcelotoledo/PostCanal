@@ -4,10 +4,10 @@
  * View
  * 
  * @category    Blotomate
- * @package     AB
+ * @package     Base
  * @author      Rafael Castilho <rafael@castilho.biz>
  */
-class AB_View
+class B_View
 {
     /**
      * View data
@@ -33,7 +33,7 @@ class AB_View
     /**
      * Registry
      *
-     * @var AB_Registry
+     * @var B_Registry
      */
     public $registry;
 
@@ -92,7 +92,7 @@ class AB_View
             {
                 $_m = "view can not overwrite attribute (" . $name . ")";
                 $_d = array('method' => __METHOD__);
-                throw new AB_Exception($_m, E_USER_WARNING, $_d);
+                throw new B_Exception($_m, E_USER_WARNING, $_d);
             }
         }
 
@@ -172,7 +172,7 @@ class AB_View
     /**
      * View render
      *
-     * @throws  AB_Exception
+     * @throws  B_Exception
      * @return  void
      */
     public function render()
@@ -204,7 +204,7 @@ class AB_View
             {
                 $_m = "layout (" . $this->layout . ") not found";
                 $_d = array('method' => __METHOD__);
-                throw new AB_Exception($_m, E_USER_ERROR, $_d);
+                throw new B_Exception($_m, E_USER_ERROR, $_d);
             }
         }
     }
@@ -214,7 +214,7 @@ class AB_View
      *
      * @param   string          $type
      * @param   string          $required
-     * @throws  AB_Exception
+     * @throws  B_Exception
      * @return  void
      */
     private function renderTemplate($type='php', $required=true)
@@ -235,7 +235,7 @@ class AB_View
             {
                 $_m = "template (" . $this->template . "." . $type . ") not found";
                 $_d = array('method' => __METHOD__);
-                throw new AB_Exception($_m, E_USER_ERROR, $_d);
+                throw new B_Exception($_m, E_USER_ERROR, $_d);
             }
         }
     }

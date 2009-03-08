@@ -4,10 +4,10 @@
  * Application mailer class
  * 
  * @category    Blotomate
- * @package     Application library
+ * @package     Library
  * @author      Rafael Castilho <rafael@castilho.biz>
  */
-class APP_Mailer
+class L_Mailer
 {
     /**
      * From
@@ -65,7 +65,7 @@ class APP_Mailer
      */
     public function __construct($mailer='default', $sender='default')
     {
-        $registry = AB_Registry::singleton();
+        $registry = B_Registry::singleton();
         $mailer_config = $registry->application->mailer->{$mailer};
         $sender_config = $mailer_config->sender->{$sender};
 
@@ -117,7 +117,7 @@ class APP_Mailer
      *
      * @param   string          $recipient      Email address
      * @param   string          $identifier     Message identifier
-     * @throws  AB_Exception
+     * @throws  B_Exception
      * @return  boolean
      */
     public function send($recipient, $identifier=null)
@@ -146,13 +146,13 @@ class APP_Mailer
                 $message = "sending mail to recipient (" . $recipient . ") failed. " .
                            "Zend_Exception (" . get_class($exception) . ")";
                 $data = array('method' => __METHOD__);
-                AB_Exception::forward($message, E_USER_WARNING, $exception, $data);
+                B_Exception::forward($message, E_USER_WARNING, $exception, $data);
             }
             catch(Exception $exception)
             {
                 $message = "sending mail to recipient (" . $recipient . ") failed";
                 $data = array('method' => __METHOD__);
-                AB_Exception::forward($message, E_USER_ERROR, $exception, $data);
+                B_Exception::forward($message, E_USER_ERROR, $exception, $data);
             }
         }
 
@@ -168,7 +168,7 @@ class APP_Mailer
      */
     private static function setRelay($recipient, $identifier)
     {
-        return AB_Model::execute("INSERT INTO " . self::$relay_table . " " .
+        return B_Model::execute("INSERT INTO " . self::$relay_table . " " .
                                  "(recipient, identifier) VALUES (?, ?)",
                                  array($recipient, substr(md5($identifier), 0, 8)));
     }
@@ -207,7 +207,7 @@ class APP_Mailer
 
         $deny = false;
 
-        if(is_object($result = AB_Model::selectRow($sql, $data)))
+        if(is_object($result = B_Model::selectRow($sql, $data)))
         {
             $deny = $result->total >= $count;
         }
@@ -217,7 +217,7 @@ class APP_Mailer
             $message = "mailer relay denied to recipient (" . $recipient . ") " .
                        "and identifier (" . $identifier . ")";
             $data = array('method' => __METHOD__);
-            throw new AB_Exception($message, E_USER_WARNING, $data);
+            throw new B_Exception($message, E_USER_WARNING, $data);
         }
 
         return $deny ^ true;
