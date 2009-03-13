@@ -7,6 +7,65 @@ $(document).ready(function()
 
     defaultSelectCmsItem();
 
+    /* LAYOUT */
+
+    var viewport = 
+    {
+        v: function() 
+        {
+            if (self.innerWidth && self.innerHeight) 
+            {
+                this.pageXOffset = self.pageXOffset;
+                this.pageYOffset = self.pageYOffset;
+                this.innerWidth = self.innerWidth;
+                this.innerHeight = self.innerHeight;
+            } 
+            else if (document.documentElement && 
+                     document.documentElement.clientWidth &&
+                     document.documentElement.clientHeight) 
+            {
+                this.pageXOffset = document.documentElement.scrollLeft;
+                this.pageYOffset = document.documentElement.scrollTop;
+                this.innerWidth = document.documentElement.clientWidth;
+                this.innerHeight = document.documentElement.clientHeight;
+            }
+            else if (document.body) 
+            {
+                this.pageXOffset = document.body.scrollLeft;
+                this.pageYOffset = document.body.scrollTop;
+                this.innerWidth = document.body.clientWidth;
+                this.innerHeight = document.body.clientHeight;
+            }
+
+            return this;
+        },
+
+        initX: function(element, offset, max)
+        {
+            element.css("height", Math.round((
+                viewport.v().innerWidth  - 
+                viewport.v().pageXOffset -
+                element.position().left  - offset) * max));
+        },
+
+        initY: function(element, offset, max) 
+        {
+            element.css("height", Math.round((
+                viewport.v().innerHeight - 
+                viewport.v().pageYOffset -
+                element.position().top   - offset) * max));
+        },
+
+        init: function(element, x, y)
+        {
+            initX(element, x, 1.0);
+            initY(element, y, 1.0);
+        }
+    };
+
+    viewport.initY($("#mlcb"),    28, 1.0);
+    viewport.initY($("#mrcb"),    28, 1.0);
+    viewport.initY($("#rbox td"), 28, 0.6);
 
     /* SWITCHES */
 
@@ -31,29 +90,30 @@ $(document).ready(function()
 
     function setSelectedCmsItem(cid)
     {
-        $(".cms-item").each(function()
+        $(".cmsitm").each(function()
         {
-            $(this).removeClass("cms-item-selected");
+            $(this).removeClass("cmsitm-s");
         });
 
-        $("div[@cid='" + cid + "']").addClass("cms-item-selected");
+        $("div[@cid='" + cid + "']").removeClass("cmsitm-h");
+        $("div[@cid='" + cid + "']").addClass("cmsitm-s");
     }
 
     /* FX */
 
     /* cms */
 
-    $(".cms-item").hover
+    $(".cmsitm").hover
     (
         function()
         {
-            if($(this).hasClass("cms-item-selected") == false)
-                $(this).addClass("cms-item-hover");
+            if($(this).hasClass("cmsitm-s") == false)
+                $(this).addClass("cmsitm-h");
         },
         function()
         {
-            if($(this).hasClass("cms-item-selected") == false)
-                $(this).removeClass("cms-item-hover");
+            if($(this).hasClass("cmsitm-s") == false)
+                $(this).removeClass("cmsitm-h");
         }
     );
 
@@ -107,7 +167,7 @@ $(document).ready(function()
 
     function defaultSelectCmsItem()
     {
-        var ls = $(".cms-item");
+        var ls = $(".cmsitm");
         var item = null;
         
         if(ls.size() > 0) selectCmsItem(ls.get(0).getAttribute("cid"));
@@ -117,9 +177,9 @@ $(document).ready(function()
 
     /* cms */
 
-    $(".cms-item").click(function()
+    $(".cmsitm").click(function()
     {
-        if($(this).hasClass("cms-item-selected") == false)
+        if($(this).hasClass("cmsitm-s") == false)
             selectCmsItem($(this).attr("cid"));
     });
 });

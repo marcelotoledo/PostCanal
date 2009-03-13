@@ -1,29 +1,48 @@
-<?php if(strlen($this->profile->name) > 0) : ?>
-<h2><?php echo $this->translation->application_welcome ?>, 
-    <?php echo $this->profile->name ?></h2>
-<?php endif ?>
-
 <?php if(count($this->cms) == 0) : ?>
 
 <div class="nocms">Nenhum CMS cadastrado. <?php B_Helper::a("Adicionar novo CMS", "cms", "add") ?></span> 
 
 <?php else : ?>
 
-<table id="main-panel">
-<tr>
-    <td id="cms-panel">
-        <span class="panel-title">CMS</span>
-        <table class="panel-list">
+<div id="lcol">
+<div class="ctit">
+<?php B_Helper::a("adicionar", "cms", "add") ?>
+</div>
+<div class="cbox" id="mlcb" style="height:500px">
 
 <?php foreach($this->cms as $cms) : ?>
-<tr><td><div class="cms-item" cid="<?php echo $cms->cid ?>"><?php echo $cms->name ?></div></tr></td>
+<div class="cmsitm" cid="<?php echo $cms->cid ?>"><a><?php echo $cms->name ?></a></div>
 <?php endforeach ?>
 
-        </table>
-<div><?php B_Helper::a($this->translation->application_add, "cms", "add") ?></span>
-    </td>
-    <td id="right-panel"><!-- dashboard/cms loaded by ajax --></td>
-</tr>
-</table>
+</div></div>
+
+<div id="rcol">
+<div class="ctit">Super CMS</div>
+<div class="cbox" id="mrcb" style="height:500px">
+
+<table id="rbox"><tbody><tr><td id="rbcA">
+
+<div id="rbdA">
+&nbsp;
+</div>
+
+</td><td id="rbcB">
+
+<div id="rbdB">
+&nbsp;
+</div>
+
+</td></tr>
+<tr><td colspan="2">
+
+<div id="rbdC">
+&nbsp;
+</div>
+
+</td></tr></tbody></table>
+
+</div></div>
+
+<div id="bbox" style="display:none">&nbsp;</div>
 
 <?php endif ?>

@@ -38,7 +38,6 @@ CREATE TABLE base_session
     active TINYINT(1) NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET='utf8' COLLATE='utf8_unicode_ci';
 
-CREATE INDEX as_id_idx ON base_session (id);
 CREATE INDEX as_id_active_idx ON base_session (id, active);
 CREATE INDEX as_expires_active_idx ON base_session (session_expires, active);
 
@@ -59,8 +58,8 @@ CREATE INDEX at_template_culture_idx ON base_translation (template, culture);
 CREATE TABLE application_mailer_relay
 (
     id INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
-    recipient VARCHAR(100) NOT NULL,
-    identifier VARCHAR(8) DEFAULT NULL,
+    recipient CHAR(100) NOT NULL,
+    identifier CHAR(8) DEFAULT NULL,
     created_at TIMESTAMP NOT NULL DEFAULT NOW(),
     PRIMARY KEY (id)
 ) ENGINE=InnoDB DEFAULT CHARSET='utf8';
@@ -72,8 +71,8 @@ CREATE INDEX amr_recipient_identifier_created_idx ON application_mailer_relay (r
 CREATE TABLE cms_type
 (
     cms_type_id SMALLINT UNSIGNED NOT NULL AUTO_INCREMENT,
-    name VARCHAR(50) NOT NULL,
-    version VARCHAR(50) NOT NULL,
+    name CHAR(50) NOT NULL,
+    version CHAR(50) NOT NULL,
     maintenance TINYINT(1) NOT NULL DEFAULT 0,
     enabled TINYINT(1) NOT NULL DEFAULT 0,
     PRIMARY KEY (cms_type_id),
@@ -111,11 +110,11 @@ CREATE INDEX ctc_type_idx ON cms_type_configuration (cms_type_id);
 CREATE TABLE aggregator_channel
 (
     aggregator_channel_id INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
-    type VARCHAR(50) NOT NULL,
+    type ENUM('rss','atom') NOT NULL DEFAULT 'rss',
     title VARCHAR(100) NOT NULL,
     link VARCHAR(200) NOT NULL,
     description TEXT NOT NULL DEFAULT '',
-    status VARCHAR(50) NOT NULL,
+    status ENUM('new','failed_url','new_items_available','new_items_not_available') NOT NULL DEFAULT 'new',
     created_at TIMESTAMP NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
     enabled TINYINT(1) NOT NULL DEFAULT 1,
@@ -140,14 +139,14 @@ CREATE TABLE aggregator_item
 CREATE TABLE user_profile
 (
     user_profile_id INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
-    uid VARCHAR(8) NOT NULL,
-    login_email VARCHAR(100) NOT NULL,
-    login_password_md5 VARCHAR(32) NOT NULL,
+    uid CHAR(8) NOT NULL,
+    login_email CHAR(100) NOT NULL,
+    login_password_md5 CHAR(32) NOT NULL,
     -- -------------------------------------------------------------------------
-    name VARCHAR(100) NOT NULL DEFAULT '',
+    name CHAR(100) NOT NULL DEFAULT '',
     -- -------------------------------------------------------------------------
     register_confirmation TINYINT(1) NOT NULL DEFAULT 0,
-    email_update VARCHAR(100) NOT NULL DEFAULT '',
+    email_update CHAR(100) NOT NULL DEFAULT '',
     register_message_time TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
     register_confirmation_time TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
     last_login_time TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
@@ -162,7 +161,6 @@ CREATE TABLE user_profile
 ) ENGINE=InnoDB DEFAULT CHARSET='utf8';
 
 CREATE INDEX up_id_enabled_idx ON user_profile (user_profile_id, enabled);
-CREATE INDEX up_email_enabled_idx ON user_profile (login_email, enabled);
 CREATE INDEX up_email_password_enabled_idx ON user_profile (login_email, login_password_md5, enabled);
 CREATE INDEX up_email_uid_idx ON user_profile (login_email, uid);
 
@@ -171,13 +169,13 @@ CREATE TABLE user_cms
     user_cms_id INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
     user_profile_id INTEGER UNSIGNED NOT NULL,
     cms_type_id SMALLINT UNSIGNED NOT NULL,
-    cid VARCHAR(8) NOT NULL,
-    name VARCHAR(100) NOT NULL,
-    url VARCHAR(200) NOT NULL,
-    manager_url VARCHAR(200) NOT NULL,
-    manager_username VARCHAR(100) NOT NULL,
-    manager_password VARCHAR(100) NOT NULL,
-    status VARCHAR(50) NOT NULL,
+    cid CHAR(8) NOT NULL,
+    name CHAR(100) NOT NULL,
+    url CHAR(200) NOT NULL,
+    manager_url CHAR(200) NOT NULL,
+    manager_username CHAR(100) NOT NULL,
+    manager_password CHAR(100) NOT NULL,
+    status ENUM('new','ok','failed_url','failed_login','failed_publication') NOT NULL DEFAULT 'new',
     created_at TIMESTAMP NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
     enabled TINYINT(1) NOT NULL DEFAULT 1,
@@ -208,7 +206,6 @@ CREATE TABLE user_cms_channel
         REFERENCES aggregator_channel (aggregator_channel_id) ON DELETE RESTRICT
 ) ENGINE=InnoDB DEFAULT CHARSET='utf8';
 
-CREATE INDEX ucc_uci_idx ON user_cms_channel (user_cms_id);
 CREATE INDEX uc_uci_ch_idx ON user_cms (user_cms_id, ch);
 
 CREATE TABLE user_cms_queue

@@ -1,176 +1,169 @@
-div#topbar
-{
-    padding: 10px;
-    padding-left: 25px;
-    padding-right: 25px;
-    height: 15px;
-    background-color: wheat;
-}
+/* layout */
 
-div#dashboardcontent
+html, body
 {
-    padding: 10px;
-    padding-left: 25px;
+    margin: 0;
+    border: 0;
 }
-
-div.nocms
+body
 {
-    margin-top: 20px;
+    color: black;
+    background: white;
+}
+div, form
+{
+    margin: 0;
+}
+#mbar
+{
+    height: 25px;
+    padding: 5px 10px 0px 10px;
+    float: left;
+}
+#mbar span
+{
+    padding-right: 10px;
+}
+#ubar
+{
+    position: absolute;
+    top: 0;
+    right: 0;
+    margin: 0;
+    padding: 5px 10px 0px 10px;
+}
+#ubar span
+{
+    padding-left: 10px;
+}
+.bsep
+{
+    height: 0;
+    position: absolute;
+    top: 28px;
+    width: 100%;
+    border-top: 1px solid silver;
+    font-size: 1px;
+}
+#main
+{
+    position: static;
+    margin: 0;
+    width: 100%;
+    position: absolute;
+    top: 28px; /* @see dashboard/index.js, initY() */
+}
+#subpage
+{
+    padding: 40px 25px 25px 25px;
+}
+.ctit
+{
+    line-height: 50px;
+    padding-left: 10px;
+    overflow: hidden;
+    color: white;
+}
+.cbox
+{
+    /* void */
+}
+#lcol
+{
+    float: left;
+    width: 250px;
+}
+#lcol .cbox
+{
+    overflow: auto;
+}
+#rcol
+{
+    margin-left: 250px;
+}
+#rcol .ctit
+{
+    text-align: right;
+    padding-right: 10px;
+    font-size: large;
     font-style: italic;
+    background-color: chocolate;
+}
+#rcol .cbox
+{
+    overflow: hidden;
+}
+#rbox
+{
+    border-collapse: collapse;
+    border-spacing: 0;
+    width: 100%;
+    table-layout: fixed;
+}
+#rbox td
+{
+    border-top: 1px solid black;
+}
+#bbox
+{
+    line-height: 25px;
+    padding-left: 10px;
+    overflow: hidden;
+    background-color: black;
+    color: white;
+}
+#rbcA
+{
+    /* void */
+}
+#rbdA
+{
+    height: 100%;
+    overflow: auto;
+    background-color: khaki;
+}
+#rbcB
+{
+    width: 250px;
+}
+#rbdB
+{
+    height: 100%;
+    overflow: auto;
+    background-color: navajowhite;
+}
+#rbcC
+{
+    /* void */
+}
+#rbdC
+{
+    height: 100%;
+    overflow: auto;
+    background-color: silver;
 }
 
-#main-panel
-{
-}
+/* custom */
 
-.panel-title
+#lcol
 {
-    color: gray;
-    font-size: medium;
+    border-right: 1px solid saddlebrown;
+}
+.cmsitm
+{
+    padding: 5px 10px 5px 10px;
     font-weight: bold;
 }
-
-#right-panel
+.cmsitm-s
 {
-    background-color: wheat;
-    padding: 5px;
+    background-color: bisque;
 }
-
-.panel-list
+.cmsitm-h
 {
-    margin-top: 5px;
-}
-
-#cms-panel
-{
-    vertical-align: top;
-    text-align: right;
-    padding: 10px;
-    border-right: 1px solid gray;
-}
-
-#cms-panel table
-{
-    width: 200px;
-    border-top: 1px solid gray;
-}
-
-#channel-chanels-panel
-{
-    vertical-align: top;
-    padding: 10px;
-}
-
-#channel-chanels-panel table
-{
-    width: 200px;
-    border-top: 1px solid gray;
-}
-
-#channel-items-panel
-{
-    padding: 10px;
-    vertical-align: top;
-    background-color: white;
-}
-
-#channel-items-panel h2
-{
-    background-color: gray;
-    padding: 2px;
-    margin-left: -2px;
-    color: white;
-}
-
-#channel-items-list
-{
-    padding-top: 5px;
-    width: 500px;
-    margin-left: -2px;
-    height: 150px;
-    overflow: auto;
-}
-
-#channel-items-list table
-{
-    width: 475px;
-}
-
-#queue-panel
-{
-    padding: 10px;
-    background-color: white;
-}
-
-#queue-panel h2
-{
-    background-color: gray;
-    padding: 2px;
-    margin-left: -2px;
-    color: white;
-}
-
-#queue-items-list
-{
-    padding-top: 5px;
-    width: 500px;
-    margin-left: -2px;
-    height: 150px;
-    overflow: auto;
-}
-
-#queue-items-list table
-{
-    width: 475px;
-}
-
-.cms-item
-{
-    font-size: small;
-    text-align: right;
-    margin-right: -2px;
-    padding-top: 5px;
-    padding-bottom: 5px;
-    padding-right: 2px;
-}
-
-.cms-item-hover
-{
-    background-color: wheat;
-    margin-right:-16px;
-    padding-right:16px;
     cursor: pointer;
     cursor: hand;
 }
-
-.cms-item-selected
+.cmsitm-h a
 {
-    font-weight: bold;
-    background-color: wheat;
-    margin-right:-16px;
-    padding-right:16px;
-}
-
-.channel-item
-{
-    padding-top: 2px;
-    padding-bottom: 2px;
-    margin-left: -2px;
-}
-
-.channel-item-selected
-{
-    background-color: white;
-    margin-left:-15px;
-    padding-left:13px;
-}
-
-.channel-item-title
-{
-    float: left;
-}
-
-.channel-item-date
-{
-    float: right;
+    color: blue;
 }
