@@ -1,8 +1,6 @@
 div#container
 {
-    width: 60%;
-    padding-left: 10%;
-    padding-top: 5%;
+    padding-top: 50px;
 }
 div#logo
 {
@@ -15,8 +13,8 @@ div#logo
 div#form
 {
     float: right;
-    width: 55%;
-    padding-top: 5%;
+    width: 50%;
+    padding-top: 40px;
 }
 div#logo h1
 {

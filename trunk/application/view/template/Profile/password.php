@@ -5,22 +5,30 @@
     <h1>Mudança de Senha de Acesso</h1>
     <input type="hidden" name="email" value="<?php echo $this->profile->login_email ?>">
     <input type="hidden" name="uid" value="<?php echo $this->profile->uid ?>">
-    <dl>
-        <dt>E-mail:</dt>
-        <dd><i><?php echo $this->profile->login_email ?></i></dd>
-        <dt>Senha:</dt>
-        <dd><input type="password" name="password"></dd>
-        <dt>Confirmar Senha:</dt>
-        <dd><input type="password" name="confirm"></dd>
-        <dt>&nbsp;</dt>
-        <dd class="buttons">
+    <table>
+        <tr>
+        <th>E-mail:</th>
+        <td><i><?php echo $this->profile->login_email ?></i></td>
+        </tr>
+        <tr>
+        <th>Senha:</th>
+        <td><input type="password" name="password"></td>
+        </tr>
+        <tr>
+        <th>Confirmar Senha:</th>
+        <td><input type="password" name="confirm"></td>
+        </tr>
+        <tr>
+        <th>&nbsp;</th>
+        <td class="buttons">
             <input name="pwdchangesubmit" type="button" value="Alterar">
-        </dd>
-        <div id="message" style="display:none">
-        <dt>&nbsp;</dt>
-        <dd class="message"></dd>
-        </div>
-    </dl>
+        </td>
+        </tr>
+        <tr id="message" style="display:none">
+        <th>&nbsp;</th>
+        <td class="message"></td>
+        </tr>
+    </table>
 </form>
 </div>
 

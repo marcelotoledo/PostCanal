@@ -89,31 +89,25 @@ form h1
 {
     text-decoration: underline;
     font-size: x-large;
-    padding-bottom: 0.5em;
-    margin: 0;
+    margin-bottom: 25px;
 }
-form dt
+form th
 {
-    clear: both;
-    width: 30%;
-    float: left;
     text-align: right;
     font-weight: bold;
-    padding-right: 0.25em;
+    padding-right: 5px;
     line-height: 25px;
 }
-form dd
+form td
 {
-    float: left;
-    width: 60%;
-    margin: 0 0 0.5em 0.25em;
+    /* void */
 }
 form .buttons
 {
-    margin-top: 1em;
+    padding-top: 15px;
 }
 form .message
 {
-    margin-top: 0.25em;
+    padding-top: 5px;
     color: red;
 }

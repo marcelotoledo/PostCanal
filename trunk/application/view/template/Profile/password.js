@@ -30,7 +30,7 @@ $(document).ready(function()
 
     function showMessage(message)
     {
-        $("#message dd").html(message);
+        $("#message td").html(message);
         $("#message").show();
     }
 

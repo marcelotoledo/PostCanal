@@ -1,26 +1,30 @@
 <?php if(is_object($this->profile) && strlen($this->new_email) > 0) : ?>
 
-<h1>Mudança de E-mail de Acesso</h1>
-<input type="hidden" name="email" value="<?php echo $this->profile->login_email ?>">
-<input type="hidden" name="uid" value="<?php echo $this->profile->uid ?>">
-<table id="emlform">
+<form>
+    <h1>Mudança de E-mail de Acesso</h1>
+    <input type="hidden" name="email" value="<?php echo $this->profile->login_email ?>">
+    <input type="hidden" name="uid" value="<?php echo $this->profile->uid ?>">
+    <table>
     <tr>
-        <td class="formlabel">E-mail atual:</td>
+        <th>E-mail atual:</th>
         <td><i><?php echo $this->profile->login_email ?></i></td>
     </tr>
     <tr>
-        <td class="formlabel">Novo E-mail:</td>
+        <th>Novo E-mail:</th>
         <td><i><?php echo $this->new_email ?></i></td>
     </tr>
     <tr>
-        <td class="formlabel">Senha:</td>
+        <th>Senha:</th>
         <td><input type="password" name="password"></td>
     </tr>
-    <tr class="formbutton">
-        <td>&nbsp;</td>
-        <td><input name="emlchangesubmit" type="button" value="Alterar"></td>
+    <tr>
+        <th>&nbsp;</th>
+        <td class="buttons">
+            <input name="emlchangesubmit" type="button" value="Alterar">
+        </td>
     </tr>
 </table>
+</form>
 
 <p id="changenotice" style="display:none">
 E-mail alterado com sucesso. <?php B_Helper::a("clique aqui") ?> 
