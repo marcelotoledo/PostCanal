@@ -1,6 +1,6 @@
 <?php if(count($this->cms) == 0) : ?>
 
-<div class="nocms">Nenhum CMS cadastrado. <?php B_Helper::a("Adicionar novo CMS", "cms", "add") ?></span> 
+<div id="nocms">Nenhum CMS cadastrado. <?php B_Helper::a("Adicionar novo CMS", "cms", "add") ?></span> 
 
 <?php else : ?>
 

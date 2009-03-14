@@ -72,6 +72,7 @@ $(document).ready(function()
         $("#input_manager_url_ro").show();
         $("#input_manager_url_ro").text(url);
         $("#check_manager_login").show();
+        $("#manager_login_row").show();
         complete = true;
     }
 
@@ -83,6 +84,7 @@ $(document).ready(function()
         $("input[@name='manager_url']").show();
         $("#check_manager_url").show();
         $("#check_manager_login").hide();
+        $("#manager_login_row").hide();
         complete = false;
     }
 
@@ -92,6 +94,7 @@ $(document).ready(function()
         $("#input_manager_url_ro").text("");
         $("#manager_url_row").hide();
         $("#check_manager_login").hide();
+        $("#manager_login_row").hide();
         complete = false;
     }
 

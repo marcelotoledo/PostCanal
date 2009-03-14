@@ -29,16 +29,24 @@ $(document).ready(function()
 
     function toggleForm()
     {
-        $("#logintitle").toggle();
-        $("#regtitle").toggle();
-        $("#regrow").toggle();
-        $("#pwdconfrow").toggle();
+        $("#ftitlog").toggle();
+        $("#ftitreg").toggle();
+        $("#lnkrow").toggle();
+        $("#confirmrow").toggle();
         $("input[@name='regcancel']").toggle();
+        $("#message").hide();
         register = register ^ true;
     }
 
-
     /* ACTIONS */
+
+    /* show message */
+
+    function showMessage(message)
+    {
+        $("#message dd").html(message);
+        $("#message").show();
+    }
 
     /* on error */
 
@@ -53,7 +61,7 @@ $(document).ready(function()
     {
         if($("input[@name='email']").val() == "")
         {
-            $.ab_alert("<?php echo $this->translation->recovery_email ?>");
+            showMessage("<?php echo $this->translation->recovery_email ?>");
             return null;
         }
 
@@ -79,7 +87,7 @@ $(document).ready(function()
             { 
                 var data = $(xml).find('data');
                 var message = data.find('message').text();
-                if(message != "") $.ab_alert(message);
+                if(message != "") showMessage(message);
             }, 
             error: function () { onError(); } 
         });
@@ -102,13 +110,13 @@ $(document).ready(function()
 
         if(email == "" || password == "" || confirm_ == "")
         {
-            $.ab_alert("<?php echo $this->translation->form_incomplete ?>");
+            showMessage("<?php echo $this->translation->form_incomplete ?>");
             return null;
         }
 
         if(password != confirm_)
         {
-            $.ab_alert("<?php echo $this->translation->form_not_match ?>");
+            showMessage("<?php echo $this->translation->form_not_match ?>");
             return null;
         }
 
@@ -136,7 +144,7 @@ $(document).ready(function()
                 var register = data.find('register').text();
                 var message = data.find('message').text();
                 if(register == "true") toggleForm();
-                if(message != "") $.ab_alert(message);
+                if(message != "") showMessage(message);
             }, 
             error: function () { onError(); } 
         });
@@ -151,7 +159,7 @@ $(document).ready(function()
 
         if(email == "" || password == "")
         {
-            $.ab_alert("<?php echo $this->translation->form_incomplete ?>");
+            showMessage("<?php echo $this->translation->form_incomplete ?>");
             return null;
         }
 
@@ -180,7 +188,7 @@ $(document).ready(function()
                 var message = data.find('message').text();
                 var url = "<?php B_Helper::url('dashboard') ?>";
                 if(login == "true") window.location = url;
-                if(message != "") $.ab_alert(message);
+                if(message != "") showMessage(message);
             }, 
             error: function () { onError(); } 
         });

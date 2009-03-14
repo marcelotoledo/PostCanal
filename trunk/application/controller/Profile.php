@@ -111,11 +111,11 @@ class C_Profile extends C_Abstract
             {
                 if($profile->register_confirmation)
                 {
-                    $this->notify($profile, "register_existing");
+                    $this->notify($profile->login_email, "register_existing", $profile);
                 }
                 else
                 {
-                    $this->notify($profile, "register_new");
+                    $this->notify($profile->login_email, "register_new", $profile);
 
                     if(is_object($information))
                     {
@@ -180,7 +180,7 @@ class C_Profile extends C_Abstract
         {
             try
             {
-                $this->notify($profile, "recovery");
+                $this->notify($profile->login_email, "recovery", $profile);
                 $profile->recovery_message_time = time();
                 $profile->recovery_allowed = true;
                 $profile->save();
@@ -362,6 +362,7 @@ class C_Profile extends C_Abstract
             else
             {
                 $profile->login_password_md5 = md5($password);
+                $profile->recovery_allowed = false;
                 $profile->save();
 
                 $updated = true;
@@ -410,7 +411,7 @@ class C_Profile extends C_Abstract
                 $id = intval($profile->user_profile_id);
                 $_d = array ('method' => __METHOD__, 'user_profile_id' => $id);
                 self::log("password changed", $_d);
-                # $this->notify($profile, "updated");
+                $this->notify($profile->login_email, "updated", $profile);
                 $this->session->setActive(false);
             }
         }
@@ -486,6 +487,13 @@ class C_Profile extends C_Abstract
             $accepted = $this->emailChangeSave($email, $uid, $password, $message);
         }
 
+        /* disable session */
+
+        if($accepted == true)
+        {
+            $this->session->setActive(false);
+        }
+
         $this->view->accepted = $accepted;
         $this->view->message = $message;
     }
@@ -515,7 +523,7 @@ class C_Profile extends C_Abstract
                     $profile->email_update = $new_email;
                     $profile->email_update_message_time = time();
                     $profile->save();
-                    $this->notify($profile, "email_change");
+                    $this->notify($new_email, "email_change", $profile);
                     $message = $this->translation->change_request_accepted;
                     $accepted = true;
                 }
@@ -567,7 +575,7 @@ class C_Profile extends C_Abstract
                     $id = $profile->user_profile_id;
                     $_d = array ('method' => __METHOD__, 'user_profile_id' => $id);
                     self::log("email changed", $_d);
-                    $this->notify($profile, "updated");
+                    $this->notify($new_email, "updated", $profile);
                 }
             }
         }
@@ -647,11 +655,12 @@ class C_Profile extends C_Abstract
     /**
      * Send notification mail
      *
-     * @param   mixed       $recipient
+     * @param   string      $email
      * @param   string      $template
+     * @param   UserProfile $profile
      * @return  boolean
      */
-    private function notify ($recipient, $template)
+    private function notify ($email, $template, $profile=null)
     {
         $mailer = new L_Mailer();
 
@@ -659,13 +668,9 @@ class C_Profile extends C_Abstract
         $mailer->setSubject($this->translation->{$subject});
         $template = $this->request->getController() . "/mail_" . $template;
 
-        $profile = is_object($recipient) ? $recipient : null;
-
         ob_start();
         include B_View::getTemplatePath($template);
         $mailer->setBody(ob_get_clean());
-
-        $email = $profile ? $profile->email_update : $recipient;
 
         return $mailer->send($email, $template);
     }

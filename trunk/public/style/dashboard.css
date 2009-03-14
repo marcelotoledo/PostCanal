@@ -55,7 +55,8 @@ div, form
 }
 #subpage
 {
-    padding: 40px 25px 25px 25px;
+    width: 60%;
+    padding: 60px 25px 25px 25px;
 }
 .ctit
 {
@@ -144,6 +145,11 @@ div, form
 }
 
 /* custom */
+
+#nocms
+{
+    padding: 25px;
+}
 
 #lcol
 {

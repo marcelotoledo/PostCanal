@@ -12,7 +12,6 @@
     </database>
     <application>
         <mailer>
-            <!--
             <default>
                 <transport>smtp</transport>
                 <server>smtp.gmail.com</server>
@@ -28,10 +27,10 @@
                 </sender>
                 <relay>
                     <time>43200</time>
-                    <count>2</count>
+                    <count>10</count>
                 </relay>
             </default>
-            -->
+            <!--
             <default>
                 <transport>sendmail</transport>
                 <sender>
@@ -44,6 +43,7 @@
                     <count>1000</count>
                 </relay>
             </default>
+            -->
         </mailer>
     </application>
 </environment>

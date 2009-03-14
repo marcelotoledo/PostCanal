@@ -6,11 +6,11 @@
 <table id="emlform">
     <tr>
         <td class="formlabel">E-mail atual:</td>
-        <td><?php echo $this->profile->login_email ?></td>
+        <td><i><?php echo $this->profile->login_email ?></i></td>
     </tr>
     <tr>
         <td class="formlabel">Novo E-mail:</td>
-        <td><?php echo $this->new_email ?></td>
+        <td><i><?php echo $this->new_email ?></i></td>
     </tr>
     <tr>
         <td class="formlabel">Senha:</td>

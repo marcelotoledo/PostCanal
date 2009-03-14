@@ -24,6 +24,15 @@ $(document).ready(function()
         $.ab_spinner_stop();
     }
 
+    /* ACTIONS */
+
+    /* show message */
+
+    function showMessage(message)
+    {
+        $("#message dd").html(message);
+        $("#message").show();
+    }
 
     /* password change */
 
@@ -46,13 +55,13 @@ $(document).ready(function()
 
         if(password == "" || confirm_ == "")
         {
-            $.ab_alert("Preencha o formulário corretamente");
+            showMessage("Preencha o formulário corretamente");
             return null;
         }
 
         if(password != confirm_)
         {
-            $.ab_alert("Senha e confirmação NÃO CORRESPONDEM");
+            showMessage("Senha e confirmação NÃO CORRESPONDEM");
             return null;
         }
 
@@ -87,7 +96,7 @@ $(document).ready(function()
                 }
                 else
                 {
-                    if(message != "") $.ab_alert(message);
+                    if(message != "") showMessage(message);
                 }
             }, 
             error: function (data) { onError(); }

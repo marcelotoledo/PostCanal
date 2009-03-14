@@ -11,6 +11,6 @@
 <?php B_Helper::style("index.css") ?>
 </head>
 <body>
-<div id="indexcontent"><?php $this->renderTemplate('php', true) ?></div>
+<div id="container"><?php $this->renderTemplate('php', true) ?></div>
 </body>
 </html>

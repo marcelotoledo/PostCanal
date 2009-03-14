@@ -85,20 +85,35 @@ h2
 
 /* form */
 
-td.formlabel
+form h1
 {
-    width: 150px;
+    text-decoration: underline;
+    font-size: x-large;
+    padding-bottom: 0.5em;
+    margin: 0;
+}
+form dt
+{
+    clear: both;
+    width: 30%;
+    float: left;
     text-align: right;
     font-weight: bold;
+    padding-right: 0.25em;
+    line-height: 25px;
 }
-
-tr.formbutton
+form dd
 {
-    height: 50px;
-    vertical-align: bottom;
+    float: left;
+    width: 60%;
+    margin: 0 0 0.5em 0.25em;
 }
-
-tr.formbutton td
+form .buttons
 {
-    text-align: right;
+    margin-top: 1em;
+}
+form .message
+{
+    margin-top: 0.25em;
+    color: red;
 }
