@@ -47,17 +47,47 @@ div, form
 }
 #main
 {
-    position: static;
-    margin: 0;
-    width: 100%;
     position: absolute;
-    top: 28px; /* @see dashboard/index.js, initY() */
+    top: 29px;
+    left: 0px;
+    width: 100%;
 }
-#subpage
+.mmsg
 {
-    width: 60%;
-    padding: 60px 25px 25px 25px;
+    padding: 25px;
 }
+
+
+#aA0
+{
+    /* void */
+}
+#bA0
+{
+    width: 100%;
+}
+#bAL
+{
+    width: 200px;
+    padding: 10px;
+}
+#bAR
+{
+    padding: 10px;
+    text-align: right;
+    font-size: large;
+    background-color: chocolate;
+    color: white;
+}
+
+
+#cmsc
+{
+    background-color: red;
+    overflow: auto;
+}
+
+
 .ctit
 {
     line-height: 50px;
@@ -145,11 +175,6 @@ div, form
 }
 
 /* custom */
-
-#nocms
-{
-    padding: 25px;
-}
 
 #lcol
 {
