@@ -2,35 +2,37 @@ $(document).ready(function()
 {
     /* DEFAULTS */
 
-    var active_request = false;
-    var complete = false;
+    var ar = false; /* active request */
+    var fc = false; /* form complete */
 
 
     /* SWITCHES */
 
     /* spinner */
 
-    function showSpinner()
+    function sp(b)
     {
-        $.ab_spinner
-        ({
-            height: 32, width: 32,
-            image: "<?php B_Helper::img_src('spinner/linux_spinner.png') ?>",
-            message: "... carregando"
-        });
-    }
-
-    function hideSpinner()
-    {
-        $.ab_spinner_stop();
+        if((ar = b) == true)
+        {
+            $.b_spinner_start
+            ({
+                height: 32, width: 32,
+                image: "<?php B_Helper::img_src('spinner.gif') ?>",
+                message: "... <?php echo $this->translation->application_loading ?>"
+            });
+        }
+        else
+        {
+            $.b_spinner_stop();
+        }
     }
 
     /* url */
 
     function commitURL(url)
     {
-        $("input[@name='input_url']").val(url);
-        $("input[@name='input_url']").hide();
+        $("input[name='input_url']").val(url);
+        $("input[name='input_url']").hide();
         $("#input_url_ro").text(url);
         $("#input_url_ro").show();
         $("#check_url").hide();
@@ -41,7 +43,7 @@ $(document).ready(function()
     {
         $("#input_url_ro").text("");
         $("#input_url_ro").hide();
-        $("input[@name='input_url']").show();
+        $("input[name='input_url']").show();
         $("#change_url").hide();
         $("#check_url").show();
         changeCMSType();
@@ -66,14 +68,14 @@ $(document).ready(function()
 
     function commitManagerURL(url)
     {
-        $("input[@name='manager_url']").val(url);
-        $("input[@name='manager_url']").hide();
+        $("input[name='manager_url']").val(url);
+        $("input[name='manager_url']").hide();
         $("#check_manager_url").hide();
         $("#input_manager_url_ro").show();
         $("#input_manager_url_ro").text(url);
         $("#check_manager_login").show();
         $("#manager_login_row").show();
-        complete = true;
+        fc = true;
     }
 
     function changeManagerURL()
@@ -81,21 +83,21 @@ $(document).ready(function()
         $("#manager_url_row").show();
         $("#input_manager_url_ro").text("");
         $("#input_manager_url_ro").hide();
-        $("input[@name='manager_url']").show();
+        $("input[name='manager_url']").show();
         $("#check_manager_url").show();
         $("#check_manager_login").hide();
         $("#manager_login_row").hide();
-        complete = false;
+        fc = false;
     }
 
     function resetManagerURL()
     {
-        $("input[@name='manager_url']").val("");
+        $("input[name='manager_url']").val("");
         $("#input_manager_url_ro").text("");
         $("#manager_url_row").hide();
         $("#check_manager_login").hide();
         $("#manager_login_row").hide();
-        complete = false;
+        fc = false;
     }
 
     /* ACTIONS */
@@ -112,16 +114,16 @@ $(document).ready(function()
 
     function checkURL()
     {
-        if(active_request == true)
+        if(ar == true)
         {
             return null;
         }
 
-        var url = $("input[@name='input_url']").val();
+        var url = $("input[name='input_url']").val();
 
         if(url == "")
         {
-            $.ab_alert("informe o endereço do CMS");
+            $.b_alert("informe o endereço do CMS");
             return null;
         }
 
@@ -133,27 +135,19 @@ $(document).ready(function()
             url: "<?php B_Helper::url('cms', 'check') ?>",
             dataType: "xml",
             data: parameters,
-            beforeSend: function ()
-            {
-                active_request = true;
-                showSpinner();
-            },
-            complete: function ()
-            {
-                active_request = false;
-                hideSpinner();
-            },
+            beforeSend: function () { sp(true);  },
+            complete: function ()   { sp(false); },
             success: function (xml) 
             { 
-                var data                 = $(xml).find('data');
-                var url                  = data.find('url').text();
-                var url_accepted         = data.find('url_accepted').text();
-                var cms_type_name        = data.find('cms_type_name').text();
-                var cms_type_version     = data.find('cms_type_version').text();
-                var cms_type_accepted    = data.find('cms_type_accepted').text();
-                var cms_type_maintenance = data.find('cms_type_maintenance').text();
-                var manager_url          = data.find('manager_url').text();
-                var manager_url_accepted = data.find('manager_url_accepted').text();
+                data                 = $(xml).find('data');
+                url                  = data.find('url').text();
+                url_accepted         = data.find('url_accepted').text();
+                cms_type_name        = data.find('cms_type_name').text();
+                cms_type_version     = data.find('cms_type_version').text();
+                cms_type_accepted    = data.find('cms_type_accepted').text();
+                cms_type_maintenance = data.find('cms_type_maintenance').text();
+                manager_url          = data.find('manager_url').text();
+                manager_url_accepted = data.find('manager_url_accepted').text();
 
                 /* url */
 
@@ -164,7 +158,7 @@ $(document).ready(function()
                 else
                 {
                     changeURL();
-                    $.ab_alert("<?php echo $this->translation->url_not_accepted ?>");
+                    $.b_alert("<?php echo $this->translation->url_not_accepted ?>");
                 }
 
                 /* cms type */
@@ -176,12 +170,12 @@ $(document).ready(function()
                 else
                 {
                     changeURL();
-                    $.ab_alert("<?php echo $this->translation->cms_type_not_accepted ?>");
+                    $.b_alert("<?php echo $this->translation->cms_type_not_accepted ?>");
                 }
 
                 if(cms_type_maintenance == "true")
                 {
-                    $.ab_alert("<?php echo $this->translation->cms_type_maintenance ?>");
+                    $.b_alert("<?php echo $this->translation->cms_type_maintenance ?>");
                 }
 
                 /* manager url */
@@ -192,7 +186,7 @@ $(document).ready(function()
 
                     if(manager_url_accepted == "false")
                     {
-                        $.ab_alert("<?php echo $this->translation->url_manager_not_accepted ?>");
+                        $.b_alert("<?php echo $this->translation->url_manager_not_accepted ?>");
                         changeManagerURL();
                     }
                 }
@@ -205,16 +199,16 @@ $(document).ready(function()
 
     function checkManagerURL()
     {
-        if(active_request == true)
+        if(ar == true)
         {
             return null;
         }
 
-        var manager_url = $("input[@name='manager_url']").val();
+        var manager_url = $("input[name='manager_url']").val();
 
         if(manager_url == "")
         {
-            $.ab_alert("informe o endereço do gerenciador");
+            $.b_alert("informe o endereço do gerenciador");
             return null;
         }
 
@@ -226,27 +220,19 @@ $(document).ready(function()
             url: "<?php B_Helper::url('cms', 'check') ?>",
             dataType: "xml",
             data: parameters,
-            beforeSend: function ()
-            {
-                active_request = true;
-                showSpinner();
-            },
-            complete: function ()
-            {
-                active_request = false;
-                hideSpinner();
-            },
+            beforeSend: function () { sp(true);  },
+            complete: function ()   { sp(false); },
             success: function (xml) 
             { 
-                var data                 = $(xml).find('data');
-                var manager_url          = data.find('manager_url').text();
-                var manager_url_accepted = data.find('manager_url_accepted').text();
+                data                 = $(xml).find('data');
+                manager_url          = data.find('manager_url').text();
+                manager_url_accepted = data.find('manager_url_accepted').text();
 
                 commitManagerURL(manager_url);
 
                 if(manager_url_accepted == "false")
                 {
-                    $.ab_alert("<?php echo $this->translation->url_manager_not_accepted ?>");
+                    $.b_alert("<?php echo $this->translation->url_manager_not_accepted ?>");
                     changeManagerURL();
                 }
             }, 
@@ -258,17 +244,17 @@ $(document).ready(function()
 
     function checkManagerLogin()
     {
-        if(active_request == true)
+        if(ar == true)
         {
             return null;
         }
 
-        var username = $("input[@name='manager_username']").val();
-        var password = $("input[@name='manager_password']").val();
+        var username = $("input[name='manager_username']").val();
+        var password = $("input[name='manager_password']").val();
 
         if(username == "" || password == "")
         {
-            $.ab_alert("informe o usuário e senha do gerenciador");
+            $.b_alert("informe o usuário e senha do gerenciador");
             return null;
         }
 
@@ -280,27 +266,19 @@ $(document).ready(function()
             url: "<?php B_Helper::url('cms', 'check') ?>",
             dataType: "xml",
             data: parameters,
-            beforeSend: function ()
-            {
-                active_request = true;
-                showSpinner();
-            },
-            complete: function ()
-            {
-                active_request = false;
-                hideSpinner();
-            },
+            beforeSend: function () { sp(true);  },
+            complete: function ()   { sp(false); },
             success: function (xml) 
             { 
                 var login_status = $(xml).find('login_status').text();
 
                 if(login_status = "ok")
                 {
-                    $.ab_alert("Usuário e senha verificados com sucesso");
+                    $.b_alert("Usuário e senha verificados com sucesso");
                 }
                 else
                 {
-                    $.ab_alert("O usuário ou senha informados não são válidos");
+                    $.b_alert("O usuário ou senha informados não são válidos");
                 }
             }, 
             error: function () { onError(); }
@@ -311,24 +289,24 @@ $(document).ready(function()
 
     function addSubmit()
     {
-        if(active_request == true)
+        if(ar == true)
         {
             return null;
         }
 
-        name = $("input[@name='name']").val();
-        username = $("input[@name='manager_username']").val();
-        password = $("input[@name='manager_password']").val();
+        name = $("input[name='name']").val();
+        username = $("input[name='manager_username']").val();
+        password = $("input[name='manager_password']").val();
 
         if(name == "" || username == "" || password == "")
         {
-            $.ab_alert("Preencha o formulário corretamente");
+            $.b_alert("Preencha o formulário corretamente");
             return null;
         }
 
-        if(complete == false)
+        if(fc == false)
         {
-            $.ab_alert("O endereço do CMS precisa ser verificado");
+            $.b_alert("O endereço do CMS precisa ser verificado");
             return null;
         }
 
@@ -342,16 +320,8 @@ $(document).ready(function()
             url: "<?php B_Helper::url('cms', 'add') ?>",
             dataType: "xml",
             data: parameters,
-            beforeSend: function ()
-            {
-                active_request = true;
-                showSpinner();
-            },
-            complete: function ()
-            {
-                active_request = false;
-                hideSpinner();
-            },
+            beforeSend: function () { sp(true);  },
+            complete: function ()   { sp(false); },
             success: function (xml) 
             { 
                 var data = $(xml).find('data');
@@ -364,7 +334,7 @@ $(document).ready(function()
                 }
                 else
                 {
-                    if(message != "") $.ab_alert(message);
+                    if(message != "") $.b_alert(message);
                 }
             }, 
             error: function () { onError(); }
@@ -374,7 +344,7 @@ $(document).ready(function()
     /* TRIGGERS */
 
     /* 
-    $("input[@name='input_url']").blur(function()
+    $("input[name='input_url']").blur(function()
     {
         check();
     });
@@ -400,12 +370,12 @@ $(document).ready(function()
         checkManagerLogin();
     });
 
-    $("input[@name='addsubmit']").click(function() 
+    $("input[name='addsubmit']").click(function() 
     {
         addSubmit();
     });
 
-    $("input[@name='addcancel']").click(function() 
+    $("input[name='addcancel']").click(function() 
     {
         window.location = "<?php B_Helper::url('dashboard') ?>";
     });

@@ -2,218 +2,214 @@ $(document).ready(function()
 {
     /* DEFAULTS */
 
-    var active_request = false;
-    var register = false;
-
+    var ar = false; /* active request */
+    var rg = false; /* register on/off */
 
     /* SWITCHES */
 
     /* spinner */
 
-    function showSpinner()
+    function sp(b)
     {
-        $.ab_spinner
-        ({
-            height: 32, width: 32,
-            image: "<?php B_Helper::img_src('spinner/linux_spinner.png') ?>",
-            message: "... <?php echo $this->translation->application_loading ?>"
-        });
+        if((ar = b) == true)
+        {
+            $.b_spinner_start
+            ({
+                height: 32, width: 32,
+                image: "<?php B_Helper::img_src('spinner.gif') ?>",
+                message: "... <?php echo $this->translation->application_loading ?>"
+            });
+        }
+        else
+        {
+            $.b_spinner_stop();
+        }
     }
 
-    function hideSpinner()
-    {
-        $.ab_spinner_stop();
-    }
+    /* toggle form */
 
-    /* toggle between login and register form */
-
-    function toggleForm()
+    function tf()
     {
         $("#ftitlog").toggle();
         $("#ftitreg").toggle();
         $("#lnkrow").toggle();
         $("#confirmrow").toggle();
-        $("input[@name='regcancel']").toggle();
+        $("input[name='regcancel']").toggle();
         $("#message").hide();
-        register = register ^ true;
+        rg = rg ^ true;
+    }
+
+    /* message */
+
+    function msg(m)
+    {
+        if(m=="")
+        {
+            $("#message td").html("");
+            $("#message").hide();
+        }
+        else
+        {
+            $("#message td").html(m);
+            $("#message").show();
+        }
     }
 
     /* ACTIONS */
 
-    /* show message */
+    /* error */
 
-    function showMessage(message)
-    {
-        $("#message td").html(message);
-        $("#message").show();
-    }
-
-    /* on error */
-
-    function onError()
+    function err()
     {
         alert("<?php echo $this->translation->server_error ?>");
     }
 
     /* password recovery */
 
-    function passwordRecovery()
+    function recovery()
     {
-        if($("input[@name='email']").val() == "")
+        if($("input[name='email']").val() == "")
         {
-            showMessage("<?php echo $this->translation->recovery_email ?>");
+            msg("<?php echo $this->translation->recovery_email ?>");
             return null;
         }
-
-        parameters = { email: $("input[@name='email']").val() }
 
         $.ajax
         ({
             type: "POST",
             url: "<?php B_Helper::url('profile', 'recovery') ?>",
             dataType: "xml",
-            data: parameters,
+            data: { email: $("input[name='email']").val() },
             beforeSend: function()
             {
-                active_request = true;
-                showSpinner();
+                sp(true);
             },
             complete: function()
             {
-                active_request = false;
-                hideSpinner();
+                sp(false);
             },
             success: function (xml) 
             { 
-                var data = $(xml).find('data');
-                var message = data.find('message').text();
-                if(message != "") showMessage(message);
+                d = $(xml).find('data');
+                m = d.find('message').text();
+                msg(m);
             }, 
-            error: function () { onError(); } 
+            error: function () { err(); } 
         });
-    };
+    }
 
     /* form submit */
 
-    function formSubmit()
+    function fs()
     {
-        if(register == true) { registerSubmit(); } else { loginSubmit(); }
+        if(rg == true) { register(); } else { login(); }
     }
 
-    /* register */
+    /* login register */
 
-    function registerSubmit()
+    function register()
     {
-        email = $("input[@name='email']").val();
-        password = $("input[@name='password']").val();
-        confirm_ = $("input[@name='confirm']").val();
+        email = $("input[name='email']").val();
+        password = $("input[name='password']").val();
+        confirm_ = $("input[name='confirm']").val();
 
         if(email == "" || password == "" || confirm_ == "")
         {
-            showMessage("<?php echo $this->translation->form_incomplete ?>");
+            msg("<?php echo $this->translation->form_incomplete ?>");
             return null;
         }
 
         if(password != confirm_)
         {
-            showMessage("<?php echo $this->translation->form_not_match ?>");
+            msg("<?php echo $this->translation->form_not_match ?>");
             return null;
         }
-
-        parameters = { email: email, password: password, confirm: confirm_ }
 
         $.ajax
         ({
             type: "POST",
             url: "<?php B_Helper::url('profile', 'register') ?>",
             dataType: "xml",
-            data: parameters,
+            data: { email: email, password: password, confirm: confirm_ },
             beforeSend: function ()
             {
-                active_request = true;
-                showSpinner();
+                sp(true);
             },
             complete: function()
             {
-                active_request = false;
-                hideSpinner();
+                sp(false);
             },
             success: function (xml) 
             { 
-                var data = $(xml).find('data');
-                var register = data.find('register').text();
-                var message = data.find('message').text();
-                if(register == "true") toggleForm();
-                if(message != "") showMessage(message);
+                d = $(xml).find('data');
+                r = d.find('register').text();
+                m = d.find('message').text();
+                if(r == "true") tf();
+                msg(m);
             }, 
-            error: function () { onError(); } 
+            error: function () { err(); } 
         });
-    };
+    }
 
-    /* login */
+    /* login authentication */
 
-    function loginSubmit()
+    function login()
     {
-        email = $("input[@name='email']").val();
-        password = $("input[@name='password']").val();
+        email = $("input[name='email']").val();
+        password = $("input[name='password']").val();
 
         if(email == "" || password == "")
         {
-            showMessage("<?php echo $this->translation->form_incomplete ?>");
+            msg("<?php echo $this->translation->form_incomplete ?>");
             return null;
         }
-
-        parameters = { email: email, password: password }
 
         $.ajax
         ({
             type: "POST",
             url: "<?php B_Helper::url('profile', 'login') ?>",
             dataType: "xml",
-            data: parameters,
+            data: { email: email, password: password },
             beforeSend: function ()
             {
-                active_request = true;
-                showSpinner();
+                sp(true);
             },
             complete: function()
             {
-                active_request = false;
-                hideSpinner();
+                sp(false);
             },
             success: function (xml) 
             { 
-                var data = $(xml).find('data');
-                var login = data.find('login').text();
-                var message = data.find('message').text();
-                var url = "<?php B_Helper::url('dashboard') ?>";
-                if(login == "true") window.location = url;
-                if(message != "") showMessage(message);
+                d = $(xml).find('data');
+                l = d.find('login').text();
+                m = d.find('message').text();
+                u = "<?php B_Helper::url('dashboard') ?>";
+                if(l == "true") window.location = u;
+                msg(m);
             }, 
-            error: function () { onError(); } 
+            error: function () { err(); } 
         });
-    };
-
+    }
 
     /* TRIGGERS */
 
     $("#reglnk").click(function()
     {
-        if(active_request == false) { toggleForm(); }
+        if(ar == false) { tf(); }
     });
 
-    $("input[@name='regcancel']").click(function() 
+    $("input[name='regcancel']").click(function() 
     {
-        if(active_request == false) { toggleForm(); }
+        if(ar == false) { tf(); }
     });
 
     $("#pwdlnk").click(function()
     {
-        if(active_request == false) { passwordRecovery(); }
+        if(ar == false) { recovery(); }
     });
 
-    $("input[@name='frmsubmit']").click(function() 
+    $("input[name='frmsubmit']").click(function() 
     {
-        if(active_request == false) { formSubmit(); }
+        if(ar == false) { fs(); }
     });
 });

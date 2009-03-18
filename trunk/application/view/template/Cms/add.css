@@ -1,4 +1,11 @@
-form th
+#main
+{
+    <?php if(strpos($_SERVER['HTTP_USER_AGENT'], "MSIE") > 0) : ?>
+    padding-top: 15px;
+    <?php endif ?>
+    padding-left: 25px;
+}
+table th
 {
     width: 180px;
 }

@@ -47,9 +47,5 @@
         <input name="addsubmit" type="button" value="Adicionar">
     </td>
     </tr>
-    <tr id="message" style="display:none">
-    <th>&nbsp;</th>
-    <td class="message"></td>
-    </tr>
     </table>
 </form>

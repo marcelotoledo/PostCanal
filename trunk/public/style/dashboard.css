@@ -14,6 +14,9 @@ div, form
 {
     margin: 0;
 }
+
+/* topbar */
+
 #mbar
 {
     height: 25px;
@@ -45,156 +48,19 @@ div, form
     border-top: 1px solid silver;
     font-size: 1px;
 }
+
+/* container */
+
 #main
 {
     position: absolute;
     top: 29px;
     left: 0px;
-    width: 100%;
 }
+
+/* message */
+
 .mmsg
 {
     padding: 25px;
-}
-
-
-#aA0
-{
-    /* void */
-}
-#bA0
-{
-    width: 100%;
-}
-#bAL
-{
-    width: 200px;
-    padding: 10px;
-}
-#bAR
-{
-    padding: 10px;
-    text-align: right;
-    font-size: large;
-    background-color: chocolate;
-    color: white;
-}
-
-
-#cmsc
-{
-    background-color: red;
-    overflow: auto;
-}
-
-
-.ctit
-{
-    line-height: 50px;
-    padding-left: 10px;
-    overflow: hidden;
-    color: white;
-}
-.cbox
-{
-    /* void */
-}
-#lcol
-{
-    float: left;
-    width: 250px;
-}
-#lcol .cbox
-{
-    overflow: auto;
-}
-#rcol
-{
-    margin-left: 250px;
-}
-#rcol .ctit
-{
-    text-align: right;
-    padding-right: 10px;
-    font-size: large;
-    font-style: italic;
-    background-color: chocolate;
-}
-#rcol .cbox
-{
-    overflow: hidden;
-}
-#rbox
-{
-    border-collapse: collapse;
-    border-spacing: 0;
-    width: 100%;
-    table-layout: fixed;
-}
-#rbox td
-{
-    border-top: 1px solid black;
-}
-#bbox
-{
-    line-height: 25px;
-    padding-left: 10px;
-    overflow: hidden;
-    background-color: black;
-    color: white;
-}
-#rbcA
-{
-    /* void */
-}
-#rbdA
-{
-    height: 100%;
-    overflow: auto;
-    background-color: khaki;
-}
-#rbcB
-{
-    width: 250px;
-}
-#rbdB
-{
-    height: 100%;
-    overflow: auto;
-    background-color: navajowhite;
-}
-#rbcC
-{
-    /* void */
-}
-#rbdC
-{
-    height: 100%;
-    overflow: auto;
-    background-color: silver;
-}
-
-/* custom */
-
-#lcol
-{
-    border-right: 1px solid saddlebrown;
-}
-.cmsitm
-{
-    padding: 5px 10px 5px 10px;
-    font-weight: bold;
-}
-.cmsitm-s
-{
-    background-color: bisque;
-}
-.cmsitm-h
-{
-    cursor: pointer;
-    cursor: hand;
-}
-.cmsitm-h a
-{
-    color: blue;
 }

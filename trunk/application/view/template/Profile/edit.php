@@ -12,10 +12,6 @@
             <input name="editsubmit" type="button" value="Alterar">
         </td>
         </tr>
-        <tr id="editmsg" style="display:none">
-        <th>&nbsp;</th>
-        <td class="message"></td>
-        </tr>
     </table>
 </form>
 <br>
@@ -44,10 +40,6 @@
             <input name="pwdchangesubmit" type="button" value="Alterar" disabled>
         </td>
         </tr>
-        <tr id="pwdchangemsg" style="display:none">
-        <th>&nbsp;</th>
-        <td class="message"></td>
-        </tr>
     </table>
 </form>
 <br>
@@ -67,10 +59,6 @@
             <input name="emlchangecancel" type="button" value="Cancelar" disabled>
             <input name="emlchangesubmit" type="button" value="Alterar" disabled>
         </td>
-        </tr>
-        <tr id="emlchangemsg" style="display:none">
-        <th>&nbsp;</th>
-        <td class="message"></td>
         </tr>
     </table>
 </form>

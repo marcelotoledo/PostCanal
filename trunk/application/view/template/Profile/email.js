@@ -2,28 +2,28 @@ $(document).ready(function()
 {
     /* DEFAULTS */
 
-    var active_request = false;
-
+    var ar = false; /* active request */
 
     /* SWITCHES */
 
     /* spinner */
 
-    function showSpinner()
+    function sp(b)
     {
-        $.ab_spinner
-        ({
-            height: 32, width: 32,
-            image: "<?php B_Helper::img_src('spinner/linux_spinner.png') ?>",
-            message: "... carregando"
-        });
+        if((ar = b) == true)
+        {
+            $.b_spinner_start
+            ({
+                height: 32, width: 32,
+                image: "<?php B_Helper::img_src('spinner.gif') ?>",
+                message: "... <?php echo $this->translation->application_loading ?>"
+            });
+        }
+        else
+        {
+            $.b_spinner_stop();
+        }
     }
-
-    function hideSpinner()
-    {
-        $.ab_spinner_stop();
-    }
-
 
     /* password change */
 
@@ -34,14 +34,14 @@ $(document).ready(function()
 
     function emailChange()
     {
-        if(active_request == true)
+        if(ar == true)
         {
             return null;
         }
 
-        email = $("input[@name='email']").val();
-        uid = $("input[@name='uid']").val();
-        password = $("input[@name='password']").val();
+        email = $("input[name='email']").val();
+        uid = $("input[name='uid']").val();
+        password = $("input[name='password']").val();
 
         if(password == "")
         {
@@ -57,16 +57,8 @@ $(document).ready(function()
             url: "<?php B_Helper::url('profile','email') ?>",
             dataType: "xml",
             data: parameters,
-            beforeSend: function()
-            {
-                active_request = true;
-                showSpinner();
-            },
-            complete: function()
-            {
-                active_request = false;
-                hideSpinner();
-            },
+            beforeSend: function() { sp(true);  },
+            complete: function()   { sp(false); },
             success: function (xml) 
             { 
                 var data = $(xml).find('data');
@@ -90,7 +82,7 @@ $(document).ready(function()
 
     /* TRIGGERS */
 
-    $("input[@name='emlchangesubmit']").click(function() 
+    $("input[name='emlchangesubmit']").click(function() 
     {
         emailChange();
     });

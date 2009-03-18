@@ -2,21 +2,21 @@ $(document).ready(function()
 {
     /* password recovery */
 
-    function onError()
+    function err()
     {
         alert("erro ao adicionar canal!");
     }
 
     function channelAdd()
     {
-        if($("input[@name='chaddurl']").val() == "")
+        if($("input[name='chaddurl']").val() == "")
         {
             $.ab_alert("<?php echo $this->translation->channel_add_url_null ?>");
             return null;
         }
 
-        parameters = { url: $("input[@name='chaddurl']").val(), 
-                       cid: $("input[@name='chaddcid']").val() }
+        parameters = { url: $("input[name='chaddurl']").val(), 
+                       cid: $("input[name='chaddcid']").val() }
 
         $.ajax
         ({
@@ -42,7 +42,7 @@ $(document).ready(function()
                 if(message != "") $.ab_alert(message);
                 */
             }, 
-            error: function () { onError(); } 
+            error: function () { err(); } 
         });
     };
 

@@ -1,8 +1,25 @@
 <?php if(count($this->cms) == 0) : ?>
 
-<div id="nocms">Nenhum CMS cadastrado. <?php B_Helper::a("Adicionar novo CMS", "cms", "add") ?></span> 
+<div class="mmsg">Nenhum CMS cadastrado. <?php B_Helper::a("Adicionar novo CMS", "cms", "add") ?></div>
 
 <?php else : ?>
+
+<div id="dccms" title="Blogs">
+<?php B_Helper::a("adicionar", "cms", "add") ?>
+<div id="lscms">
+<?php foreach($this->cms as $cms) : ?>
+<div class="iicms" cid="<?php echo $cms->cid ?>"><a><?php echo $cms->name ?></a></div>
+<?php endforeach ?>
+</div>
+</div>
+
+<div id="dcqueue" title="Queue"></div>
+
+<div id="dcfeedch" title="Feeds"></div>
+
+<div id="dcchitem" title="Items"></div>
+
+<!--
 
 <div id="lcol">
 <div class="ctit">
@@ -44,5 +61,7 @@
 </div></div>
 
 <div id="bbox" style="display:none">&nbsp;</div>
+
+-->
 
 <?php endif ?>
