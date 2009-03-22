@@ -1,6 +1,6 @@
-<?php if(count($this->cms) == 0) : ?>
+<?php if(count($this->blog) == 0) : ?>
 
-<div id="nocmsmsg">Nenhum <b>blog</b> cadastrado. <?php B_Helper::a("Clique aqui", "cms", "add") ?> para adicionar um novo blog, ou utilize o link "blogs" no menu superior.</div>
+<div id="noblogmsg">Nenhum <b>blog</b> cadastrado. <?php B_Helper::a("Clique aqui", "blog", "add") ?> para adicionar um novo blog, ou utilize o link "blogs" no menu superior.</div>
 
 <?php else : ?>
 

@@ -6,9 +6,9 @@ $(document).ready(function()
 
     /* dashboard containers */
 
-    <?php if(count($this->cms) == 0) : ?>
+    <?php if(count($this->blog) == 0) : ?>
 
-    $("#nocmsmsg").dialog({ bgiframe: true, modal: true });
+    $("#noblogmsg").dialog({ bgiframe: true, modal: true });
 
     <?php else : ?>
 
@@ -45,15 +45,15 @@ $(document).ready(function()
     $("#newscontainer").click(function() { front($(this).attr('id')); });
     $("#queuecontainer").click(function() { front($(this).attr('id')); });
 
-    /* select default cms */
+    /* select default blog */
 
-    <?php if(count($this->cms) == 1) : ?>
+    <?php if(count($this->blog) == 1) : ?>
     cid = $("#blogcur").val();
     <?php else : ?>
     cid = $("select[name='bloglst'] > option:selected").val();
     <?php endif ?>
 
-    setcms(cid);
+    setblog(cid);
 
     <?php endif ?>
 
@@ -87,11 +87,60 @@ $(document).ready(function()
         alert("<?php echo $this->translation->server_error ?>");
     }
 
-    /* select cms */
+    /* load blog data */
 
-    function setcms(cid)
+    function loadfeed(cid)
     {
-        alert("setting cms " + cid);
+        $.ajax
+        ({
+            type: "POST",
+            url: "<?php B_Helper::url('dashboard', 'feed') ?>",
+            dataType: "xml",
+            data: { cid: cid },
+            beforeSend: function()
+            {
+                sp(true);
+            },
+            complete: function()
+            {
+                sp(false);
+            },
+            success: function (xml) 
+            { 
+                d = $(xml).find('data');
+            }, 
+            error: function () { err(); } 
+        });
+    }
+
+    function loadqueue(cid)
+    {
+        $.ajax
+        ({
+            type: "POST",
+            url: "<?php B_Helper::url('dashboard', 'queue') ?>",
+            dataType: "xml",
+            data: { cid: cid },
+            beforeSend: function()
+            {
+                sp(true);
+            },
+            complete: function()
+            {
+                sp(false);
+            },
+            success: function (xml) 
+            { 
+                d = $(xml).find('data');
+            }, 
+            error: function () { err(); } 
+        });
+    }
+
+    function setblog(cid)
+    {
+        loadfeed();
+        loadqueue();
     }
 
     /* TRIGGERS */
@@ -99,6 +148,6 @@ $(document).ready(function()
     $("select[name='bloglst']").change(function()
     {
         cid = $("select[name='bloglst'] > option:selected").val();
-        setcms(cid);
+        setblog(cid);
     });
 });

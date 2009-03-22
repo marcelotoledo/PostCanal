@@ -7,5 +7,5 @@ sleep:
 data:
 	./configure.php base_translation.mysql
 	./configure.php user_profile.mysql
-	./configure.php cms_type_wordpress.mysql
+	./configure.php blog_type_wordpress.mysql
 	./configure.php aggregator.mysql

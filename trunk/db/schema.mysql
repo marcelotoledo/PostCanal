@@ -1,13 +1,13 @@
 -- drop --
 
-DROP TABLE IF EXISTS user_cms_channel CASCADE;
-DROP TABLE IF EXISTS user_cms CASCADE;
+DROP TABLE IF EXISTS user_blog_feed CASCADE;
+DROP TABLE IF EXISTS user_blog CASCADE;
 DROP TABLE IF EXISTS user_profile CASCADE;
 DROP TABLE IF EXISTS aggregator_item CASCADE;
-DROP TABLE IF EXISTS aggregator_channel CASCADE;
-DROP TABLE IF EXISTS cms_type_configuration CASCADE;
-DROP TABLE IF EXISTS cms_type_discovery CASCADE;
-DROP TABLE IF EXISTS cms_type CASCADE;
+DROP TABLE IF EXISTS aggregator_feed CASCADE;
+DROP TABLE IF EXISTS blog_type_configuration CASCADE;
+DROP TABLE IF EXISTS blog_type_discovery CASCADE;
+DROP TABLE IF EXISTS blog_type CASCADE;
 DROP TABLE IF EXISTS application_mailer_relay CASCADE;
 DROP TABLE IF EXISTS base_translation CASCADE;
 DROP TABLE IF EXISTS base_session CASCADE;
@@ -28,7 +28,7 @@ CREATE TABLE base_log
     PRIMARY KEY (id)
 ) ENGINE=InnoDB DEFAULT CHARSET='utf8';
 
-CREATE INDEX al_priority_idx ON base_log (priority);
+CREATE INDEX bl_priority_idx ON base_log (priority);
 
 CREATE TABLE base_session
 (
@@ -38,8 +38,8 @@ CREATE TABLE base_session
     active TINYINT(1) NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET='utf8' COLLATE='utf8_unicode_ci';
 
-CREATE INDEX as_id_active_idx ON base_session (id, active);
-CREATE INDEX as_expires_active_idx ON base_session (session_expires, active);
+CREATE INDEX bs_id_active_idx ON base_session (id, active);
+CREATE INDEX bs_expires_active_idx ON base_session (session_expires, active);
 
 CREATE TABLE base_translation
 (
@@ -51,7 +51,7 @@ CREATE TABLE base_translation
     PRIMARY KEY (id)
 ) ENGINE=InnoDB DEFAULT CHARSET='utf8';
 
-CREATE INDEX at_template_culture_idx ON base_translation (template, culture);
+CREATE INDEX bt_template_culture_idx ON base_translation (template, culture);
 
 -- application --
 
@@ -64,52 +64,52 @@ CREATE TABLE application_mailer_relay
     PRIMARY KEY (id)
 ) ENGINE=InnoDB DEFAULT CHARSET='utf8';
 
-CREATE INDEX amr_recipient_identifier_created_idx ON application_mailer_relay (recipient, identifier, created_at);
+CREATE INDEX mr_recipient_identifier_created_idx ON application_mailer_relay (recipient, identifier, created_at);
 
--- cms type --
+-- blog type --
 
-CREATE TABLE cms_type
+CREATE TABLE blog_type
 (
-    cms_type_id SMALLINT UNSIGNED NOT NULL AUTO_INCREMENT,
+    blog_type_id SMALLINT UNSIGNED NOT NULL AUTO_INCREMENT,
     name CHAR(50) NOT NULL,
     version CHAR(50) NOT NULL,
     maintenance TINYINT(1) NOT NULL DEFAULT 0,
     enabled TINYINT(1) NOT NULL DEFAULT 0,
-    PRIMARY KEY (cms_type_id),
-    CONSTRAINT cms_type_id_unique UNIQUE (cms_type_id)
+    PRIMARY KEY (blog_type_id),
+    CONSTRAINT blog_type_id_unique UNIQUE (blog_type_id)
 ) ENGINE=InnoDB DEFAULT CHARSET='utf8';
 
-CREATE TABLE cms_type_discovery
+CREATE TABLE blog_type_discovery
 (
-    cms_type_discovery_id MEDIUMINT UNSIGNED NOT NULL AUTO_INCREMENT,
-    cms_type_id SMALLINT UNSIGNED NOT NULL,
+    blog_type_discovery_id MEDIUMINT UNSIGNED NOT NULL AUTO_INCREMENT,
+    blog_type_id SMALLINT UNSIGNED NOT NULL,
     name VARCHAR(50) NOT NULL,
     value TEXT NOT NULL,
-    PRIMARY KEY (cms_type_discovery_id),
-    CONSTRAINT ctd_cms_type_fk FOREIGN KEY (cms_type_id) 
-        REFERENCES cms_type (cms_type_id) ON DELETE CASCADE
+    PRIMARY KEY (blog_type_discovery_id),
+    CONSTRAINT td_blog_type_fk FOREIGN KEY (blog_type_id) 
+        REFERENCES blog_type (blog_type_id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET='utf8';
 
-CREATE INDEX ctd_id_name_idx ON cms_type_discovery (cms_type_id, name);
+CREATE INDEX td_id_name_idx ON blog_type_discovery (blog_type_id, name);
 
-CREATE TABLE cms_type_configuration
+CREATE TABLE blog_type_configuration
 (
-    cms_type_configuration_id MEDIUMINT UNSIGNED NOT NULL AUTO_INCREMENT,
-    cms_type_id SMALLINT UNSIGNED NOT NULL,
+    blog_type_configuration_id MEDIUMINT UNSIGNED NOT NULL AUTO_INCREMENT,
+    blog_type_id SMALLINT UNSIGNED NOT NULL,
     name VARCHAR(50) NOT NULL,
     value TEXT NOT NULL,
-    PRIMARY KEY (cms_type_configuration_id),
-    CONSTRAINT ctc_cms_type_fk FOREIGN KEY (cms_type_id) 
-        REFERENCES cms_type (cms_type_id) ON DELETE CASCADE
+    PRIMARY KEY (blog_type_configuration_id),
+    CONSTRAINT tc_blog_type_fk FOREIGN KEY (blog_type_id) 
+        REFERENCES blog_type (blog_type_id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET='utf8';
 
-CREATE INDEX ctc_type_idx ON cms_type_configuration (cms_type_id);
+CREATE INDEX tc_type_idx ON blog_type_configuration (blog_type_id);
 
 -- aggregator --
 
-CREATE TABLE aggregator_channel
+CREATE TABLE aggregator_feed
 (
-    aggregator_channel_id INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
+    aggregator_feed_id INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
     type ENUM('rss','atom') NOT NULL DEFAULT 'rss',
     title VARCHAR(100) NOT NULL,
     link VARCHAR(200) NOT NULL,
@@ -118,20 +118,20 @@ CREATE TABLE aggregator_channel
     created_at TIMESTAMP NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
     enabled TINYINT(1) NOT NULL DEFAULT 1,
-    PRIMARY KEY (aggregator_channel_id)
+    PRIMARY KEY (aggregator_feed_id)
 ) ENGINE=InnoDB DEFAULT CHARSET='utf8';
 
 CREATE TABLE aggregator_item
 (
     aggregator_item_id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
-    aggregator_channel_id INTEGER UNSIGNED NOT NULL, 
+    aggregator_feed_id INTEGER UNSIGNED NOT NULL, 
     title TEXT NOT NULL, 
     link TEXT NOT NULL,
     description TEXT NOT NULL DEFAULT '',
     created_at TIMESTAMP NOT NULL DEFAULT NOW(), 
     PRIMARY KEY (aggregator_item_id),
-    CONSTRAINT ai_aggregator_channel_fk FOREIGN KEY (aggregator_channel_id) 
-        REFERENCES aggregator_channel (aggregator_channel_id) ON DELETE CASCADE
+    CONSTRAINT ai_aggregator_feed_fk FOREIGN KEY (aggregator_feed_id) 
+        REFERENCES aggregator_feed (aggregator_feed_id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET='utf8';
 
 -- user --
@@ -164,11 +164,11 @@ CREATE INDEX up_id_enabled_idx ON user_profile (user_profile_id, enabled);
 CREATE INDEX up_email_password_enabled_idx ON user_profile (login_email, login_password_md5, enabled);
 CREATE INDEX up_email_uid_idx ON user_profile (login_email, uid);
 
-CREATE TABLE user_cms
+CREATE TABLE user_blog
 (
-    user_cms_id INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
+    user_blog_id INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
     user_profile_id INTEGER UNSIGNED NOT NULL,
-    cms_type_id SMALLINT UNSIGNED NOT NULL,
+    blog_type_id SMALLINT UNSIGNED NOT NULL,
     cid CHAR(8) NOT NULL,
     name CHAR(100) NOT NULL,
     url CHAR(200) NOT NULL,
@@ -179,46 +179,46 @@ CREATE TABLE user_cms
     created_at TIMESTAMP NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
     enabled TINYINT(1) NOT NULL DEFAULT 1,
-    PRIMARY KEY (user_cms_id),
-    CONSTRAINT uc_user_profile_fk FOREIGN KEY (user_profile_id) 
+    PRIMARY KEY (user_blog_id),
+    CONSTRAINT ub_user_profile_fk FOREIGN KEY (user_profile_id) 
         REFERENCES user_profile (user_profile_id) ON DELETE CASCADE,
-    CONSTRAINT uc_cms_type_fk FOREIGN KEY (cms_type_id) 
-        REFERENCES cms_type (cms_type_id) ON DELETE RESTRICT
+    CONSTRAINT ub_blog_type_fk FOREIGN KEY (blog_type_id) 
+        REFERENCES blog_type (blog_type_id) ON DELETE RESTRICT
 ) ENGINE=InnoDB DEFAULT CHARSET='utf8';
 
-CREATE INDEX uc_id_cid_idx ON user_cms (user_profile_id, cid);
+CREATE INDEX ub_id_cid_idx ON user_blog (user_profile_id, cid);
 
-CREATE TABLE user_cms_channel
+CREATE TABLE user_blog_feed
 (
-    user_cms_channel_id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
-    user_cms_id INTEGER UNSIGNED NOT NULL,
+    user_blog_feed_id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+    user_blog_id INTEGER UNSIGNED NOT NULL,
     ch VARCHAR(8) NOT NULL,
-    aggregator_channel_id INTEGER UNSIGNED NOT NULL,
+    aggregator_feed_id INTEGER UNSIGNED NOT NULL,
     title VARCHAR(100) NOT NULL,
     description TEXT NOT NULL DEFAULT '',
     created_at TIMESTAMP NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
     enabled TINYINT(1) NOT NULL DEFAULT 1,
-    PRIMARY KEY (user_cms_channel_id),
-    CONSTRAINT ucc_user_cms_fk FOREIGN KEY (user_cms_id) 
-        REFERENCES user_cms (user_cms_id) ON DELETE CASCADE,
-    CONSTRAINT ucc_aggregator_channel_fk FOREIGN KEY (aggregator_channel_id) 
-        REFERENCES aggregator_channel (aggregator_channel_id) ON DELETE RESTRICT
+    PRIMARY KEY (user_blog_feed_id),
+    CONSTRAINT bf_user_blog_fk FOREIGN KEY (user_blog_id) 
+        REFERENCES user_blog (user_blog_id) ON DELETE CASCADE,
+    CONSTRAINT bf_aggregator_feed_fk FOREIGN KEY (aggregator_feed_id) 
+        REFERENCES aggregator_feed (aggregator_feed_id) ON DELETE RESTRICT
 ) ENGINE=InnoDB DEFAULT CHARSET='utf8';
 
-CREATE INDEX uc_uci_ch_idx ON user_cms (user_cms_id, ch);
+CREATE INDEX bf_bid_ch_idx ON user_blog (user_blog_id, ch);
 
-CREATE TABLE user_cms_queue
+CREATE TABLE user_blog_queue
 (
-    user_cms_queue_id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
-    user_cms_id INTEGER UNSIGNED NOT NULL,
+    user_blog_queue_id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+    user_blog_id INTEGER UNSIGNED NOT NULL,
     title TEXT NOT NULL, 
     description TEXT NOT NULL DEFAULT '',
     created_at TIMESTAMP NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
-    PRIMARY KEY (user_cms_channel_id),
-    CONSTRAINT ucc_user_cms_fk FOREIGN KEY (user_cms_id) 
-        REFERENCES user_cms (user_cms_id) ON DELETE CASCADE,
-    CONSTRAINT ucc_aggregator_channel_fk FOREIGN KEY (aggregator_channel_id) 
-        REFERENCES aggregator_channel (aggregator_channel_id) ON DELETE RESTRICT
+    PRIMARY KEY (user_blog_feed_id),
+    CONSTRAINT bq_user_blog_fk FOREIGN KEY (user_blog_id) 
+        REFERENCES user_blog (user_blog_id) ON DELETE CASCADE,
+    CONSTRAINT bq_aggregator_feed_fk FOREIGN KEY (aggregator_feed_id) 
+        REFERENCES aggregator_feed (aggregator_feed_id) ON DELETE RESTRICT
 ) ENGINE=InnoDB DEFAULT CHARSET='utf8';

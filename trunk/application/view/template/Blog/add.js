@@ -46,22 +46,22 @@ $(document).ready(function()
         $("input[name='input_url']").show();
         $("#change_url").hide();
         $("#check_url").show();
-        changeCMSType();
+        changeBlogType();
         resetManagerURL();
     }
 
-    /* cms type */
+    /* blog type */
 
-    function commitCMSType(name)
+    function commitBlogType(name)
     {
-        $("#cms_type_row").show();
-        $("#input_cms_type_ro").text(name);
+        $("#blog_type_row").show();
+        $("#input_blog_type_ro").text(name);
     }
 
-    function changeCMSType()
+    function changeBlogType()
     {
-        $("#input_cms_type_ro").text("");
-        $("#cms_type_row").hide();
+        $("#input_blog_type_ro").text("");
+        $("#blog_type_row").hide();
     }
 
     /* manager url */
@@ -107,7 +107,7 @@ $(document).ready(function()
     function onError()
     {
         alert('erro!');
-        /* window.location = "<?php B_Helper::url('cms','add') ?>"; */
+        /* window.location = "<?php B_Helper::url('blog','add') ?>"; */
     }
 
     /* check url action */
@@ -123,7 +123,7 @@ $(document).ready(function()
 
         if(url == "")
         {
-            $.b_alert("informe o endereço do CMS");
+            $.b_alert("informe o endereço do Blog");
             return null;
         }
 
@@ -132,7 +132,7 @@ $(document).ready(function()
         $.ajax
         ({
             type: "POST",
-            url: "<?php B_Helper::url('cms', 'check') ?>",
+            url: "<?php B_Helper::url('blog', 'check') ?>",
             dataType: "xml",
             data: parameters,
             beforeSend: function () { sp(true);  },
@@ -142,10 +142,10 @@ $(document).ready(function()
                 data                 = $(xml).find('data');
                 url                  = data.find('url').text();
                 url_accepted         = data.find('url_accepted').text();
-                cms_type_name        = data.find('cms_type_name').text();
-                cms_type_version     = data.find('cms_type_version').text();
-                cms_type_accepted    = data.find('cms_type_accepted').text();
-                cms_type_maintenance = data.find('cms_type_maintenance').text();
+                blog_type_name        = data.find('blog_type_name').text();
+                blog_type_version     = data.find('blog_type_version').text();
+                blog_type_accepted    = data.find('blog_type_accepted').text();
+                blog_type_maintenance = data.find('blog_type_maintenance').text();
                 manager_url          = data.find('manager_url').text();
                 manager_url_accepted = data.find('manager_url_accepted').text();
 
@@ -161,26 +161,26 @@ $(document).ready(function()
                     $.b_alert("<?php echo $this->translation->url_not_accepted ?>");
                 }
 
-                /* cms type */
+                /* blog type */
 
-                if(cms_type_accepted == "true")
+                if(blog_type_accepted == "true")
                 {
-                    commitCMSType(cms_type_name + " (" + cms_type_version + ")");
+                    commitBlogType(blog_type_name + " (" + blog_type_version + ")");
                 }
                 else
                 {
                     changeURL();
-                    $.b_alert("<?php echo $this->translation->cms_type_not_accepted ?>");
+                    $.b_alert("<?php echo $this->translation->blog_type_not_accepted ?>");
                 }
 
-                if(cms_type_maintenance == "true")
+                if(blog_type_maintenance == "true")
                 {
-                    $.b_alert("<?php echo $this->translation->cms_type_maintenance ?>");
+                    $.b_alert("<?php echo $this->translation->blog_type_maintenance ?>");
                 }
 
                 /* manager url */
 
-                if(cms_type_accepted == "true")
+                if(blog_type_accepted == "true")
                 {
                     commitManagerURL(manager_url);
 
@@ -217,7 +217,7 @@ $(document).ready(function()
         $.ajax
         ({
             type: "POST",
-            url: "<?php B_Helper::url('cms', 'check') ?>",
+            url: "<?php B_Helper::url('blog', 'check') ?>",
             dataType: "xml",
             data: parameters,
             beforeSend: function () { sp(true);  },
@@ -263,7 +263,7 @@ $(document).ready(function()
         $.ajax
         ({
             type: "POST",
-            url: "<?php B_Helper::url('cms', 'check') ?>",
+            url: "<?php B_Helper::url('blog', 'check') ?>",
             dataType: "xml",
             data: parameters,
             beforeSend: function () { sp(true);  },
@@ -306,7 +306,7 @@ $(document).ready(function()
 
         if(fc == false)
         {
-            $.b_alert("O endereço do CMS precisa ser verificado");
+            $.b_alert("O endereço do Blog precisa ser verificado");
             return null;
         }
 
@@ -317,7 +317,7 @@ $(document).ready(function()
         $.ajax
         ({
             type: "POST",
-            url: "<?php B_Helper::url('cms', 'add') ?>",
+            url: "<?php B_Helper::url('blog', 'add') ?>",
             dataType: "xml",
             data: parameters,
             beforeSend: function () { sp(true);  },

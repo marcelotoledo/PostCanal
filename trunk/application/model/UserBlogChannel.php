@@ -1,49 +1,41 @@
 <?php
 
-
 /**
- * UserCMS model class
+ * UserBlogChannel model class
  * 
  * @category    Blotomate
  * @package     Model
  * @author      Rafael Castilho <rafael@castilho.biz>
  */
-class UserCMS extends B_Model
+class UserBlogChannel extends B_Model
 {
-    const STATUS_OK                  = "ok";
-    const STATUS_NEW                 = "new";
-    const STATUS_FAILED_URL          = "failed_url";
-    const STATUS_FAILED_LOGIN        = "failed_login";
-    const STATUS_FAILED_PUBLICATION  = "failed_publication";
-
-
     /**
      * Table name
      *
      * @var string
      */
-    protected static $table_name = 'user_cms';
+    protected static $table_name = 'user_blog_channel';
 
     /**
      * Table structure
      *
      * @var array
      */
-    protected static $table_structure = array('user_cms_id'=>array('type'=>'integer','size'=>0,'required'=>false),'user_profile_id'=>array('type'=>'integer','size'=>0,'required'=>true),'cms_type_id'=>array('type'=>'integer','size'=>0,'required'=>true),'name'=>array('type'=>'string','size'=>100,'required'=>true),'url'=>array('type'=>'string','size'=>200,'required'=>true),'manager_url'=>array('type'=>'string','size'=>200,'required'=>true),'manager_username'=>array('type'=>'string','size'=>100,'required'=>true),'manager_password'=>array('type'=>'string','size'=>100,'required'=>true),'status'=>array('type'=>'string','size'=>50,'required'=>true),'created_at'=>array('type'=>'date','size'=>0,'required'=>false),'updated_at'=>array('type'=>'date','size'=>0,'required'=>false),'enabled'=>array('type'=>'boolean','size'=>0,'required'=>false));
+    protected static $table_structure = array();
 
     /**
      * Sequence name
      *
      * @var string
      */
-    protected static $sequence_name = '';
+    protected static $sequence_name = null;
 
     /**
      * Primary key name
      *
      * @var string
      */
-    protected static $primary_key_name = 'user_cms_id';
+    protected static $primary_key_name = 'user_blog_channel_id';
 
 
     /**
@@ -93,18 +85,18 @@ class UserCMS extends B_Model
      */
     public function save()
     {
-        /* generate CID */
+        /* generate CH */
 
         if($this->isNew()) 
         {
-            $this->cid = L_Utility::randomString(8);
+            $this->ch = L_Utility::randomString(8);
         }
 
         return parent::save();
     }
 
     /**
-     * Find UserCMS with an encapsulated SELECT command
+     * Find UserBlogChannel with an encapsulated SELECT command
      *
      * @param   array   $conditions WHERE parameters
      * @param   array   $order      ORDER parameters
@@ -126,7 +118,7 @@ class UserCMS extends B_Model
     }
 
     /**
-     * Get UserCMS with SQL
+     * Get UserBlogChannel with SQL
      *
      * @param   string  $sql    SQL query
      * @param   array   $data   values array
@@ -150,11 +142,11 @@ class UserCMS extends B_Model
     }
 
     /**
-     * Find UserCMS by primary key
+     * Find UserBlogChannel by primary key
      *
      * @param   integer $id    Primary key value
      *
-     * @return  UserCMS|null 
+     * @return  UserBlogChannel|null 
      */
     public static function findByPrimaryKey($id)
     {
@@ -162,31 +154,14 @@ class UserCMS extends B_Model
     }
 
     /**
-     * Find CMS by user profile
+     * Find by User Blog
      *
-     * @param   integer         $user_profile_id    User profile PK
-     * @param   boolean|null    $enabled
-     * @return  array
-     */
-    public static function findByUserProfileId($user_profile_id, $enabled=null)
-    {
-        $args = array();
-        $args['user_profile_id'] = $user_profile_id;
-        if(is_bool($enabled)) $args['enabled'] = $enabled;
-        return self::find($args, array('name ASC, created_at ASC'));
-    }
-
-    /**
-     * Find CMS from CID (user_cms_cid_index)
+     * @param   integer     $id         UserBlog ID
      *
-     * @param   integer $user_profile_id
-     * @param   string  $cid
-     * @return  UserCMS|null
+     * @return  UserBlogChannel|null 
      */
-    public static function findByCID($user_profile_id, $cid)
+    public static function findByUserBlog($id)
     {
-        return current(self::find(array(
-            'user_profile_id' => $user_profile_id,
-            'cid' => $cid)));
+        return self::find(array('user_blog_id' => $id));
     }
 }

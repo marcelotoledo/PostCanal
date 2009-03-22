@@ -7,7 +7,7 @@
     <div id="chadddiv" style="display:block">
         <h2>Adicionar novo Canal</h2>
         <form id="chaddform">
-        <input type="hidden" name="chaddcid" value="<?php echo $this->cms->cid ?>">
+        <input type="hidden" name="chaddcid" value="<?php echo $this->blog->cid ?>">
         <input type="text" name="chaddurl" value="">
         <input type="button" value="adicionar" class="chaddsubmit">
         </form>
@@ -59,18 +59,18 @@
 
 <?php foreach($this->channels as $channel) : ?>
 
-<tr><td><div class="channel-item" cid="<?php echo $this->cms->cid ?>" ch="<?php echo $channel->ch ?>"><?php echo $channel->title ?></div></td></tr>
+<tr><td><div class="channel-item" cid="<?php echo $this->blog->cid ?>" ch="<?php echo $channel->ch ?>"><?php echo $channel->title ?></div></td></tr>
 
 <?php endforeach ?>
 
         </table>
-<div><a id="chaddlnk" cid="<?php echo $this->cms->cid ?>"><?php echo $this->translation->application_add ?></a></span>
+<div><a id="chaddlnk" cid="<?php echo $this->blog->cid ?>"><?php echo $this->translation->application_add ?></a></span>
     </td>
 </table>
 <table>
     <tr>
         <td id="queue-panel">
-            <h2><?php echo $this->cms->name ?>'s <i>Queue</i></h2>
+            <h2><?php echo $this->blog->name ?>'s <i>Queue</i></h2>
             <div id="queue-items-list">
             <table>
                 <tr>

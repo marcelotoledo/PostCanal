@@ -1,13 +1,13 @@
 <?php
 
 /**
- * CMSType model class
+ * BlogType model class
  * 
  * @category    Blotomate
  * @package     Model
  * @author      Rafael Castilho <rafael@castilho.biz>
  */
-class CMSType extends B_Model
+class BlogType extends B_Model
 {
     /**
      * Discovery constants
@@ -36,14 +36,14 @@ class CMSType extends B_Model
      *
      * @var string
      */
-    protected static $table_name = 'cms_type';
+    protected static $table_name = 'blog_type';
 
     /**
      * Table structure
      *
      * @var array
      */
-    protected static $table_structure = array('cms_type_id'=>array('type'=>'integer','size'=>0,'required'=>false),'name'=>array('type'=>'string','size'=>50,'required'=>true),'version'=>array('type'=>'string','size'=>50,'required'=>true),'maintenance'=>array('type'=>'boolean','size'=>0,'required'=>false),'enabled'=>array('type'=>'boolean','size'=>0,'required'=>false));
+    protected static $table_structure = array('blog_type_id'=>array('type'=>'integer','size'=>0,'required'=>false),'name'=>array('type'=>'string','size'=>50,'required'=>true),'version'=>array('type'=>'string','size'=>50,'required'=>true),'maintenance'=>array('type'=>'boolean','size'=>0,'required'=>false),'enabled'=>array('type'=>'boolean','size'=>0,'required'=>false));
 
     /**
      * Sequence name
@@ -57,7 +57,7 @@ class CMSType extends B_Model
      *
      * @var string
      */
-    protected static $primary_key_name = 'cms_type_id';
+    protected static $primary_key_name = 'blog_type_id';
 
     /**
      * Configuration
@@ -67,7 +67,7 @@ class CMSType extends B_Model
     protected $configuration = array();
 
     /**
-     * CMSType plugin info (DEPRECATED)
+     * BlogType plugin info (DEPRECATED)
      *
      * @var Object
      */
@@ -115,7 +115,7 @@ class CMSType extends B_Model
     }
 
     /**
-     * Get CMSType plugin info (DEPRECATED)
+     * Get BlogType plugin info (DEPRECATED)
      *
      * @param   string  $url    Base URL
      * @throws  B_Exception
@@ -126,7 +126,7 @@ class CMSType extends B_Model
         if($this->isNew())
         {
 #            throw new B_Exception(
-#                "a new cms type can not be used " . 
+#                "a new blog type can not be used " . 
 #                "to obtain information from the plugin",
 #                E_USER_ERROR);
         }
@@ -149,12 +149,12 @@ class CMSType extends B_Model
     {
         if(count($this->configuration) == 0)
         {
-            $sql = "SELECT name, value FROM cms_type_configuration " . 
-                   "WHERE cms_type_id = ?";
+            $sql = "SELECT name, value FROM blog_type_configuration " . 
+                   "WHERE blog_type_id = ?";
 
             $results = array();
 
-            foreach(self::select($sql, array($this->cms_type_id)) as $i)
+            foreach(self::select($sql, array($this->blog_type_id)) as $i)
             {
                 $results[$i->name] = $i->value;
             }
@@ -166,7 +166,7 @@ class CMSType extends B_Model
     }
 
     /**
-     * Find CMSType with an encapsulated SELECT command
+     * Find BlogType with an encapsulated SELECT command
      *
      * @param   array   $conditions WHERE parameters
      * @param   array   $order      ORDER parameters
@@ -188,7 +188,7 @@ class CMSType extends B_Model
     }
 
     /**
-     * Get CMSType with SQL
+     * Get BlogType with SQL
      *
      * @param   string  $sql    SQL query
      * @param   array   $data   values array
@@ -212,30 +212,30 @@ class CMSType extends B_Model
     }
 
     /**
-     * Find CMSType by primary key
+     * Find BlogType by primary key
      *
      * @param   integer $id    Primary key value
      *
-     * @return  CMSType|null 
+     * @return  BlogType|null 
      */
     public static function findByPrimaryKey($id)
     {
         return current(self::find(array(self::$primary_key_name => $id)));
     }
 
-    /* CMS TYPE DISCOVERY */
+    /* Blog TYPE DISCOVERY */
 
     /**
-     * Discovery CMS type
+     * Discovery Blog type
      *
      * @param   string          $url
      * @param   string          $headers
      * @param   string          $html
-     * @return  CMSType|null
+     * @return  BlogType|null
      */
     public static function discovery(&$url, $headers, &$html)
     {
-        $cms_type = null;
+        $blog_type = null;
 
         $types = array();
         $types = self::discoveryByURL($url, $types);
@@ -244,7 +244,7 @@ class CMSType extends B_Model
 
         $type = current($types);
 
-        /* more than one cms type == warning */
+        /* more than one blog type == warning */
 
         if(count($types) > 1)
         {
@@ -256,17 +256,17 @@ class CMSType extends B_Model
 
         if(!empty($type))
         {
-            $cms_type = self::findByPrimaryKey($type);
+            $blog_type = self::findByPrimaryKey($type);
         }
 
-        return $cms_type;
+        return $blog_type;
     }
 
     /**
      * Discovery by URL
      * 
      * @param   string      $url
-     * @param   array       $types      CMS type IDs array
+     * @param   array       $types      Blog type IDs array
      * @return  array
      */
     protected static function discoveryByURL(&$url, $types=array())
@@ -305,7 +305,7 @@ class CMSType extends B_Model
      * Discovery by headers
      * 
      * @param   array       $headers
-     * @param   array       $types      CMS type IDs array
+     * @param   array       $types      Blog type IDs array
      * @return  array
      */
     protected static function discoveryByHeaders($headers, $types=array())
@@ -338,7 +338,7 @@ class CMSType extends B_Model
      * Discovery by HTML
      * 
      * @param   string      $html
-     * @param   array       $types      CMS type IDs array
+     * @param   array       $types      Blog type IDs array
      * @return  array
      */
     protected static function discoveryByHTML(&$html, $types=array())
@@ -376,26 +376,26 @@ class CMSType extends B_Model
      * Find discovery rules by name
      *
      * @param   string  $name
-     * @param   array   $types      CMS type IDs array
+     * @param   array   $types      Blog type IDs array
      *
      * @return  array
      */
     protected static function discoveryRules($name, $types=array())
     {
-        $sql = "SELECT cms_type_id, value FROM cms_type_discovery WHERE name = ? ";
+        $sql = "SELECT blog_type_id, value FROM blog_type_discovery WHERE name = ? ";
 
         if(count($types) > 0)
         {
-            $sql.= "AND cms_type_id IN (" . implode(", ", $types) . ") ";
+            $sql.= "AND blog_type_id IN (" . implode(", ", $types) . ") ";
         }
 
-        $sql.= "ORDER BY cms_type_id, cms_type_discovery_id ASC";
+        $sql.= "ORDER BY blog_type_id, blog_type_discovery_id ASC";
 
         $results = array();
 
         foreach(self::select($sql, array($name)) as $i)
         {
-            $type = $i->cms_type_id;
+            $type = $i->blog_type_id;
             $rules = ((array) unserialize($i->value));
             $results[$type] = (array_key_exists($type, $results)) ?
                 array_merge($results[$type], $rules) : 
@@ -411,7 +411,7 @@ class CMSType extends B_Model
      * Check manager HTML
      * 
      * @param   string      $html
-     * @param   array       $config      CMS Type configuration
+     * @param   array       $config      Blog Type configuration
      * @return  array
      */
     public static function managerCheckHTML(&$html, &$config)
@@ -432,10 +432,10 @@ class CMSType extends B_Model
         return (L_Utility::preg($html, $r, $m) == $t && $t > 0);
     }
 
-    /* CMS TYPE PLUGIN */
+    /* Blog TYPE PLUGIN */
 
     /**
-     * Load CMS Type plugin info (DEPRECATED)
+     * Load Blog Type plugin info (DEPRECATED)
      * 
      * @param   string          $name       Plugin Name
      * @oaram   string          $version    Plugin Version
@@ -445,7 +445,7 @@ class CMSType extends B_Model
      */
     protected static function loadPluginInfo($name, $version, $url)
     {
-        $path = APPLICATION_PATH . "/library/CMSType";
+        $path = APPLICATION_PATH . "/library/BlogType";
         $filename = strtolower($name) . ".py";
         $plugin = null;
 

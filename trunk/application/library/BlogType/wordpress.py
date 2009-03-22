@@ -1,4 +1,4 @@
-# WordPress CMSType Plugin
+# WordPress BlogType Plugin
 
 import sys
 
@@ -55,7 +55,7 @@ def main(args = None):
 
     cmd = args[1]
 
-    if cms not in CMDS:
+    if blog not in CMDS:
         print CMDERR % (cmd)
         sys.exit(1)
 

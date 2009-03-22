@@ -1,12 +1,12 @@
 <form>
-    <h1>Adicionar CMS</h1>
+    <h1>Adicionar Blog</h1>
     <table>
     <tr>
     <th>Nome:</th>
-    <td><input type="text" name="name" value="<?php echo $this->cms->name ?>"></td>
+    <td><input type="text" name="name" value="<?php echo $this->blog->name ?>"></td>
     </tr>
     <tr>
-    <th>Endereço de CMS:</th>
+    <th>Endereço de Blog:</th>
     <td>
         <input type="text" name="input_url" value="">
         <div id="input_url_ro" style="display:none"></div>
@@ -14,9 +14,9 @@
         <a id="change_url" style="display:none">modificar</a>
     </td>
     </tr>
-    <tr id="cms_type_row" style="display:none">
-    <th>Tipo de CMS:</th>
-    <td><div id="input_cms_type_ro"></div></td>
+    <tr id="blog_type_row" style="display:none">
+    <th>Tipo de Blog:</th>
+    <td><div id="input_blog_type_ro"></div></td>
     </tr>
     <tr id="manager_url_row" style="display:none">
     <th>Gerenciador:</th>

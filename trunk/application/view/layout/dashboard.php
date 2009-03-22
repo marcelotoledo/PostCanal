@@ -22,16 +22,16 @@
 <div id="topleftbar"><nobr>
 <span><?php B_Helper::a("principal", "dashboard") ?></span>
 <span><?php B_Helper::a("perfil", "profile", "edit") ?></span>
-<span><?php B_Helper::a("blogs", "cms") ?></span>
+<span><?php B_Helper::a("blogs", "blog") ?></span>
 <span><?php B_Helper::a("feeds", "feeds") ?></span>
-<span id="cmslstbar">
-<?php if(($i = count($this->cms)) && $i == 1 && is_array($this->cms)) : ?>
-    <b>blog: </b><i><?php echo $this->cms[0]->name ?></i>
-    <input type="hidden" id="blogcur" value="<?php echo $this->cms[0]->cid ?>">
+<span id="bloglstbar">
+<?php if(($i = count($this->blog)) && $i == 1 && is_array($this->blog)) : ?>
+    <b>blog: </b><i><?php echo $this->blog[0]->name ?></i>
+    <input type="hidden" id="blogcur" value="<?php echo $this->blog[0]->cid ?>">
 <?php elseif($i > 1) : ?>
     <b>blogs: </b>
     <select name="bloglst">
-    <?php foreach($this->cms as $c) : ?>
+    <?php foreach($this->blog as $c) : ?>
     <option value="<?php echo $c->cid ?>"><?php echo $c->name ?></option>
     <?php endforeach ?>
     </select>

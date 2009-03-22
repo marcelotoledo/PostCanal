@@ -1,13 +1,13 @@
 <?php
 
 /**
- * CMS controller class
+ * Blog controller class
  * 
  * @category    Blotomate
  * @package     Controller
  * @author      Rafael Castilho <rafael@castilho.biz>
  */
-class C_Cms extends C_Abstract
+class C_Blog extends C_Abstract
 {
     /**
      * Before action
@@ -35,17 +35,17 @@ class C_Cms extends C_Abstract
     private function G_add()
     {
         $this->view->setLayout('dashboard');
-        $this->view->cms = new UserCMS();
+        $this->view->blog = new UserBlog();
 
-        /* reset cms add session variables */
+        /* reset blog add session variables */
 
         $this->session->c_url = "";
         $this->session->c_url_accepted = false; 
-        $this->session->c_cms_type = 0; 
-        $this->session->c_cms_type_name = ""; 
-        $this->session->c_cms_type_version = ""; 
-        $this->session->c_cms_type_maintenance = false; 
-        $this->session->c_cms_type_accepted = false; 
+        $this->session->c_blog_type = 0; 
+        $this->session->c_blog_type_name = ""; 
+        $this->session->c_blog_type_version = ""; 
+        $this->session->c_blog_type_maintenance = false; 
+        $this->session->c_blog_type_accepted = false; 
         $this->session->c_manager_url = "";
         $this->session->c_manager_url_accepted = false;
         $this->session->c_login_accepted = false;
@@ -63,24 +63,24 @@ class C_Cms extends C_Abstract
 
         $added = false;
 
-        $cms = new UserCMS();
-        $cms->user_profile_id = $this->session->user_profile_id;
-        $cms->cms_type_id = $this->session->c_cms_type;
-        $cms->name = $this->request->name;
-        $cms->url = $this->session->c_url;
-        $cms->manager_url = $this->session->c_manager_url;
-        $cms->manager_username = $this->request->username;
-        $cms->manager_password = $this->request->password;
-        $cms->status = UserCMS::STATUS_NEW;
+        $blog = new UserBlog();
+        $blog->user_profile_id = $this->session->user_profile_id;
+        $blog->blog_type_id = $this->session->c_blog_type;
+        $blog->name = $this->request->name;
+        $blog->url = $this->session->c_url;
+        $blog->manager_url = $this->session->c_manager_url;
+        $blog->manager_username = $this->request->username;
+        $blog->manager_password = $this->request->password;
+        $blog->status = UserBlog::STATUS_NEW;
 
         try
         {
-            $cms->save();
+            $blog->save();
             $added = true;
         }
         catch(B_Exception $exception)
         {
-            $_m = "failed to add new cms";
+            $_m = "failed to add new blog";
             $_d = array('method' => __METHOD__);
             B_Exception::forward($_m, E_USER_WARNING, $exception, $_d);
         }
@@ -110,14 +110,14 @@ class C_Cms extends C_Abstract
 
         if(strlen(($manager_url = $this->request->manager)) > 0)
         {
-            if($this->session->c_cms_type == 0)
+            if($this->session->c_blog_type == 0)
             {
-                $_m = "cms type is not available in session";
+                $_m = "blog type is not available in session";
                 $_d = array('method' => __METHOD__);
                 throw new B_Exception($_m, E_USER_NOTICE, $_d);
             }
 
-            $type = CMSType::findByPrimaryKey($this->session->c_cms_type);
+            $type = BlogType::findByPrimaryKey($this->session->c_blog_type);
             $this->checkManagerURL($manager_url, $client, $type);
         }
 
@@ -126,10 +126,10 @@ class C_Cms extends C_Abstract
         if(strlen(($username = $this->request->username)) > 0 &&
            strlen(($password = $this->request->password)) > 0)
         {
-            if($this->session->c_cms_type == 0 ||
+            if($this->session->c_blog_type == 0 ||
                strlen($this->session->c_manager_url) == 0)
             {
-                $_m = "cms type or manager url are not available in session";
+                $_m = "blog type or manager url are not available in session";
                 $_d = array('method' => __METHOD__);
                 throw new B_Exception($_m, E_USER_NOTICE, $_d);
             }
@@ -140,8 +140,8 @@ class C_Cms extends C_Abstract
         /* send response */
 
         foreach(array(
-            'url', 'url_accepted', 'cms_type_name', 'cms_type_version',
-            'cms_type_accepted', 'cms_type_maintenance', 'manager_url', 
+            'url', 'url_accepted', 'blog_type_name', 'blog_type_version',
+            'blog_type_accepted', 'blog_type_maintenance', 'manager_url', 
             'manager_url_accepted') as $i)
         {
             $this->view->{$i} = $this->session->{('c_' . $i)};
@@ -175,29 +175,29 @@ class C_Cms extends C_Abstract
 
         B_Log::write($_m, E_USER_NOTICE, $_d);
 
-        /* discovery cms type */
+        /* discovery blog type */
 
         $type = null;
 
         if($client->getStatus() == L_HTTPClient::STATUS_OK)
         {
             $this->session->c_url_accepted = true;
-            $type = CMSType::discovery($url, $client->getHeaders(), $client->getBody());
+            $type = BlogType::discovery($url, $client->getHeaders(), $client->getBody());
         }
 
         if(is_object($type))
         {
-            $this->session->c_cms_type = $type->cms_type_id;
-            $this->session->c_cms_type_name = $type->name;
-            $this->session->c_cms_type_version = $type->version;
-            $this->session->c_cms_type_maintenance = $type->maintenance;
-            $this->session->c_cms_type_accepted = true;
+            $this->session->c_blog_type = $type->blog_type_id;
+            $this->session->c_blog_type_name = $type->name;
+            $this->session->c_blog_type_version = $type->version;
+            $this->session->c_blog_type_maintenance = $type->maintenance;
+            $this->session->c_blog_type_accepted = true;
 
             $config = $type->getConfiguration();
 
             /* get manager url */
 
-            if(array_key_exists(($k = CMSType::CONFIG_MANAGER_URL), $config))
+            if(array_key_exists(($k = BlogType::CONFIG_MANAGER_URL), $config))
             {
                 $manager_url = ($url . $config[$k]);
 
@@ -212,7 +212,7 @@ class C_Cms extends C_Abstract
                 if($accepted == false)
                 {
                     $_m = "default manager url (" . $manager_url . ") " .
-                          "for cms type (" . $type->cms_type_id . ") not accepted";
+                          "for blog type (" . $type->blog_type_id . ") not accepted";
                     $_d = array('method' => __METHOD__);
                     B_Log::write($_m, E_USER_WARNING, $_d);
                 }
@@ -227,7 +227,7 @@ class C_Cms extends C_Abstract
      *
      * @params  string          $manager_url
      * @params  L_HTTPClient  $client
-     * @params  CMSType         $type
+     * @params  BlogType         $type
      */
     private function checkManagerURL(&$manager_url, $client, $type)
     {
@@ -241,7 +241,7 @@ class C_Cms extends C_Abstract
 
         if($client->getStatus() == L_HTTPClient::STATUS_OK)
         {
-            if(CMSType::managerCheckHTML($client->getBody(), $type->getConfiguration()))
+            if(BlogType::managerCheckHTML($client->getBody(), $type->getConfiguration()))
             {
                 $this->session->c_manager_url_accepted = true;
             }

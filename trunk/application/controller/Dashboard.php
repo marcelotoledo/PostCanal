@@ -40,37 +40,37 @@ class C_Dashboard extends C_Abstract
             throw new B_Exception($_m, E_USER_WARNING, $d);
         }
 
-        $cms = UserCMS::findByUserProfileId($id, true);
+        $blog = UserBlog::findByUserProfileId($id, true);
 
         $this->view->profile = $profile;
-        $this->view->cms = $cms;
+        $this->view->blog = $blog;
     }
 
-    /**
-     * Load CMS data
-     *
-     */
-    public function A_cms()
-    {
-        $this->view->setLayout(null);
+    # /**
+    #  * Load Blog data
+    #  *
+    #  */
+    # public function A_blog()
+    # {
+    #     $this->view->setLayout(null);
 
-        $user_profile_id = intval($this->session->user_profile_id);
-        $cid = $this->request->cid;
-        $cms = null;
-        $this->view->channels = array();
+    #     $user_profile_id = intval($this->session->user_profile_id);
+    #     $cid = $this->request->cid;
+    #     $blog = null;
+    #     $this->view->channels = array();
 
-        if($user_profile_id > 0 && strlen($cid) > 0)
-        {
-            $cms = UserCMS::findByCID($user_profile_id, $cid);
+    #     if($user_profile_id > 0 && strlen($cid) > 0)
+    #     {
+    #         $blog = UserBlog::findByCID($user_profile_id, $cid);
 
-            if(is_object($cms))
-            {
-                $this->view->channels = UserCMSChannel::findByUserCMS($cms->user_cms_id);
-            }
-        }
+    #         if(is_object($blog))
+    #         {
+    #             $this->view->channels = UserBlogChannel::findByUserBlog($blog->user_blog_id);
+    #         }
+    #     }
 
-        $this->view->cms = $cms;
-    }
+    #     $this->view->blog = $blog;
+    # }
 
     /**
      * Load channel data
@@ -83,17 +83,17 @@ class C_Dashboard extends C_Abstract
         $user_profile_id = intval($this->session->user_profile_id);
         $cid = $this->request->cid;
         $ch = $this->request->ch;
-        $cms = null;
+        $blog = null;
         $channel = null;
         $this->view->items = array();
 
         if($user_profile_id > 0 && strlen($cid) > 0)
         {
-            $cms = UserCMS::findByCID($user_profile_id, $cid);
+            $blog = UserBlog::findByCID($user_profile_id, $cid);
 
-            if(is_object($cms) && strlen($ch) > 0)
+            if(is_object($blog) && strlen($ch) > 0)
             {
-                $channel = UserCMSChannel::findByCH($cms->user_cms_id, $ch);
+                $channel = UserBlogChannel::findByCH($blog->user_blog_id, $ch);
 
                 if(is_object($channel))
                 {
@@ -114,16 +114,16 @@ class C_Dashboard extends C_Abstract
 
         $user_profile_id = intval($this->session->user_profile_id);
         $cid = $this->request->cid;
-        $cms = null;
+        $blog = null;
         $this->view->items = array();
 
         if($user_profile_id > 0 && strlen($cid) > 0)
         {
-            $cms = UserCMS::findByCID($user_profile_id, $cid);
+            $blog = UserBlog::findByCID($user_profile_id, $cid);
 
-            if(is_object($cms))
+            if(is_object($blog))
             {
-                $this->view->items = UserCMSQueue::findByUserCMS($cms->user_cms_id);
+                $this->view->items = UserBlogQueue::findByUserBlog($blog->user_blog_id);
             }
         }
     }
