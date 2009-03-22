@@ -1,13 +1,13 @@
 <?php
 
 /**
- * AggregatorChannel model class
+ * AggregatorFeed model class
  * 
  * @category    Blotomate
  * @package     Model
  * @author      Rafael Castilho <rafael@castilho.biz>
  */
-class AggregatorChannel extends B_Model
+class AggregatorFeed extends B_Model
 {
     const TYPE_RSS  = "rss";
     const TYPE_ATOM = "atom";
@@ -23,7 +23,7 @@ class AggregatorChannel extends B_Model
      *
      * @var string
      */
-    protected static $table_name = 'aggregator_channel';
+    protected static $table_name = 'aggregator_feed';
 
     /**
      * Sequence name
@@ -37,7 +37,7 @@ class AggregatorChannel extends B_Model
      *
      * @var string
      */
-    protected static $primary_key_name = 'aggregator_channel_id';
+    protected static $primary_key_name = 'aggregator_feed_id';
 
 
     /**
@@ -83,7 +83,7 @@ class AggregatorChannel extends B_Model
     }
 
     /**
-     * Find AggregatorChannel with an encapsulated SELECT command
+     * Find AggregatorFeed with an encapsulated SELECT command
      *
      * @param   array   $conditions WHERE parameters
      * @param   array   $order      ORDER parameters
@@ -105,7 +105,7 @@ class AggregatorChannel extends B_Model
     }
 
     /**
-     * Get AggregatorChannel with SQL
+     * Get AggregatorFeed with SQL
      *
      * @param   string  $sql    SQL query
      * @param   array   $data   values array
@@ -129,11 +129,11 @@ class AggregatorChannel extends B_Model
     }
 
     /**
-     * Find AggregatorChannel by primary key
+     * Find AggregatorFeed by primary key
      *
      * @param   integer $id    Primary key value
      *
-     * @return  AggregatorChannel|null 
+     * @return  AggregatorFeed|null 
      */
     public static function findByPrimaryKey($id)
     {

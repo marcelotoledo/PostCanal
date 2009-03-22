@@ -1,20 +1,20 @@
 <?php
 
 /**
- * UserBlogChannel model class
+ * UserBlogFeed model class
  * 
  * @category    Blotomate
  * @package     Model
  * @author      Rafael Castilho <rafael@castilho.biz>
  */
-class UserBlogChannel extends B_Model
+class UserBlogFeed extends B_Model
 {
     /**
      * Table name
      *
      * @var string
      */
-    protected static $table_name = 'user_blog_channel';
+    protected static $table_name = 'user_blog_feed';
 
     /**
      * Table structure
@@ -35,7 +35,7 @@ class UserBlogChannel extends B_Model
      *
      * @var string
      */
-    protected static $primary_key_name = 'user_blog_channel_id';
+    protected static $primary_key_name = 'user_blog_feed_id';
 
 
     /**
@@ -96,7 +96,7 @@ class UserBlogChannel extends B_Model
     }
 
     /**
-     * Find UserBlogChannel with an encapsulated SELECT command
+     * Find UserBlogFeed with an encapsulated SELECT command
      *
      * @param   array   $conditions WHERE parameters
      * @param   array   $order      ORDER parameters
@@ -118,7 +118,7 @@ class UserBlogChannel extends B_Model
     }
 
     /**
-     * Get UserBlogChannel with SQL
+     * Get UserBlogFeed with SQL
      *
      * @param   string  $sql    SQL query
      * @param   array   $data   values array
@@ -142,11 +142,11 @@ class UserBlogChannel extends B_Model
     }
 
     /**
-     * Find UserBlogChannel by primary key
+     * Find UserBlogFeed by primary key
      *
      * @param   integer $id    Primary key value
      *
-     * @return  UserBlogChannel|null 
+     * @return  UserBlogFeed|null 
      */
     public static function findByPrimaryKey($id)
     {
@@ -158,7 +158,7 @@ class UserBlogChannel extends B_Model
      *
      * @param   integer     $id         UserBlog ID
      *
-     * @return  UserBlogChannel|null 
+     * @return  UserBlogFeed|null 
      */
     public static function findByUserBlog($id)
     {

@@ -57,7 +57,7 @@ class C_Dashboard extends C_Abstract
     #     $user_profile_id = intval($this->session->user_profile_id);
     #     $cid = $this->request->cid;
     #     $blog = null;
-    #     $this->view->channels = array();
+    #     $this->view->feeds = array();
 
     #     if($user_profile_id > 0 && strlen($cid) > 0)
     #     {
@@ -65,7 +65,7 @@ class C_Dashboard extends C_Abstract
 
     #         if(is_object($blog))
     #         {
-    #             $this->view->channels = UserBlogChannel::findByUserBlog($blog->user_blog_id);
+    #             $this->view->feeds = UserBlogFeed::findByUserBlog($blog->user_blog_id);
     #         }
     #     }
 
@@ -73,10 +73,10 @@ class C_Dashboard extends C_Abstract
     # }
 
     /**
-     * Load channel data
+     * Load feed data
      *
      */
-    public function A_channel()
+    public function A_feed()
     {
         $this->view->setLayout(null);
 
@@ -84,7 +84,7 @@ class C_Dashboard extends C_Abstract
         $cid = $this->request->cid;
         $ch = $this->request->ch;
         $blog = null;
-        $channel = null;
+        $feed = null;
         $this->view->items = array();
 
         if($user_profile_id > 0 && strlen($cid) > 0)
@@ -93,12 +93,12 @@ class C_Dashboard extends C_Abstract
 
             if(is_object($blog) && strlen($ch) > 0)
             {
-                $channel = UserBlogChannel::findByCH($blog->user_blog_id, $ch);
+                $feed = UserBlogFeed::findByCH($blog->user_blog_id, $ch);
 
-                if(is_object($channel))
+                if(is_object($feed))
                 {
-                    $chid = $channel->aggregator_channel_id;
-                    $this->view->items = AggregatorItem::findByChannel($chid);
+                    $chid = $feed->aggregator_feed_id;
+                    $this->view->items = AggregatorItem::findByFeed($chid);
                 }
             }
         }

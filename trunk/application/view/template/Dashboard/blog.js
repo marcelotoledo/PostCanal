@@ -7,11 +7,11 @@ $(document).ready(function()
         alert("erro ao adicionar canal!");
     }
 
-    function channelAdd()
+    function feedAdd()
     {
         if($("input[name='chaddurl']").val() == "")
         {
-            $.ab_alert("<?php echo $this->translation->channel_add_url_null ?>");
+            $.ab_alert("<?php echo $this->translation->feed_add_url_null ?>");
             return null;
         }
 
@@ -21,7 +21,7 @@ $(document).ready(function()
         $.ajax
         ({
             type: "POST",
-            url: "<?php B_Helper::url('channel', 'add') ?>",
+            url: "<?php B_Helper::url('feed', 'add') ?>",
             dataType: "xml",
             data: parameters,
             beforeSend: function()
@@ -48,17 +48,17 @@ $(document).ready(function()
 
     /* TRIGGERS */
 
-    /* channel add popup */
+    /* feed add popup */
 
     $("#chaddlnk").click(function()
     {
         $.ab_alert($("#chaddpopup").html());
     });
 
-    /* channel add submit */
+    /* feed add submit */
 
     $(".chaddsubmit").click(function()
     {
-        channelAdd();
+        feedAdd();
     });
 });
