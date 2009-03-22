@@ -8,7 +8,6 @@
 <script type="text/javascript" src="/jquery/jquery.bgiframe.min.js"></script>
 <script type="text/javascript" src="/jquery/ui/jquery-ui-1.7.custom.min.js"></script>
 <style type="text/css" media="screen">@import url("/jquery/ui/css/custom-theme/jquery-ui-1.7.custom.css");</style>
-<?php B_Helper::script("dcontainer.js") ?>
 <?php endif ?>
 <?php B_Helper::script("spinner.js") ?>
 <?php B_Helper::script("alert.js") ?>
@@ -19,17 +18,31 @@
 </head>
 <body>
 
-<div id="mbar"><nobr>
+<div id="topbar">
+<div id="topleftbar"><nobr>
 <span><?php B_Helper::a("principal", "dashboard") ?></span>
 <span><?php B_Helper::a("perfil", "profile", "edit") ?></span>
+<span><?php B_Helper::a("blogs", "cms") ?></span>
+<span><?php B_Helper::a("feeds", "feeds") ?></span>
+<span id="cmslstbar">
+<?php if(($i = count($this->cms)) && $i == 1 && is_array($this->cms)) : ?>
+    <b>blog: </b><i><?php echo $this->cms[0]->name ?></i>
+    <input type="hidden" id="blogcur" value="<?php echo $this->cms[0]->cid ?>">
+<?php elseif($i > 1) : ?>
+    <b>blogs: </b>
+    <select name="bloglst">
+    <?php foreach($this->cms as $c) : ?>
+    <option value="<?php echo $c->cid ?>"><?php echo $c->name ?></option>
+    <?php endforeach ?>
+    </select>
+<?php endif ?>
+</span>
 </nobr></div>
-
-<p id="ubar">
+<div id="toprightbar"><nobr>
 <span><?php echo $this->session->user_profile_login_email ?></span>
 <span><?php B_Helper::a("sair", "profile", "logout") ?></span>
-</p>
-
-<div class="bsep" style="left: 0pt;"></div>
+</nobr></div>
+</div>
 
 <div id="main">
 <?php $this->renderTemplate() ?>

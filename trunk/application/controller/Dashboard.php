@@ -40,7 +40,7 @@ class C_Dashboard extends C_Abstract
             throw new B_Exception($_m, E_USER_WARNING, $d);
         }
 
-        $cms = UserCMS::findByUserProfileId($id);
+        $cms = UserCMS::findByUserProfileId($id, true);
 
         $this->view->profile = $profile;
         $this->view->cms = $cms;

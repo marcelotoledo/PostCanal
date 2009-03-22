@@ -8,7 +8,7 @@ html, body
 body
 {
     color: black;
-    background: white;
+    background: ghostwhite;
 }
 div, form
 {
@@ -17,50 +17,51 @@ div, form
 
 /* topbar */
 
-#mbar
-{
-    height: 25px;
-    padding: 5px 10px 0px 10px;
-    float: left;
-}
-#mbar span
-{
-    padding-right: 10px;
-}
-#ubar
+#topbar
 {
     position: absolute;
     top: 0;
-    right: 0;
-    margin: 0;
-    padding: 5px 10px 0px 10px;
+    left: 0;
+    width: 100%;
+    height: 40px;
+    background-color: wheat;
+    border-bottom: 1px solid chocolate;
 }
-#ubar span
+#topleftbar
+{
+    float: left;
+    height: 40px;
+    line-height: 40px;
+    vertical-align: middle;
+    margin-left: 15px;
+}
+#topleftbar span
+{
+    padding-right: 10px;
+}
+#topleftbar span#cmslstbar
+{
+    padding-left: 50px;
+}
+#toprightbar
+{
+    float: right;
+    height: 40px;
+    line-height: 40px;
+    vertical-align: middle;
+    margin-right: 15px;
+}
+#toprightbar span
 {
     padding-left: 10px;
 }
-.bsep
-{
-    height: 0;
-    position: absolute;
-    top: 28px;
-    width: 100%;
-    border-top: 1px solid silver;
-    font-size: 1px;
-}
 
-/* container */
+/* main */
 
 #main
 {
     position: absolute;
-    top: 29px;
-    left: 0px;
-}
-
-/* message */
-
-.mmsg
-{
-    padding: 25px;
+    top: 41px;
+    left: 0;
+    width: 100%;
 }

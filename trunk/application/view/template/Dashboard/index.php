@@ -1,67 +1,22 @@
 <?php if(count($this->cms) == 0) : ?>
 
-<div class="mmsg">Nenhum CMS cadastrado. <?php B_Helper::a("Adicionar novo CMS", "cms", "add") ?></div>
+<div id="nocmsmsg">Nenhum <b>blog</b> cadastrado. <?php B_Helper::a("Clique aqui", "cms", "add") ?> para adicionar um novo blog, ou utilize o link "blogs" no menu superior.</div>
 
 <?php else : ?>
 
-<div id="dccms" title="Blogs">
-<?php B_Helper::a("adicionar", "cms", "add") ?>
-<div id="lscms">
-<?php foreach($this->cms as $cms) : ?>
-<div class="iicms" cid="<?php echo $cms->cid ?>"><a><?php echo $cms->name ?></a></div>
-<?php endforeach ?>
-</div>
+<div class="dashboardcontainers" id="feedscontainer">
+<h2>feeds</h2>
+feeds container
 </div>
 
-<div id="dcqueue" title="Queue"></div>
-
-<div id="dcfeedch" title="Feeds"></div>
-
-<div id="dcchitem" title="Items"></div>
-
-<!--
-
-<div id="lcol">
-<div class="ctit">
-<?php B_Helper::a("adicionar", "cms", "add") ?>
-</div>
-<div class="cbox" id="mlcb" style="height:500px">
-
-<?php foreach($this->cms as $cms) : ?>
-<div class="cmsitm" cid="<?php echo $cms->cid ?>"><a><?php echo $cms->name ?></a></div>
-<?php endforeach ?>
-
-</div></div>
-
-<div id="rcol">
-<div class="ctit">Super CMS</div>
-<div class="cbox" id="mrcb" style="height:500px">
-
-<table id="rbox"><tbody><tr><td id="rbcA">
-
-<div id="rbdA">
-&nbsp;
+<div class="dashboardcontainers" id="newscontainer">
+<h2>news</h2>
+news container
 </div>
 
-</td><td id="rbcB">
-
-<div id="rbdB">
-&nbsp;
+<div class="dashboardcontainers" id="queuecontainer">
+<h2>queue</h2>
+queue container
 </div>
-
-</td></tr>
-<tr><td colspan="2">
-
-<div id="rbdC">
-&nbsp;
-</div>
-
-</td></tr></tbody></table>
-
-</div></div>
-
-<div id="bbox" style="display:none">&nbsp;</div>
-
--->
 
 <?php endif ?>

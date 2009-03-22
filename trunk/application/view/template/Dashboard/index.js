@@ -4,22 +4,58 @@ $(document).ready(function()
     
     var ar = false;
 
-    <?php if(count($this->cms) > 0) : ?>
-
     /* dashboard containers */
 
-    $("#dccms").b_dcontainer   (200, 500, 200, 300, [25,50]  );
-    $("#dcqueue").b_dcontainer (700, 225, 200, 150, [250,325]);
-    $("#dcfeedch").b_dcontainer(200, 250, 200, 150, [750,50] );
-    $("#dcchitem").b_dcontainer(475, 250, 200, 150, [250,50] );
+    <?php if(count($this->cms) == 0) : ?>
+
+    $("#nocmsmsg").dialog({ bgiframe: true, modal: true });
+
+    <?php else : ?>
+
+    ww = $(window).width();
+    wh = $(window).height();
+
+    uw = Math.floor(ww / 25) * 25;
+    uh = Math.floor(wh / 25) * 25;
+
+    $("#newscontainer").width(uw - 325);
+    $("#queuecontainer").width(uw - 325);
+    $("#feedscontainer").height(uh - 100);
+    $("#queuecontainer").height(uh - 350);
+
+    function container(id, mw, mh, mx)
+    {
+        r = { grid: [25,25], minWidth: mw, minHeight: mh };
+        d = { grid: [25,25], handle: 'h2', stack: { group: 'dbcontainers', min: mx } };
+        $("#" + id).resizable(r).draggable(d);
+    }
+
+    container("feedscontainer", 200, 300, 1201);
+    container("newscontainer", 400, 150, 1202);
+    container("queuecontainer", 400, 150, 1203);
+
+    function front(id)
+    {
+        v = ['feedscontainer', 'newscontainer', 'queuecontainer'];
+        for(i=0;i<v.length;i++) { if(v[i]!=id) { $("#" + v[i]).css('z-index', (1201 + i)); } }
+        $("#" + id).css('z-index', 1401);
+    }
+
+    $("#feedscontainer").click(function() { front($(this).attr('id')); });
+    $("#newscontainer").click(function() { front($(this).attr('id')); });
+    $("#queuecontainer").click(function() { front($(this).attr('id')); });
 
     /* select default cms */
 
-    selectCMS($(".iicms").get(0).getAttribute("cid"));
-
+    <?php if(count($this->cms) == 1) : ?>
+    cid = $("#blogcur").val();
+    <?php else : ?>
+    cid = $("select[name='bloglst'] > option:selected").val();
     <?php endif ?>
 
-    // $("#dcfeedch").b_dcontainer_title("<i>Outro blog Qualquer</i> Feeds");
+    setcms(cid);
+
+    <?php endif ?>
 
     /* SWITCHES */
 
@@ -53,23 +89,16 @@ $(document).ready(function()
 
     /* select cms */
 
-    function selectCMS(cid)
+    function setcms(cid)
     {
-        $(".iicms").each(function()
-        {
-            $(this).css("font-weight", "normal");
-        });
-
-        $("div[cid='" + cid + "']").css("font-weight", "bold");
-
-        // _t = $("div[cid='" + cid + "'] > a").text();
-        // $("#dcfeedch").b_dcontainer_title("<i>" + _t + "</i> Feeds");
+        alert("setting cms " + cid);
     }
 
     /* TRIGGERS */
 
-    $(".iicms").click(function()
+    $("select[name='bloglst']").change(function()
     {
-        selectCMS($(this).attr("cid"));
+        cid = $("select[name='bloglst'] > option:selected").val();
+        setcms(cid);
     });
 });

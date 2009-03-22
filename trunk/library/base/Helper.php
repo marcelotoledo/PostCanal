@@ -19,7 +19,7 @@ class B_Helper
      */
     public static function url($controller=null, $action=null, $parameters=array())
     {
-        echo self::relativeURL(B_Request::url($controller, $action, $parameters));
+        echo self::relative(B_Request::url($controller, $action, $parameters));
     }
 
     /**
@@ -32,7 +32,7 @@ class B_Helper
      */
     public static function href($controller=null, $action=null, $parameters=array())
     {
-        $url = self::relativeURL(B_Request::url($controller, $action, $parameters));
+        $url = self::relative(B_Request::url($controller, $action, $parameters));
         echo strlen($url) > 0 ? $url : "/";
     }
 
@@ -60,7 +60,7 @@ class B_Helper
      */
     public static function script_src($name)
     {
-        echo self::relativeURL(BASE_URL) . "/script/" . $name;
+        echo self::relative(BASE_URL) . "/script/" . $name;
     }
 
     /**
@@ -85,7 +85,7 @@ class B_Helper
      */
     public static function style_url($name)
     {
-        echo self::relativeURL(BASE_URL) . "/style/" . $name;
+        echo self::relative(BASE_URL) . "/style/" . $name;
     }
 
     /**
@@ -111,7 +111,7 @@ class B_Helper
      */
     public static function img_src($path)
     {
-        echo self::relativeURL(BASE_URL) . "/image/" . $path;
+        echo self::relative(BASE_URL) . "/image/" . $path;
     }
 
     /**
@@ -133,7 +133,7 @@ class B_Helper
      * @param   string  $url
      * @return  string
      */
-    protected static function relativeURL($url)
+    public static function relative($url)
     {
         $relative = $url;
 

@@ -1,9 +1,10 @@
 #main
 {
-    <?php if(strpos($_SERVER['HTTP_USER_AGENT'], "MSIE") > 0) : ?>
     padding-top: 15px;
-    <?php endif ?>
-    padding-left: 25px;
+}
+form
+{
+    padding-left: 50px;
 }
 table th
 {

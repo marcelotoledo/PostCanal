@@ -164,13 +164,16 @@ class UserCMS extends B_Model
     /**
      * Find CMS by user profile
      *
-     * @param   integer     $user_profile_id    User profile PK
+     * @param   integer         $user_profile_id    User profile PK
+     * @param   boolean|null    $enabled
      * @return  array
      */
-    public static function findByUserProfileId($user_profile_id)
+    public static function findByUserProfileId($user_profile_id, $enabled=null)
     {
-        return self::find(array('user_profile_id' => $user_profile_id),
-                          array('name ASC, created_at ASC'));
+        $args = array();
+        $args['user_profile_id'] = $user_profile_id;
+        if(is_bool($enabled)) $args['enabled'] = $enabled;
+        return self::find($args, array('name ASC, created_at ASC'));
     }
 
     /**

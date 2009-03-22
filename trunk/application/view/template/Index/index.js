@@ -212,4 +212,20 @@ $(document).ready(function()
     {
         if(ar == false) { fs(); }
     });
+
+    $("input[name='password']").keypress(function(e) 
+    {
+        if((e.which && e.which == 13) || (e.keyCode && e.keyCode == 13))
+        {
+            $("input[name='frmsubmit']").click();
+        }
+    });
+
+    $("input[name='confirm']").keypress(function(e) 
+    {
+        if((e.which && e.which == 13) || (e.keyCode && e.keyCode == 13))
+        {
+            $("input[name='frmsubmit']").click();
+        }
+    });
 });

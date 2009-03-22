@@ -355,6 +355,14 @@ $(document).ready(function()
         checkURL();
     });
 
+    $("input[name='input_url']").keypress(function(e) 
+    {
+        if((e.which && e.which == 13) || (e.keyCode && e.keyCode == 13))
+        {
+            $("#check_url").click();
+        }
+    });
+
     $("#change_url").click(function()
     {
         changeURL();

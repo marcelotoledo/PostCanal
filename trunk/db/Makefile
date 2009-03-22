@@ -1,7 +1,8 @@
-install: schema data
+install: schema sleep data
 clean: schema
 schema:
 	./configure.php schema.mysql
+sleep:	
 	sleep 1s
 data:
 	./configure.php base_translation.mysql
