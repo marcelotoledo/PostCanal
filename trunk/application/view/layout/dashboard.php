@@ -44,9 +44,13 @@
 </nobr></div>
 </div>
 
+<?php if($this->request->getAction() == "index") : ?>
+<?php $this->renderTemplate() ?>
+<?php else : ?>
 <div id="main">
 <?php $this->renderTemplate() ?>
 </div>
+<?php endif ?>
 
 </body>
 </html>

@@ -12,75 +12,49 @@ $(document).ready(function()
 
     <?php else : ?>
 
-    sn = 25; /* snap, in pixels */
-
-    /* maximize containers */
-
-    ww = $(window).width();
-    wh = $(window).height();
-
-    uw = Math.floor(ww / sn) * sn;
-    uh = Math.floor(wh / sn) * sn;
-
-    c = $("#feedscontainer");
-    c.height(uh - (4 * sn));
-    c = $("#itemscontainer");
-    c.width(uw - c.position().left - sn);
-    c = $("#queuecontainer");
-    c.width(uw - c.position().left - sn);
-    c.height(uh - c.position().top - (3 * sn));
-
     /* maximize content area */
 
-    function content_a(o)
+    function maxcontent(o)
     {
-        a = $("#" + o.attr('id') + " > div.containercontentarea");
+        _c = $("#" + o.attr('id') + " > div.containercontentarea");
+        _f = $("#" + o.attr('id') + " > div.containerfooter").height();
 
-        if(a.position())
+        if(_c.position())
         { 
-            a.height((o.height() - a.position().top) - sn);
+            _c.height((o.height() - _c.position().top) - _f);
         }
     }
 
-    /* on container resize event ... */
+    /* maximize containers */
 
-    function container_r(o)
+    function maxcontainers()
     {
-        content_a(o);
+        ww = $(window).width();
+        wh = $(window).height();
+
+        _c = $("#feedscontainer");
+        _h = wh - _c.offset().top + _c.height() - _c.outerHeight();
+        _c.height(_h);
+        maxcontent(_c);
+
+        _c = $("#itemscontainer");
+        _w = ww - _c.offset().left + _c.width() - _c.outerWidth();
+        _c.width(_w);
+        _c.height(_h * 0.5);
+        maxcontent(_c);
+
+        _t = _c.offset().top + _c.position().top + _c.height();
+
+        // alert("offset: " + _c.offset().top + "\n" + "position: " + _c.position().top + "\n" + "scroll: " + _c.scrollTop() + "\n" + "height: " + _c.height() + "\n" + "inner: " + _c.innerHeight() + "\n" + "outer: " + _c.outerHeight());
+
+        _c = $("#queuecontainer");
+        _c.width(_w);
+        _c.css('top', _t - 8);
+        _c.height((_h * 0.5) - 5);
+        maxcontent(_c);
     }
 
-    /* container initializer */
-
-    function container(id, mw, mh, mz)
-    {
-        r = { grid: [25,25], minWidth: mw, minHeight: mh, 
-              stop: function(e, u) { container_r($(this)); } };
-        d = { grid: [25,25], handle: 'h2', 
-              stack: { group: 'dbcontainers', min: mz } };
-
-        c = $("#" + id);
-        c.resizable(r).draggable(d);
-        container_r(c);
-    }
-
-    /* initialize containers */
-
-    container("feedscontainer", 200, 300, 1201);
-    container("itemscontainer", 400, 150, 1202);
-    container("queuecontainer", 400, 150, 1203);
-
-    /* focus / bring to front */
-
-    function front(id)
-    {
-        v = ['feedscontainer', 'itemscontainer', 'queuecontainer'];
-        for(i=0;i<v.length;i++) { if(v[i]!=id) { $("#" + v[i]).css('z-index', (1201 + i)); } }
-        $("#" + id).css('z-index', 1401);
-    }
-
-    $("#feedscontainer").click(function() { front($(this).attr('id')); });
-    $("#itemscontainer").click(function() { front($(this).attr('id')); });
-    $("#queuecontainer").click(function() { front($(this).attr('id')); });
+    maxcontainers();
 
     /* set default blog */
 
