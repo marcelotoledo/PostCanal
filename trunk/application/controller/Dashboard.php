@@ -14,13 +14,7 @@ class C_Dashboard extends C_Abstract
      */
     public function before()
     {
-        if($this->request->getAction() != 'unauthorized')
-        {
-            $url = ($this->request->getAction() == "index") ? 
-                B_Request::url('index','index') : 
-                B_Request::url('dashboard', 'unauthorized');
-            $this->authorize($url);
-        }
+        $this->authorize();
     }
 
     /**

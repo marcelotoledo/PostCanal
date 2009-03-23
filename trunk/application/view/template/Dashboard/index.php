@@ -6,17 +6,24 @@
 
 <div class="dashboardcontainers" id="feedscontainer">
 <h2>feeds</h2>
+<div class="containercontentarea" style="background-color:red">
 feeds container
+</div>
+<div class="containerfooter">footer</div>
 </div>
 
 <div class="dashboardcontainers" id="itemscontainer">
 <h2>items</h2>
+<div class="containercontentarea" style="background-color:green">
 items container
+</div>
 </div>
 
 <div class="dashboardcontainers" id="queuecontainer">
 <h2>queue</h2>
+<div class="containercontentarea" style="background-color:blue">
 queue container
+</div>
 </div>
 
 <?php endif ?>

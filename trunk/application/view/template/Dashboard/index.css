@@ -7,7 +7,7 @@
 }
 .dashboardcontainers h2
 {
-    margin: 0 0 5px 0;
+    margin: 0;
     padding-left: 5px;
     background-color: wheat;
     border-bottom: 1px solid chocolate;
@@ -15,6 +15,14 @@
     font-size: large;
     font-weight: bold;
     cursor: move;
+}
+.containercontentarea
+{
+    overflow: auto;
+}
+.containerfooter
+{
+    padding: 5px;
 }
 #feedscontainer
 {

@@ -12,27 +12,64 @@ $(document).ready(function()
 
     <?php else : ?>
 
+    sn = 25; /* snap, in pixels */
+
+    /* maximize containers */
+
     ww = $(window).width();
     wh = $(window).height();
 
-    uw = Math.floor(ww / 25) * 25;
-    uh = Math.floor(wh / 25) * 25;
+    uw = Math.floor(ww / sn) * sn;
+    uh = Math.floor(wh / sn) * sn;
 
-    $("#itemscontainer").width(uw - 325);
-    $("#queuecontainer").width(uw - 325);
-    $("#feedscontainer").height(uh - 100);
-    $("#queuecontainer").height(uh - 350);
+    c = $("#feedscontainer");
+    c.height(uh - (4 * sn));
+    c = $("#itemscontainer");
+    c.width(uw - c.position().left - sn);
+    c = $("#queuecontainer");
+    c.width(uw - c.position().left - sn);
+    c.height(uh - c.position().top - (3 * sn));
+
+    /* maximize content area */
+
+    function content_a(o)
+    {
+        a = $("#" + o.attr('id') + " > div.containercontentarea");
+
+        if(a.position())
+        { 
+            a.height((o.height() - a.position().top) - sn);
+        }
+    }
+
+    /* on container resize event ... */
+
+    function container_r(o)
+    {
+        content_a(o);
+    }
+
+    /* container initializer */
 
     function container(id, mw, mh, mz)
     {
-        r = { grid: [25,25], minWidth: mw, minHeight: mh };
-        d = { grid: [25,25], handle: 'h2', stack: { group: 'dbcontainers', min: mz } };
-        $("#" + id).resizable(r).draggable(d);
+        r = { grid: [25,25], minWidth: mw, minHeight: mh, 
+              stop: function(e, u) { container_r($(this)); } };
+        d = { grid: [25,25], handle: 'h2', 
+              stack: { group: 'dbcontainers', min: mz } };
+
+        c = $("#" + id);
+        c.resizable(r).draggable(d);
+        container_r(c);
     }
+
+    /* initialize containers */
 
     container("feedscontainer", 200, 300, 1201);
     container("itemscontainer", 400, 150, 1202);
     container("queuecontainer", 400, 150, 1203);
+
+    /* focus / bring to front */
 
     function front(id)
     {
@@ -45,7 +82,7 @@ $(document).ready(function()
     $("#itemscontainer").click(function() { front($(this).attr('id')); });
     $("#queuecontainer").click(function() { front($(this).attr('id')); });
 
-    /* select default blog */
+    /* set default blog */
 
     <?php if(count($this->blogs) == 1) : ?>
     blog = $("#blogcur").val();
