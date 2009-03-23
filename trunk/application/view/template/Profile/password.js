@@ -51,9 +51,9 @@ $(document).ready(function()
         }
 
         email = $("input[name='email']").val();
-        uid = $("input[name='uid']").val();
         password = $("input[name='password']").val();
         confirm_ = $("input[name='confirm']").val();
+        user = $("input[name='user']").val();
 
         if(password == "" || confirm_ == "")
         {
@@ -67,7 +67,7 @@ $(document).ready(function()
             return null;
         }
 
-        parameters = { email: email, uid: uid, password: password, confirm: confirm_ }
+        parameters = { email: email, password: password, confirm: confirm_, user: user }
 
         $.ajax
         ({

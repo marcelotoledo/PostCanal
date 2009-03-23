@@ -1,4 +1,4 @@
-<?php $password_url = B_Request::url("profile", "password", array("email" => $profile->login_email, "uid" => $profile->uid)) ?>
+<?php $password_url = B_Request::url("profile", "password", array("email" => $profile->login_email, "user" => $profile->hash)) ?>
 
 <?php echo $this->translation->mail_register_existing_body_1 ?>
 

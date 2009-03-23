@@ -93,11 +93,11 @@ class UserBlog extends B_Model
      */
     public function save()
     {
-        /* generate CID */
+        /* generate Hash */
 
         if($this->isNew()) 
         {
-            $this->cid = L_Utility::randomString(8);
+            $this->hash = L_Utility::randomString(8);
         }
 
         return parent::save();
@@ -177,16 +177,16 @@ class UserBlog extends B_Model
     }
 
     /**
-     * Find Blog from CID (user_blog_cid_index)
+     * Find Blog from Hash
      *
      * @param   integer $user_profile_id
      * @param   string  $cid
      * @return  UserBlog|null
      */
-    public static function findByCID($user_profile_id, $cid)
+    public static function findByHash($user_profile_id, $hash)
     {
         return current(self::find(array(
             'user_profile_id' => $user_profile_id,
-            'cid' => $cid)));
+            'hash' => $hash)));
     }
 }

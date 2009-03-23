@@ -43,7 +43,7 @@ class C_<controller> extends B_Controller
      *
      * @return void
      */
-    public function ACTION_index()
+    public function A_index()
     {
     }
 }

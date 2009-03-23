@@ -1,4 +1,4 @@
-<?php if(count($this->blog) == 0) : ?>
+<?php if(count($this->blogs) == 0) : ?>
 
 <div id="noblogmsg">Nenhum <b>blog</b> cadastrado. <?php B_Helper::a("Clique aqui", "blog", "add") ?> para adicionar um novo blog, ou utilize o link "blogs" no menu superior.</div>
 
@@ -9,9 +9,9 @@
 feeds container
 </div>
 
-<div class="dashboardcontainers" id="newscontainer">
-<h2>news</h2>
-news container
+<div class="dashboardcontainers" id="itemscontainer">
+<h2>items</h2>
+items container
 </div>
 
 <div class="dashboardcontainers" id="queuecontainer">

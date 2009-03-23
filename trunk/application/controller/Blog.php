@@ -18,6 +18,14 @@ class C_Blog extends C_Abstract
     }
 
     /**
+     * Default action
+     */
+    public function A_index()
+    {
+        $this->view->setLayout('dashboard');
+    }
+
+    /**
      * Add action
      *
      * @return void

@@ -101,11 +101,11 @@ class UserProfile extends B_Model
      */
     public function save()
     {
-        /* generate UID */
+        /* generate Hash */
 
         if($this->isNew()) 
         {
-            $this->uid = L_Utility::randomString(8);
+            $this->hash = L_Utility::randomString(8);
         }
 
         return parent::save();
@@ -211,17 +211,17 @@ class UserProfile extends B_Model
     }
 
     /**
-     * Find UserProfile from UID (user_profile_uid_index)
+     * Find UserProfile from Hash
      *
      * @param   string  $email
-     * @param   string  $uid
+     * @param   string  $hash
      * @return  UserProfile|null
      */
-    public static function findByUID($email, $uid)
+    public static function findByHash($email, $hash)
     {
         return current(self::find(array(
             'login_email' => strtolower($email), 
-            'uid'         => $uid,
+            'hash'        => $hash,
             'enabled'     => true)));
     }
 }

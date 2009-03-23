@@ -111,6 +111,7 @@ CREATE TABLE aggregator_feed
 (
     aggregator_feed_id INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
     type ENUM('rss','atom') NOT NULL DEFAULT 'rss',
+    hash CHAR(8) NOT NULL,
     title VARCHAR(100) NOT NULL,
     link VARCHAR(200) NOT NULL,
     description TEXT NOT NULL DEFAULT '',
@@ -121,15 +122,16 @@ CREATE TABLE aggregator_feed
     PRIMARY KEY (aggregator_feed_id)
 ) ENGINE=InnoDB DEFAULT CHARSET='utf8';
 
-CREATE TABLE aggregator_item
+CREATE TABLE aggregator_feed_item
 (
-    aggregator_item_id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+    aggregator_feed_item_id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
     aggregator_feed_id INTEGER UNSIGNED NOT NULL, 
+    hash CHAR(8) NOT NULL,
     title TEXT NOT NULL, 
     link TEXT NOT NULL,
     description TEXT NOT NULL DEFAULT '',
     created_at TIMESTAMP NOT NULL DEFAULT NOW(), 
-    PRIMARY KEY (aggregator_item_id),
+    PRIMARY KEY (aggregator_feed_item_id),
     CONSTRAINT ai_aggregator_feed_fk FOREIGN KEY (aggregator_feed_id) 
         REFERENCES aggregator_feed (aggregator_feed_id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET='utf8';
@@ -139,7 +141,7 @@ CREATE TABLE aggregator_item
 CREATE TABLE user_profile
 (
     user_profile_id INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
-    uid CHAR(8) NOT NULL,
+    hash CHAR(8) NOT NULL,
     login_email CHAR(100) NOT NULL,
     login_password_md5 CHAR(32) NOT NULL,
     -- -------------------------------------------------------------------------
@@ -162,14 +164,14 @@ CREATE TABLE user_profile
 
 CREATE INDEX up_id_enabled_idx ON user_profile (user_profile_id, enabled);
 CREATE INDEX up_email_password_enabled_idx ON user_profile (login_email, login_password_md5, enabled);
-CREATE INDEX up_email_uid_idx ON user_profile (login_email, uid);
+CREATE INDEX up_email_hash_idx ON user_profile (login_email, hash);
 
 CREATE TABLE user_blog
 (
     user_blog_id INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
     user_profile_id INTEGER UNSIGNED NOT NULL,
     blog_type_id SMALLINT UNSIGNED NOT NULL,
-    cid CHAR(8) NOT NULL,
+    hash CHAR(8) NOT NULL,
     name CHAR(100) NOT NULL,
     url CHAR(200) NOT NULL,
     manager_url CHAR(200) NOT NULL,
@@ -186,13 +188,12 @@ CREATE TABLE user_blog
         REFERENCES blog_type (blog_type_id) ON DELETE RESTRICT
 ) ENGINE=InnoDB DEFAULT CHARSET='utf8';
 
-CREATE INDEX ub_id_cid_idx ON user_blog (user_profile_id, cid);
+CREATE INDEX ub_id_hash_idx ON user_blog (user_profile_id, hash);
 
 CREATE TABLE user_blog_feed
 (
     user_blog_feed_id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
     user_blog_id INTEGER UNSIGNED NOT NULL,
-    ch VARCHAR(8) NOT NULL,
     aggregator_feed_id INTEGER UNSIGNED NOT NULL,
     title VARCHAR(100) NOT NULL,
     description TEXT NOT NULL DEFAULT '',
@@ -206,7 +207,7 @@ CREATE TABLE user_blog_feed
         REFERENCES aggregator_feed (aggregator_feed_id) ON DELETE RESTRICT
 ) ENGINE=InnoDB DEFAULT CHARSET='utf8';
 
-CREATE INDEX bf_bid_ch_idx ON user_blog (user_blog_id, ch);
+CREATE INDEX bf_idx ON user_blog (user_blog_id, aggregator_feed_id);
 
 CREATE TABLE user_blog_queue
 (

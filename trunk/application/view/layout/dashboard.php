@@ -23,16 +23,16 @@
 <span><?php B_Helper::a("principal", "dashboard") ?></span>
 <span><?php B_Helper::a("perfil", "profile", "edit") ?></span>
 <span><?php B_Helper::a("blogs", "blog") ?></span>
-<span><?php B_Helper::a("feeds", "feeds") ?></span>
+<span><?php B_Helper::a("feeds", "feed") ?></span>
 <span id="bloglstbar">
-<?php if(($i = count($this->blog)) && $i == 1 && is_array($this->blog)) : ?>
-    <b>blog: </b><i><?php echo $this->blog[0]->name ?></i>
-    <input type="hidden" id="blogcur" value="<?php echo $this->blog[0]->cid ?>">
+<?php if(($i = count($this->blogs)) && $i == 1 && is_array($this->blogs)) : ?>
+    <b>blog: </b><i><?php echo $this->blogs[0]->name ?></i>
+    <input type="hidden" id="blogcur" value="<?php echo $this->blogs[0]->hash ?>">
 <?php elseif($i > 1) : ?>
     <b>blogs: </b>
     <select name="bloglst">
-    <?php foreach($this->blog as $c) : ?>
-    <option value="<?php echo $c->cid ?>"><?php echo $c->name ?></option>
+    <?php foreach($this->blogs as $c) : ?>
+    <option value="<?php echo $c->hash ?>"><?php echo $c->name ?></option>
     <?php endforeach ?>
     </select>
 <?php endif ?>

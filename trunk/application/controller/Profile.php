@@ -47,7 +47,7 @@ class C_Profile extends C_Abstract
             {
                 $this->session->setActive(true);
                 $this->session->user_profile_id = $profile->user_profile_id;
-                $this->session->user_profile_uid = $profile->uid;
+                $this->session->user_profile_hash = $profile->hash;
                 $this->session->user_profile_login_email = $profile->login_email;
 
                 $profile->last_login_time = time();
@@ -226,15 +226,15 @@ class C_Profile extends C_Abstract
         $this->view->setLayout('index');
 
         $email = $this->request->email;
-        $uid = $this->request->uid;
+        $hash = $this->request->user;
         $this->view->accepted = false;
         $this->view->message = $this->translation->confirm_failed;
 
         $profile = null;
 
-        if(strlen($email) > 0 && strlen($uid) > 0)
+        if(strlen($email) > 0 && strlen($hash) > 0)
         {
-            $profile = UserProfile::findByUID($email, $uid);
+            $profile = UserProfile::findByHash($email, $hash);
         }
 
         if(is_object($profile))
@@ -245,7 +245,7 @@ class C_Profile extends C_Abstract
             }
             else
             {
-                $profile->uid = L_Utility::randomString(8);
+                $profile->hash = L_Utility::randomString(8);
                 $profile->register_confirmation = true;
                 $profile->register_confirmation_time = time();
                 $profile->save();
@@ -279,13 +279,13 @@ class C_Profile extends C_Abstract
         $this->view->setLayout('index');
 
         $email = $this->request->email;
-        $uid = $this->request->uid;
+        $hash = $this->request->user;
         $expired = false;
         $profile = null;
 
-        if(strlen($email) > 0 && strlen($uid) > 0)
+        if(strlen($email) > 0 && strlen($hash) > 0)
         {
-            $profile = UserProfile::findByUID($email, $uid);
+            $profile = UserProfile::findByHash($email, $hash);
             $expired = is_object($profile) ? $profile->recovery_allowed : true;
         }
 
@@ -303,7 +303,7 @@ class C_Profile extends C_Abstract
         $this->response->setXML(true);
 
         $email = $this->request->email;
-        $uid = $this->request->uid;
+        $hash = $this->request->user;
         $current = $this->request->current;
         $password = $this->request->password;
         $confirm = $this->request->confirm;
@@ -320,11 +320,11 @@ class C_Profile extends C_Abstract
  
         /* password change (not authenticated) */
 
-        if(strlen($email) > 0 && strlen($uid) > 0 && 
+        if(strlen($email) > 0 && strlen($hash) > 0 && 
            strlen($password) && strlen($confirm))
         {
             $updated = $this->passwordNotAuthenticated
-                ($email, $uid, $password, $confirm, $message);
+                ($email, $hash, $password, $confirm, $message);
         }
 
         $this->view->updated = $updated;
@@ -381,18 +381,18 @@ class C_Profile extends C_Abstract
      * Offline password change (not authenticated)
      *
      * @param   string  $email
-     * @param   string  $uid
+     * @param   string  $hash
      * @param   string  $password
      * @param   string  $confirm
      * @param   string  $message
      * @return  boolean
      */
     private function passwordNotAuthenticated
-        ($email, $uid, $password, $confirm, &$message)
+        ($email, $hash, $password, $confirm, &$message)
     {
         $updated = false;
 
-        if(is_object($profile = $profile = UserProfile::findByUID($email, $uid)))
+        if(is_object($profile = $profile = UserProfile::findByHash($email, $hash)))
         {
             if($password != $confirm)
             {
@@ -400,7 +400,7 @@ class C_Profile extends C_Abstract
             }
             else
             {
-                $profile->uid = L_Utility::randomString(8);
+                $profile->hash = L_Utility::randomString(8);
                 $profile->login_password_md5 = md5($password);
                 $profile->recovery_allowed = false;
                 $profile->save();
@@ -441,13 +441,13 @@ class C_Profile extends C_Abstract
         $this->view->setLayout('index');
 
         $email = $this->request->email;
-        $uid = $this->request->uid;
+        $hash = $this->request->user;
         $profile = null;
         $new_email = "";
 
-        if(strlen($email) > 0 && strlen($uid) > 0)
+        if(strlen($email) > 0 && strlen($hash) > 0)
         {
-            $profile = UserProfile::findByUID($email, $uid);
+            $profile = UserProfile::findByHash($email, $hash);
             $new_email = is_object($profile) ? $profile->email_update : "";
         }
 
@@ -466,7 +466,7 @@ class C_Profile extends C_Abstract
 
         $new_email = $this->request->new_email;
         $email = $this->request->email;
-        $uid = $this->request->uid;
+        $hash = $this->request->user;
         $password = $this->request->password;
         $accepted = false;
         $message = $this->translation->email_failed;
@@ -482,9 +482,9 @@ class C_Profile extends C_Abstract
         
         /* change save */
 
-        if(strlen($email) > 0 && strlen($uid) > 0 && strlen($password) > 0)
+        if(strlen($email) > 0 && strlen($hash) > 0 && strlen($password) > 0)
         {
-            $accepted = $this->emailChangeSave($email, $uid, $password, $message);
+            $accepted = $this->emailChangeSave($email, $hash, $password, $message);
         }
 
         /* disable session */
@@ -545,16 +545,16 @@ class C_Profile extends C_Abstract
      * Email change save
      * 
      * @param   string  $email      New user profile login email
-     * @param   string  $uid        Profile UID
-     * @param   string  $password   Profile password
+     * @param   string  $hash       User Profile Hash
+     * @param   string  $password   User Profile password
      * @param   string  $message
      * @return  boolean
      */
-    private function emailChangeSave($email, $uid, $password, &$message)
+    private function emailChangeSave($email, $hash, $password, &$message)
     {
         $accepted = false;
 
-        if(is_object($profile = UserProfile::findByUID($email, $uid)))
+        if(is_object($profile = UserProfile::findByHash($email, $hash)))
         {
             if($profile->login_password_md5 != md5($password))
             {
@@ -566,7 +566,7 @@ class C_Profile extends C_Abstract
                 {
                     $profile->login_email = $new_email;
                     $profile->email_update = "";
-                    $profile->uid = L_Utility::randomString(8);
+                    $profile->hash = L_Utility::randomString(8);
                     $profile->save();
 
                     $accepted = true;

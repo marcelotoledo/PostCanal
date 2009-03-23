@@ -3,7 +3,7 @@
 <form>
     <h1>Mudança de E-mail de Acesso</h1>
     <input type="hidden" name="email" value="<?php echo $this->profile->login_email ?>">
-    <input type="hidden" name="uid" value="<?php echo $this->profile->uid ?>">
+    <input type="hidden" name="user" value="<?php echo $this->profile->hash ?>">
     <table>
     <tr>
         <th>E-mail atual:</th>

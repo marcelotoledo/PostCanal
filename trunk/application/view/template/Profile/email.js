@@ -40,8 +40,8 @@ $(document).ready(function()
         }
 
         email = $("input[name='email']").val();
-        uid = $("input[name='uid']").val();
         password = $("input[name='password']").val();
+        user = $("input[name='user']").val();
 
         if(password == "")
         {
@@ -49,7 +49,7 @@ $(document).ready(function()
             return null;
         }
 
-        parameters = { email: email, uid: uid, password: password }
+        parameters = { email: email, password: password, user: user }
 
         $.ajax
         ({
