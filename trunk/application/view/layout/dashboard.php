@@ -10,8 +10,8 @@
 <style type="text/css" media="screen">@import url("/jquery/ui/css/custom-theme/jquery-ui-1.7.custom.css");</style>
 <?php endif ?>
 <?php B_Helper::script("spinner.js") ?>
-<?php B_Helper::script("alert.js") ?>
-<?php B_Helper::style("default.css") ?>
+<?php B_Helper::script("dialog.js") ?>
+<?php B_Helper::style("application.css") ?>
 <?php B_Helper::style("dashboard.css") ?>
 <?php $this->renderTemplate('js', false) ?>
 <?php $this->renderTemplate('css', false) ?>

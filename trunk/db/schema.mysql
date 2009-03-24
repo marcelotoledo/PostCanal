@@ -1,9 +1,11 @@
 -- drop --
 
 DROP TABLE IF EXISTS user_blog_feed CASCADE;
+DROP TABLE IF EXISTS user_blog_queue_config CASCADE;
+DROP TABLE IF EXISTS user_blog_queue_item CASCADE;
 DROP TABLE IF EXISTS user_blog CASCADE;
 DROP TABLE IF EXISTS user_profile CASCADE;
-DROP TABLE IF EXISTS aggregator_item CASCADE;
+DROP TABLE IF EXISTS aggregator_feed_item CASCADE;
 DROP TABLE IF EXISTS aggregator_feed CASCADE;
 DROP TABLE IF EXISTS blog_type_configuration CASCADE;
 DROP TABLE IF EXISTS blog_type_discovery CASCADE;
@@ -111,7 +113,6 @@ CREATE TABLE aggregator_feed
 (
     aggregator_feed_id INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
     type ENUM('rss','atom') NOT NULL DEFAULT 'rss',
-    hash CHAR(8) NOT NULL,
     title VARCHAR(100) NOT NULL,
     link VARCHAR(200) NOT NULL,
     description TEXT NOT NULL DEFAULT '',
@@ -126,7 +127,6 @@ CREATE TABLE aggregator_feed_item
 (
     aggregator_feed_item_id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
     aggregator_feed_id INTEGER UNSIGNED NOT NULL, 
-    hash CHAR(8) NOT NULL,
     title TEXT NOT NULL, 
     link TEXT NOT NULL,
     description TEXT NOT NULL DEFAULT '',
@@ -188,15 +188,17 @@ CREATE TABLE user_blog
         REFERENCES blog_type (blog_type_id) ON DELETE RESTRICT
 ) ENGINE=InnoDB DEFAULT CHARSET='utf8';
 
-CREATE INDEX ub_id_hash_idx ON user_blog (user_profile_id, hash);
+CREATE INDEX ub_profile_id_hash_idx ON user_blog (user_profile_id, hash);
 
 CREATE TABLE user_blog_feed
 (
     user_blog_feed_id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
     user_blog_id INTEGER UNSIGNED NOT NULL,
     aggregator_feed_id INTEGER UNSIGNED NOT NULL,
+    hash CHAR(8) NOT NULL,
     title VARCHAR(100) NOT NULL,
     description TEXT NOT NULL DEFAULT '',
+    ordering SMALLINT UNSIGNED NOT NULL DEFAULT 1,
     created_at TIMESTAMP NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
     enabled TINYINT(1) NOT NULL DEFAULT 1,
@@ -207,19 +209,34 @@ CREATE TABLE user_blog_feed
         REFERENCES aggregator_feed (aggregator_feed_id) ON DELETE RESTRICT
 ) ENGINE=InnoDB DEFAULT CHARSET='utf8';
 
-CREATE INDEX bf_idx ON user_blog (user_blog_id, aggregator_feed_id);
+CREATE INDEX bf_bid_ord_enabled_idx ON user_blog_feed (user_blog_id, ordering, enabled);
+CREATE INDEX bf_bid_hash_idx ON user_blog_feed (user_blog_id, hash);
 
-CREATE TABLE user_blog_queue
+CREATE TABLE user_blog_queue_config
 (
-    user_blog_queue_id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+    user_blog_queue_config_id INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
     user_blog_id INTEGER UNSIGNED NOT NULL,
+    -- TODO --
+    PRIMARY KEY (user_blog_queue_config_id),
+    CONSTRAINT bc_user_blog_fk FOREIGN KEY (user_blog_id) 
+        REFERENCES user_blog (user_blog_id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET='utf8';
+
+CREATE TABLE user_blog_queue_item
+(
+    user_blog_queue_item_id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+    aggregator_feed_item_id BIGINT UNSIGNED NOT NULL,
+    user_blog_id INTEGER UNSIGNED NOT NULL,
+    hash CHAR(8) NOT NULL,
     title TEXT NOT NULL, 
     description TEXT NOT NULL DEFAULT '',
     created_at TIMESTAMP NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
-    PRIMARY KEY (user_blog_feed_id),
+    PRIMARY KEY (user_blog_queue_item_id),
+    CONSTRAINT bq_feed_item_fk FOREIGN KEY (aggregator_feed_item_id) 
+        REFERENCES aggregator_feed_item (aggregator_feed_item_id) ON DELETE RESTRICT,
     CONSTRAINT bq_user_blog_fk FOREIGN KEY (user_blog_id) 
-        REFERENCES user_blog (user_blog_id) ON DELETE CASCADE,
-    CONSTRAINT bq_aggregator_feed_fk FOREIGN KEY (aggregator_feed_id) 
-        REFERENCES aggregator_feed (aggregator_feed_id) ON DELETE RESTRICT
+        REFERENCES user_blog (user_blog_id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET='utf8';
+
+CREATE INDEX bq_blog_id_hash_idx ON user_blog_queue_item (user_blog_id, hash);

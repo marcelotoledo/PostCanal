@@ -4,11 +4,11 @@ $(document).ready(function()
     
     var ar = false;
 
-    /* dashboard containers */
+    /* CONTAINERS */
 
     <?php if(count($this->blogs) == 0) : ?>
 
-    $("#noblogmsg").dialog({ bgiframe: true, modal: true });
+    $.b_dialog({ selector: "#noblogmsg", modal: true });
 
     <?php else : ?>
 
@@ -44,8 +44,6 @@ $(document).ready(function()
         maxcontent(_c);
 
         _t = _c.offset().top + _c.position().top + _c.height();
-
-        // alert("offset: " + _c.offset().top + "\n" + "position: " + _c.position().top + "\n" + "scroll: " + _c.scrollTop() + "\n" + "height: " + _c.height() + "\n" + "inner: " + _c.innerHeight() + "\n" + "outer: " + _c.outerHeight());
 
         _c = $("#queuecontainer");
         _c.width(_w);
@@ -98,7 +96,7 @@ $(document).ready(function()
         alert("<?php echo $this->translation->server_error ?>");
     }
 
-    /* load blog data */
+    /* load queue */
 
     function loadqueue(blog)
     {
@@ -123,6 +121,8 @@ $(document).ready(function()
             error: function () { err(); } 
         });
     }
+
+    /* load feeds */
 
     function loadfeeds(blog)
     {
@@ -152,6 +152,8 @@ $(document).ready(function()
         });
     }
 
+    /* load items */
+
     function loaditems(blog, feed)
     {
         $.ajax
@@ -176,6 +178,9 @@ $(document).ready(function()
         });
     }
 
+    /* set blog 
+     * loadqueue > loadfeeds > loaditems */
+
     function setblog(blog)
     {
         loadqueue(blog);
@@ -187,5 +192,11 @@ $(document).ready(function()
     {
         blog = $("select[name='bloglst'] > option:selected").val();
         setblog(blog);
+    });
+
+    $("#feedaddlnk").click(function()
+    {
+        $.b_dialog({ selector: "#feedaddform" });
+        $("input[name='feedaddurl']").focus();
     });
 });
