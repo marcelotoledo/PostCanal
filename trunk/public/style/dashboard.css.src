@@ -1,0 +1,67 @@
+/* layout */
+
+html, body
+{
+    margin: 0;
+    border: 0;
+}
+body
+{
+    color: black;
+    background: ghostwhite;
+}
+div, form
+{
+    margin: 0;
+}
+
+/* topbar */
+
+#topbar
+{
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 40px;
+    background-color: moccasin;
+    border-bottom: 1px solid saddlebrown;
+}
+#topleftbar
+{
+    float: left;
+    height: 40px;
+    line-height: 40px;
+    vertical-align: middle;
+    margin-left: 15px;
+}
+#topleftbar span
+{
+    padding-right: 10px;
+}
+#topleftbar span#bloglstbar
+{
+    padding-left: 50px;
+}
+#toprightbar
+{
+    float: right;
+    height: 40px;
+    line-height: 40px;
+    vertical-align: middle;
+    margin-right: 15px;
+}
+#toprightbar span
+{
+    padding-left: 10px;
+}
+
+/* main */
+
+#main
+{
+    position: absolute;
+    top: 41px;
+    left: 0;
+    width: 100%;
+}
