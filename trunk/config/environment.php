@@ -40,8 +40,8 @@ $registry->response->headers = array
 (
     B_Response::STATUS_OK => array
     (
+        'Cache-Control' => "no-store, no-cache, must-revalidate",
         'Last-Modified' => gmdate("D, d M Y H:i:s") . " GMT",
-        'Cache-Control' => "no-store, no-cache, must-revalidate"
     )
 );
 

@@ -8,7 +8,7 @@
 <!--
 <script type="text/javascript" src="/jquery/jquery.bgiframe.min.js"></script>
 <script type="text/javascript" src="/jquery/ui/jquery-ui-1.7.custom.min.js"></script>
-<style type="text/css" media="screen">@import url("/jquery/ui/css/custom-theme/jquery-ui-1.7.custom.css");</style>
+<link rel="StyleSheet" href="/jquery/ui/css/custom-theme/jquery-ui-1.7.custom.css" type="text/css" media="screen">
 -->
 <?#php endif ?>
 <?php B_Helper::script("spinner.js") ?>

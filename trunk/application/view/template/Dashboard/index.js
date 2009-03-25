@@ -99,7 +99,7 @@ $(document).ready(function()
     {
         $.ajax
         ({
-            type: "POST",
+            type: "GET",
             url: "<?php B_Helper::url('queue', 'list') ?>",
             dataType: "xml",
             data: { blog: blog },
@@ -125,7 +125,7 @@ $(document).ready(function()
     {
         $.ajax
         ({
-            type: "POST",
+            type: "GET",
             url: "<?php B_Helper::url('feed', 'list') ?>",
             dataType: "xml",
             data: { blog: blog },
@@ -155,13 +155,39 @@ $(document).ready(function()
     {
         $.ajax
         ({
-            type: "POST",
+            type: "GET",
             url: "<?php B_Helper::url('feed', 'item') ?>",
             dataType: "xml",
             data: { blog: blog, feed: feed},
             beforeSend: function()
             {
                 /* void */
+            },
+            complete: function()
+            {
+                sp(false);
+            },
+            success: function (xml) 
+            { 
+                d = $(xml).find('data');
+            }, 
+            error: function () { err(); } 
+        });
+    }
+
+    /* feed add */
+
+    function feedcheck()
+    {
+        $.ajax
+        ({
+            type: "POST",
+            url: "<?php B_Helper::url('feed', 'check') ?>",
+            dataType: "xml",
+            data: { url: $("input[name='feedaddurl']").val() },
+            beforeSend: function()
+            {
+                sp(true);
             },
             complete: function()
             {

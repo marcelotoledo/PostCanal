@@ -39,6 +39,7 @@
     width: 250px;
     height: 500px;
     border-right: 1px solid silver;
+    background-color: snow;
 }
 #itemscontainer
 {
@@ -47,6 +48,7 @@
     width: 500px;
     height: 225px;
     border-bottom: 1px solid gainsboro;
+    background-color: snow;
 }
 #queuecontainer
 {
@@ -54,6 +56,7 @@
     left: 255px;
     width: 500px;
     height: 250px;
+    background-color: snow;
 }
 
 /* dialogs */

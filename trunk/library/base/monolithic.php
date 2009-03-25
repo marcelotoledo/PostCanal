@@ -371,10 +371,15 @@ class B_Helper
      */
     public static function style($name, $type="text/css", $media="screen")
     {
+        /*
         echo "<style type=\"" . $type . "\" media=\"" . $media . "\">";
         echo "@import url(\"";
         self::style_url($name);
         echo "\");</style>\n";
+        */
+        echo "<link rel=\"stylesheet\" href=\"";
+        self::style_url($name);
+        echo "\" type=\"" . $type . "\" media=\"" . $media . "\">\n";
     }
 
     /**
