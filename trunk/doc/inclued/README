@@ -1,0 +1,8 @@
+See
+
+http://talks.php.net/show/froscon08/14
+
+Usage
+
+php /usr/share/php/gengraph.php -i /tmp/inclued.*
+dot -Tpng -o inclued.png inclued.out.dot

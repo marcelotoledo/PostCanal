@@ -10,7 +10,8 @@
 
 /* autoloader setup */
 
-require "../library/base/Loader.php";
+##require "../library/base/Loader.php";
+require "../library/base/monolithic.php";
 B_Loader::register();
 
 

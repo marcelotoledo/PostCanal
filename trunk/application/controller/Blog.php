@@ -193,6 +193,8 @@ class C_Blog extends C_Abstract
             $type = BlogType::discovery($url, $client->getHeaders(), $client->getBody());
         }
 
+        /* configure blog */
+
         if(is_object($type))
         {
             $this->session->c_blog_type = $type->blog_type_id;
@@ -205,7 +207,7 @@ class C_Blog extends C_Abstract
 
             /* get manager url */
 
-            if(array_key_exists(($k = BlogType::CONFIG_MANAGER_URL), $config))
+            if(array_key_exists(($k = BlogType::C_MANAGER_URL), $config))
             {
                 $manager_url = ($url . $config[$k]);
 

@@ -37,24 +37,23 @@ h2
 
 /* spinner */
 
-.b-spinner-div
+.b-spinner
 {
+    z-index: 2201;
     position: absolute;
-    top: 0;
-    left: 0;
+    padding: 10px;
     background: gold;
 }
-
-.b-spinner-div table
+.b-spinner-image
 {
-    padding: 10px;
+    float: left;
+    padding: 5px;
 }
-
-.b-spinner-div-inner
+.b-spinner-message
 {
-    display: table-cell;
-    vertical-align: middle;
-    text-align: left;
+    float: right;
+    padding: 5px;
+    line-height: 24px;
 }
 
 /* dialog */

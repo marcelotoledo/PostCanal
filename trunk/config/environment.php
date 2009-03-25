@@ -21,6 +21,7 @@ define('APPLICATION_PATH', BASE_PATH . "/application");
 define('LIBRARY_PATH', BASE_PATH . "/library");
 
 set_include_path (LIBRARY_PATH . PATH_SEPARATOR . get_include_path());
+##set_include_path (get_include_path() . PATH_SEPARATOR . LIBRARY_PATH);
 
 
 /* REGISTRY */

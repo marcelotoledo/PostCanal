@@ -12,23 +12,24 @@ class BlogType extends B_Model
     /**
      * Discovery constants
      */
-    const DISCOVERY_URL_REPLACE  = "url_replace";
-    const DISCOVERY_URL_MATCH    = "url_match";
-    //    DISCOVERY_HEADER_REPLACE: is not necessary because headers have a simple format
-    const DISCOVERY_HEADER_MATCH = "header_match";
-    const DISCOVERY_HTML_REPLACE = "html_replace";
-    const DISCOVERY_HTML_MATCH   = "html_match";
+    const D_URL_REPLACE    = "url_replace";
+    const D_URL_MATCH      = "url_match";
+    const D_HEADER_REPLACE = "header_replace"; // not implemented
+    const D_HEADER_MATCH   = "header_match";
+    const D_HTML_REPLACE   = "html_replace";
+    const D_HTML_MATCH     = "html_match";
+    const D_HTML_UNMATCH   = "html_unmatch"; // TODO
 
     /**
      * Configuration constants
      */
-    const CONFIG_MANAGER_URL            = "manager_url";
-    const CONFIG_MANAGER_ACTION_URL     = "manager_action_url";
-    const CONFIG_MANAGER_INPUT_USERNAME = "manager_input_username";
-    const CONFIG_MANAGER_INPUT_PASSWORD = "manager_input_password";
+    const C_MANAGER_URL            = "manager_url";
+    const C_MANAGER_ACTION_URL     = "manager_action_url";
+    const C_MANAGER_INPUT_USERNAME = "manager_input_username";
+    const C_MANAGER_INPUT_PASSWORD = "manager_input_password";
 
-    const CONFIG_MANAGER_HTML_REPLACE   = "manager_html_replace";
-    const CONFIG_MANAGER_HTML_MATCH     = "manager_html_match";
+    const C_MANAGER_HTML_REPLACE   = "manager_html_replace";
+    const C_MANAGER_HTML_MATCH     = "manager_html_match";
 
 
     /**
@@ -273,8 +274,8 @@ class BlogType extends B_Model
     {
         L_Utility::fixURL($url);
 
-        $r = self::discoveryRules(self::DISCOVERY_URL_REPLACE, $types);
-        $m = self::discoveryRules(self::DISCOVERY_URL_MATCH, $types);
+        $r = self::discoveryRules(self::D_URL_REPLACE, $types);
+        $m = self::discoveryRules(self::D_URL_MATCH, $types);
 
         $k = array();
         $k = array_merge($k, array_keys($r));
@@ -310,7 +311,7 @@ class BlogType extends B_Model
      */
     protected static function discoveryByHeaders($headers, $types=array())
     {
-        $m = self::discoveryRules(self::DISCOVERY_HEADER_MATCH, $types);
+        $m = self::discoveryRules(self::D_HEADER_MATCH, $types);
         $a = array();
 
         foreach($headers as $k => $v)
@@ -345,8 +346,8 @@ class BlogType extends B_Model
     {
         L_Utility::compactHTML($html);
 
-        $r = self::discoveryRules(self::DISCOVERY_HTML_REPLACE, $types);
-        $m = self::discoveryRules(self::DISCOVERY_HTML_MATCH, $types);
+        $r = self::discoveryRules(self::D_HTML_REPLACE, $types);
+        $m = self::discoveryRules(self::D_HTML_MATCH, $types);
 
         $k = array();
         $k = array_merge($k, array_keys($r));
@@ -421,10 +422,10 @@ class BlogType extends B_Model
         $r = array();
         $m = array();
 
-        $k = self::CONFIG_MANAGER_HTML_REPLACE;
+        $k = self::C_MANAGER_HTML_REPLACE;
         if(array_key_exists($k, $config)) $r = unserialize($config[$k]);
 
-        $k = self::CONFIG_MANAGER_HTML_MATCH;
+        $k = self::C_MANAGER_HTML_MATCH;
         if(array_key_exists($k, $config)) $m = unserialize($config[$k]);
 
         $t = count($m);

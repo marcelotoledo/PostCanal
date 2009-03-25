@@ -4,6 +4,13 @@ $(document).ready(function()
 
     var ar = false;
 
+    /* spinner */
+
+    $.b_spinner
+    ({
+        image: "<?php B_Helper::img_src('spinner.gif') ?>",
+        message: "... <?php echo $this->translation->application_loading ?>"
+    });
 
     /* SWITCHES */
 
@@ -11,19 +18,7 @@ $(document).ready(function()
 
     function sp(b)
     {
-        if((ar = b) == true)
-        {
-            $.b_spinner_start
-            ({
-                height: 32, width: 32,
-                image: "<?php B_Helper::img_src('spinner.gif') ?>",
-                message: "... <?php echo $this->translation->application_loading ?>"
-            });
-        }
-        else
-        {
-            $.b_spinner_stop();
-        }
+        ((ar = b) == true) ? $.b_spinner_start() : $.b_spinner_stop();
     }
 
     /* ACTIONS */

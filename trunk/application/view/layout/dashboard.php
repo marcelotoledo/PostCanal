@@ -4,11 +4,13 @@
 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
 <title>Blotomate</title>
 <script type="text/javascript" src="/jquery/jquery-1.3.2.min.js"></script>
-<?php if($this->request->getAction() == "index") : ?>
+<?#php if($this->request->getAction() == "index") : ?>
+<!--
 <script type="text/javascript" src="/jquery/jquery.bgiframe.min.js"></script>
 <script type="text/javascript" src="/jquery/ui/jquery-ui-1.7.custom.min.js"></script>
 <style type="text/css" media="screen">@import url("/jquery/ui/css/custom-theme/jquery-ui-1.7.custom.css");</style>
-<?php endif ?>
+-->
+<?#php endif ?>
 <?php B_Helper::script("spinner.js") ?>
 <?php B_Helper::script("dialog.js") ?>
 <?php B_Helper::style("application.css") ?>
