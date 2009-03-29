@@ -183,14 +183,14 @@ class C_Blog extends C_Abstract
 
         B_Log::write($_m, E_USER_NOTICE, $_d);
 
-        /* discovery blog type */
+        /* discover blog type */
 
         $type = null;
 
         if($client->getStatus() == L_HTTPClient::STATUS_OK)
         {
             $this->session->c_url_accepted = true;
-            $type = BlogType::discovery($url, $client->getHeaders(), $client->getBody());
+            $type = BlogType::discover($url, $client->getHeaders(), $client->getBody());
         }
 
         /* configure blog */

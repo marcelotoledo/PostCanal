@@ -47,13 +47,22 @@ class C_Feed extends B_Controller
     }
 
     /**
-     * Check feed URL
+     * Discover feeds from URL
      *
      * @return void
      */
-    public function A_check()
+    public function A_discover()
     {
         $this->response->setXML(true);
+
+        $token = $this->registry->application->webservice->token;
+        $url = $this->request->url;
+
+        $client = new Zend_XmlRpc_Client(B_Request::url('webservice','backend'));
+        $args = array('token' => $token, 'url' => $url);
+        $result = $client->call('discover_feed', array($args));
+
+        $this->view->discovery = $result;
     }
 
     /**

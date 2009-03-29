@@ -10,6 +10,13 @@
             <timezone>UTC</timezone>
         </default>
     </database>
+    <session>
+        <name>blotomate</name>
+        <expiration>43200</expiration>
+    </session>
+    <translation>
+        <culture>us_EN</culture>
+    </translation>
     <application>
         <mailer>
             <default>
@@ -45,5 +52,12 @@
             </default>
             -->
         </mailer>
+        <httpClient>
+            <maxHeaders>30</maxHeaders>
+            <maxBodyLenght>5242880</maxBodyLenght>
+        </httpClient>
+        <webservice>
+            <token>c4z5mYW1pYWSJe2BzcIq1wv6n95o1E2kwuD1B0Wuo3XbHx82Vk</token>
+        </webservice>
     </application>
 </environment>

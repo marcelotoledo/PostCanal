@@ -11,8 +11,6 @@ class C_Index extends C_Abstract
 {
     /**
      * Default action
-     *
-     * @return void
      */
     public function A_index()
     {

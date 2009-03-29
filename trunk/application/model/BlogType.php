@@ -10,7 +10,7 @@
 class BlogType extends B_Model
 {
     /**
-     * Discovery constants
+     * Blog discovery constants
      */
     const D_URL_REPLACE    = "url_replace";
     const D_URL_MATCH      = "url_match";
@@ -227,21 +227,21 @@ class BlogType extends B_Model
     /* Blog TYPE DISCOVERY */
 
     /**
-     * Discovery Blog type
+     * Discover Blog type
      *
      * @param   string          $url
      * @param   string          $headers
      * @param   string          $html
      * @return  BlogType|null
      */
-    public static function discovery(&$url, $headers, &$html)
+    public static function discover(&$url, $headers, &$html)
     {
         $blog_type = null;
 
         $types = array();
-        $types = self::discoveryByURL($url, $types);
-        $types = self::discoveryByHeaders($headers, $types);
-        $types = self::discoveryByHTML($html, $types);
+        $types = self::discoverByURL($url, $types);
+        $types = self::discoverByHeaders($headers, $types);
+        $types = self::discoverByHTML($html, $types);
 
         $type = current($types);
 
@@ -264,13 +264,13 @@ class BlogType extends B_Model
     }
 
     /**
-     * Discovery by URL
+     * Discover by URL
      * 
      * @param   string      $url
      * @param   array       $types      Blog type IDs array
      * @return  array
      */
-    protected static function discoveryByURL(&$url, $types=array())
+    protected static function discoverByURL(&$url, $types=array())
     {
         L_Utility::fixURL($url);
 
@@ -303,13 +303,13 @@ class BlogType extends B_Model
     }
 
     /**
-     * Discovery by headers
+     * Discover by headers
      * 
      * @param   array       $headers
      * @param   array       $types      Blog type IDs array
      * @return  array
      */
-    protected static function discoveryByHeaders($headers, $types=array())
+    protected static function discoverByHeaders($headers, $types=array())
     {
         $m = self::discoveryRules(self::D_HEADER_MATCH, $types);
         $a = array();
@@ -336,13 +336,13 @@ class BlogType extends B_Model
     }
 
     /**
-     * Discovery by HTML
+     * Discover by HTML
      * 
      * @param   string      $html
      * @param   array       $types      Blog type IDs array
      * @return  array
      */
-    protected static function discoveryByHTML(&$html, $types=array())
+    protected static function discoverByHTML(&$html, $types=array())
     {
         L_Utility::compactHTML($html);
 
