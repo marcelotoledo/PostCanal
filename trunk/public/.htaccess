@@ -7,6 +7,6 @@ Options -Indexes
     RewriteCond %{REQUEST_FILENAME} -f [OR]
     RewriteCond %{REQUEST_FILENAME} -d
     RewriteRule ^.*$ - [NC,L]
-    RewriteRule ^webservice/backend$ cgi-bin/ws/backend.py [NC,L] 
+    RewriteRule ^webservice/(.+)$ cgi-bin/ws/$1.py [NC,L] 
     RewriteRule ^.*$ index.php [NC,L]
 </IfModule>    
