@@ -4,7 +4,7 @@
  * Application HTTP Client
  * 
  * @category    Blotomate
- * @package     library
+ * @package     Library
  * @author      Rafael Castilho <rafael@castilho.biz>
  */
 class L_HTTPClient

@@ -45,4 +45,24 @@ class C_Feed extends B_Controller
     {
         $this->response->setXML(true);
     }
+
+    /**
+     * Check feed URL
+     *
+     * @return void
+     */
+    public function A_check()
+    {
+        $this->response->setXML(true);
+    }
+
+    /**
+     * Add feed
+     *
+     * @return void
+     */
+    public function A_add()
+    {
+        $this->response->setXML(true);
+    }
 }
