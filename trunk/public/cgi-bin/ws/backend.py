@@ -1,8 +1,12 @@
 #!/usr/bin/env python
 
-import web
+from SimpleXMLRPCServer import CGIXMLRPCRequestHandler
 
 
-if __name__ == '__main__':
-    print "Content-Type: text/xml; charset=utf-8\n"
-    print "<data>void</data>"
+class BackendWebService:
+    def test(self, a, b):
+        return a + b
+
+handler = CGIXMLRPCRequestHandler(allow_none=False, encoding=False)
+handler.register_instance(BackendWebService())
+handler.handle_request()
