@@ -14,9 +14,9 @@ from blotomate import BlotomateConfig
 config = BlotomateConfig(BLOTOMATE_CONFIG_PATH)
 
 import webservice
-from webservice import BackendWebService
+from webservice import WebService
 
-ws = BackendWebService()
+ws = WebService()
 ws.token = config.get(['application','webservice','token'])
 
 

@@ -58,33 +58,8 @@ class C_Feed extends B_Controller
         $token = $this->registry->application->webservice->token;
         $url = $this->request->url;
 
-        $client = new Zend_XmlRpc_Client(B_Request::url('webservice','backend'));
-        $method = 'discover_feed';
-        $args = array('token' => $token, 'url' => $url);
-        $results = "";
-
-        try
-        {
-            $results = $client->call($method, array($args));
-        }
-        catch(Exception $e)
-        {
-            $_m = "failed to call webservice method (" . $method . ") " .
-                  "using token (" . $token . ") " .
-                  "and url (" . $url . ");\n" . 
-                  "exception (" . $e->getMessage() . ")";
-            $_d = array('method' => __METHOD__);
-            B_Log::write($_m, E_USER_WARNING, $_d);
-        }
-
-        $discovery = array();
-
-        foreach(explode(';', $results) as $i => $r)
-        {
-            if(strlen($r) > 0) $discovery['feed_' . $i] = $r;
-        }
-
-        $this->view->discovery = $discovery;
+        $client = new L_WebService();
+        $this->view->results = $client->discover_feeds(array('url' => $url));
     }
 
     /**

@@ -58,6 +58,12 @@
         </httpClient>
         <webservice>
             <token>c4z5mYW1pYWSJe2BzcIq1wv6n95o1E2kwuD1B0Wuo3XbHx82Vk</token>
+            <backend>
+                <url>/webservice/backend</url>
+            </backend>
+            <frontend>
+                <url>/webservice/frontend</url>
+            </frontend>
         </webservice>
     </application>
 </environment>

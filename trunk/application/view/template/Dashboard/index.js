@@ -93,9 +93,9 @@ $(document).ready(function()
         alert("<?php echo $this->translation->server_error ?>");
     }
 
-    /* load queue */
+    /* load queue list */
 
-    function loadqueue(blog)
+    function queue_list(blog)
     {
         $.ajax
         ({
@@ -109,7 +109,7 @@ $(document).ready(function()
             },
             complete: function()
             {
-                loadfeeds(blog);
+                feed_list(blog);
             },
             success: function (xml) 
             { 
@@ -119,9 +119,9 @@ $(document).ready(function()
         });
     }
 
-    /* load feeds */
+    /* load feed list */
 
-    function loadfeeds(blog)
+    function feed_list(blog)
     {
         $.ajax
         ({
@@ -139,7 +139,7 @@ $(document).ready(function()
 
                 feed = ''; /* TODO */
 
-                loaditems(blog, feed);
+                feed_item(blog, feed);
             },
             success: function (xml) 
             { 
@@ -149,9 +149,9 @@ $(document).ready(function()
         });
     }
 
-    /* load items */
+    /* load feed items */
 
-    function loaditems(blog, feed)
+    function feed_item(blog, feed)
     {
         $.ajax
         ({
@@ -177,7 +177,7 @@ $(document).ready(function()
 
     /* feed add */
 
-    function feeddiscover()
+    function feed_discover()
     {
         $.ajax
         ({
@@ -196,7 +196,7 @@ $(document).ready(function()
             success: function (xml) 
             { 
                 d = $(xml).find('data');
-                d.find('discovery').each(function()
+                d.find('results').each(function()
                 {
                     $(this).each(function()
                     {
@@ -209,11 +209,11 @@ $(document).ready(function()
     }
 
     /* set blog 
-     * loadqueue > loadfeeds > loaditems */
+     * queue_list > feed_list > feed_item */
 
     function setblog(blog)
     {
-        loadqueue(blog);
+        queue_list(blog);
     }
 
     /* TRIGGERS */
@@ -234,6 +234,6 @@ $(document).ready(function()
     $("input[name='feedaddsubmit']").click(function()
     {
         url = $("input[name='feedaddurl']").val();
-        feeddiscover(url)
+        feed_discover(url)
     });
 });
