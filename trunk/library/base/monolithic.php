@@ -2660,15 +2660,31 @@ class B_View
         $xml = new XmlWriter();
         $xml->openMemory();
         $xml->startElement("data");
-
-        foreach ($this->data as $k => $v) 
-        {
-            if(is_bool($v)) $v = ($v == true) ? "true" : "false";
-            $xml->writeElement($k, $v);
-        }
-
+        self::__xml_recursive($this->data, $xml);
         $xml->endElement();
         return $xml->outputMemory();
+    }
+
+    /**
+     * Deep recursion in array to write xml
+     * Auxiliar method for __toString
+     */
+    private static function __xml_recursive($a, &$xml)
+    {
+        foreach($a as $k => $v)
+        {
+            if(is_array($v))
+            {
+                $xml->startElement($k);
+                self::__xml_recursive($v, $xml);
+                $xml->endElement();
+            }
+            else
+            {
+                if(is_bool($v)) $v = ($v == true) ? "true" : "false";
+                $xml->writeElement($k, $v);
+            }
+        }
     }
 
     /**

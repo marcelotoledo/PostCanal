@@ -177,12 +177,12 @@ $(document).ready(function()
 
     /* feed add */
 
-    function feedcheck()
+    function feeddiscover()
     {
         $.ajax
         ({
             type: "POST",
-            url: "<?php B_Helper::url('feed', 'check') ?>",
+            url: "<?php B_Helper::url('feed', 'discover') ?>",
             dataType: "xml",
             data: { url: $("input[name='feedaddurl']").val() },
             beforeSend: function()
@@ -196,6 +196,13 @@ $(document).ready(function()
             success: function (xml) 
             { 
                 d = $(xml).find('data');
+                d.find('discovery').each(function()
+                {
+                    $(this).each(function()
+                    {
+                        alert($(this).text()); // ... TODO
+                    });
+                });
             }, 
             error: function () { err(); } 
         });
@@ -222,5 +229,11 @@ $(document).ready(function()
         $.b_dialog({ selector: "#feedaddform" });
         $.b_dialog_show();
         $("input[name='feedaddurl']").focus();
+    });
+
+    $("input[name='feedaddsubmit']").click(function()
+    {
+        url = $("input[name='feedaddurl']").val();
+        feeddiscover(url)
     });
 });
