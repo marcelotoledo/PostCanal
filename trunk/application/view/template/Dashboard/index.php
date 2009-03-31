@@ -38,10 +38,15 @@ queue container
 <form>
     <h1><?php echo $this->translation->feed_add_form_title ?></h1>
     <table>
-        <tr>
+        <tr id="feedaddurlrow">
         <th><?php echo $this->translation->feed_add_url ?>:</th>
         <td><input type="text" name="feedaddurl" value=""></td>
         </tr>
+        <tr id="feedaddmessage" style="display:none">
+        <th>&nbsp;</th>
+        <td class="message"></td>
+        </tr>
+        <tr id="feedaddoptions"><td></td></tr>
         <tr>
         <th>&nbsp;</th>
         <td class="buttons">

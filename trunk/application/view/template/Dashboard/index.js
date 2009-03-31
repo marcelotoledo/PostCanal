@@ -177,6 +177,36 @@ $(document).ready(function()
 
     /* feed add */
 
+    function feed_discover_msg(m)
+    {
+        _f  = $("#feedaddmessage");
+        _td = $("#feedaddmessage td");
+
+        if(m=="")
+        {
+            _td.html("");
+            _f.hide();
+        }
+        else
+        {
+            _td.html(m);
+            _f.show();
+        }
+    }
+
+    function feed_show_options(l)
+    {
+        $("#feedaddurlrow").hide();
+
+        l.each(function()
+        {
+            i = $(this).text();
+            $("#feedaddoptions > td").append("<input name=\"feedaddoptions[]\" type=\"radio\" value=\"" + i + "\">" + i + "<br/>");
+        });
+
+        $("input[name^=feedaddoptions]:first").attr('checked', 'checked');
+    }
+
     function feed_discover()
     {
         $.ajax
@@ -188,6 +218,7 @@ $(document).ready(function()
             beforeSend: function()
             {
                 sp(true);
+                feed_discover_msg("");
             },
             complete: function()
             {
@@ -196,13 +227,19 @@ $(document).ready(function()
             success: function (xml) 
             { 
                 d = $(xml).find('data');
-                d.find('results').each(function()
+                r = d.find('results')
+
+                if(r.length > 0)
                 {
-                    $(this).each(function()
+                    r.each(function()
                     {
-                        alert($(this).text()); // ... TODO
+                        feed_show_options($(this));
                     });
-                });
+                }
+                else
+                {
+                    feed_discover_msg("<?php echo $this->translation->feed_not_found ?>");
+                }
             }, 
             error: function () { err(); } 
         });
@@ -229,6 +266,7 @@ $(document).ready(function()
     {
         $.b_dialog({ selector: "#feedaddform" });
         $.b_dialog_show();
+        $("#feedaddurlrow").show();
         $("input[name='feedaddurl']").focus();
     });
 

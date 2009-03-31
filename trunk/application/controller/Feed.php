@@ -59,7 +59,9 @@ class C_Feed extends B_Controller
         $url = $this->request->url;
 
         $client = new L_WebService();
-        $this->view->results = $client->discover_feeds(array('url' => $url));
+        $results = $client->discover_feeds(array('url' => $url));
+
+        if(count($results) > 0) $this->view->results = $results;
     }
 
     /**
