@@ -15,8 +15,8 @@ error_reporting (E_ALL);
 /* PATH */
 
 define('BASE_PATH', "/var/www/blotomate");
-##define('BASE_URL', "http://127.0.0.1:8001");
-define('BASE_URL', "http://192.168.1.100:8080");
+define('BASE_URL', "http://127.0.0.1:8080");
+##define('BASE_URL', "http://192.168.1.100:8080");
 define('APPLICATION_PATH', BASE_PATH . "/application");
 define('LIBRARY_PATH', BASE_PATH . "/library");
 

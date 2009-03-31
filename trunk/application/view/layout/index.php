@@ -3,7 +3,7 @@
 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
 <title>Blotomate</title>
 <script type="text/javascript" src="/jquery/jquery-1.3.2.min.js"></script>
-<?php B_Helper::script("spinner.js") ?>
+<?php B_Helper::script("application.js") ?>
 <?php B_Helper::style("application.css") ?>
 <?php B_Helper::style("index.css") ?>
 <?php $this->renderTemplate('css', false) ?>

@@ -208,8 +208,7 @@ $(document).ready(function()
         });
     }
 
-    /* set blog 
-     * queue_list > feed_list > feed_item */
+    /* set blog (run queue_list > feed_list > feed_item) */
 
     function setblog(blog)
     {
@@ -217,6 +216,8 @@ $(document).ready(function()
     }
 
     /* TRIGGERS */
+
+    /* disable form submit */
 
     $("select[name='bloglst']").change(function()
     {
@@ -234,6 +235,6 @@ $(document).ready(function()
     $("input[name='feedaddsubmit']").click(function()
     {
         url = $("input[name='feedaddurl']").val();
-        feed_discover(url)
+        feed_discover(url);
     });
 });
