@@ -12,6 +12,7 @@ INSERT INTO base_translation VALUES (NULL, "application", "us_EN", "application_
 INSERT INTO base_translation VALUES (NULL, "application", "us_EN", "application_click_here", "click here");
 INSERT INTO base_translation VALUES (NULL, "application", "us_EN", "application_close", "close");
 INSERT INTO base_translation VALUES (NULL, "application", "us_EN", "application_exit", "exit");
+INSERT INTO base_translation VALUES (NULL, "application", "us_EN", "application_add", "add");
 INSERT INTO base_translation VALUES (NULL, "application", "us_EN", "application_cancel", "cancel");
 INSERT INTO base_translation VALUES (NULL, "application", "us_EN", "application_update", "update");
 INSERT INTO base_translation VALUES (NULL, "application", "us_EN", "application_email", "e-mail");
@@ -51,6 +52,18 @@ INSERT INTO base_translation VALUES (NULL, "profile/edit", "us_EN", "password_co
 INSERT INTO base_translation VALUES (NULL, "profile/edit", "us_EN", "update_email", "update e-mail");
 INSERT INTO base_translation VALUES (NULL, "profile/edit", "us_EN", "form_unfilled", "fill the form correctly");
 INSERT INTO base_translation VALUES (NULL, "profile/edit", "us_EN", "form_unconfirmed", "password and confirmation do not match");
+INSERT INTO base_translation VALUES (NULL, "profile/edit", "us_EN", "edit_saved", "profile updated successfully");
+INSERT INTO base_translation VALUES (NULL, "blog/add", "us_EN", "blog_add", "Blog add");
+INSERT INTO base_translation VALUES (NULL, "blog/add", "us_EN", "blog_name", "Name");
+INSERT INTO base_translation VALUES (NULL, "blog/add", "us_EN", "blog_url", "URL");
+INSERT INTO base_translation VALUES (NULL, "blog/add", "us_EN", "blog_check_url", "check");
+INSERT INTO base_translation VALUES (NULL, "blog/add", "us_EN", "blog_change_url", "change");
+INSERT INTO base_translation VALUES (NULL, "blog/add", "us_EN", "blog_type", "Blog type");
+INSERT INTO base_translation VALUES (NULL, "blog/add", "us_EN", "blog_manager_url", "Blog manager URL");
+INSERT INTO base_translation VALUES (NULL, "blog/add", "us_EN", "blog_manager_check_url", "check");
+INSERT INTO base_translation VALUES (NULL, "blog/add", "us_EN", "blog_username", "Username");
+INSERT INTO base_translation VALUES (NULL, "blog/add", "us_EN", "blog_password", "Password");
+INSERT INTO base_translation VALUES (NULL, "blog/add", "us_EN", "blog_login_check", "check");
 INSERT INTO base_translation VALUES (NULL, "dashboard/index", "us_EN", "no_registered_blog", "No registered <b>blog</b>");
 INSERT INTO base_translation VALUES (NULL, "dashboard/index", "us_EN", "new_blog_instruction", "to add a new blog, or use the item \"blogs\" in menu");
 INSERT INTO base_translation VALUES (NULL, "dashboard/index", "us_EN", "feed_add", "feed add");

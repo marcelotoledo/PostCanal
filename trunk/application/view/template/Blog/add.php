@@ -1,42 +1,42 @@
 <form>
-    <h1>Adicionar Blog</h1>
+    <h1><?php echo $this->translation->blog_add ?></h1>
     <table>
     <tr>
-    <th>Nome:</th>
+    <th><?php echo $this->translation->blog_name ?>:</th>
     <td><input type="text" name="name" value="<?php echo $this->blog->name ?>"></td>
     </tr>
     <tr>
-    <th>Endereço de Blog:</th>
+    <th><?php echo $this->translation->blog_url ?>:</th>
     <td>
         <input type="text" name="input_url" value="">
         <div id="input_url_ro" style="display:none"></div>
-        <a id="check_url">verificar</a>
-        <a id="change_url" style="display:none">modificar</a>
+        <a id="check_url"><?php echo $this->translation->blog_check_url ?></a>
+        <a id="change_url" style="display:none"><?php echo $this->translation->blog_change_url ?></a>
     </td>
     </tr>
     <tr id="blog_type_row" style="display:none">
-    <th>Tipo de Blog:</th>
+    <th><?php echo $this->translation->blog_type ?>:</th>
     <td><div id="input_blog_type_ro"></div></td>
     </tr>
     <tr id="manager_url_row" style="display:none">
-    <th>Gerenciador:</th>
+    <th><?php echo $this->translation->blog_manager_url ?>:</th>
     <td>
         <input type="text" name="manager_url" value="">
-        <a id="check_manager_url">verificar</a>
+        <a id="check_manager_url"><?php echo $this->translation->blog_manager_check_url ?></a>
         <div id="input_manager_url_ro" style="display:none"></div>
     </td>
     </tr>
     </table>
     <table id="manager_login_row" style="display:none">
     <tr>
-    <th>Usuário:</th>
+    <th><?php echo $this->translation->blog_username ?>:</th>
     <td><input type="text" name="manager_username"></td>
     </tr>
     <tr>
-    <th>Senha:</th>
+    <th><?php echo $this->translation->blog_password ?>:</th>
     <td>
         <input type="password" name="manager_password">
-        <a id="check_manager_login">verificar</a>
+        <a id="check_manager_login"><?php echo $this->translation->blog_login_check ?></a>
     </td>
     </tr>
     </table>
@@ -44,8 +44,12 @@
     <tr>
     <th>&nbsp;</th>
     <td class="buttons">
-        <input name="addsubmit" type="button" value="Adicionar">
+        <input name="addsubmit" type="button" value="<?php echo $this->translation->application_add ?>">
     </td>
+    </tr>
+    <tr id="blogaddmessage" style="display:none">
+    <th>&nbsp;</th>
+    <td class="message"></td>
     </tr>
     </table>
 </form>

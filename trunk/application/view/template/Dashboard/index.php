@@ -11,7 +11,7 @@
 <?php else : ?>
 
 <div class="dashboardcontainers" id="feedscontainer">
-<h2>feeds</h2>
+<h2><?php echo $this->translation->application_feeds ?></h2>
 <div class="containercontentarea">
 feeds container
 </div>
@@ -19,7 +19,7 @@ feeds container
 </div>
 
 <div class="dashboardcontainers" id="itemscontainer">
-<h2>items</h2>
+<h2><?php echo $this->translation->application_items ?></h2>
 <div class="containercontentarea">
 items container
 </div>
@@ -27,7 +27,7 @@ items container
 </div>
 
 <div class="dashboardcontainers" id="queuecontainer">
-<h2>queue</h2>
+<h2><?php echo $this->translation->application_queue ?></h2>
 <div class="containercontentarea">
 queue container
 </div>
@@ -50,8 +50,8 @@ queue container
         <tr>
         <th>&nbsp;</th>
         <td class="buttons">
-            <input name="feedaddcancel" type="button" value="<?php echo $this->translation->application_form_cancel ?>" class="b-dialog-close">
-            <input name="feedaddsubmit" type="button" value="<?php echo $this->translation->application_form_submit ?>">
+            <input name="feedaddcancel" type="button" value="<?php echo $this->translation->application_cancel ?>" class="b-dialog-close">
+            <input name="feedaddsubmit" type="button" value="<?php echo $this->translation->application_submit ?>">
         </td>
         </tr>
     </table>

@@ -209,14 +209,14 @@ $(document).ready(function()
         $("input[name^=feedaddoptions]:first").attr('checked', 'checked');
     }
 
-    function feed_discover()
+    function feed_discover(url)
     {
         $.ajax
         ({
             type: "POST",
             url: "<?php B_Helper::url('feed', 'discover') ?>",
             dataType: "xml",
-            data: { url: $("input[name='feedaddurl']").val() },
+            data: { url: url },
             beforeSend: function()
             {
                 sp(true);
@@ -242,6 +242,31 @@ $(document).ready(function()
                 {
                     feed_discover_msg("<?php echo $this->translation->feed_not_found ?>");
                 }
+            }, 
+            error: function () { err(); } 
+        });
+    }
+
+    function feed_add(url)
+    {
+        $.ajax
+        ({
+            type: "POST",
+            url: "<?php B_Helper::url('feed', 'add') ?>",
+            dataType: "xml",
+            data: { url: url },
+            beforeSend: function()
+            {
+                sp(true);
+                feed_discover_msg("");
+            },
+            complete: function()
+            {
+                sp(false);
+            },
+            success: function (xml) 
+            { 
+                d = $(xml).find('data');
             }, 
             error: function () { err(); } 
         });
@@ -276,13 +301,33 @@ $(document).ready(function()
         $.b_dialog({ selector: "#feedaddform" });
         $.b_dialog_show();
         $("#feedaddurlrow").show();
+        $("#feedaddoptions > td").html("");
         $("input[name='feedaddurl']").focus();
     });
 
     $("input[name='feedaddsubmit']").click(function()
     {
-        url = $("input[name='feedaddurl']").val();
-        feed_discover(url);
+        feedurl = $("input[name^=feedaddoptions]:checked");
+
+        if(feedurl.val() != undefined)
+        {
+            feed_add(feedurl.val());
+        }
+        else
+        {
+            $("#feedaddurlrow").show();
+            $("#feedaddoptions > td").html("");
+            url = $("input[name='feedaddurl']").val();
+
+            if(url)
+            {
+                feed_discover(url);
+            }
+            else
+            {
+                feed_discover_msg("<?php echo $this->translation->blank_url ?>");
+            }
+        }
     });
 
     $("input[name='feedaddurl']").keypress(function(e) 

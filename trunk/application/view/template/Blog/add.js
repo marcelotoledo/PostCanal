@@ -107,6 +107,12 @@ $(document).ready(function()
 
     /* check url action */
 
+    function blogaddmsg(m)
+    {
+        _id = "blogaddmessage"; $("#" + _id + " td").html(m); _tr = $("#" + _id);
+        (m=="") ? (_tr.hide()) : (_tr.show());
+    }
+
     function checkURL()
     {
         if(ar == true)
@@ -130,7 +136,7 @@ $(document).ready(function()
             url: "<?php B_Helper::url('blog', 'check') ?>",
             dataType: "xml",
             data: parameters,
-            beforeSend: function () { sp(true);  },
+            beforeSend: function () { sp(true); blogaddmsg(""); },
             complete: function ()   { sp(false); },
             success: function (xml) 
             { 
@@ -153,7 +159,7 @@ $(document).ready(function()
                 else
                 {
                     changeURL();
-                    $.b_alert("<?php echo $this->translation->url_not_accepted ?>");
+                    blogaddmsg("<?php echo $this->translation->url_not_accepted ?>");
                 }
 
                 /* blog type */
@@ -165,12 +171,12 @@ $(document).ready(function()
                 else
                 {
                     changeURL();
-                    $.b_alert("<?php echo $this->translation->blog_type_not_accepted ?>");
+                    blogaddmsg("<?php echo $this->translation->blog_type_not_accepted ?>");
                 }
 
                 if(blog_type_maintenance == "true")
                 {
-                    $.b_alert("<?php echo $this->translation->blog_type_maintenance ?>");
+                    blogaddmsg("<?php echo $this->translation->blog_type_maintenance ?>");
                 }
 
                 /* manager url */
@@ -181,7 +187,7 @@ $(document).ready(function()
 
                     if(manager_url_accepted == "false")
                     {
-                        $.b_alert("<?php echo $this->translation->url_manager_not_accepted ?>");
+                        blogaddmsg("<?php echo $this->translation->url_manager_not_accepted ?>");
                         changeManagerURL();
                     }
                 }
@@ -203,7 +209,7 @@ $(document).ready(function()
 
         if(manager_url == "")
         {
-            $.b_alert("informe o endereço do gerenciador");
+            blogaddmsg("<?php echo $this->translation->manager_url_blank ?>");
             return null;
         }
 
@@ -215,7 +221,7 @@ $(document).ready(function()
             url: "<?php B_Helper::url('blog', 'check') ?>",
             dataType: "xml",
             data: parameters,
-            beforeSend: function () { sp(true);  },
+            beforeSend: function () { sp(true); blogaddmsg(""); },
             complete: function ()   { sp(false); },
             success: function (xml) 
             { 
@@ -227,7 +233,7 @@ $(document).ready(function()
 
                 if(manager_url_accepted == "false")
                 {
-                    $.b_alert("<?php echo $this->translation->url_manager_not_accepted ?>");
+                    blogaddmsg("<?php echo $this->translation->url_manager_not_accepted ?>");
                     changeManagerURL();
                 }
             }, 
@@ -249,7 +255,7 @@ $(document).ready(function()
 
         if(username == "" || password == "")
         {
-            $.b_alert("informe o usuário e senha do gerenciador");
+            blogaddmsg("informe o usuário e senha do gerenciador");
             return null;
         }
 
@@ -269,11 +275,11 @@ $(document).ready(function()
 
                 if(login_status = "ok")
                 {
-                    $.b_alert("Usuário e senha verificados com sucesso");
+                    blogaddmsg("<?php echo $this->translation->login_verified ?>");
                 }
                 else
                 {
-                    $.b_alert("O usuário ou senha informados não são válidos");
+                    blogaddmsg("<?php echo $this->translation->login_invalid ?>");
                 }
             }, 
             error: function () { onError(); }
@@ -295,13 +301,13 @@ $(document).ready(function()
 
         if(name == "" || username == "" || password == "")
         {
-            $.b_alert("Preencha o formulário corretamente");
+            blogaddmsg("<?php echo $this->translation->invalid_form ?>");
             return null;
         }
 
         if(fc == false)
         {
-            $.b_alert("O endereço do Blog precisa ser verificado");
+            blogaddmsg("<?php echo $this->translation->blog_url_not_verified ?>");
             return null;
         }
 
@@ -315,7 +321,7 @@ $(document).ready(function()
             url: "<?php B_Helper::url('blog', 'add') ?>",
             dataType: "xml",
             data: parameters,
-            beforeSend: function () { sp(true);  },
+            beforeSend: function () { sp(true); blogaddmsg(""); },
             complete: function ()   { sp(false); },
             success: function (xml) 
             { 
@@ -329,7 +335,7 @@ $(document).ready(function()
                 }
                 else
                 {
-                    if(message != "") $.b_alert(message);
+                    blogaddmsg(message);
                 }
             }, 
             error: function () { onError(); }
