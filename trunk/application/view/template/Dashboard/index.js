@@ -201,7 +201,9 @@ $(document).ready(function()
         l.each(function()
         {
             i = $(this).text();
-            $("#feedaddoptions > td").append("<input name=\"feedaddoptions[]\" type=\"radio\" value=\"" + i + "\">" + i + "<br/>");
+            j = i.length;
+            s = (j > 50) ? (i.substring(0, 25) + "..." + i.substring(j - 25)) : (i); 
+            $("#feedaddoptions > td").append("<input name=\"feedaddoptions[]\" type=\"radio\" value=\"" + i + "\">" + s + "<br/>");
         });
 
         $("input[name^=feedaddoptions]:first").attr('checked', 'checked');
@@ -254,6 +256,13 @@ $(document).ready(function()
 
     /* TRIGGERS */
 
+    /* reload when window resizes */
+
+    $(window).resize(function()
+    {
+        maxcontainers();
+    });
+
     /* disable form submit */
 
     $("select[name='bloglst']").change(function()
@@ -274,5 +283,13 @@ $(document).ready(function()
     {
         url = $("input[name='feedaddurl']").val();
         feed_discover(url);
+    });
+
+    $("input[name='feedaddurl']").keypress(function(e) 
+    {
+        if((e.which && e.which == 13) || (e.keyCode && e.keyCode == 13))
+        {
+            $("input[name='feedaddsubmit']").click();
+        }
     });
 });

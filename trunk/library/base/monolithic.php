@@ -635,43 +635,9 @@ class B_Log
         }
         catch(Exception $exception)
         {
-            $message = $exception->getMessage() . "; " . $message;
-            self::writeErrorLog($message);
+            $message = chop($exception->getMessage()) . "; " . chop($message);
+            if(syslog(LOG_ERR, $message) == false) fwrite(STDOUT, $message);
         }
-    }
-
-    /**
-     * Write log to application error_log file
-     *
-     * @param   string  $message    Log message
-     * @return  void
-     */
-    private static function writeErrorLog ($message)
-    {
-        $message = preg_replace("/[\r\n]+/", "", $message);
-
-        try
-        {
-            $f = fopen(BASE_PATH . "/log/error_log", "a");
-            fwrite($f, $message . "\n");
-            fclose($f);
-        }
-        catch(Exception $exception)
-        {
-            $message = $exception->getMessage() . "; " . $message;
-            self::writeStdout($message);
-        }
-    }
-
-    /**
-     * Write log to stdout
-     *
-     * @param   string  $message    Log message
-     * @return  void
-     */
-    private static function writeStdout ($message)
-    {
-        fwrite(STDOUT, $message);
     }
 }
 

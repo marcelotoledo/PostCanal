@@ -1,10 +1,10 @@
 <?php if(count($this->blogs) == 0) : ?>
 
 <div id="noblogmsg" class="b-dialog" style="display:none">
-Nenhum <b>blog</b> cadastrado. <?php B_Helper::a("Clique aqui", "blog", "add") ?> para adicionar um novo blog, ou utilize o link "blogs" no menu superior.
+<?php echo $this->translation->no_registered_blog ?>. <?php B_Helper::a(ucfirst($this->translation->application_click_here), "blog", "add") ?> <?php echo $this->translation->new_blog_instruction ?>.
 <hr>
 <div class="b-dialog-buttons">
-<a class="b-dialog-close"><?php echo $this->translation->dialog_close ?></a>
+<a class="b-dialog-close"><?php echo $this->translation->application_close ?></a>
 </div>
 </div>
 
@@ -23,7 +23,7 @@ feeds container
 <div class="containercontentarea">
 items container
 </div>
-<div class="containerfooter">footer</div>
+<div class="containerfooter">&nbsp;</div>
 </div>
 
 <div class="dashboardcontainers" id="queuecontainer">
@@ -31,7 +31,7 @@ items container
 <div class="containercontentarea">
 queue container
 </div>
-<div class="containerfooter">footer</div>
+<div class="containerfooter">&nbsp;</div>
 </div>
 
 <div id="feedaddform" class="b-dialog" style="display:none">
@@ -42,11 +42,11 @@ queue container
         <th><?php echo $this->translation->feed_add_url ?>:</th>
         <td><input type="text" name="feedaddurl" value=""></td>
         </tr>
+        <tr id="feedaddoptions"><td colspan="2"></td></tr>
         <tr id="feedaddmessage" style="display:none">
         <th>&nbsp;</th>
         <td class="message"></td>
         </tr>
-        <tr id="feedaddoptions"><td></td></tr>
         <tr>
         <th>&nbsp;</th>
         <td class="buttons">

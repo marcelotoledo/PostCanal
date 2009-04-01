@@ -1,51 +1,54 @@
--- TRANSLATION --
-
--- Application --
-
-INSERT INTO base_translation VALUES (NULL, 'Application', 'us_EN', 'application_loading', 'Loading');
-INSERT INTO base_translation VALUES (NULL, 'Application', 'us_EN', 'application_welcome', 'Welcome');
-
--- Index/index --
-
-INSERT INTO base_translation VALUES (NULL, 'Index/index', 'us_EN', 'form_login', 'Login');
-INSERT INTO base_translation VALUES (NULL, 'Index/index', 'us_EN', 'form_register', 'Register');
-INSERT INTO base_translation VALUES (NULL, 'Index/index', 'us_EN', 'form_email', 'E-mail');
-INSERT INTO base_translation VALUES (NULL, 'Index/index', 'us_EN', 'form_password', 'Password');
-INSERT INTO base_translation VALUES (NULL, 'Index/index', 'us_EN', 'form_confirm', 'Confirm');
-INSERT INTO base_translation VALUES (NULL, 'Index/index', 'us_EN', 'form_not_registered', 'not registered');
-INSERT INTO base_translation VALUES (NULL, 'Index/index', 'us_EN', 'form_forgot_password', 'password');
-INSERT INTO base_translation VALUES (NULL, 'Index/index', 'us_EN', 'form_cancel', 'Cancel');
-INSERT INTO base_translation VALUES (NULL, 'Index/index', 'us_EN', 'form_submit', 'Submit');
-INSERT INTO base_translation VALUES (NULL, 'Index/index', 'us_EN', 'form_incomplete', 'Form incomplete');
-INSERT INTO base_translation VALUES (NULL, 'Index/index', 'us_EN', 'form_incomplete', 'Form incomplete');
-INSERT INTO base_translation VALUES (NULL, 'Index/index', 'us_EN', 'form_not_match', 'Password and confirm does not match');
-INSERT INTO base_translation VALUES (NULL, 'Index/index', 'us_EN', 'server_error', 'Server error');
-INSERT INTO base_translation VALUES (NULL, 'Index/index', 'us_EN', 'recovery_email', 'Enter an e-mail');
-
--- Profile/login --
-
-INSERT INTO base_translation VALUES (NULL, 'Profile/login', 'us_EN', 'login_invalid', 'Invalid login');
-INSERT INTO base_translation VALUES (NULL, 'Profile/login', 'us_EN', 'register_unconfirmed', 'Registration not confirmed. Please check the email sent and follow the instructions');
-
--- Profile/register --
-
-INSERT INTO base_translation VALUES (NULL, 'Profile/register', 'us_EN', 'register_invalid', 'Unable to register');
-INSERT INTO base_translation VALUES (NULL, 'Profile/register', 'us_EN', 'register_invalid_email', 'Unable to send a message to the email address specified');
-INSERT INTO base_translation VALUES (NULL, 'Profile/register', 'us_EN', 'register_accepted', 'Registration accepted. A message has been sent to your e-mail');
-
--- Profile/recovery --
-
-INSERT INTO base_translation VALUES (NULL, 'Profile/recovery', 'us_EN', 'recovery_failed', 'Unable to recover the password');
-INSERT INTO base_translation VALUES (NULL, 'Profile/recovery', 'us_EN', 'recovery_invalid_email', 'Unable to send a message to the email address specified');
-INSERT INTO base_translation VALUES (NULL, 'Profile/recovery', 'us_EN', 'recovery_sent', 'Please check the email sent and follow the instructions');
-
--- Profile/password --
-
-INSERT INTO base_translation VALUES (NULL, 'Profile/password', 'us_EN', 'password_updated', 'Password updated');
-INSERT INTO base_translation VALUES (NULL, 'Profile/password', 'us_EN', 'password_failed', 'Failed to update password');
-INSERT INTO base_translation VALUES (NULL, 'Profile/password', 'us_EN', 'password_not_match', 'Password and confirm does not match');
-INSERT INTO base_translation VALUES (NULL, 'Profile/password', 'us_EN', 'password_invalid', 'Invalid password');
-
--- Profile/email --
-
-INSERT INTO base_translation VALUES (NULL, 'Profile/email', 'us_EN', 'email_failed', 'Unable to update the e-mail');
+INSERT INTO base_translation VALUES (NULL, "application", "us_EN", "application_loading", "loading");
+INSERT INTO base_translation VALUES (NULL, "application", "us_EN", "application_welcome", "welcome");
+INSERT INTO base_translation VALUES (NULL, "application", "us_EN", "application_dashboard", "dashboard");
+INSERT INTO base_translation VALUES (NULL, "application", "us_EN", "application_profile", "profile");
+INSERT INTO base_translation VALUES (NULL, "application", "us_EN", "application_blog", "blog");
+INSERT INTO base_translation VALUES (NULL, "application", "us_EN", "application_blogs", "blogs");
+INSERT INTO base_translation VALUES (NULL, "application", "us_EN", "application_feed", "feed");
+INSERT INTO base_translation VALUES (NULL, "application", "us_EN", "application_feeds", "feeds");
+INSERT INTO base_translation VALUES (NULL, "application", "us_EN", "application_item", "item");
+INSERT INTO base_translation VALUES (NULL, "application", "us_EN", "application_items", "items");
+INSERT INTO base_translation VALUES (NULL, "application", "us_EN", "application_queue", "queue");
+INSERT INTO base_translation VALUES (NULL, "application", "us_EN", "application_click_here", "click here");
+INSERT INTO base_translation VALUES (NULL, "application", "us_EN", "application_close", "close");
+INSERT INTO base_translation VALUES (NULL, "application", "us_EN", "application_exit", "exit");
+INSERT INTO base_translation VALUES (NULL, "application", "us_EN", "application_cancel", "cancel");
+INSERT INTO base_translation VALUES (NULL, "application", "us_EN", "application_update", "update");
+INSERT INTO base_translation VALUES (NULL, "application", "us_EN", "application_email", "e-mail");
+INSERT INTO base_translation VALUES (NULL, "index/index", "us_EN", "form_login", "Login");
+INSERT INTO base_translation VALUES (NULL, "index/index", "us_EN", "form_register", "Register");
+INSERT INTO base_translation VALUES (NULL, "index/index", "us_EN", "form_email", "E-mail");
+INSERT INTO base_translation VALUES (NULL, "index/index", "us_EN", "form_password", "Password");
+INSERT INTO base_translation VALUES (NULL, "index/index", "us_EN", "form_confirm", "Confirm");
+INSERT INTO base_translation VALUES (NULL, "index/index", "us_EN", "form_not_registered", "not registered");
+INSERT INTO base_translation VALUES (NULL, "index/index", "us_EN", "form_forgot_password", "password");
+INSERT INTO base_translation VALUES (NULL, "index/index", "us_EN", "form_cancel", "Cancel");
+INSERT INTO base_translation VALUES (NULL, "index/index", "us_EN", "form_submit", "Submit");
+INSERT INTO base_translation VALUES (NULL, "index/index", "us_EN", "form_incomplete", "Form incomplete");
+INSERT INTO base_translation VALUES (NULL, "index/index", "us_EN", "form_incomplete", "Form incomplete");
+INSERT INTO base_translation VALUES (NULL, "index/index", "us_EN", "form_not_match", "Password and confirm does not match");
+INSERT INTO base_translation VALUES (NULL, "index/index", "us_EN", "server_error", "Server error");
+INSERT INTO base_translation VALUES (NULL, "index/index", "us_EN", "recovery_email", "Enter an e-mail");
+INSERT INTO base_translation VALUES (NULL, "profile/login", "us_EN", "login_invalid", "Invalid login");
+INSERT INTO base_translation VALUES (NULL, "profile/login", "us_EN", "register_unconfirmed", "Registration not confirmed. Please check the email sent and follow the instructions");
+INSERT INTO base_translation VALUES (NULL, "profile/register", "us_EN", "register_invalid", "Unable to register");
+INSERT INTO base_translation VALUES (NULL, "profile/register", "us_EN", "register_invalid_email", "Unable to send a message to the email address specified");
+INSERT INTO base_translation VALUES (NULL, "profile/register", "us_EN", "register_accepted", "Registration accepted. A message has been sent to your e-mail");
+INSERT INTO base_translation VALUES (NULL, "profile/recovery", "us_EN", "recovery_failed", "Unable to recover the password");
+INSERT INTO base_translation VALUES (NULL, "profile/recovery", "us_EN", "recovery_invalid_email", "Unable to send a message to the email address specified");
+INSERT INTO base_translation VALUES (NULL, "profile/recovery", "us_EN", "recovery_sent", "Please check the email sent and follow the instructions");
+INSERT INTO base_translation VALUES (NULL, "profile/password", "us_EN", "password_updated", "Password updated");
+INSERT INTO base_translation VALUES (NULL, "profile/password", "us_EN", "password_failed", "Failed to update password");
+INSERT INTO base_translation VALUES (NULL, "profile/password", "us_EN", "password_not_match", "Password and confirm does not match");
+INSERT INTO base_translation VALUES (NULL, "profile/password", "us_EN", "password_invalid", "Invalid password");
+INSERT INTO base_translation VALUES (NULL, "profile/email", "us_EN", "email_failed", "Unable to update the e-mail");
+INSERT INTO base_translation VALUES (NULL, "profile/edit", "us_EN", "edit_profile", "Edit profile");
+INSERT INTO base_translation VALUES (NULL, "profile/edit", "us_EN", "profile_name", "Name");
+INSERT INTO base_translation VALUES (NULL, "profile/edit", "us_EN", "update_password", "update password");
+INSERT INTO base_translation VALUES (NULL, "profile/edit", "us_EN", "current_password", "Current password");
+INSERT INTO base_translation VALUES (NULL, "profile/edit", "us_EN", "new_password", "New password");
+INSERT INTO base_translation VALUES (NULL, "profile/edit", "us_EN", "password_confirm", "Password confirm");
+INSERT INTO base_translation VALUES (NULL, "profile/edit", "us_EN", "update_email", "update e-mail");
+INSERT INTO base_translation VALUES (NULL, "dashboard/index", "us_EN", "no_registered_blog", "No registered <b>blog</b>");
+INSERT INTO base_translation VALUES (NULL, "dashboard/index", "us_EN", "new_blog_instruction", "to add a new blog, or use the item \"blogs\" in menu");
+INSERT INTO base_translation VALUES (NULL, "dashboard/index", "us_EN", "feed_add", "feed add");
