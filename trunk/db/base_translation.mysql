@@ -49,6 +49,8 @@ INSERT INTO base_translation VALUES (NULL, "profile/edit", "us_EN", "current_pas
 INSERT INTO base_translation VALUES (NULL, "profile/edit", "us_EN", "new_password", "New password");
 INSERT INTO base_translation VALUES (NULL, "profile/edit", "us_EN", "password_confirm", "Password confirm");
 INSERT INTO base_translation VALUES (NULL, "profile/edit", "us_EN", "update_email", "update e-mail");
+INSERT INTO base_translation VALUES (NULL, "profile/edit", "us_EN", "form_unfilled", "fill the form correctly");
+INSERT INTO base_translation VALUES (NULL, "profile/edit", "us_EN", "form_unconfirmed", "password and confirmation do not match");
 INSERT INTO base_translation VALUES (NULL, "dashboard/index", "us_EN", "no_registered_blog", "No registered <b>blog</b>");
 INSERT INTO base_translation VALUES (NULL, "dashboard/index", "us_EN", "new_blog_instruction", "to add a new blog, or use the item \"blogs\" in menu");
 INSERT INTO base_translation VALUES (NULL, "dashboard/index", "us_EN", "feed_add", "feed add");

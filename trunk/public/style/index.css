@@ -1,1 +1,23 @@
-div#container{padding-top:50px;}div#logo{float:left;width:40%;text-align:center;line-height:250px;border-right:1px solid silver;}div#form{float:right;width:50%;padding-top:40px;}div#logo h1{font-size:44px;color:silver;}
+div#container
+{
+    padding-top: 50px;
+}
+div#logo
+{
+    float: left;
+    width: 40%;
+    text-align: center;
+    line-height: 250px;
+    border-right: 1px solid silver;
+}
+div#form
+{
+    float: right;
+    width: 50%;
+    padding-top: 40px;
+}
+div#logo h1
+{
+    font-size: 44px;
+    color: silver;
+}

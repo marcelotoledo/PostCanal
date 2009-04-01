@@ -12,6 +12,10 @@
             <input name="editsubmit" type="button" value="<?php echo $this->translation->application_update ?>">
         </td>
         </tr>
+        <tr id="editmessage" style="display:none">
+        <th>&nbsp;</th>
+        <td class="message"></td>
+        </tr>
     </table>
 </form>
 <br>
@@ -40,6 +44,11 @@
             <input name="pwdchangesubmit" type="button" value="<?php echo $this->translation->application_update ?>" disabled>
         </td>
         </tr>
+        </tr>
+        <tr id="pwdchangemessage" style="display:none">
+        <th>&nbsp;</th>
+        <td class="message"></td>
+        </tr>
     </table>
 </form>
 <br>
@@ -59,6 +68,11 @@
             <input name="emlchangecancel" type="button" value="<?php echo $this->translation->application_cancel ?>" disabled>
             <input name="emlchangesubmit" type="button" value="<?php echo $this->translation->application_update ?>" disabled>
         </td>
+        </tr>
+        </tr>
+        <tr id="emlchangemessage" style="display:none">
+        <th>&nbsp;</th>
+        <td class="message"></td>
         </tr>
     </table>
 </form>

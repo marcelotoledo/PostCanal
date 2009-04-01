@@ -77,6 +77,12 @@ $(document).ready(function()
 
     /* edit submit */
 
+    function editmsg(m)
+    {
+        _id = "editmessage"; $("#" + _id + " td").html(m); _tr = $("#" + _id);
+        (m=="") ? (_tr.hide()) : (_tr.show());
+    }
+
     function editSubmit()
     {
         if(ar == true)
@@ -94,20 +100,26 @@ $(document).ready(function()
             url: "<?php B_Helper::url('profile', 'edit') ?>",
             dataType: "xml",
             data: parameters,
-            beforeSend: function () { sp(true);  },
+            beforeSend: function () { sp(true); editmsg("");  },
             complete: function ()   { sp(false); },
             success: function (xml) 
             { 
                 data = $(xml).find('data');
                 saved = data.find('saved').text();
                 message = data.find('message').text();
-                if(message!="") $.b_alert(message);
+                editmsg(message);
             }, 
             error: function () { err(); }
         });
     }
 
     /* password change submit */
+
+    function pwdchangemsg(m)
+    {
+        _id = "pwdchangemessage"; $("#" + _id + " td").html(m); _tr = $("#" + _id);
+        (m=="") ? (_tr.hide()) : (_tr.show());
+    }
 
     function passwordChangeSubmit()
     {
@@ -122,13 +134,13 @@ $(document).ready(function()
 
         if((current == "" || password == "" || _confirm == ""))
         {
-            $.b_alert("Preencha o formulário corretamente");
+            pwdchangemsg("<?php echo $this->translation->form_unfilled ?>");
             return null;
         }
 
         if(password != _confirm)
         {
-            $.b_alert("Senha e confirmação NÃO CORRESPONDEM");
+            pwdchangemsg("<?php echo $this->translation->form_unconfirmed ?>");
             return null;
         }
 
@@ -142,14 +154,14 @@ $(document).ready(function()
             url: "<?php B_Helper::url('profile', 'password') ?>",
             dataType: "xml",
             data: parameters,
-            beforeSend: function () { sp(true);  },
+            beforeSend: function () { sp(true); pwdchangemsg(""); },
             complete: function ()   { sp(false); },
             success: function (xml) 
             { 
                 data = $(xml).find('data');
                 updated = data.find('updated').text();
                 message = data.find('message').text();
-                if(message!="") $.b_alert(message);
+                pwdchangemsg(message);
 
                 if(updated == "true")
                 {
@@ -162,6 +174,12 @@ $(document).ready(function()
 
     /* email change submit */
 
+    function emlchangemsg(m)
+    {
+        _id = "emlchangemessage"; $("#" + _id + " td").html(m); _tr = $("#" + _id);
+        (m=="") ? (_tr.hide()) : (_tr.show());
+    }
+
     function emailChangeSubmit()
     {
         if(ar == true)
@@ -173,7 +191,7 @@ $(document).ready(function()
 
         if(new_email == "")
         {
-            $.b_alert("Preencha o formulário corretamente");
+            emlchangemsg("<?php echo $this->translation->form_unfilled ?>");
             return null;
         }
 
@@ -185,20 +203,19 @@ $(document).ready(function()
             url: "<?php B_Helper::url('profile', 'email') ?>",
             dataType: "xml",
             data: parameters,
-            beforeSend: function () { sp(true);  },
+            beforeSend: function () { sp(true); emlchangemsg(""); },
             complete: function ()   { sp(false); setEmailChange(false); },
             success: function (xml) 
             { 
                 data = $(xml).find('data');
                 accepted = data.find('accepted').text();
                 message = data.find('message').text();
-                if(message!="") $.b_alert(message);
+                emlchangemsg(message);
             }, 
             error: function () { err(); }
         });
     }
 
-    
     /* TRIGGERS */
 
     /* edit */
