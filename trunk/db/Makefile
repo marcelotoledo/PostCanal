@@ -1,9 +1,9 @@
 install: schema sleep data
 clean: schema
 schema:
-	./load.php schema.mysql
+	./load.php schema.mysql &
 sleep:	
-	sleep 1s
+	sleep 3s
 data:
 	./load.php base_translation.mysql
 	./load.php user_profile.mysql

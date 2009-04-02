@@ -73,6 +73,7 @@ class C_Feed extends B_Controller
     {
         $this->response->setXML(true);
 
-        $url = $this->request->url;
+        $data = array("default", $this->request->url, "none none");
+        $this->view->result = AggregatorFeed::procedureInsert($data);
     }
 }

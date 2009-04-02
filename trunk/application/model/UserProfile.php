@@ -154,7 +154,7 @@ class UserProfile extends B_Model
      */
     public static function insert($sql, $data=array())
     {
-        return parent::_insert($sql, $data, self::sequence_name);
+        return parent::_insert($sql, $data, self::$sequence_name);
     }
 
     /**

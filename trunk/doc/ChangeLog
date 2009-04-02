@@ -7,3 +7,11 @@
 - Alteracao do model, inclusao de stored procedure para inclusao de feeds
 
 HORAS TRABALHADAS: 6h
+
+==========
+02/04/2009
+==========
+
+- Cadastro de feed ok através de stored procedure
+
+HORAS TRABALHADAS: 1h

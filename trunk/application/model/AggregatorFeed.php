@@ -17,11 +17,18 @@ class AggregatorFeed extends B_Model
     protected static $table_name = 'model_aggregator_feed';
 
     /**
+     * Table structure
+     *
+     * @var array
+     */
+    protected static $table_structure = array();
+
+    /**
      * Sequence name
      *
      * @var string
      */
-    protected static $sequence_name = '';
+    protected static $sequence_name = null;
 
     /**
      * Primary key name
@@ -42,6 +49,16 @@ class AggregatorFeed extends B_Model
     }
 
     /**
+     * Get table structure
+     *
+     * @return  array
+     */
+    public function getTableStructure()
+    {
+        return self::$table_structure;
+    }
+
+    /**
      * Get sequence name
      *
      * @return  string
@@ -59,18 +76,6 @@ class AggregatorFeed extends B_Model
     public function getPrimaryKeyName()
     {
         return self::$primary_key_name;
-    }
-
-    /**
-     * Save model
-     *
-     * @return  boolean
-     */
-    public function save()
-    {
-        if(!$this->isNew()) $this->updated_at = date("Y/m/d H:i:s");
-
-        return parent::save();
     }
 
     /**
@@ -116,7 +121,7 @@ class AggregatorFeed extends B_Model
      */
     public static function insert($sql, $data=array())
     {
-        return parent::_insert($sql, $data, self::sequence_name);
+        return parent::_insert($sql, $data, self::$sequence_name);
     }
 
     /**
@@ -129,5 +134,16 @@ class AggregatorFeed extends B_Model
     public static function findByPrimaryKey($id)
     {
         return current(self::find(array(self::$primary_key_name => $id)));
+    }
+
+    /**
+     * Add new feed to aggregator using a stored procedure and transaction
+     * 
+     * @param   array   $data
+     */
+    public static function procedureInsert($data)
+    {
+        $sql = "CALL " . self::$table_name . "_insert (?, ?, ?)";
+        return (self::execute($sql, $data) > 0);
     }
 }
