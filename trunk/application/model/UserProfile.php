@@ -14,7 +14,7 @@ class UserProfile extends B_Model
      *
      * @var string
      */
-    protected static $table_name = 'user_profile';
+    protected static $table_name = 'model_user_profile';
 
     /**
      * Table structure

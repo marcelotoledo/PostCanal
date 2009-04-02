@@ -79,7 +79,6 @@ class C_Blog extends C_Abstract
         $blog->manager_url = $this->session->c_manager_url;
         $blog->manager_username = $this->request->username;
         $blog->manager_password = $this->request->password;
-        $blog->status = UserBlog::STATUS_NEW;
 
         try
         {

@@ -9,23 +9,12 @@
  */
 class AggregatorFeed extends B_Model
 {
-    /*
-    const TYPE_RSS  = "rss";
-    const TYPE_ATOM = "atom";
-
-    const STATUS_NEW                     = "new";
-    const STATUS_FAILED_URL              = "failed_url";
-    const STATUS_NEW_ITEMS_AVAILABLE     = "new_items_available";
-    const STATUS_NEW_ITEMS_NOT_AVAILABLE = "new_items_not_available";
-    */
-
-
     /**
      * Table name
      *
      * @var string
      */
-    protected static $table_name = 'aggregator_feed';
+    protected static $table_name = 'model_aggregator_feed';
 
     /**
      * Sequence name

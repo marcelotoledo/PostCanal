@@ -14,7 +14,7 @@ class UserBlogFeed extends B_Model
      *
      * @var string
      */
-    protected static $table_name = 'user_blog_feed';
+    protected static $table_name = 'model_user_blog_feed';
 
     /**
      * Table structure

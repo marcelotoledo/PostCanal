@@ -37,7 +37,7 @@ class BlogType extends B_Model
      *
      * @var string
      */
-    protected static $table_name = 'blog_type';
+    protected static $table_name = 'model_blog_type';
 
     /**
      * Table structure
@@ -150,8 +150,8 @@ class BlogType extends B_Model
     {
         if(count($this->configuration) == 0)
         {
-            $sql = "SELECT name, value FROM blog_type_configuration " . 
-                   "WHERE blog_type_id = ?";
+            $sql = "SELECT name, value FROM " .
+                   self::$table_name . "_configuration WHERE blog_type_id = ?";
 
             $results = array();
 
@@ -383,7 +383,8 @@ class BlogType extends B_Model
      */
     protected static function discoveryRules($name, $types=array())
     {
-        $sql = "SELECT blog_type_id, value FROM blog_type_discovery WHERE name = ? ";
+        $sql = "SELECT blog_type_id, value FROM " . 
+               self::$table_name . "_discovery WHERE name = ? ";
 
         if(count($types) > 0)
         {
