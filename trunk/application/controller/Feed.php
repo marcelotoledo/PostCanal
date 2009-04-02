@@ -72,5 +72,7 @@ class C_Feed extends B_Controller
     public function A_add()
     {
         $this->response->setXML(true);
+
+        $url = $this->request->url;
     }
 }

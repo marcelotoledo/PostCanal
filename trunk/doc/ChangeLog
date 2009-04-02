@@ -4,5 +4,6 @@
 
 - Ajustes no cadastro de feeds
 - Inclusao de novas tags de i18n
+- Alteracao do model, inclusao de stored procedure para inclusao de feeds
 
-HORAS TRABALHADAS: 4h
+HORAS TRABALHADAS: 6h
