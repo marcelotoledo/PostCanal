@@ -229,11 +229,11 @@ class B_Response
     {
         $registry = B_Registry::singleton();
 
-        if(is_array($registry->response->headers))
+        if(is_array($registry->response()->headers))
         {
-            if(array_key_exists($status, $registry->response->headers))
+            if(array_key_exists($status, $registry->response()->headers))
             {
-                if(is_array($headers = $registry->response->headers[$status]))
+                if(is_array($headers = $registry->response()->headers[$status]))
                 {
                     foreach($headers as $name => $value)
                     {

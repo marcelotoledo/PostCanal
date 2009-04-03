@@ -164,9 +164,9 @@ class B_Session
     public static function gc ($max) 
     {
         $registry = B_Registry::singleton();
-        $expiration = $registry->session->expiration;
+        $expiration = intval($registry->session()->expiration);
 
-        if(intval($expiration) <= 0)
+        if(($expiration = intval($registry->session()->expiration)) <= 0)
         {
             $_m = "session expiration value must be greater than zero";
             $_d = array('method' => __METHOD__);

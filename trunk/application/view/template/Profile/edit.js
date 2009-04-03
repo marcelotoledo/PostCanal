@@ -9,7 +9,7 @@ $(document).ready(function()
     $.b_spinner
     ({
         image: "<?php B_Helper::img_src('spinner.gif') ?>",
-        message: "... <?php echo $this->translation->application_loading ?>"
+        message: "... <?php echo $this->translation()->application_loading ?>"
     });
 
     /* SWITCHES */
@@ -134,13 +134,13 @@ $(document).ready(function()
 
         if((current == "" || password == "" || _confirm == ""))
         {
-            pwdchangemsg("<?php echo $this->translation->form_unfilled ?>");
+            pwdchangemsg("<?php echo $this->translation()->form_unfilled ?>");
             return null;
         }
 
         if(password != _confirm)
         {
-            pwdchangemsg("<?php echo $this->translation->form_unconfirmed ?>");
+            pwdchangemsg("<?php echo $this->translation()->form_unconfirmed ?>");
             return null;
         }
 
@@ -191,7 +191,7 @@ $(document).ready(function()
 
         if(new_email == "")
         {
-            emlchangemsg("<?php echo $this->translation->form_unfilled ?>");
+            emlchangemsg("<?php echo $this->translation()->form_unfilled ?>");
             return null;
         }
 

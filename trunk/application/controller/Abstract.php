@@ -18,8 +18,8 @@ abstract class C_Abstract extends B_Controller
     {
         /* load translation data */
 
-        $this->translation->load('application');
-        $this->translation->load(strtolower($this->view->getTemplate()));
+        $this->translation()->load('application');
+        $this->translation()->load(strtolower($this->view->getTemplate()));
 
         /* run parent action */
 
@@ -31,7 +31,7 @@ abstract class C_Abstract extends B_Controller
         {
             /* add user profile information to exception */
 
-            $id = intval($this->session->user_profile_id);
+            $id = intval($this->session()->user_profile_id);
             $_m = "an error occurred during the execution of action (" . $name . ")";
             $_d = array('method' => __METHOD__);
             if($id > 0) $_d = array_merge($_d, array('user_profile_id' => $id));

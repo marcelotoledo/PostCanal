@@ -33,7 +33,7 @@ class C_Feed extends B_Controller
      */
     public function A_list()
     {
-        $this->response->setXML(true);
+        $this->response()->setXML(true);
     }
 
     /**
@@ -43,7 +43,7 @@ class C_Feed extends B_Controller
      */
     public function A_item()
     {
-        $this->response->setXML(true);
+        $this->response()->setXML(true);
     }
 
     /**
@@ -53,10 +53,10 @@ class C_Feed extends B_Controller
      */
     public function A_discover()
     {
-        $this->response->setXML(true);
+        $this->response()->setXML(true);
 
         $token = $this->registry->application->webservice->token;
-        $url = $this->request->url;
+        $url = $this->request()->url;
 
         $client = new L_WebService();
         $results = $client->discover_feeds(array('url' => $url));
@@ -71,9 +71,9 @@ class C_Feed extends B_Controller
      */
     public function A_add()
     {
-        $this->response->setXML(true);
+        $this->response()->setXML(true);
 
-        $data = array("default", $this->request->url, "none none");
+        $data = array("default", $this->request()->url, "none none");
         $this->view->result = AggregatorFeed::procedureInsert($data);
     }
 }

@@ -35,14 +35,7 @@ class B_Request
      *
      * @var string
      */
-    private $controller = "Index";
-
-    /**
-     * Action name
-     *
-     * @var string
-     */
-    private $action = "index";
+    private $arguments = array();
 
 
     /**
@@ -87,34 +80,18 @@ class B_Request
         $this->path = self::pathFromServer();
         $this->method = self::methodFromServer();
 
-        /* initialize controller */
+        $arguments = explode("/", trim($this->path, "/"));
+        $total = count($arguments);
 
-        $arguments = explode ("/", trim($this->path, "/"));
-        $total_arguments = count($arguments);
+        /* filter arguments */
 
-        if(count($arguments) > 0)
+        for($i=0;$i<$total;$i++)
         {
-            $controller_name = ((string) urldecode($arguments[0]));
-            $controller_name = preg_replace("/[^a-zA-Z0-9_]/", "", $controller_name);
-
-            if(strlen($controller_name) > 0)
-            {
-                $this->controller = ucfirst($controller_name);
-            }
+            $arguments[$i] = strtolower($arguments[$i]);
+            $arguments[$i] = preg_replace("/[^a-z0-9]/", "", $arguments[$i]);
         }
 
-        /* initialize action */
-
-        if($total_arguments > 1)
-        {
-            $action_name = ((string) urldecode($arguments[1]));
-            $action_name = preg_replace("/[^a-zA-Z0-9_]/", "", $action_name);
-
-            if(strlen($action_name) > 0)
-            {
-                $this->action = $action_name;
-            }
-        }
+        $this->arguments = $arguments;
     }
 
     /**
@@ -138,23 +115,34 @@ class B_Request
     }
 
     /**
-     * Controller name
+     * Get request argument
      *
-     * @return  string
+     * @parameter   integer     $i
+     * @return      array
      */
-    public function getController()
+    public function getArgument($i)
     {
-        return $this->controller;
+        return $this->arguments[$i];
     }
 
     /**
-     * Action name
+     * Request controller
      *
-     * @return  string
+     * @return  array
+     */
+    public function getController()
+    {
+        return array_key_exists(0, $this->arguments) ? $this->arguments[0] : null;
+    }
+
+    /**
+     * Request action
+     *
+     * @return  array
      */
     public function getAction()
     {
-        return $this->action;
+        return array_key_exists(1, $this->arguments) ? $this->arguments[1] : null;
     }
 
     /**

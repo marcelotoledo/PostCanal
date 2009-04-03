@@ -32,7 +32,7 @@ class C_Blog extends C_Abstract
      */
     public function A_add()
     {
-        $this->request->getMethod() == B_Request::METHOD_POST ?
+        $this->request()->getMethod() == B_Request::METHOD_POST ?
             $this->P_add() :
             $this->G_add();
     }
@@ -47,17 +47,17 @@ class C_Blog extends C_Abstract
 
         /* reset blog add session variables */
 
-        $this->session->c_url = "";
-        $this->session->c_url_accepted = false; 
-        $this->session->c_blog_type = 0; 
-        $this->session->c_blog_type_name = ""; 
-        $this->session->c_blog_type_version = ""; 
-        $this->session->c_blog_type_maintenance = false; 
-        $this->session->c_blog_type_accepted = false; 
-        $this->session->c_manager_url = "";
-        $this->session->c_manager_url_accepted = false;
-        $this->session->c_login_accepted = false;
-        $this->session->c_publication_accepted = false;
+        $this->session()->c_url = "";
+        $this->session()->c_url_accepted = false; 
+        $this->session()->c_blog_type = 0; 
+        $this->session()->c_blog_type_name = ""; 
+        $this->session()->c_blog_type_version = ""; 
+        $this->session()->c_blog_type_maintenance = false; 
+        $this->session()->c_blog_type_accepted = false; 
+        $this->session()->c_manager_url = "";
+        $this->session()->c_manager_url_accepted = false;
+        $this->session()->c_login_accepted = false;
+        $this->session()->c_publication_accepted = false;
     }
 
     /**
@@ -67,18 +67,18 @@ class C_Blog extends C_Abstract
      */
     private function P_add()
     {
-        $this->response->setXML(true);
+        $this->response()->setXML(true);
 
         $added = false;
 
         $blog = new UserBlog();
-        $blog->user_profile_id = $this->session->user_profile_id;
-        $blog->blog_type_id = $this->session->c_blog_type;
-        $blog->name = $this->request->name;
-        $blog->url = $this->session->c_url;
-        $blog->manager_url = $this->session->c_manager_url;
-        $blog->manager_username = $this->request->username;
-        $blog->manager_password = $this->request->password;
+        $blog->user_profile_id = $this->session()->user_profile_id;
+        $blog->blog_type_id = $this->session()->c_blog_type;
+        $blog->name = $this->request()->name;
+        $blog->url = $this->session()->c_url;
+        $blog->manager_url = $this->session()->c_manager_url;
+        $blog->manager_username = $this->request()->username;
+        $blog->manager_password = $this->request()->password;
 
         try
         {
@@ -102,39 +102,39 @@ class C_Blog extends C_Abstract
      */
     public function A_check()
     {
-        $this->response->setXML(true);
+        $this->response()->setXML(true);
 
         $client = new L_HTTPClient();
 
         /* check url (and manager url internally) */
 
-        if(strlen(($url = $this->request->url)) > 0)
+        if(strlen(($url = $this->request()->url)) > 0)
         {
             $this->checkURL($url, $client);
         }
 
         /* manager url */
 
-        if(strlen(($manager_url = $this->request->manager)) > 0)
+        if(strlen(($manager_url = $this->request()->manager)) > 0)
         {
-            if($this->session->c_blog_type == 0)
+            if($this->session()->c_blog_type == 0)
             {
                 $_m = "blog type is not available in session";
                 $_d = array('method' => __METHOD__);
                 throw new B_Exception($_m, E_USER_NOTICE, $_d);
             }
 
-            $type = BlogType::findByPrimaryKey($this->session->c_blog_type);
+            $type = BlogType::findByPrimaryKey($this->session()->c_blog_type);
             $this->checkManagerURL($manager_url, $client, $type);
         }
 
         /* manager login */
 
-        if(strlen(($username = $this->request->username)) > 0 &&
-           strlen(($password = $this->request->password)) > 0)
+        if(strlen(($username = $this->request()->username)) > 0 &&
+           strlen(($password = $this->request()->password)) > 0)
         {
-            if($this->session->c_blog_type == 0 ||
-               strlen($this->session->c_manager_url) == 0)
+            if($this->session()->c_blog_type == 0 ||
+               strlen($this->session()->c_manager_url) == 0)
             {
                 $_m = "blog type or manager url are not available in session";
                 $_d = array('method' => __METHOD__);
@@ -151,7 +151,7 @@ class C_Blog extends C_Abstract
             'blog_type_accepted', 'blog_type_maintenance', 'manager_url', 
             'manager_url_accepted') as $i)
         {
-            $this->view->{$i} = $this->session->{('c_' . $i)};
+            $this->view->{$i} = $this->session()->{('c_' . $i)};
         }
     }
 
@@ -188,7 +188,7 @@ class C_Blog extends C_Abstract
 
         if($client->getStatus() == L_HTTPClient::STATUS_OK)
         {
-            $this->session->c_url_accepted = true;
+            $this->session()->c_url_accepted = true;
             $type = BlogType::discover($url, $client->getHeaders(), $client->getBody());
         }
 
@@ -196,11 +196,11 @@ class C_Blog extends C_Abstract
 
         if(is_object($type))
         {
-            $this->session->c_blog_type = $type->blog_type_id;
-            $this->session->c_blog_type_name = $type->name;
-            $this->session->c_blog_type_version = $type->version;
-            $this->session->c_blog_type_maintenance = $type->maintenance;
-            $this->session->c_blog_type_accepted = true;
+            $this->session()->c_blog_type = $type->blog_type_id;
+            $this->session()->c_blog_type_name = $type->name;
+            $this->session()->c_blog_type_version = $type->version;
+            $this->session()->c_blog_type_maintenance = $type->maintenance;
+            $this->session()->c_blog_type_accepted = true;
 
             $config = $type->getConfiguration();
 
@@ -216,7 +216,7 @@ class C_Blog extends C_Abstract
 
                 /* default manager url not accepted */
 
-                $accepted = $this->session->c_manager_url_accepted;
+                $accepted = $this->session()->c_manager_url_accepted;
 
                 if($accepted == false)
                 {
@@ -228,7 +228,7 @@ class C_Blog extends C_Abstract
             }
         }
 
-        $this->session->c_url = $url;
+        $this->session()->c_url = $url;
     }
 
     /**
@@ -240,7 +240,7 @@ class C_Blog extends C_Abstract
      */
     private function checkManagerURL(&$manager_url, $client, $type)
     {
-        $this->session->c_manager_url = $manager_url;
+        $this->session()->c_manager_url = $manager_url;
 
         /* get response from manager url */
 
@@ -252,7 +252,7 @@ class C_Blog extends C_Abstract
         {
             if(BlogType::managerCheckHTML($client->getBody(), $type->getConfiguration()))
             {
-                $this->session->c_manager_url_accepted = true;
+                $this->session()->c_manager_url_accepted = true;
             }
         }
     }

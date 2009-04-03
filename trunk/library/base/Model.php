@@ -523,16 +523,15 @@ abstract class B_Model
     public static function connection($database='default')
     {
         $registry = B_Registry::singleton();
-        $db = $registry->database->{$database};
 
-        if(!isset($db))
+        if(($db = $registry->database()->{$database}()) == null)
         {
             $_m = "database (" . $database . ") does not exists in registry";
             $_d = array('method' => __METHOD__);
             throw new B_Exception($_m, E_USER_ERROR, $_d);
         }
         
-        if(get_class($db->connection) != "PDO") self::setupConnection($db);
+        if($db->connection == null) self::setupConnection($db);
 
         return $db->connection;
     }

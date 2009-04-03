@@ -39,6 +39,19 @@ class B_View
 
 
     /**
+     * Access to registry data
+     * 
+     * @param   string  $name
+     * @return  mixed
+     */
+    public function __call($name, $arguments)
+    {
+        return ($name == "registry") ? 
+            $this->registry :
+            $this->registry->{$name}()->object;
+    }
+
+    /**
      * Get overloading
      *
      * @param   string  $name
@@ -48,28 +61,9 @@ class B_View
     {
         $result = null;
 
-        /* registry */
-
-        if(is_object($this->registry))
+        if(array_key_exists($name, $this->data))
         {
-            if($this->registry->check(array($name, 'object')))
-            {
-                $result = $this->registry->{$name}->object;
-            }
-        }
-
-        /* view data */
-
-        if(is_null($result))
-        {
-
-            if(is_array($this->data))
-            {
-                if(array_key_exists($name, $this->data))
-                {
-                    $result = $this->data[$name];
-                }
-            }
+            $result = $this->data[$name];
         }
 
         return $result;
@@ -84,25 +78,6 @@ class B_View
      */
     public function __set($name, $value)
     {
-        /* registry */
-
-        if(is_object($this->registry))
-        {
-            if($this->registry->check(array($name, 'object')))
-            {
-                $_m = "view can not overwrite attribute (" . $name . ")";
-                $_d = array('method' => __METHOD__);
-                throw new B_Exception($_m, E_USER_WARNING, $_d);
-            }
-        }
-
-        /* view data */
-
-        if(is_array($this->data) == false)
-        {
-            $this->data = array();
-        }
-
         $this->data[$name] = $value;
     }
 

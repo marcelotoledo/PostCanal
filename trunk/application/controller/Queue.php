@@ -23,6 +23,6 @@ class C_Queue extends B_Controller
      */
     public function A_list()
     {
-        $this->response->setXML(true);
+        $this->response()->setXML(true);
     }
 }

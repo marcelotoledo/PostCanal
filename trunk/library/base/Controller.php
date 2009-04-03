@@ -30,12 +30,12 @@ class B_Controller
      * @param   string  $name
      * @return  mixed
      */
-    public function __get ($name)
+    public function __call ($name, $arguments)
     {
-        return $this->registry->{$name}->object;
+        return ($name == "registry") ? 
+            $this->registry :
+            $this->registry->{$name}()->object;
     }
-
-    public function __set ($name, $value) { } // read-only
 
     /**
      * Before action
@@ -74,7 +74,7 @@ class B_Controller
 
         /* unset layout and template for xml response */
 
-        if($this->response->isXML() == true)
+        if($this->response()->isXML() == true)
         {
             $this->view->setLayout(null);
             $this->view->setTemplate(null);
@@ -82,11 +82,11 @@ class B_Controller
 
         /* render only for non redirect request */
 
-        if($this->response->isRedirect() == false)
+        if($this->response()->isRedirect() == false)
         {
             ob_start();
             $this->view->render();
-            $this->response->setBody(ob_get_clean());
+            $this->response()->setBody(ob_get_clean());
         }
     }
 
@@ -97,12 +97,16 @@ class B_Controller
      */
     protected function authorize($redirect=null)
     {
-        if(($active = $this->session->getActive()) == false)
+        if(($active = $this->session()->getActive()) == false)
         {
             if($redirect == null)
             {
-                $redirect = $this->registry->session->unauthorized->redirect;
-                if(isset($redirect) == false) $redirect = BASE_URL;
+                $redirect = $this->session()->unauthorized()->redirect;
+            }
+
+            if($redirect == null)
+            {
+                $redirect = BASE_URL;
             }
 
             $this->response->setRedirect($redirect, B_Response::STATUS_UNAUTHORIZED);

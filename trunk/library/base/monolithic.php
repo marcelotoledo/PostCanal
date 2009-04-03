@@ -30,12 +30,12 @@ class B_Controller
      * @param   string  $name
      * @return  mixed
      */
-    public function __get ($name)
+    public function __call ($name, $arguments)
     {
-        return $this->registry->{$name}->object;
+        return ($name == "registry") ? 
+            $this->registry :
+            $this->registry->{$name}()->object;
     }
-
-    public function __set ($name, $value) { } // read-only
 
     /**
      * Before action
@@ -74,7 +74,7 @@ class B_Controller
 
         /* unset layout and template for xml response */
 
-        if($this->response->isXML() == true)
+        if($this->response()->isXML() == true)
         {
             $this->view->setLayout(null);
             $this->view->setTemplate(null);
@@ -82,11 +82,11 @@ class B_Controller
 
         /* render only for non redirect request */
 
-        if($this->response->isRedirect() == false)
+        if($this->response()->isRedirect() == false)
         {
             ob_start();
             $this->view->render();
-            $this->response->setBody(ob_get_clean());
+            $this->response()->setBody(ob_get_clean());
         }
     }
 
@@ -97,12 +97,16 @@ class B_Controller
      */
     protected function authorize($redirect=null)
     {
-        if(($active = $this->session->getActive()) == false)
+        if(($active = $this->session()->getActive()) == false)
         {
             if($redirect == null)
             {
-                $redirect = $this->registry->session->unauthorized->redirect;
-                if(isset($redirect) == false) $redirect = BASE_URL;
+                $redirect = $this->session()->unauthorized()->redirect;
+            }
+
+            if($redirect == null)
+            {
+                $redirect = BASE_URL;
             }
 
             $this->response->setRedirect($redirect, B_Response::STATUS_UNAUTHORIZED);
@@ -677,12 +681,13 @@ class B_Main
 
         $request = new B_Request();
         $response = new B_Response();
-        $registry->request->object = $request;
-        $registry->response->object = $response;
+        $registry->request()->object = $request;
+        $registry->response()->object = $response;
 
         /* check controller */
 
         $controller_name = $request->getController();
+        if(strlen($controller_name) == 0) $controller_name = "index";
 
         if(($controller = self::factory($controller_name)) == null)
         {
@@ -699,6 +704,7 @@ class B_Main
             /* check action */
 
             $action_name = $request->getAction();
+            if(strlen($action_name) == 0) $action_name = "index";
 
             if($controller->check($action_name) == false)
             {
@@ -714,23 +720,23 @@ class B_Main
                 $view->registry = $registry;
                 $layout = strtolower($controller_name);
                 $view->setLayout($layout);
-                $template = $controller_name . "/" . $action_name;
+                $template = ucfirst($controller_name) . "/" . $action_name;
                 $view->setTemplate($template);
                 $controller->view = $view;
 
                 /* initialize session */
 
-                $session_name = $registry->session->name;
+                $session_name = $registry->session()->name;
                 $session = new B_Session($session_name);
                 $controller->session = $session;
-                $registry->session->object = $session;
+                $registry->session()->object = $session;
 
                 /* initialize translation */
 
-                $culture = $registry->translation->culture;
+                $culture = $registry->translation()->culture;
                 $translation = new B_Translation($culture);
                 $controller->translation = $translation;
-                $registry->translation->object = $translation;
+                $registry->translation()->object = $translation;
 
                 /* run action */
 
@@ -840,7 +846,7 @@ class B_Main
     private static function factory($name)
     {
         $controller = null;
-        $class_name = 'C_' . $name;
+        $class_name = 'C_' . ucfirst($name);
 
         if(class_exists($class_name))
         {
@@ -1379,16 +1385,15 @@ abstract class B_Model
     public static function connection($database='default')
     {
         $registry = B_Registry::singleton();
-        $db = $registry->database->{$database};
 
-        if(!isset($db))
+        if(($db = $registry->database()->{$database}()) == null)
         {
             $_m = "database (" . $database . ") does not exists in registry";
             $_d = array('method' => __METHOD__);
             throw new B_Exception($_m, E_USER_ERROR, $_d);
         }
         
-        if(get_class($db->connection) != "PDO") self::setupConnection($db);
+        if($db->connection == null) self::setupConnection($db);
 
         return $db->connection;
     }
@@ -1465,8 +1470,30 @@ class B_Registry
      */
     private $data = array();
 
-    
-    private function __construct() { }
+    /**
+     * Constructor 
+     *
+     * @param   string  $filename
+     * @param   string  $type
+     * @return  void
+     */
+    private function __construct($filename=null, $type='xml')
+    {
+        if(strlen($filename) > 0 && file_exists($filename))
+        {
+            switch (strtolower($type))
+            {
+                case 'xml' : 
+                    $xml = simplexml_load_file($filename); 
+
+                    if(is_object($xml)) 
+                        if(count($xml) > 0) 
+                            self::fromXML($xml->children(), $this->data);
+                break;
+            }
+        }
+    }
+
     private function __clone() { }
 
     /**
@@ -1474,11 +1501,11 @@ class B_Registry
      * 
      * @return B_Dispatcher
      */
-    public static function singleton()
+    public static function singleton($filename=null, $type='xml')
     {
         if(is_null(self::$instance) == true)
         {
-            self::$instance = new self();
+            self::$instance = new self($filename, $type);
         }
 
         return self::$instance;
@@ -1504,6 +1531,23 @@ class B_Registry
      */
     public function __get ($name)
     {
+        $value = null;
+
+        if(array_key_exists($name, $this->data))
+        {
+            $value = $this->data[$name];
+        }
+
+        return $value;
+    }
+
+    /**
+     * Call overloading
+     *
+     * @param   string  $name
+     */
+    public function __call($name, $arguments)
+    {
         if(array_key_exists($name, $this->data) == false)
         {
             $this->data[$name] = new self();
@@ -1512,93 +1556,6 @@ class B_Registry
         return $this->data[$name];
     }
 
-    /**
-     * Check if a node is set
-     *
-     * @param   string  $name
-     * @return  boolean
-     */
-    public function __isset($name)
-    {
-        $result = false;
-
-        if(array_key_exists($name, $this->data))
-        {
-            $result = true;
-
-            if(is_object($this->data[$name]))
-            {
-                if(get_class($this->data[$name]) == __CLASS__)
-                {
-                    $result = false;
-                }
-            }
-        }
-
-        return $result;
-    }
-
-    /**
-     * Check if a node is set (from array path)
-     *
-     * @param   array   $path
-     * @return  boolean
-     */
-    public function check($path)
-    {
-        $b = false;
-        $n = $this;
-
-        foreach($path as $i)
-        {
-            if(array_key_exists($i, $n->data))
-            {
-                $n = $n->data[$i];
-            }
-            else
-            {
-                $n = null;
-                break;
-            }
-        }
-        
-        return isset($n);
-    }
-
-    /**
-     * Return null string to B_Registry objects
-     *
-     * @return  string
-     */
-    public function __toString()
-    {
-        return ((string) null);
-    }
-
-    /**
-     * Load data from file
-     *
-     * @param   string  $filename
-     * @param   string  $type
-     * @return  void
-     */
-    public function load($filename, $type='xml')
-    {
-        if(file_exists($filename))
-        {
-            switch (strtolower($type))
-            {
-                case 'xml' : 
-                    $xml = simplexml_load_file($filename); 
-
-                    if(is_object($xml)) 
-                        if(count($xml) > 0) 
-                            self::fromXML($xml->children(), $this->data);
-                break;
-            }
-        }
-    }
-    
     /**
      * Load data from XML
      *
@@ -1658,14 +1615,7 @@ class B_Request
      *
      * @var string
      */
-    private $controller = "Index";
-
-    /**
-     * Action name
-     *
-     * @var string
-     */
-    private $action = "index";
+    private $arguments = array();
 
 
     /**
@@ -1710,34 +1660,18 @@ class B_Request
         $this->path = self::pathFromServer();
         $this->method = self::methodFromServer();
 
-        /* initialize controller */
+        $arguments = explode("/", trim($this->path, "/"));
+        $total = count($arguments);
 
-        $arguments = explode ("/", trim($this->path, "/"));
-        $total_arguments = count($arguments);
+        /* filter arguments */
 
-        if(count($arguments) > 0)
+        for($i=0;$i<$total;$i++)
         {
-            $controller_name = ((string) urldecode($arguments[0]));
-            $controller_name = preg_replace("/[^a-zA-Z0-9_]/", "", $controller_name);
-
-            if(strlen($controller_name) > 0)
-            {
-                $this->controller = ucfirst($controller_name);
-            }
+            $arguments[$i] = strtolower($arguments[$i]);
+            $arguments[$i] = preg_replace("/[^a-z0-9]/", "", $arguments[$i]);
         }
 
-        /* initialize action */
-
-        if($total_arguments > 1)
-        {
-            $action_name = ((string) urldecode($arguments[1]));
-            $action_name = preg_replace("/[^a-zA-Z0-9_]/", "", $action_name);
-
-            if(strlen($action_name) > 0)
-            {
-                $this->action = $action_name;
-            }
-        }
+        $this->arguments = $arguments;
     }
 
     /**
@@ -1761,23 +1695,34 @@ class B_Request
     }
 
     /**
-     * Controller name
+     * Get request argument
      *
-     * @return  string
+     * @parameter   integer     $i
+     * @return      array
      */
-    public function getController()
+    public function getArgument($i)
     {
-        return $this->controller;
+        return $this->arguments[$i];
     }
 
     /**
-     * Action name
+     * Request controller
      *
-     * @return  string
+     * @return  array
+     */
+    public function getController()
+    {
+        return array_key_exists(0, $this->arguments) ? $this->arguments[0] : null;
+    }
+
+    /**
+     * Request action
+     *
+     * @return  array
      */
     public function getAction()
     {
-        return $this->action;
+        return array_key_exists(1, $this->arguments) ? $this->arguments[1] : null;
     }
 
     /**
@@ -2122,11 +2067,11 @@ class B_Response
     {
         $registry = B_Registry::singleton();
 
-        if(is_array($registry->response->headers))
+        if(is_array($registry->response()->headers))
         {
-            if(array_key_exists($status, $registry->response->headers))
+            if(array_key_exists($status, $registry->response()->headers))
             {
-                if(is_array($headers = $registry->response->headers[$status]))
+                if(is_array($headers = $registry->response()->headers[$status]))
                 {
                     foreach($headers as $name => $value)
                     {
@@ -2336,9 +2281,9 @@ class B_Session
     public static function gc ($max) 
     {
         $registry = B_Registry::singleton();
-        $expiration = $registry->session->expiration;
+        $expiration = intval($registry->session()->expiration);
 
-        if(intval($expiration) <= 0)
+        if(($expiration = intval($registry->session()->expiration)) <= 0)
         {
             $_m = "session expiration value must be greater than zero";
             $_d = array('method' => __METHOD__);
@@ -2549,6 +2494,19 @@ class B_View
 
 
     /**
+     * Access to registry data
+     * 
+     * @param   string  $name
+     * @return  mixed
+     */
+    public function __call($name, $arguments)
+    {
+        return ($name == "registry") ? 
+            $this->registry :
+            $this->registry->{$name}()->object;
+    }
+
+    /**
      * Get overloading
      *
      * @param   string  $name
@@ -2558,28 +2516,9 @@ class B_View
     {
         $result = null;
 
-        /* registry */
-
-        if(is_object($this->registry))
+        if(array_key_exists($name, $this->data))
         {
-            if($this->registry->check(array($name, 'object')))
-            {
-                $result = $this->registry->{$name}->object;
-            }
-        }
-
-        /* view data */
-
-        if(is_null($result))
-        {
-
-            if(is_array($this->data))
-            {
-                if(array_key_exists($name, $this->data))
-                {
-                    $result = $this->data[$name];
-                }
-            }
+            $result = $this->data[$name];
         }
 
         return $result;
@@ -2594,25 +2533,6 @@ class B_View
      */
     public function __set($name, $value)
     {
-        /* registry */
-
-        if(is_object($this->registry))
-        {
-            if($this->registry->check(array($name, 'object')))
-            {
-                $_m = "view can not overwrite attribute (" . $name . ")";
-                $_d = array('method' => __METHOD__);
-                throw new B_Exception($_m, E_USER_WARNING, $_d);
-            }
-        }
-
-        /* view data */
-
-        if(is_array($this->data) == false)
-        {
-            $this->data = array();
-        }
-
         $this->data[$name] = $value;
     }
 

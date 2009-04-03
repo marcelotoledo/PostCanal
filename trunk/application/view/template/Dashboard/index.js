@@ -9,7 +9,7 @@ $(document).ready(function()
     $.b_spinner
     ({
         image: "<?php B_Helper::img_src('spinner.gif') ?>",
-        message: "... <?php echo $this->translation->application_loading ?>"
+        message: "... <?php echo $this->translation()->application_loading ?>"
     });
 
     /* CONTAINERS */
@@ -42,12 +42,19 @@ $(document).ready(function()
         wh = $(window).height();
 
         _c = $("#feedscontainer");
+        _c.css('top', 0);
+        _c.css('left', 0);
+        _c.css('width', 250);
         _h = wh - _c.offset().top + _c.height() - _c.outerHeight();
         _c.height(_h);
         maxcontent(_c);
 
         _c = $("#itemscontainer");
+        _c.css('top', 0);
+        _c.css('left', 255);
+
         _w = ww - _c.offset().left + _c.width() - _c.outerWidth();
+
         _c.width(_w);
         _c.height(_h * 0.5);
         maxcontent(_c);
@@ -55,8 +62,9 @@ $(document).ready(function()
         _t = _c.offset().top + _c.position().top + _c.height();
 
         _c = $("#queuecontainer");
+        _c.css('top', 300 - 3);
+        _c.css('left', 255);
         _c.width(_w);
-        _c.css('top', _t - 8);
         _c.height((_h * 0.5) - 5);
         maxcontent(_c);
     }
@@ -90,7 +98,7 @@ $(document).ready(function()
 
     function err()
     {
-        alert("<?php echo $this->translation->server_error ?>");
+        alert("<?php echo $this->translation()->server_error ?>");
     }
 
     /* load queue list */
@@ -240,7 +248,7 @@ $(document).ready(function()
                 }
                 else
                 {
-                    feed_discover_msg("<?php echo $this->translation->feed_not_found ?>");
+                    feed_discover_msg("<?php echo $this->translation()->feed_not_found ?>");
                 }
             }, 
             error: function () { err(); } 
@@ -325,7 +333,7 @@ $(document).ready(function()
             }
             else
             {
-                feed_discover_msg("<?php echo $this->translation->blank_url ?>");
+                feed_discover_msg("<?php echo $this->translation()->blank_url ?>");
             }
         }
     });

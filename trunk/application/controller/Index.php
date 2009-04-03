@@ -14,9 +14,9 @@ class C_Index extends C_Abstract
      */
     public function A_index()
     {
-        if($this->session->getActive() == true)
+        if($this->session()->getActive() == true)
         {
-            $this->response->setRedirect(B_Request::url("dashboard"));
+            $this->response()->setRedirect(B_Request::url("dashboard"));
         }
     }
 }

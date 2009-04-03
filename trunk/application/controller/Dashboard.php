@@ -24,7 +24,7 @@ class C_Dashboard extends C_Abstract
      */
     public function A_index()
     {
-        $id = intval($this->session->user_profile_id);
+        $id = intval($this->session()->user_profile_id);
         $profile = ($id > 0) ? UserProfile::findByPrimaryKeyEnabled($id) : null;
 
         if(is_object($profile) == false)
@@ -48,8 +48,8 @@ class C_Dashboard extends C_Abstract
     # {
     #     $this->view->setLayout(null);
 
-    #     $user_profile_id = intval($this->session->user_profile_id);
-    #     $hash = $this->request->blog;
+    #     $user_profile_id = intval($this->session()->user_profile_id);
+    #     $hash = $this->request()->blog;
     #     $blog = null;
     #     $this->view->feeds = array();
 
@@ -74,9 +74,9 @@ class C_Dashboard extends C_Abstract
     # {
     #     $this->view->setLayout(null);
 
-    #     $user_profile_id = intval($this->session->user_profile_id);
-    #     $hash = $this->request->blog;
-    #     $ch = $this->request->ch;
+    #     $user_profile_id = intval($this->session()->user_profile_id);
+    #     $hash = $this->request()->blog;
+    #     $ch = $this->request()->ch;
     #     $blog = null;
     #     $feed = null;
     #     $this->view->items = array();
@@ -106,8 +106,8 @@ class C_Dashboard extends C_Abstract
     # {
     #     $this->view->setLayout(null);
 
-    #     $user_profile_id = intval($this->session->user_profile_id);
-    #     $cid = $this->request->cid;
+    #     $user_profile_id = intval($this->session()->user_profile_id);
+    #     $cid = $this->request()->cid;
     #     $blog = null;
     #     $this->view->items = array();
 

@@ -36,12 +36,13 @@ class B_Main
 
         $request = new B_Request();
         $response = new B_Response();
-        $registry->request->object = $request;
-        $registry->response->object = $response;
+        $registry->request()->object = $request;
+        $registry->response()->object = $response;
 
         /* check controller */
 
         $controller_name = $request->getController();
+        if(strlen($controller_name) == 0) $controller_name = "index";
 
         if(($controller = self::factory($controller_name)) == null)
         {
@@ -58,6 +59,7 @@ class B_Main
             /* check action */
 
             $action_name = $request->getAction();
+            if(strlen($action_name) == 0) $action_name = "index";
 
             if($controller->check($action_name) == false)
             {
@@ -73,23 +75,23 @@ class B_Main
                 $view->registry = $registry;
                 $layout = strtolower($controller_name);
                 $view->setLayout($layout);
-                $template = $controller_name . "/" . $action_name;
+                $template = ucfirst($controller_name) . "/" . $action_name;
                 $view->setTemplate($template);
                 $controller->view = $view;
 
                 /* initialize session */
 
-                $session_name = $registry->session->name;
+                $session_name = $registry->session()->name;
                 $session = new B_Session($session_name);
                 $controller->session = $session;
-                $registry->session->object = $session;
+                $registry->session()->object = $session;
 
                 /* initialize translation */
 
-                $culture = $registry->translation->culture;
+                $culture = $registry->translation()->culture;
                 $translation = new B_Translation($culture);
                 $controller->translation = $translation;
-                $registry->translation->object = $translation;
+                $registry->translation()->object = $translation;
 
                 /* run action */
 
@@ -199,7 +201,7 @@ class B_Main
     private static function factory($name)
     {
         $controller = null;
-        $class_name = 'C_' . $name;
+        $class_name = 'C_' . ucfirst($name);
 
         if(class_exists($class_name))
         {

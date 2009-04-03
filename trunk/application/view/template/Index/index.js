@@ -10,7 +10,7 @@ $(document).ready(function()
     $.b_spinner
     ({
         image: "<?php B_Helper::img_src('spinner.gif') ?>", 
-        message: "... <?php echo $this->translation->application_loading ?>"
+        message: "... <?php echo $this->translation()->application_loading ?>"
     });
 
     /* SWITCHES */
@@ -57,7 +57,7 @@ $(document).ready(function()
 
     function err()
     {
-        alert("<?php echo $this->translation->server_error ?>");
+        alert("<?php echo $this->translation()->server_error ?>");
     }
 
     /* password recovery */
@@ -66,7 +66,7 @@ $(document).ready(function()
     {
         if($("input[name='email']").val() == "")
         {
-            msg("<?php echo $this->translation->recovery_email ?>");
+            msg("<?php echo $this->translation()->recovery_email ?>");
             return null;
         }
 
@@ -111,13 +111,13 @@ $(document).ready(function()
 
         if(email == "" || password == "" || confirm_ == "")
         {
-            msg("<?php echo $this->translation->form_incomplete ?>");
+            msg("<?php echo $this->translation()->form_incomplete ?>");
             return null;
         }
 
         if(password != confirm_)
         {
-            msg("<?php echo $this->translation->form_not_match ?>");
+            msg("<?php echo $this->translation()->form_not_match ?>");
             return null;
         }
 
@@ -156,7 +156,7 @@ $(document).ready(function()
 
         if(email == "" || password == "")
         {
-            msg("<?php echo $this->translation->form_incomplete ?>");
+            msg("<?php echo $this->translation()->form_incomplete ?>");
             return null;
         }
 

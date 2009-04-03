@@ -16,12 +16,12 @@ class C_Profile extends C_Abstract
      */
     public function A_login()
     {
-        $this->response->setXML(true);
+        $this->response()->setXML(true);
 
-        $email = $this->request->email;
-        $password = $this->request->password;
+        $email = $this->request()->email;
+        $password = $this->request()->password;
         $this->view->login = false;
-        $this->view->message = $this->translation->login_invalid;
+        $this->view->message = $this->translation()->login_invalid;
 
         /* check for existing profile */
 
@@ -38,17 +38,17 @@ class C_Profile extends C_Abstract
 
             if($profile->register_confirmation == false)
             {
-                $this->view->message = $this->translation->register_unconfirmed;
+                $this->view->message = $this->translation()->register_unconfirmed;
             }
 
             /* valid login, create session */
 
             else
             {
-                $this->session->setActive(true);
-                $this->session->user_profile_id = $profile->user_profile_id;
-                $this->session->user_profile_hash = $profile->hash;
-                $this->session->user_profile_login_email = $profile->login_email;
+                $this->session()->setActive(true);
+                $this->session()->user_profile_id = $profile->user_profile_id;
+                $this->session()->user_profile_hash = $profile->hash;
+                $this->session()->user_profile_login_email = $profile->login_email;
 
                 $profile->last_login_time = time();
                 $profile->save();
@@ -70,13 +70,13 @@ class C_Profile extends C_Abstract
      */
     public function A_register()
     {
-        $this->response->setXML(true);
+        $this->response()->setXML(true);
 
-        $email = $this->request->email;
-        $password = $this->request->password;
-        $confirm = $this->request->confirm;
+        $email = $this->request()->email;
+        $password = $this->request()->password;
+        $confirm = $this->request()->confirm;
         $this->view->register = false;
-        $this->view->message = $this->translation->register_invalid;
+        $this->view->message = $this->translation()->register_invalid;
 
         /* check for existing profile */
 
@@ -125,11 +125,11 @@ class C_Profile extends C_Abstract
                 }
 
                 $this->view->register = true;
-                $this->view->message = $this->translation->register_accepted;
+                $this->view->message = $this->translation()->register_accepted;
             }
             catch(B_Exception $exception)
             {
-                $this->view->message = $this->translation->register_invalid_email;
+                $this->view->message = $this->translation()->register_invalid_email;
 
                 /* disable unconfirmed profile */
 
@@ -156,8 +156,8 @@ class C_Profile extends C_Abstract
     {
         $this->view->setLayout(null);
         $this->view->setTemplate(null);
-        $this->session->setActive(false);
-        $this->response->setRedirect(BASE_URL);
+        $this->session()->setActive(false);
+        $this->response()->setRedirect(BASE_URL);
     }
 
     /**
@@ -167,12 +167,12 @@ class C_Profile extends C_Abstract
      */
     public function A_recovery()
     {
-        $this->response->setXML(true);
+        $this->response()->setXML(true);
 
-        $email = $this->request->email;
+        $email = $this->request()->email;
         $profile = UserProfile::findByEmail($email);
         $this->view->recovery = false;
-        $this->view->message = $this->translation->recovery_failed;
+        $this->view->message = $this->translation()->recovery_failed;
 
         /* recovery instructions */
 
@@ -185,7 +185,7 @@ class C_Profile extends C_Abstract
                 $profile->recovery_allowed = true;
                 $profile->save();
                 $this->view->recovery = true;
-                $this->view->message = $this->translation->recovery_sent;
+                $this->view->message = $this->translation()->recovery_sent;
             }
             catch(B_Exception $exception)
             {
@@ -204,7 +204,7 @@ class C_Profile extends C_Abstract
             {
                 $this->notify($email, "dummy");
                 $this->view->recovery = true;
-                $this->view->message = $this->translation->recovery_sent;
+                $this->view->message = $this->translation()->recovery_sent;
             }
             catch(B_Exception $exception)
             {
@@ -225,10 +225,10 @@ class C_Profile extends C_Abstract
     {
         $this->view->setLayout('index');
 
-        $email = $this->request->email;
-        $hash = $this->request->user;
+        $email = $this->request()->email;
+        $hash = $this->request()->user;
         $this->view->accepted = false;
-        $this->view->message = $this->translation->confirm_failed;
+        $this->view->message = $this->translation()->confirm_failed;
 
         $profile = null;
 
@@ -241,7 +241,7 @@ class C_Profile extends C_Abstract
         {
             if($profile->register_confirmation == true)
             {
-                $this->view->message = $this->translation->confirm_done_before;
+                $this->view->message = $this->translation()->confirm_done_before;
             }
             else
             {
@@ -250,7 +250,7 @@ class C_Profile extends C_Abstract
                 $profile->register_confirmation_time = time();
                 $profile->save();
 
-                $this->view->message = $this->translation->confirm_accepted;
+                $this->view->message = $this->translation()->confirm_accepted;
             }
 
             $this->view->accepted = true;
@@ -264,7 +264,7 @@ class C_Profile extends C_Abstract
      */
     public function A_password()
     {
-        $this->request->getMethod() == B_Request::METHOD_POST ?
+        $this->request()->getMethod() == B_Request::METHOD_POST ?
             $this->P_password() :
             $this->G_password();
     }
@@ -278,8 +278,8 @@ class C_Profile extends C_Abstract
     {
         $this->view->setLayout('index');
 
-        $email = $this->request->email;
-        $hash = $this->request->user;
+        $email = $this->request()->email;
+        $hash = $this->request()->user;
         $expired = false;
         $profile = null;
 
@@ -300,18 +300,18 @@ class C_Profile extends C_Abstract
      */
     private function P_password()
     {
-        $this->response->setXML(true);
+        $this->response()->setXML(true);
 
-        $email = $this->request->email;
-        $hash = $this->request->user;
-        $current = $this->request->current;
-        $password = $this->request->password;
-        $confirm = $this->request->confirm;
-        $message = $this->translation->password_failed;
+        $email = $this->request()->email;
+        $hash = $this->request()->user;
+        $current = $this->request()->current;
+        $password = $this->request()->password;
+        $confirm = $this->request()->confirm;
+        $message = $this->translation()->password_failed;
 
         /* password change (authenticated) */
 
-        if(strlen($current) > 0 && ($id = intval($this->session->user_profile_id)) > 0)
+        if(strlen($current) > 0 && ($id = intval($this->session()->user_profile_id)) > 0)
         {
             $this->authorize();
             $updated = $this->passwordAuthenticated
@@ -350,11 +350,11 @@ class C_Profile extends C_Abstract
         {
             if($password != $confirm)
             {
-                $message = $this->translation->password_not_match;
+                $message = $this->translation()->password_not_match;
             }
             elseif($profile->login_password_md5 != md5($current))
             {
-                $message = $this->translation->password_invalid;
+                $message = $this->translation()->password_invalid;
             }
 
             /* all ok ! */
@@ -366,7 +366,7 @@ class C_Profile extends C_Abstract
                 $profile->save();
 
                 $updated = true;
-                $message = $this->translation->password_updated;
+                $message = $this->translation()->password_updated;
 
                 $id = intval($profile->user_profile_id);
                 $_d = array ('method' => __METHOD__, 'user_profile_id' => $id);
@@ -396,7 +396,7 @@ class C_Profile extends C_Abstract
         {
             if($password != $confirm)
             {
-                $message = $this->translation->password_not_match;
+                $message = $this->translation()->password_not_match;
             }
             else
             {
@@ -406,13 +406,13 @@ class C_Profile extends C_Abstract
                 $profile->save();
 
                 $updated = true;
-                $message = $this->translation->password_updated;
+                $message = $this->translation()->password_updated;
 
                 $id = intval($profile->user_profile_id);
                 $_d = array ('method' => __METHOD__, 'user_profile_id' => $id);
                 self::log("password changed", $_d);
                 $this->notify($profile->login_email, "updated", $profile);
-                $this->session->setActive(false);
+                $this->session()->setActive(false);
             }
         }
 
@@ -426,7 +426,7 @@ class C_Profile extends C_Abstract
      */
     public function A_email()
     {
-        $this->request->getMethod() == B_Request::METHOD_POST ?
+        $this->request()->getMethod() == B_Request::METHOD_POST ?
             $this->P_email() :
             $this->G_email();
     }
@@ -440,8 +440,8 @@ class C_Profile extends C_Abstract
     {
         $this->view->setLayout('index');
 
-        $email = $this->request->email;
-        $hash = $this->request->user;
+        $email = $this->request()->email;
+        $hash = $this->request()->user;
         $profile = null;
         $new_email = "";
 
@@ -462,19 +462,19 @@ class C_Profile extends C_Abstract
      */
     private function P_email()
     {
-        $this->response->setXML(true);
+        $this->response()->setXML(true);
 
-        $new_email = $this->request->new_email;
-        $email = $this->request->email;
-        $hash = $this->request->user;
-        $password = $this->request->password;
+        $new_email = $this->request()->new_email;
+        $email = $this->request()->email;
+        $hash = $this->request()->user;
+        $password = $this->request()->password;
         $accepted = false;
-        $message = $this->translation->email_failed;
+        $message = $this->translation()->email_failed;
         $profile = null;
 
         /* change request (authenticated) */
 
-        if(strlen($new_email) > 0 && ($id = intval($this->session->user_profile_id)) > 0)
+        if(strlen($new_email) > 0 && ($id = intval($this->session()->user_profile_id)) > 0)
         {
             $this->authorize();
             $accepted = $this->emailChangeRequest($id, $new_email, $message);
@@ -491,7 +491,7 @@ class C_Profile extends C_Abstract
 
         if($accepted == true)
         {
-            $this->session->setActive(false);
+            $this->session()->setActive(false);
         }
 
         $this->view->accepted = $accepted;
@@ -514,7 +514,7 @@ class C_Profile extends C_Abstract
         {
             if($profile->login_email == $new_email)
             {
-                $message = $this->translation->email_unchanged;
+                $message = $this->translation()->email_unchanged;
             }
             else
             {
@@ -524,7 +524,7 @@ class C_Profile extends C_Abstract
                     $profile->email_update_message_time = time();
                     $profile->save();
                     $this->notify($new_email, "email_change", $profile);
-                    $message = $this->translation->change_request_accepted;
+                    $message = $this->translation()->change_request_accepted;
                     $accepted = true;
                 }
                 catch(B_Exception $exception)
@@ -558,7 +558,7 @@ class C_Profile extends C_Abstract
         {
             if($profile->login_password_md5 != md5($password))
             {
-                $message = $this->translation->email_unmatched_password;
+                $message = $this->translation()->email_unmatched_password;
             }
             else
             {
@@ -570,7 +570,7 @@ class C_Profile extends C_Abstract
                     $profile->save();
 
                     $accepted = true;
-                    $message = $this->translation->email_change_accepted;
+                    $message = $this->translation()->email_change_accepted;
 
                     $id = $profile->user_profile_id;
                     $_d = array ('method' => __METHOD__, 'user_profile_id' => $id);
@@ -592,7 +592,7 @@ class C_Profile extends C_Abstract
     {
         $this->authorize();
 
-        $this->request->getMethod() == B_Request::METHOD_POST ?
+        $this->request()->getMethod() == B_Request::METHOD_POST ?
             $this->P_edit() :
             $this->G_edit();
     }
@@ -606,12 +606,12 @@ class C_Profile extends C_Abstract
     {
         $this->view->setLayout('dashboard');
         
-        $id = intval($this->session->user_profile_id);
+        $id = intval($this->session()->user_profile_id);
         $this->view->profile = UserProfile::findByPrimaryKeyEnabled($id);
 
         if(is_object($this->view->profile) == false) 
         {
-            $this->response->setRedirect(BASE_URL);
+            $this->response()->setRedirect(BASE_URL);
         }
     }
 
@@ -622,12 +622,12 @@ class C_Profile extends C_Abstract
      */
     private function P_edit()
     {
-        $this->response->setXML(true);
+        $this->response()->setXML(true);
 
-        $id = intval($this->session->user_profile_id);
+        $id = intval($this->session()->user_profile_id);
         $profile = ($id > 0) ? UserProfile::findByPrimaryKeyEnabled($id) : null;
         $this->view->saved = false;
-        $this->view->message = $this->translation->edit_failed;
+        $this->view->message = $this->translation()->edit_failed;
 
         if(!is_object($profile))
         {
@@ -636,13 +636,13 @@ class C_Profile extends C_Abstract
             throw new B_Exception($_m, E_USER_WARNING, $_d);
         }
 
-        $profile->name = $this->request->name;
+        $profile->name = $this->request()->name;
 
         try
         {
             $profile->save();
             $this->view->saved = true;
-            $this->view->message = $this->translation->edit_saved;
+            $this->view->message = $this->translation()->edit_saved;
         }
         catch(B_Exception $exception)
         {
@@ -665,8 +665,8 @@ class C_Profile extends C_Abstract
         $mailer = new L_Mailer();
 
         $subject = "mail_" . $template . "_subject";
-        $mailer->setSubject($this->translation->{$subject});
-        $template = $this->request->getController() . "/mail_" . $template;
+        $mailer->setSubject($this->translation()->{$subject});
+        $template = $this->request()->getController() . "/mail_" . $template;
 
         ob_start();
         include B_View::getTemplatePath($template);

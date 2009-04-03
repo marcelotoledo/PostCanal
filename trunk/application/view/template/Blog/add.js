@@ -10,7 +10,7 @@ $(document).ready(function()
     $.b_spinner
     ({
         image: "<?php B_Helper::img_src('spinner.gif') ?>",
-        message: "... <?php echo $this->translation->application_loading ?>"
+        message: "... <?php echo $this->translation()->application_loading ?>"
     });
 
     /* SWITCHES */
@@ -159,7 +159,7 @@ $(document).ready(function()
                 else
                 {
                     changeURL();
-                    blogaddmsg("<?php echo $this->translation->url_not_accepted ?>");
+                    blogaddmsg("<?php echo $this->translation()->url_not_accepted ?>");
                 }
 
                 /* blog type */
@@ -171,12 +171,12 @@ $(document).ready(function()
                 else
                 {
                     changeURL();
-                    blogaddmsg("<?php echo $this->translation->blog_type_not_accepted ?>");
+                    blogaddmsg("<?php echo $this->translation()->blog_type_not_accepted ?>");
                 }
 
                 if(blog_type_maintenance == "true")
                 {
-                    blogaddmsg("<?php echo $this->translation->blog_type_maintenance ?>");
+                    blogaddmsg("<?php echo $this->translation()->blog_type_maintenance ?>");
                 }
 
                 /* manager url */
@@ -187,7 +187,7 @@ $(document).ready(function()
 
                     if(manager_url_accepted == "false")
                     {
-                        blogaddmsg("<?php echo $this->translation->url_manager_not_accepted ?>");
+                        blogaddmsg("<?php echo $this->translation()->url_manager_not_accepted ?>");
                         changeManagerURL();
                     }
                 }
@@ -209,7 +209,7 @@ $(document).ready(function()
 
         if(manager_url == "")
         {
-            blogaddmsg("<?php echo $this->translation->manager_url_blank ?>");
+            blogaddmsg("<?php echo $this->translation()->manager_url_blank ?>");
             return null;
         }
 
@@ -233,7 +233,7 @@ $(document).ready(function()
 
                 if(manager_url_accepted == "false")
                 {
-                    blogaddmsg("<?php echo $this->translation->url_manager_not_accepted ?>");
+                    blogaddmsg("<?php echo $this->translation()->url_manager_not_accepted ?>");
                     changeManagerURL();
                 }
             }, 
@@ -275,11 +275,11 @@ $(document).ready(function()
 
                 if(login_status = "ok")
                 {
-                    blogaddmsg("<?php echo $this->translation->login_verified ?>");
+                    blogaddmsg("<?php echo $this->translation()->login_verified ?>");
                 }
                 else
                 {
-                    blogaddmsg("<?php echo $this->translation->login_invalid ?>");
+                    blogaddmsg("<?php echo $this->translation()->login_invalid ?>");
                 }
             }, 
             error: function () { onError(); }
@@ -301,13 +301,13 @@ $(document).ready(function()
 
         if(name == "" || username == "" || password == "")
         {
-            blogaddmsg("<?php echo $this->translation->invalid_form ?>");
+            blogaddmsg("<?php echo $this->translation()->invalid_form ?>");
             return null;
         }
 
         if(fc == false)
         {
-            blogaddmsg("<?php echo $this->translation->blog_url_not_verified ?>");
+            blogaddmsg("<?php echo $this->translation()->blog_url_not_verified ?>");
             return null;
         }
 

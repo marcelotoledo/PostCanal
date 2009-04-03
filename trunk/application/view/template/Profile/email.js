@@ -9,7 +9,7 @@ $(document).ready(function()
     $.b_spinner
     ({
         image: "<?php B_Helper::img_src('spinner.gif') ?>",
-        message: "... <?php echo $this->translation->application_loading ?>"
+        message: "... <?php echo $this->translation()->application_loading ?>"
     });
 
     /* SWITCHES */

@@ -15,7 +15,7 @@ error_reporting (E_ALL);
 /* PATH */
 
 define('BASE_PATH', "/var/www/blotomate");
-define('BASE_URL', "http://127.0.0.1:8080");
+define('BASE_URL', "http://localhost:8080");
 ##define('BASE_URL', "http://192.168.1.100:8080");
 define('APPLICATION_PATH', BASE_PATH . "/application");
 define('LIBRARY_PATH', BASE_PATH . "/library");
@@ -23,15 +23,14 @@ define('LIBRARY_PATH', BASE_PATH . "/library");
 set_include_path (LIBRARY_PATH . PATH_SEPARATOR . get_include_path());
 
 
-$registry = B_Registry::singleton();
-$registry->load(BASE_PATH . '/config/environment.xml');
+$registry = B_Registry::singleton(BASE_PATH . '/config/environment.xml');
 
-$registry->request->object = null;
-$registry->response->object = null;
-$registry->session->object = null;
-$registry->translation->object = null;
+$registry->request()->object = null;
+$registry->response()->object = null;
+$registry->session()->object = null;
+$registry->translation()->object = null;
 
-$registry->response->headers = array
+$registry->response()->headers = array
 (
     B_Response::STATUS_OK => array
     (
@@ -40,4 +39,4 @@ $registry->response->headers = array
     )
 );
 
-$registry->session->unauthorized->redirect = BASE_URL;
+$registry->session()->unauthorized()->redirect = BASE_URL;
