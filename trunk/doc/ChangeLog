@@ -32,5 +32,6 @@ HORAS TRABALHADAS: 2h
 
 - Alteração do cadastro de Feeds. Inclusao da biblioteca feedparser no
 backend e implementação no webservice discover_feed(url)
+- Cadastro de feeds: Implementação de inclusão de feed no blog do usuário
 
-HORAS TRABALHADAS: 2h
+HORAS TRABALHADAS: 4h

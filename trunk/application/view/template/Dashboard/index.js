@@ -2,7 +2,8 @@ $(document).ready(function()
 {
     /* DEFAULTS */
     
-    var ar = false;
+    var active_request = false;
+    var current_blog = null;
 
     /* spinner */
 
@@ -41,17 +42,22 @@ $(document).ready(function()
         ww = $(window).width();
         wh = $(window).height();
 
+        _l = 250; /* left bar width */
+        _b = 5;   /* container spacing */
+
         _c = $("#feedscontainer");
         _c.css('top', 0);
         _c.css('left', 0);
-        _c.css('width', 250);
+        _c.css('width', _l);
+
         _h = wh - _c.offset().top + _c.height() - _c.outerHeight();
+
         _c.height(_h);
         maxcontent(_c);
 
         _c = $("#itemscontainer");
         _c.css('top', 0);
-        _c.css('left', 255);
+        _c.css('left', _l + _b);
 
         _w = ww - _c.offset().left + _c.width() - _c.outerWidth();
 
@@ -62,10 +68,10 @@ $(document).ready(function()
         _t = _c.offset().top + _c.position().top + _c.height();
 
         _c = $("#queuecontainer");
-        _c.css('top', 300 - 3);
-        _c.css('left', 255);
+        _c.css('top', (_h * 0.5) + _b);
+        _c.css('left', _l + _b);
         _c.width(_w);
-        _c.height((_h * 0.5) - 5);
+        _c.height((_h * 0.5) - _b);
         maxcontent(_c);
     }
 
@@ -79,7 +85,7 @@ $(document).ready(function()
     blog = $("select[name='bloglst'] > option:selected").val();
     <?php endif ?>
 
-    setblog(blog);
+    set_blog(blog);
 
     <?php endif ?>
 
@@ -89,7 +95,7 @@ $(document).ready(function()
 
     function sp(b)
     {
-        ((ar = b) == true) ? $.b_spinner_start() : $.b_spinner_stop();
+        ((active_request = b) == true) ? $.b_spinner_start() : $.b_spinner_stop();
     }
 
     /* ACTIONS */
@@ -224,17 +230,22 @@ $(document).ready(function()
                 d = $(xml).find('data');
                 r = d.find('results')
 
+                if(r.length > 0) r = r.children();
+
                 if(r.length > 0)
                 {
                     $("#feedaddurlrow").hide();
 
                     r.each(function()
                     {
+                        _node = $(this)[0].nodeName;
                         _url = $(this).find('url').text();
                         _title = $(this).find('title').text();
 
-                        s = "<input name=\"feedaddoptions[]\" type=\"radio\" " +
-                            "url=\"" + _url + "\" title=\"" + _title + "\">" +
+                        if(_title.length == 0) _title = _url;
+
+                        s = "<input name=\"feedaddoptions[]\" " +
+                            "type=\"radio\" node=\"" + _node + "\">" +
                             ( (_title.length > 50) ? 
                               (_title.substring(0, 50) + "...") : 
                               (_title) ) + "<br/>";
@@ -252,14 +263,16 @@ $(document).ready(function()
         });
     }
 
-    function feed_add(url, title)
+    function feed_add(node)
     {
+
+
         $.ajax
         ({
             type: "POST",
             url: "<?php B_Helper::url('feed', 'add') ?>",
             dataType: "xml",
-            data: { url: url, title: title },
+            data: { node: node, blog: current_blog },
             beforeSend: function()
             {
                 sp(true);
@@ -279,8 +292,9 @@ $(document).ready(function()
 
     /* set blog (run queue_list > feed_list > feed_item) */
 
-    function setblog(blog)
+    function set_blog(blog)
     {
+        current_blog = blog;
         queue_list(blog);
     }
 
@@ -298,7 +312,7 @@ $(document).ready(function()
     $("select[name='bloglst']").change(function()
     {
         blog = $("select[name='bloglst'] > option:selected").val();
-        setblog(blog);
+        set_blog(blog);
     });
 
     $("#feedaddlnk").click(function()
@@ -316,7 +330,7 @@ $(document).ready(function()
 
         if(feedurl.val() != undefined)
         {
-            feed_add(feedurl.attr('url'), feedurl.attr('title'));
+            feed_add(feedurl.attr('node'));
         }
         else
         {

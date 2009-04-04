@@ -89,7 +89,7 @@ class UserBlogFeed extends B_Model
 
         if($this->isNew()) 
         {
-            $this->ch = L_Utility::randomString(8);
+            $this->hash = L_Utility::randomString(8);
         }
 
         return parent::save();
@@ -151,6 +151,18 @@ class UserBlogFeed extends B_Model
     public static function findByPrimaryKey($id)
     {
         return current(self::find(array(self::$primary_key_name => $id)));
+    }
+
+    /**
+     * Find by Feed
+     *
+     * @param   integer     $id         AggregatorFeed ID
+     *
+     * @return  UserBlogFeed|null 
+     */
+    public static function findByFeed($id)
+    {
+        return current(self::find(array('aggregator_feed_id' => $id)));
     }
 
     /**
