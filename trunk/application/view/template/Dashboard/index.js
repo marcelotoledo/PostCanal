@@ -139,11 +139,11 @@ $(document).ready(function()
 
     function feed_list_populate(feeds)
     {
+        _c = $("#feedscontainer > div.containercontentarea");
+        _c.html("");
+
         if(feeds.length > 0)
         {
-            _c = $("#feedscontainer > div.containercontentarea");
-            _c.html("");
-
             feeds.each(function()
             {
                 _feed = $(this).find('feed').text();
@@ -395,6 +395,7 @@ $(document).ready(function()
     {
         current_blog = blog;
         current_feed = null;
+        feedaddform_hide();
         queue_list(blog);
     }
 
