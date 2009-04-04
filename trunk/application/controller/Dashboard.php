@@ -36,8 +36,8 @@ class C_Dashboard extends C_Abstract
 
         $blogs = UserBlog::findByUserProfileId($id, true);
 
-        $this->view->profile = $profile;
-        $this->view->blogs = $blogs;
+        $this->view()->profile = $profile;
+        $this->view()->blogs = $blogs;
     }
 
     # /**
@@ -46,12 +46,12 @@ class C_Dashboard extends C_Abstract
     #  */
     # public function A_blog()
     # {
-    #     $this->view->setLayout(null);
+    #     $this->view()->setLayout(null);
 
     #     $user_profile_id = intval($this->session()->user_profile_id);
     #     $hash = $this->request()->blog;
     #     $blog = null;
-    #     $this->view->feeds = array();
+    #     $this->view()->feeds = array();
 
     #     if($user_profile_id > 0 && strlen($hash) > 0)
     #     {
@@ -59,11 +59,11 @@ class C_Dashboard extends C_Abstract
 
     #         if(is_object($blog))
     #         {
-    #             $this->view->feeds = UserBlogFeed::findByUserBlog($blog->user_blog_id);
+    #             $this->view()->feeds = UserBlogFeed::findByUserBlog($blog->user_blog_id);
     #         }
     #     }
 
-    #     $this->view->blog = $blog;
+    #     $this->view()->blog = $blog;
     # }
 
     # /**
@@ -72,14 +72,14 @@ class C_Dashboard extends C_Abstract
     #  */
     # public function A_feed()
     # {
-    #     $this->view->setLayout(null);
+    #     $this->view()->setLayout(null);
 
     #     $user_profile_id = intval($this->session()->user_profile_id);
     #     $hash = $this->request()->blog;
     #     $ch = $this->request()->ch;
     #     $blog = null;
     #     $feed = null;
-    #     $this->view->items = array();
+    #     $this->view()->items = array();
 
     #     if($user_profile_id > 0 && strlen($hash) > 0)
     #     {
@@ -92,7 +92,7 @@ class C_Dashboard extends C_Abstract
     #             if(is_object($feed))
     #             {
     #                 $chid = $feed->aggregator_feed_id;
-    #                 $this->view->items = AggregatorItem::findByFeed($chid);
+    #                 $this->view()->items = AggregatorItem::findByFeed($chid);
     #             }
     #         }
     #     }
@@ -104,12 +104,12 @@ class C_Dashboard extends C_Abstract
     #  */
     # public function A_queue()
     # {
-    #     $this->view->setLayout(null);
+    #     $this->view()->setLayout(null);
 
     #     $user_profile_id = intval($this->session()->user_profile_id);
     #     $cid = $this->request()->cid;
     #     $blog = null;
-    #     $this->view->items = array();
+    #     $this->view()->items = array();
 
     #     if($user_profile_id > 0 && strlen($cid) > 0)
     #     {
@@ -117,7 +117,7 @@ class C_Dashboard extends C_Abstract
 
     #         if(is_object($blog))
     #         {
-    #             $this->view->items = UserBlogQueue::findByUserBlog($blog->user_blog_id);
+    #             $this->view()->items = UserBlogQueue::findByUserBlog($blog->user_blog_id);
     #         }
     #     }
     # }
@@ -127,6 +127,6 @@ class C_Dashboard extends C_Abstract
     #  */
     # public function A_unauthorized()
     # {
-    #     $this->view->setLayout(null);
+    #     $this->view()->setLayout(null);
     # }
 }

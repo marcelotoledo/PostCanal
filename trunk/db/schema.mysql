@@ -15,9 +15,7 @@ DROP TABLE IF EXISTS base_translation CASCADE;
 DROP TABLE IF EXISTS base_session CASCADE;
 DROP TABLE IF EXISTS base_log CASCADE;
 
-DROP PROCEDURE IF EXISTS model_aggregator_feed_insert;
-
-/* base */
+-- base --
 
 CREATE TABLE base_log
 (
@@ -242,25 +240,3 @@ CREATE TABLE model_user_blog_queue_item
 ) ENGINE=InnoDB DEFAULT CHARSET='utf8';
 
 CREATE INDEX m_bqi_bhs_idx ON model_user_blog_queue_item (user_blog_id, hash);
-
--- procedures --
-
-DELIMITER //
-
-CREATE PROCEDURE model_aggregator_feed_insert (_t VARCHAR(100), _u VARCHAR(200), _d TEXT)
-BEGIN
-    DECLARE total INT DEFAULT 0;
-    START TRANSACTION;
-    SELECT COUNT(*) INTO total 
-    FROM model_aggregator_feed 
-    WHERE url_md5=MD5(_u) AND enabled=1;
-    IF total=0 THEN
-        INSERT INTO model_aggregator_feed (title, url, url_md5, description) 
-        VALUES (_t, _u, MD5(_u), _d);
-        COMMIT;
-    ELSE
-        ROLLBACK;
-    END IF;        
-    INSERT INTO base_log (priority, message) VALUES (0, "testando");
-END;
-//

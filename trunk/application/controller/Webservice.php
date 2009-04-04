@@ -13,8 +13,8 @@ class C_Webservice extends B_Controller
      */
     public function before()
     {
-        $this->view->setLayout(null);
-        $this->view->setTemplate(null);
+        $this->view()->setLayout(null);
+        $this->view()->setTemplate(null);
     }
 
     /**

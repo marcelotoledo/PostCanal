@@ -20,8 +20,8 @@ class C_Profile extends C_Abstract
 
         $email = $this->request()->email;
         $password = $this->request()->password;
-        $this->view->login = false;
-        $this->view->message = $this->translation()->login_invalid;
+        $this->view()->login = false;
+        $this->view()->message = $this->translation()->login_invalid;
 
         /* check for existing profile */
 
@@ -38,7 +38,7 @@ class C_Profile extends C_Abstract
 
             if($profile->register_confirmation == false)
             {
-                $this->view->message = $this->translation()->register_unconfirmed;
+                $this->view()->message = $this->translation()->register_unconfirmed;
             }
 
             /* valid login, create session */
@@ -53,8 +53,8 @@ class C_Profile extends C_Abstract
                 $profile->last_login_time = time();
                 $profile->save();
 
-                $this->view->login = true;
-                $this->view->message = "";
+                $this->view()->login = true;
+                $this->view()->message = "";
 
                 $id = $profile->user_profile_id;
                 $_d = array ('method' => __METHOD__, 'user_profile_id' => $id);
@@ -75,8 +75,8 @@ class C_Profile extends C_Abstract
         $email = $this->request()->email;
         $password = $this->request()->password;
         $confirm = $this->request()->confirm;
-        $this->view->register = false;
-        $this->view->message = $this->translation()->register_invalid;
+        $this->view()->register = false;
+        $this->view()->message = $this->translation()->register_invalid;
 
         /* check for existing profile */
 
@@ -124,12 +124,12 @@ class C_Profile extends C_Abstract
                     }
                 }
 
-                $this->view->register = true;
-                $this->view->message = $this->translation()->register_accepted;
+                $this->view()->register = true;
+                $this->view()->message = $this->translation()->register_accepted;
             }
             catch(B_Exception $exception)
             {
-                $this->view->message = $this->translation()->register_invalid_email;
+                $this->view()->message = $this->translation()->register_invalid_email;
 
                 /* disable unconfirmed profile */
 
@@ -154,8 +154,8 @@ class C_Profile extends C_Abstract
      */
     public function A_logout()
     {
-        $this->view->setLayout(null);
-        $this->view->setTemplate(null);
+        $this->view()->setLayout(null);
+        $this->view()->setTemplate(null);
         $this->session()->setActive(false);
         $this->response()->setRedirect(BASE_URL);
     }
@@ -171,8 +171,8 @@ class C_Profile extends C_Abstract
 
         $email = $this->request()->email;
         $profile = UserProfile::findByEmail($email);
-        $this->view->recovery = false;
-        $this->view->message = $this->translation()->recovery_failed;
+        $this->view()->recovery = false;
+        $this->view()->message = $this->translation()->recovery_failed;
 
         /* recovery instructions */
 
@@ -184,8 +184,8 @@ class C_Profile extends C_Abstract
                 $profile->recovery_message_time = time();
                 $profile->recovery_allowed = true;
                 $profile->save();
-                $this->view->recovery = true;
-                $this->view->message = $this->translation()->recovery_sent;
+                $this->view()->recovery = true;
+                $this->view()->message = $this->translation()->recovery_sent;
             }
             catch(B_Exception $exception)
             {
@@ -203,8 +203,8 @@ class C_Profile extends C_Abstract
             try
             {
                 $this->notify($email, "dummy");
-                $this->view->recovery = true;
-                $this->view->message = $this->translation()->recovery_sent;
+                $this->view()->recovery = true;
+                $this->view()->message = $this->translation()->recovery_sent;
             }
             catch(B_Exception $exception)
             {
@@ -223,12 +223,12 @@ class C_Profile extends C_Abstract
      */
     public function A_confirm()
     {
-        $this->view->setLayout('index');
+        $this->view()->setLayout('index');
 
         $email = $this->request()->email;
         $hash = $this->request()->user;
-        $this->view->accepted = false;
-        $this->view->message = $this->translation()->confirm_failed;
+        $this->view()->accepted = false;
+        $this->view()->message = $this->translation()->confirm_failed;
 
         $profile = null;
 
@@ -241,7 +241,7 @@ class C_Profile extends C_Abstract
         {
             if($profile->register_confirmation == true)
             {
-                $this->view->message = $this->translation()->confirm_done_before;
+                $this->view()->message = $this->translation()->confirm_done_before;
             }
             else
             {
@@ -250,10 +250,10 @@ class C_Profile extends C_Abstract
                 $profile->register_confirmation_time = time();
                 $profile->save();
 
-                $this->view->message = $this->translation()->confirm_accepted;
+                $this->view()->message = $this->translation()->confirm_accepted;
             }
 
-            $this->view->accepted = true;
+            $this->view()->accepted = true;
         }
     }
 
@@ -276,7 +276,7 @@ class C_Profile extends C_Abstract
      */
     private function G_password()
     {
-        $this->view->setLayout('index');
+        $this->view()->setLayout('index');
 
         $email = $this->request()->email;
         $hash = $this->request()->user;
@@ -289,8 +289,8 @@ class C_Profile extends C_Abstract
             $expired = is_object($profile) ? $profile->recovery_allowed : true;
         }
 
-        $this->view->expired = $expired;
-        $this->view->profile = $profile;
+        $this->view()->expired = $expired;
+        $this->view()->profile = $profile;
     }
 
     /**
@@ -327,8 +327,8 @@ class C_Profile extends C_Abstract
                 ($email, $hash, $password, $confirm, $message);
         }
 
-        $this->view->updated = $updated;
-        $this->view->message = $message;
+        $this->view()->updated = $updated;
+        $this->view()->message = $message;
     }
 
     /**
@@ -438,7 +438,7 @@ class C_Profile extends C_Abstract
      */
     private function G_email()
     {
-        $this->view->setLayout('index');
+        $this->view()->setLayout('index');
 
         $email = $this->request()->email;
         $hash = $this->request()->user;
@@ -451,8 +451,8 @@ class C_Profile extends C_Abstract
             $new_email = is_object($profile) ? $profile->email_update : "";
         }
 
-        $this->view->profile = $profile;
-        $this->view->new_email = $new_email;
+        $this->view()->profile = $profile;
+        $this->view()->new_email = $new_email;
     }
 
     /**
@@ -494,8 +494,8 @@ class C_Profile extends C_Abstract
             $this->session()->setActive(false);
         }
 
-        $this->view->accepted = $accepted;
-        $this->view->message = $message;
+        $this->view()->accepted = $accepted;
+        $this->view()->message = $message;
     }
 
     /**
@@ -604,12 +604,12 @@ class C_Profile extends C_Abstract
      */
     private function G_edit()
     {
-        $this->view->setLayout('dashboard');
+        $this->view()->setLayout('dashboard');
         
         $id = intval($this->session()->user_profile_id);
-        $this->view->profile = UserProfile::findByPrimaryKeyEnabled($id);
+        $this->view()->profile = UserProfile::findByPrimaryKeyEnabled($id);
 
-        if(is_object($this->view->profile) == false) 
+        if(is_object($this->view()->profile) == false) 
         {
             $this->response()->setRedirect(BASE_URL);
         }
@@ -626,8 +626,8 @@ class C_Profile extends C_Abstract
 
         $id = intval($this->session()->user_profile_id);
         $profile = ($id > 0) ? UserProfile::findByPrimaryKeyEnabled($id) : null;
-        $this->view->saved = false;
-        $this->view->message = $this->translation()->edit_failed;
+        $this->view()->saved = false;
+        $this->view()->message = $this->translation()->edit_failed;
 
         if(!is_object($profile))
         {
@@ -641,8 +641,8 @@ class C_Profile extends C_Abstract
         try
         {
             $profile->save();
-            $this->view->saved = true;
-            $this->view->message = $this->translation()->edit_saved;
+            $this->view()->saved = true;
+            $this->view()->message = $this->translation()->edit_saved;
         }
         catch(B_Exception $exception)
         {

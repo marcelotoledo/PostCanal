@@ -22,7 +22,7 @@ class C_Blog extends C_Abstract
      */
     public function A_index()
     {
-        $this->view->setLayout('dashboard');
+        $this->view()->setLayout('dashboard');
     }
 
     /**
@@ -42,10 +42,10 @@ class C_Blog extends C_Abstract
      */
     private function G_add()
     {
-        $this->view->setLayout('dashboard');
-        $this->view->blog = new UserBlog();
+        $this->view()->setLayout('dashboard');
+        $this->view()->blog = new UserBlog();
 
-        /* reset blog add session variables */
+        /* reset current blog add session variables */
 
         $this->session()->c_url = "";
         $this->session()->c_url_accepted = false; 
@@ -92,7 +92,7 @@ class C_Blog extends C_Abstract
             B_Exception::forward($_m, E_USER_WARNING, $exception, $_d);
         }
 
-        $this->view->added = $added;
+        $this->view()->added = $added;
     }
 
     /**
@@ -151,7 +151,7 @@ class C_Blog extends C_Abstract
             'blog_type_accepted', 'blog_type_maintenance', 'manager_url', 
             'manager_url_accepted') as $i)
         {
-            $this->view->{$i} = $this->session()->{('c_' . $i)};
+            $this->view()->{$i} = $this->session()->{('c_' . $i)};
         }
     }
 

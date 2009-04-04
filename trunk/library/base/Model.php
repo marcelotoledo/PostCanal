@@ -537,6 +537,30 @@ abstract class B_Model
     }
 
     /**
+     * Transaction
+     */
+    public static function transaction()
+    {
+        self::execute("START TRANSACTION");
+    }
+
+    /**
+     * Commit
+     */
+    public static function commit()
+    {
+        self::execute("COMMIT");
+    }
+
+    /**
+     * Rollback
+     */
+    public static function rollback()
+    {
+        self::execute("ROLLBACK");
+    }
+
+    /**
      * Set up connection
      *
      * @param   B_Registry     $db

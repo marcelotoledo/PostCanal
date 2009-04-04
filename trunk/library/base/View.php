@@ -46,9 +46,8 @@ class B_View
      */
     public function __call($name, $arguments)
     {
-        return ($name == "registry") ? 
-            $this->registry :
-            $this->registry->{$name}()->object;
+        if($name == "registry") return $this->registry;
+        else                    return $this->registry->{$name}()->object;
     }
 
     /**

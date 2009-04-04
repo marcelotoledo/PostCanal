@@ -19,7 +19,7 @@ abstract class C_Abstract extends B_Controller
         /* load translation data */
 
         $this->translation()->load('application');
-        $this->translation()->load(strtolower($this->view->getTemplate()));
+        $this->translation()->load(strtolower($this->view()->getTemplate()));
 
         /* run parent action */
 

@@ -23,7 +23,7 @@ class C_Feed extends B_Controller
      */
     public function A_index()
     {
-        $this->view->setLayout('dashboard');
+        $this->view()->setLayout('dashboard');
     }
 
     /**
@@ -61,7 +61,7 @@ class C_Feed extends B_Controller
         $client = new L_WebService();
         $results = $client->discover_feeds(array('url' => $url));
 
-        if(count($results) > 0) $this->view->results = $results;
+        if(count($results) > 0) $this->view()->results = $results;
     }
 
     /**
@@ -73,7 +73,42 @@ class C_Feed extends B_Controller
     {
         $this->response()->setXML(true);
 
-        $data = array("default", $this->request()->url, "none none");
-        $this->view->result = AggregatorFeed::procedureInsert($data);
+        $feed = null;
+        $url = $this->request()->url;
+        $url_len = strlen($url);
+
+        /* check for existing feed */
+
+        if($url_len > 0)
+        {
+            AggregatorFeed::transaction();
+            $feed = AggregatorFeed::findByURL($url);
+        }
+
+        /* add new feed */
+
+        if($url_len > 0 && $feed == null)
+        {
+            $feed = new AggregatorFeed();
+            $feed->title = "default " . time();
+            $feed->url = $url;
+            $feed->url_md5 = md5($url);
+
+            try
+            {
+                $feed->save();
+            }
+            catch(B_Exception $exception)
+            {
+                AggregatorFeed::rollback();
+                $_m = "aggregator feed transaction failed";
+                $_d = array ('method' => __METHOD__);
+                B_Exception::forward($_m, E_USER_ERROR, $exception, $_d);
+            }
+
+            AggregatorFeed::commit();
+        }
+
+        $this->view()->result = is_object($feed) ? $feed->aggregator_feed_id : 0;
     }
 }

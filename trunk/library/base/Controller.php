@@ -25,16 +25,16 @@ class B_Controller
 
  
     /**
-     * Access to registry data
+     * Access to data
      * 
      * @param   string  $name
      * @return  mixed
      */
     public function __call ($name, $arguments)
     {
-        return ($name == "registry") ? 
-            $this->registry :
-            $this->registry->{$name}()->object;
+        if($name == "view")     return $this->view;
+        if($name == "registry") return $this->registry;
+        else                    return $this->registry->{$name}()->object;
     }
 
     /**
@@ -76,8 +76,8 @@ class B_Controller
 
         if($this->response()->isXML() == true)
         {
-            $this->view->setLayout(null);
-            $this->view->setTemplate(null);
+            $this->view()->setLayout(null);
+            $this->view()->setTemplate(null);
         }
 
         /* render only for non redirect request */
@@ -85,7 +85,7 @@ class B_Controller
         if($this->response()->isRedirect() == false)
         {
             ob_start();
-            $this->view->render();
+            $this->view()->render();
             $this->response()->setBody(ob_get_clean());
         }
     }

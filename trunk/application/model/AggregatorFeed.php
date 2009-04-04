@@ -137,13 +137,13 @@ class AggregatorFeed extends B_Model
     }
 
     /**
-     * Add new feed to aggregator using a stored procedure and transaction
-     * 
-     * @param   array   $data
+     * Find by URL
+     *
+     * @param   string  $url
+     * @return  AggregatorFeed|null 
      */
-    public static function procedureInsert($data)
+    public static function findByURL($url)
     {
-        $sql = "CALL " . self::$table_name . "_insert (?, ?, ?)";
-        return (self::execute($sql, $data) > 0);
+        return current(self::find(array('url_md5' => md5($url))));
     }
 }
