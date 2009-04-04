@@ -76,6 +76,7 @@ class C_Feed extends B_Controller
         $feed = null;
         $url = $this->request()->url;
         $url_len = strlen($url);
+        $title = $this->request()->title;
 
         /* check for existing feed */
 
@@ -90,7 +91,7 @@ class C_Feed extends B_Controller
         if($url_len > 0 && $feed == null)
         {
             $feed = new AggregatorFeed();
-            $feed->title = "default " . time();
+            $feed->title = strlen($title) > 0 ? $title : "default";
             $feed->url = $url;
             $feed->url_md5 = md5($url);
 

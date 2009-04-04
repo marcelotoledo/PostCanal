@@ -185,7 +185,7 @@ $(document).ready(function()
 
     /* feed add */
 
-    function feed_discover_msg(m)
+    function feed_msg(m)
     {
         _f  = $("#feedaddmessage");
         _td = $("#feedaddmessage td");
@@ -202,21 +202,6 @@ $(document).ready(function()
         }
     }
 
-    function feed_show_options(l)
-    {
-        $("#feedaddurlrow").hide();
-
-        l.each(function()
-        {
-            i = $(this).text();
-            j = i.length;
-            s = (j > 50) ? (i.substring(0, 25) + "..." + i.substring(j - 25)) : (i); 
-            $("#feedaddoptions > td").append("<input name=\"feedaddoptions[]\" type=\"radio\" value=\"" + i + "\">" + s + "<br/>");
-        });
-
-        $("input[name^=feedaddoptions]:first").attr('checked', 'checked');
-    }
-
     function feed_discover(url)
     {
         $.ajax
@@ -228,7 +213,7 @@ $(document).ready(function()
             beforeSend: function()
             {
                 sp(true);
-                feed_discover_msg("");
+                feed_msg("");
             },
             complete: function()
             {
@@ -241,32 +226,44 @@ $(document).ready(function()
 
                 if(r.length > 0)
                 {
+                    $("#feedaddurlrow").hide();
+
                     r.each(function()
                     {
-                        feed_show_options($(this));
+                        _url = $(this).find('url').text();
+                        _title = $(this).find('title').text();
+
+                        s = "<input name=\"feedaddoptions[]\" type=\"radio\" " +
+                            "url=\"" + _url + "\" title=\"" + _title + "\">" +
+                            ( (_title.length > 50) ? 
+                              (_title.substring(0, 50) + "...") : 
+                              (_title) ) + "<br/>";
+                        $("#feedaddoptions > td").append(s);
                     });
+
+                    $("input[name^=feedaddoptions]:first").attr('checked', 'checked');
                 }
                 else
                 {
-                    feed_discover_msg("<?php echo $this->translation()->feed_not_found ?>");
+                    feed_msg("<?php echo $this->translation()->feed_not_found ?>");
                 }
             }, 
             error: function () { err(); } 
         });
     }
 
-    function feed_add(url)
+    function feed_add(url, title)
     {
         $.ajax
         ({
             type: "POST",
             url: "<?php B_Helper::url('feed', 'add') ?>",
             dataType: "xml",
-            data: { url: url },
+            data: { url: url, title: title },
             beforeSend: function()
             {
                 sp(true);
-                feed_discover_msg("");
+                feed_msg("");
             },
             complete: function()
             {
@@ -319,7 +316,7 @@ $(document).ready(function()
 
         if(feedurl.val() != undefined)
         {
-            feed_add(feedurl.val());
+            feed_add(feedurl.attr('url'), feedurl.attr('title'));
         }
         else
         {
@@ -333,7 +330,7 @@ $(document).ready(function()
             }
             else
             {
-                feed_discover_msg("<?php echo $this->translation()->blank_url ?>");
+                feed_msg("<?php echo $this->translation()->blank_url ?>");
             }
         }
     });

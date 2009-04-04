@@ -15,3 +15,22 @@ HORAS TRABALHADAS: 6h
 - Cadastro de feed ok através de stored procedure
 
 HORAS TRABALHADAS: 1h
+
+==========
+03/04/2009
+==========
+
+- Remoção de stored procedure. Implementação de transaction e queryes através
+do código PHP
+- Ajustes no código base. Implementação de transaction no Model
+
+HORAS TRABALHADAS: 2h
+
+==========
+04/04/2009
+==========
+
+- Alteração do cadastro de Feeds. Inclusao da biblioteca feedparser no
+backend e implementação no webservice discover_feed(url)
+
+HORAS TRABALHADAS: 2h

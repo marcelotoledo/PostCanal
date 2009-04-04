@@ -20,13 +20,16 @@ class WebService:
     def __init__(self):
         self.token = ""
 
-    # discover feeds with feedfinder
+    # discover feeds
+
     def discover_feeds(self, args):
         if args['token'] == None or args['url'] == None:
             return None
 
         if args['token'] != self.token:
             return None
+
+        # discover feeds with feedfinder
 
         import feedfinder
 
@@ -35,19 +38,30 @@ class WebService:
             feeds = feedfinder.feeds(args['url'])
 
         result = {}
-        for i in range(0, len(feeds)):
-            result['feed_' + str(i)] = feeds[i]
+        feeds_len = len(feeds)
+
+        # parse feeds with feedparser
+
+        if feeds_len > 0:
+
+            import feedparser
+
+            for i in range(0, len(feeds)):
+                d = feedparser.parse(feeds[i])
+                result['feed_' + str(i)] = { "title": d.feed.title, "url": feeds[i] }
 
         return result
 
 
 # test local
+
 def test(token, url):
     ws = WebService()
     ws.token = token
     return ws.discover_feeds({'token': token, 'url': url})
 
 # test remote (with xmlrpc call)
+
 def test_remote(token, url, remote):
     import xmlrpclib
     server = xmlrpclib.ServerProxy(remote)
@@ -57,5 +71,5 @@ if __name__ == '__main__':
     token = "c4z5mYW1pYWSJe2BzcIq1wv6n95o1E2kwuD1B0Wuo3XbHx82Vk"
     url = "http://slashdot.org/"
     print test(token, url)
-    remote = "http://192.168.1.100:8080/webservice/backend"
+    remote = "http://localhost:8080/webservice/backend"
     print test_remote(token, url, remote)
