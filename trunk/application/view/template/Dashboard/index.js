@@ -4,6 +4,7 @@ $(document).ready(function()
     
     var active_request = false;
     var current_blog = null;
+    var current_feed = null;
 
     /* spinner */
 
@@ -151,9 +152,12 @@ $(document).ready(function()
             {
                 /* load items from current feed */
 
-                feed = ''; /* TODO */
+                if(current_feed == null)
+                {
+                    current_feed = ''; /* TODO */
+                }
 
-                feed_item(blog, feed);
+                feed_item(blog);
             },
             success: function (xml) 
             { 
@@ -165,14 +169,14 @@ $(document).ready(function()
 
     /* load feed items */
 
-    function feed_item(blog, feed)
+    function feed_item(blog)
     {
         $.ajax
         ({
             type: "GET",
             url: "<?php B_Helper::url('feed', 'item') ?>",
             dataType: "xml",
-            data: { blog: blog, feed: feed},
+            data: { blog: blog, feed: current_feed },
             beforeSend: function()
             {
                 /* void */
@@ -265,8 +269,6 @@ $(document).ready(function()
 
     function feed_add(node)
     {
-
-
         $.ajax
         ({
             type: "POST",
@@ -285,6 +287,19 @@ $(document).ready(function()
             success: function (xml) 
             { 
                 d = $(xml).find('data');
+                f = d.find('feed').text();
+
+                if(f.length > 0)
+                {
+                    $.b_dialog({ selector: "#feedaddform" });
+                    $.b_dialog_hide();
+                    feed_list(current_blog);
+                    current_feed = f;
+                }
+                else
+                {
+                    err();
+                }
             }, 
             error: function () { err(); } 
         });
@@ -295,6 +310,7 @@ $(document).ready(function()
     function set_blog(blog)
     {
         current_blog = blog;
+        current_feed = null;
         queue_list(blog);
     }
 

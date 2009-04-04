@@ -103,16 +103,19 @@ class B_View
     {
         foreach($a as $k => $v)
         {
+            $element = is_integer($k) ? "item" : $k;
+
             if(is_array($v))
             {
-                $xml->startElement($k);
+                $xml->startElement($element);
+                if(is_integer($k)) $xml->writeAttribute("key", $k);
                 self::__xml_recursive($v, $xml);
                 $xml->endElement();
             }
             else
             {
                 if(is_bool($v)) $v = ($v == true) ? "true" : "false";
-                $xml->writeElement($k, $v);
+                $xml->writeElement($element, $v);
             }
         }
     }

@@ -34,6 +34,32 @@ class C_Feed extends B_Controller
     public function A_list()
     {
         $this->response()->setXML(true);
+
+        $blog_hash = $this->request()->blog;
+        $user_profile_id = $this->session()->user_profile_id;
+        $blog = null;
+
+        if(strlen($blog_hash) > 0 && $user_profile_id > 0)
+        {
+            $blog = UserBlog::findByHash($user_profile_id, $blog_hash);
+        }
+
+        $feeds = array();
+
+        if(is_object($blog))
+        {
+            $feeds = UserBlogFeed::findByUserBlog($blog->user_blog_id);
+        }
+
+        $results = array();
+
+        foreach($feeds as $feed)
+        {
+            $results[] = array('hash' => $feed->hash,
+                               'title' => $feed->title);
+        }
+
+        $this->view()->feeds = $results;
     }
 
     /**
@@ -126,6 +152,8 @@ class C_Feed extends B_Controller
 
         /* add feed to user blog feed */
 
+        $blog_feed = null;
+
         if(is_object($feed))
         {
             $blog_feed = UserBlogFeed::findByFeed($feed->aggregator_feed_id);
@@ -152,6 +180,6 @@ class C_Feed extends B_Controller
             }
         }
 
-        $this->view()->result = is_object($feed) ? $feed->aggregator_feed_id : 0;
+        $this->view()->feed = is_object($blog_feed) ? $blog_feed->hash : '';
     }
 }

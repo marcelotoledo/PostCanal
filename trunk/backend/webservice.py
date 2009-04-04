@@ -37,7 +37,7 @@ class WebService:
         if len(args['url']) > 0:
             feeds = feedfinder.feeds(args['url'])
 
-        result = {}
+        result = []
         feeds_len = len(feeds)
 
         # feed parsing with feedparser
@@ -48,7 +48,7 @@ class WebService:
 
             for i in range(0, len(feeds)):
                 d = feedparser.parse(feeds[i])
-                result['feed_' + str(i)] = { "title": d.feed.title, "url": feeds[i] }
+                result.append({ "title": d.feed.title, "url": feeds[i] })
 
         return result
 
