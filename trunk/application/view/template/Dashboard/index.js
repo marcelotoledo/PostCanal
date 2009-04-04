@@ -94,7 +94,7 @@ $(document).ready(function()
 
     /* spinner */
 
-    function sp(b)
+    function set_active_request(b)
     {
         ((active_request = b) == true) ? $.b_spinner_start() : $.b_spinner_stop();
     }
@@ -120,10 +120,11 @@ $(document).ready(function()
             data: { blog: blog },
             beforeSend: function()
             {
-                sp(true);
+                set_active_request(true);
             },
             complete: function()
             {
+                set_active_request(false);
                 feed_list(blog);
             },
             success: function (xml) 
@@ -136,6 +137,49 @@ $(document).ready(function()
 
     /* load feed list */
 
+    function feed_list_populate(feeds)
+    {
+        if(feeds.length > 0)
+        {
+            _c = $("#feedscontainer > div.containercontentarea");
+            _c.html("");
+
+            feeds.each(function()
+            {
+                _feed = $(this).find('feed').text();
+                _title = $(this).find('title').text();
+
+                _item = "<div class=\"feeditem\" " +
+                        "feed=\"" + _feed + "\">" + 
+                        _title + "</div>";
+
+                _c.append(_item);
+            });
+        }
+    }
+
+    function set_feed_auto()
+    {
+        if(current_feed == null)
+        {
+            _i = $("#feedscontainer > " +
+                   "div.containercontentarea > " +
+                   "div.feeditem:first");
+
+            if(_i.length > 0)
+            {
+                current_feed = _i.attr('feed');
+            }
+        }
+
+        _i = $("div[feed='" + current_feed + "']");
+
+        if(_i.length > 0)
+        {
+            _i.addClass('feeditem-selected');
+        }
+    }
+
     function feed_list(blog)
     {
         $.ajax
@@ -146,22 +190,18 @@ $(document).ready(function()
             data: { blog: blog },
             beforeSend: function()
             {
-                /* void */
+                set_active_request(true);
             },
             complete: function()
             {
-                /* load items from current feed */
-
-                if(current_feed == null)
-                {
-                    current_feed = ''; /* TODO */
-                }
-
+                set_active_request(false);
+                set_feed_auto();
                 feed_item(blog);
             },
             success: function (xml) 
             { 
                 d = $(xml).find('data');
+                feed_list_populate(d.find('feeds').children());
             }, 
             error: function () { err(); } 
         });
@@ -179,11 +219,11 @@ $(document).ready(function()
             data: { blog: blog, feed: current_feed },
             beforeSend: function()
             {
-                /* void */
+                set_active_request(true);
             },
             complete: function()
             {
-                sp(false);
+                set_active_request(false);
             },
             success: function (xml) 
             { 
@@ -194,6 +234,68 @@ $(document).ready(function()
     }
 
     /* feed add */
+
+    function feedaddform_reset()
+    {
+        $("#feedaddurlrow").show();
+        $("#feedaddoptions > td").html("");
+    }
+
+    function feedaddform_show()
+    {
+        $.b_dialog({ selector: "#feedaddform" });
+        $.b_dialog_show();
+        feedaddform_reset();
+        $("input[name='feedaddurl']").focus();
+    }
+
+    function feedaddform_hide()
+    {
+        $.b_dialog({ selector: "#feedaddform" });
+        $.b_dialog_hide();
+    }
+
+    function feedaddform_submit()
+    {
+        if((k = $(".feedaddoption:checked").attr('key')) != undefined)
+        {
+            feed_add(k);
+        }
+        else 
+        {
+            if((url = $("input[name='feedaddurl']").val()) != "")
+            {
+                feed_discover(url);
+            }
+            else
+            {
+                feed_msg("<?php echo $this->translation()->blank_url ?>");
+            }
+        }
+    }
+
+    function feedaddform_options(feeds)
+    {
+        $("#feedaddurlrow").hide();
+
+        feeds.each(function()
+        {
+            _key = $(this).attr('key');
+            _url = $(this).find('url').text();
+            _title = $(this).find('title').text();
+
+            if(_title.length == 0) _title = _url;
+
+            item = "<input class=\"feedaddoption\" " +
+                   "type=\"radio\" key=\"" + _key + "\">" +
+                   ( (_title.length > 50) ? 
+                     (_title.substring(0, 50) + "...") : 
+                     (_title) ) + "<br/>";
+            $("#feedaddoptions > td").append(item);
+        });
+
+        $(".feedaddoption:first").attr('checked', 'checked');
+    }
 
     function feed_msg(m)
     {
@@ -222,12 +324,12 @@ $(document).ready(function()
             data: { url: url },
             beforeSend: function()
             {
-                sp(true);
+                set_active_request(true);
                 feed_msg("");
             },
             complete: function()
             {
-                sp(false);
+                set_active_request(false);
             },
             success: function (xml) 
             { 
@@ -238,25 +340,7 @@ $(document).ready(function()
 
                 if(r.length > 0)
                 {
-                    $("#feedaddurlrow").hide();
-
-                    r.each(function()
-                    {
-                        _node = $(this)[0].nodeName;
-                        _url = $(this).find('url').text();
-                        _title = $(this).find('title').text();
-
-                        if(_title.length == 0) _title = _url;
-
-                        s = "<input name=\"feedaddoptions[]\" " +
-                            "type=\"radio\" node=\"" + _node + "\">" +
-                            ( (_title.length > 50) ? 
-                              (_title.substring(0, 50) + "...") : 
-                              (_title) ) + "<br/>";
-                        $("#feedaddoptions > td").append(s);
-                    });
-
-                    $("input[name^=feedaddoptions]:first").attr('checked', 'checked');
+                    feedaddform_options(r);
                 }
                 else
                 {
@@ -267,22 +351,22 @@ $(document).ready(function()
         });
     }
 
-    function feed_add(node)
+    function feed_add(key)
     {
         $.ajax
         ({
             type: "POST",
             url: "<?php B_Helper::url('feed', 'add') ?>",
             dataType: "xml",
-            data: { node: node, blog: current_blog },
+            data: { key: key, blog: current_blog },
             beforeSend: function()
             {
-                sp(true);
+                set_active_request(true);
                 feed_msg("");
             },
             complete: function()
             {
-                sp(false);
+                set_active_request(false);
             },
             success: function (xml) 
             { 
@@ -333,36 +417,12 @@ $(document).ready(function()
 
     $("#feedaddlnk").click(function()
     {
-        $.b_dialog({ selector: "#feedaddform" });
-        $.b_dialog_show();
-        $("#feedaddurlrow").show();
-        $("#feedaddoptions > td").html("");
-        $("input[name='feedaddurl']").focus();
+        feedaddform_show();
     });
 
     $("input[name='feedaddsubmit']").click(function()
     {
-        feedurl = $("input[name^=feedaddoptions]:checked");
-
-        if(feedurl.val() != undefined)
-        {
-            feed_add(feedurl.attr('node'));
-        }
-        else
-        {
-            $("#feedaddurlrow").show();
-            $("#feedaddoptions > td").html("");
-            url = $("input[name='feedaddurl']").val();
-
-            if(url)
-            {
-                feed_discover(url);
-            }
-            else
-            {
-                feed_msg("<?php echo $this->translation()->blank_url ?>");
-            }
-        }
+        feedaddform_submit();
     });
 
     $("input[name='feedaddurl']").keypress(function(e) 

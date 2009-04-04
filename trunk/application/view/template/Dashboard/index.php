@@ -13,7 +13,6 @@
 <div class="dashboardcontainers" id="feedscontainer">
 <h2><?php echo $this->translation()->application_feeds ?></h2>
 <div class="containercontentarea">
-feeds container
 </div>
 <div class="containerfooter"><a id="feedaddlnk"><?php echo $this->translation()->feed_add ?></a></div>
 </div>

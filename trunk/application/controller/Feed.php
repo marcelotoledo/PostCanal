@@ -55,7 +55,7 @@ class C_Feed extends B_Controller
 
         foreach($feeds as $feed)
         {
-            $results[] = array('hash' => $feed->hash,
+            $results[] = array('feed' => $feed->hash,
                                'title' => $feed->title);
         }
 
@@ -100,7 +100,7 @@ class C_Feed extends B_Controller
     {
         $this->response()->setXML(true);
 
-        $node = $this->request()->node;
+        $feed_key = intval($this->request()->key);
         $blog_hash = $this->request()->blog;
         $feed_results = $this->session()->c_feed_discover_results;
         $user_profile_id = $this->session()->user_profile_id;
@@ -109,11 +109,11 @@ class C_Feed extends B_Controller
         $url_len = 0;
         $title = null;
 
-        if(array_key_exists($node, $feed_results))
+        if(array_key_exists($feed_key, $feed_results))
         {
-            $url = $feed_results[$node]['url'];
+            $url = $feed_results[$feed_key]['url'];
             $url_len = strlen($url);
-            $title = $feed_results[$node]['title'];
+            $title = $feed_results[$feed_key]['title'];
         }
 
         $feed = null;

@@ -37,6 +37,18 @@
     border-right: 1px solid silver;
     background-color: snow;
 }
+#feedscontainer .feeditem
+{
+    padding: 5px;
+    border-bottom: 1px solid silver;
+    cursor: pointer;
+    cursor: hand;
+}
+#feedscontainer .feeditem-selected
+{
+    background-color: gold;
+    font-weight: bold;
+}
 #itemscontainer
 {
     border-bottom: 1px solid gainsboro;

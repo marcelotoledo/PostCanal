@@ -34,5 +34,6 @@ HORAS TRABALHADAS: 2h
 backend e implementação no webservice discover_feed(url)
 - Cadastro de feeds: Implementação de inclusão de feed no blog do usuário
 - Ajustes no retorno do XML para requisicoes AJAX
+- Exibicao de feeds cadastrado no menu lateral
 
-HORAS TRABALHADAS: 6h
+HORAS TRABALHADAS: 8h
