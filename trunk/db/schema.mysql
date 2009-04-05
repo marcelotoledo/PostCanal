@@ -119,12 +119,11 @@ CREATE TABLE model_aggregator_discovery
     url_feed_md5 VARCHAR(32) NOT NULL DEFAULT '',
     title VARCHAR(100) NOT NULL,
     description TEXT NOT NULL DEFAULT '',
-    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
-    updated_at TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
+    updated_at TIMESTAMP NOT NULL DEFAULT NOW(),
     PRIMARY KEY (aggregator_discovery_id)
 ) ENGINE=InnoDB DEFAULT CHARSET='utf8';
 
-CREATE INDEX m_agd_um5_idx ON model_aggregator_discovery (url_md5, url_feed_md5, created_at, updated_at);
+CREATE INDEX m_agd_um5_idx ON model_aggregator_discovery (url_md5, url_feed_md5, updated_at);
 
 CREATE TABLE model_aggregator_feed
 (

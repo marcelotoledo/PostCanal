@@ -104,6 +104,7 @@ form th
     font-weight: bold;
     padding-right: 5px;
     line-height: 25px;
+    vertical-align: top;
 }
 form td
 {

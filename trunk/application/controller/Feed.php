@@ -86,8 +86,9 @@ class C_Feed extends B_Controller
 
         /* check in aggregator feed discovery cache */
 
-        $expiration = date("Y-m-d H:i:s", time() - mt_rand(43200, 86400));
-        $discovery = AggregatorFeed::discover($url, null, $expiration);
+        // $expiration = date("Y-m-d H:i:s", time() - mt_rand(43200, 86400));
+        // $discovery = AggregatorFeed::discover($url, null, $expiration);
+        $discovery = AggregatorFeed::discover($url, null);
 
         if(($discovery_len = count($discovery)) > 0)
         {

@@ -158,7 +158,7 @@ class AggregatorFeed extends B_Model
 
         if($expiration != null)
         {
-            $sql.= "AND (created_at > ? OR updated_at > ?)";
+            $sql.= "AND updated_at > ?";
             $data[] = $expiration;
             $data[] = $expiration;
         }
