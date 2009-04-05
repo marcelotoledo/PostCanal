@@ -154,26 +154,31 @@ class UserBlogFeed extends B_Model
     }
 
     /**
-     * Find by Feed
+     * Find by User Blog (and Aggregator Feed)
      *
+     * @param   integer     $id         UserBlog ID
+     * @param   integer     $feed_id    AggregatorFeed ID
+     *
+     * @return  UserBlogFeed|null 
+     */
+    public static function findByBlog($id, $feed_id=null)
+    {
+        $params = array();
+        $params['user_blog_id'] = $id;
+        if($feed_id != null) $params['aggregator_feed_id'] = $feed_id;
+        return self::find($params);
+    }
+
+    /**
+     * Find by Aggregator Feed
+     *
+     * @param   integer     $blog_id    UserBlog ID
      * @param   integer     $id         AggregatorFeed ID
      *
      * @return  UserBlogFeed|null 
      */
-    public static function findByFeed($id)
+    public static function findByFeed($blog_id, $id)
     {
-        return current(self::find(array('aggregator_feed_id' => $id)));
-    }
-
-    /**
-     * Find by User Blog
-     *
-     * @param   integer     $id         UserBlog ID
-     *
-     * @return  UserBlogFeed|null 
-     */
-    public static function findByUserBlog($id)
-    {
-        return self::find(array('user_blog_id' => $id));
+        return current(self::findByBlog($blog_id, $id));
     }
 }

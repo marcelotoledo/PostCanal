@@ -101,7 +101,7 @@ class B_Controller
         {
             if($redirect == null)
             {
-                $redirect = $this->session()->unauthorized()->redirect;
+                $redirect = $this->registry()->session()->unauthorized()->redirect;
             }
 
             if($redirect == null)
@@ -109,7 +109,7 @@ class B_Controller
                 $redirect = BASE_URL;
             }
 
-            $this->response->setRedirect($redirect, B_Response::STATUS_UNAUTHORIZED);
+            $this->response()->setRedirect($redirect, B_Response::STATUS_UNAUTHORIZED);
             $_m = "session unauthorized";
             $_d = array('method' => __METHOD__);
             throw new B_Exception($_m, E_USER_NOTICE, $_d);

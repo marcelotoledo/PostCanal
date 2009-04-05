@@ -7,6 +7,7 @@ DROP TABLE IF EXISTS model_user_blog CASCADE;
 DROP TABLE IF EXISTS model_user_profile CASCADE;
 DROP TABLE IF EXISTS model_aggregator_feed_item CASCADE;
 DROP TABLE IF EXISTS model_aggregator_feed CASCADE;
+DROP TABLE IF EXISTS model_aggregator_discovery CASCADE;
 DROP TABLE IF EXISTS model_blog_type_configuration CASCADE;
 DROP TABLE IF EXISTS model_blog_type_discovery CASCADE;
 DROP TABLE IF EXISTS model_blog_type CASCADE;
@@ -109,12 +110,28 @@ CREATE INDEX m_btc_tpn_idx ON model_blog_type_configuration (blog_type_id, name)
 
 -- aggregator --
 
+CREATE TABLE model_aggregator_discovery
+(
+    aggregator_discovery_id INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
+    url VARCHAR(200) NOT NULL,
+    url_md5 VARCHAR(32) NOT NULL,
+    url_feed VARCHAR(200) NOT NULL DEFAULT '',
+    url_feed_md5 VARCHAR(32) NOT NULL DEFAULT '',
+    title VARCHAR(100) NOT NULL,
+    description TEXT NOT NULL DEFAULT '',
+    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
+    PRIMARY KEY (aggregator_discovery_id)
+) ENGINE=InnoDB DEFAULT CHARSET='utf8';
+
+CREATE INDEX m_agd_um5_idx ON model_aggregator_discovery (url_md5, url_feed_md5, created_at, updated_at);
+
 CREATE TABLE model_aggregator_feed
 (
     aggregator_feed_id INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
-    title VARCHAR(100) NOT NULL,
     url VARCHAR(200) NOT NULL,
     url_md5 VARCHAR(32) NOT NULL,
+    title VARCHAR(100) NOT NULL,
     description TEXT NOT NULL DEFAULT '',
     created_at TIMESTAMP NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',

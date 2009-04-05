@@ -137,6 +137,81 @@ class AggregatorFeed extends B_Model
     }
 
     /**
+     * Discover Feeds
+     *
+     * @param   string  $url
+     * @param   string  $url_feed
+     * @return  AggregatorFeed|null 
+     */
+    public static function discover($url, $url_feed=null, $expiration=null)
+    {
+        $table = str_replace("_feed", "_discovery", self::$table_name);
+        $data = array();
+        $data[] = $url;
+        $sql = "SELECT * FROM " . $table . " WHERE url_md5 = MD5(?)";
+
+        if($url_feed != null)
+        {
+            $sql.= " AND url_feed_md5 = MD5(?)";
+            $data[] = $url_feed;
+        }
+
+        if($expiration != null)
+        {
+            $sql.= "AND (created_at > ? OR updated_at > ?)";
+            $data[] = $expiration;
+            $data[] = $expiration;
+        }
+
+        return ($url_feed == null) ? 
+            self::select($sql, $data) : 
+            current(self::select($sql, $data));
+    }
+
+    /**
+     * Register Feeds on discovery table
+     *
+     * @param   array   $data
+     * @return  AggregatorFeed|null 
+     */
+    public static function register($data)
+    {
+        $table = str_replace("_feed", "_discovery", self::$table_name);
+        $pk = str_replace("_feed", "_discovery", self::$primary_key_name);
+
+        if(($k_url = array_key_exists('url', $data)))
+        {
+            $data['url_md5'] = md5($data['url']);
+        }
+        if(($k_url_feed = array_key_exists('url_feed', $data)))
+        {
+            $data['url_feed_md5'] = md5($data['url_feed']);
+        }
+
+        $discovery = null;
+
+        if($k_url && $k_url_feed)
+        {
+            $discovery = self::discover($data['url'], $data['url_feed']);
+        }
+
+        if(is_object($discovery))
+        {
+            $sql = "UPDATE " . $table . " SET updated_at=NOW() " .
+                   "WHERE " . $pk . " = ?";
+            self::execute($sql, array($discovery->{$pk}));
+        }
+        else
+        {
+            $columns = array_keys($data);
+            $sql = "INSERT INTO " . $table . " " . 
+                   "(" . implode(", ", $columns) . ") VALUES " .
+                   "(?" . str_repeat(", ?", count($columns) - 1) . ")";
+            self::insert($sql, array_values($data));
+        }
+    }
+
+    /**
      * Find by URL
      *
      * @param   string  $url

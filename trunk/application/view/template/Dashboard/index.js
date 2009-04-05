@@ -237,8 +237,9 @@ $(document).ready(function()
 
     function feedaddform_reset()
     {
-        $("#feedaddurlrow").show();
         $("#feedaddoptions > td").html("");
+        $("input[name='feedaddurl']").val("");
+        $("#feedaddurlrow").show();
     }
 
     function feedaddform_show()
@@ -257,7 +258,7 @@ $(document).ready(function()
 
     function feedaddform_submit()
     {
-        if((k = $(".feedaddoption:checked").attr('key')) != undefined)
+        if((k = $("input[name='feedaddoption']:checked").attr('key')) != undefined)
         {
             feed_add(k);
         }
@@ -286,7 +287,7 @@ $(document).ready(function()
 
             if(_title.length == 0) _title = _url;
 
-            item = "<input class=\"feedaddoption\" " +
+            item = "<input name=\"feedaddoption\" " +
                    "type=\"radio\" key=\"" + _key + "\">" +
                    ( (_title.length > 50) ? 
                      (_title.substring(0, 50) + "...") : 
@@ -294,7 +295,7 @@ $(document).ready(function()
             $("#feedaddoptions > td").append(item);
         });
 
-        $(".feedaddoption:first").attr('checked', 'checked');
+        $("input[name='feedaddoption']:first").attr('checked', 'checked');
     }
 
     function feed_msg(m)
@@ -338,7 +339,11 @@ $(document).ready(function()
 
                 if(r.length > 0) r = r.children();
 
-                if(r.length > 0)
+                if(r.length == 1)
+                {
+                    feed_add(r.attr('key'));
+                }
+                else if(r.length >  1)
                 {
                     feedaddform_options(r);
                 }
