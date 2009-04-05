@@ -211,8 +211,6 @@ class C_Feed extends B_Controller
                 $blog_feed->aggregator_feed_id = $feed->aggregator_feed_id;
                 $blog_feed->title = $feed->title;
                 $blog_feed->save();
-
-syslog(1, var_export(array('blog_feed' => $blog_feed), true));
             }
         }
 
