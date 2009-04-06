@@ -44,7 +44,7 @@ class L_WebService
     public function __construct($is_server=false, $throw_exception=false)
     {
         $registry = B_Registry::singleton();
-        $this->token = $registry->application->webservice->token;
+        $this->token = $registry->application()->webservice()->token;
 
         if(($this->is_server = $is_server) === true)
         {

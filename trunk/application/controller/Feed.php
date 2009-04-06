@@ -86,7 +86,7 @@ class C_Feed extends B_Controller
 
         /* check in aggregator feed cache */
 
-        $discovery = AggregatorFeed::discover($url, null);
+        $discovery = AggregatorFeed::discover($url);
 
         if(($discovery_len = count($discovery)) > 0)
         {
@@ -101,7 +101,6 @@ class C_Feed extends B_Controller
 
         else
         {
-            $token = $this->registry->application->webservice->token;
             $client = new L_WebService();
             $results = $client->feed_discover(array('url' => $url));
             

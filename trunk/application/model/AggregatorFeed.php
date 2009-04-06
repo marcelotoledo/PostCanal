@@ -156,7 +156,7 @@ class AggregatorFeed extends B_Model
         $data = array();
         $data[] = $url;
         $sql = "SELECT * FROM " . self::$cache_table_name . " " .
-               "WHERE expires_in < NOW() AND url_md5 = MD5(?) ";
+               "WHERE expires_in > NOW() AND url_md5 = MD5(?) ";
 
         if($url_feed != null)
         {
@@ -191,17 +191,20 @@ class AggregatorFeed extends B_Model
         $fm5 = ($data['url_feed_md5'] = md5($data['url_feed']));
         $discovery = self::discover($data['url'], $data['url_feed']);
 
+        /* cache expiration */
+
+        $registry = B_Registry::singleton();
+        $config = $registry->application()->aggregator();
+
+        if(($url_life = $config->cacheURL) == null) $url_life = 259200;
+        if(($feed_life = $config->cacheFeed) == null) $feed_life = 604800;
+
+        $expires_in = date("Y-m-d H:i:s", time() + 
+            (($um5 == $fm5) ? $feed_life : $url_life));
+
+
         if(is_object($discovery))
         {
-            $registry = B_Registry::singleton();
-            $config = $registry->application()->aggregator();
-
-            if(($url_life = $config->cacheURL) == null) $url_life = 259200;
-            if(($feed_life = $config->cacheFeed) == null) $feed_life = 604800;
-
-            $expires_in = date("Y-m-d H:i:s", time() + 
-                (($um5 == $fm5) ? $feed_life : $url_life));
-
             $sql = "UPDATE " . self::$cache_table_name . " " .
                    "SET expires_in = ? WHERE " . $pk . " = ?";
 
@@ -209,6 +212,7 @@ class AggregatorFeed extends B_Model
         }
         else
         {
+            $data['expires_in'] = $expires_in;
             $columns = array_keys($data);
             $sql = "INSERT INTO " . self::$cache_table_name . " " .
                    "(" . implode(", ", $columns) . ") VALUES " .
