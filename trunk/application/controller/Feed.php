@@ -84,10 +84,8 @@ class C_Feed extends B_Controller
         $url = $this->request()->url;
         $results = array();
 
-        /* check in aggregator feed discovery cache */
+        /* check in aggregator feed cache */
 
-        // $expiration = date("Y-m-d H:i:s", time() - mt_rand(43200, 86400));
-        // $discovery = AggregatorFeed::discover($url, null, $expiration);
         $discovery = AggregatorFeed::discover($url, null);
 
         if(($discovery_len = count($discovery)) > 0)

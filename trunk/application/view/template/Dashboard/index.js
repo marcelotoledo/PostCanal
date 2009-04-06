@@ -3,6 +3,10 @@ $(document).ready(function()
     /* DEFAULTS */
     
     var active_request = false;
+
+    var window_width = 0;
+    var window_height = 0;
+
     var current_blog = null;
     var current_feed = null;
 
@@ -38,10 +42,29 @@ $(document).ready(function()
 
     /* maximize containers */
 
+    function scrollbarSize()
+    {
+        _d = $("<div style=\"width:50px;height:50px;overflow:hidden;position:absolute;top:-200px;left:-200px;\"><div style=\"height:100px;\"></div>");
+        $("body").append(_d);
+        _a = $("div", _d).innerWidth();
+        _d.css("overflow-y", "scroll");
+        _b = $("div", _d).innerWidth();
+        $(_d).remove();
+        return _a - _b;
+    }
+
     function maxcontainers()
     {
+        sb = scrollbarSize();
+
         ww = $(window).width();
         wh = $(window).height();
+
+        if(ww < window_width) { ww += sb; }
+        if(wh < window_height) { wh += sb; }
+
+        window_width = ww;
+        window_height = wh;
 
         _l = 250; /* left bar width */
         _b = 5;   /* container spacing */

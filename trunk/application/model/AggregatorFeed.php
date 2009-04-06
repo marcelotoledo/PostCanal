@@ -17,6 +17,13 @@ class AggregatorFeed extends B_Model
     protected static $table_name = 'model_aggregator_feed';
 
     /**
+     * Cache table name
+     *
+     * @var string
+     */
+    protected static $cache_table_name = 'model_aggregator_feed_cache';
+
+    /**
      * Table structure
      *
      * @var array
@@ -143,24 +150,18 @@ class AggregatorFeed extends B_Model
      * @param   string  $url_feed
      * @return  AggregatorFeed|null 
      */
-    public static function discover($url, $url_feed=null, $expiration=null)
+    public static function discover($url, $url_feed=null)
     {
-        $table = str_replace("_feed", "_discovery", self::$table_name);
+        $table = self::$cache_table_name;
         $data = array();
         $data[] = $url;
-        $sql = "SELECT * FROM " . $table . " WHERE url_md5 = MD5(?)";
+        $sql = "SELECT * FROM " . self::$cache_table_name . " " .
+               "WHERE expires_in < NOW() AND url_md5 = MD5(?) ";
 
         if($url_feed != null)
         {
-            $sql.= " AND url_feed_md5 = MD5(?)";
+            $sql.= "AND url_feed_md5 = MD5(?)";
             $data[] = $url_feed;
-        }
-
-        if($expiration != null)
-        {
-            $sql.= "AND updated_at > ?";
-            $data[] = $expiration;
-            $data[] = $expiration;
         }
 
         return ($url_feed == null) ? 
@@ -171,40 +172,45 @@ class AggregatorFeed extends B_Model
     /**
      * Register Feeds on discovery table
      *
-     * @param   array   $data
+     * @param   array   $data           array('url' => "...", 'url_feed' => "...")
      * @return  AggregatorFeed|null 
      */
     public static function register($data)
     {
-        $table = str_replace("_feed", "_discovery", self::$table_name);
-        $pk = str_replace("_feed", "_discovery", self::$primary_key_name);
+        $pk = str_replace("model_", "", self::$cache_table_name) . "_id";
 
-        if(($k_url = array_key_exists('url', $data)))
+        if(array_key_exists('url', $data) == false ||
+           array_key_exists('url_feed', $data) == false)
         {
-            $data['url_md5'] = md5($data['url']);
-        }
-        if(($k_url_feed = array_key_exists('url_feed', $data)))
-        {
-            $data['url_feed_md5'] = md5($data['url_feed']);
+            $_m = "url and url_feed keys are not found in data";
+            $_d = array('method' => __METHOD__);
+            throw new B_Exception($_m, E_USER_ERROR, $_d);
         }
 
-        $discovery = null;
-
-        if($k_url && $k_url_feed)
-        {
-            $discovery = self::discover($data['url'], $data['url_feed']);
-        }
+        $um5 = ($data['url_md5'] = md5($data['url']));
+        $fm5 = ($data['url_feed_md5'] = md5($data['url_feed']));
+        $discovery = self::discover($data['url'], $data['url_feed']);
 
         if(is_object($discovery))
         {
-            $sql = "UPDATE " . $table . " SET updated_at=NOW() " .
-                   "WHERE " . $pk . " = ?";
-            self::execute($sql, array($discovery->{$pk}));
+            $registry = B_Registry::singleton();
+            $config = $registry->application()->aggregator();
+
+            if(($url_life = $config->cacheURL) == null) $url_life = 259200;
+            if(($feed_life = $config->cacheFeed) == null) $feed_life = 604800;
+
+            $expires_in = date("Y-m-d H:i:s", time() + 
+                (($um5 == $fm5) ? $feed_life : $url_life));
+
+            $sql = "UPDATE " . self::$cache_table_name . " " .
+                   "SET expires_in = ? WHERE " . $pk . " = ?";
+
+            self::execute($sql, array($expires_in, $discovery->{$pk}));
         }
         else
         {
             $columns = array_keys($data);
-            $sql = "INSERT INTO " . $table . " " . 
+            $sql = "INSERT INTO " . self::$cache_table_name . " " .
                    "(" . implode(", ", $columns) . ") VALUES " .
                    "(?" . str_repeat(", ?", count($columns) - 1) . ")";
             self::insert($sql, array_values($data));

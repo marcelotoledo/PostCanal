@@ -65,5 +65,9 @@
                 <url>/webservice/frontend</url>
             </frontend>
         </webservice>
+        <aggregator>
+            <cacheURL>259200</cacheURL>
+            <cacheFeed>604800</cacheFeed>
+        </aggregator>
     </application>
 </environment>
