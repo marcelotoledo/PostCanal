@@ -63,11 +63,11 @@ class C_Feed extends B_Controller
     }
 
     /**
-     * List feed items
+     * List feed news items
      *
      * @return void
      */
-    public function A_item()
+    public function A_news()
     {
         $this->response()->setXML(true);
     }

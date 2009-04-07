@@ -17,10 +17,9 @@
 <div class="containerfooter"><a id="feedaddlnk"><?php echo $this->translation()->feed_add ?></a></div>
 </div>
 
-<div class="dashboardcontainers" id="itemscontainer">
-<h2><?php echo $this->translation()->application_items ?></h2>
+<div class="dashboardcontainers" id="newscontainer">
+<h2><?php echo $this->translation()->application_news ?></h2>
 <div class="containercontentarea">
-items container
 </div>
 <div class="containerfooter">&nbsp;</div>
 </div>

@@ -56,6 +56,22 @@ body
     background-color: #FFD700;
     font-weight: bold;
 }
+#newscontainer
+{
+    background-color: snow;
+}
+#newscontainer .newsitem
+{
+    padding: 5px;
+    border-bottom: 1px solid silver;
+    cursor: pointer;
+    cursor: hand;
+}
+#newscontainer .newsitem-selected
+{
+    background-color: #FFD700;
+    font-weight: bold;
+}
 #queuecontainer
 {
     background-color: snow;

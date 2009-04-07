@@ -5,7 +5,7 @@ DROP TABLE IF EXISTS model_user_blog_queue_config CASCADE;
 DROP TABLE IF EXISTS model_user_blog_queue_item CASCADE;
 DROP TABLE IF EXISTS model_user_blog CASCADE;
 DROP TABLE IF EXISTS model_user_profile CASCADE;
-DROP TABLE IF EXISTS model_aggregator_feed_item CASCADE;
+DROP TABLE IF EXISTS model_aggregator_feed_news CASCADE;
 DROP TABLE IF EXISTS model_aggregator_feed CASCADE;
 DROP TABLE IF EXISTS model_aggregator_feed_cache CASCADE;
 DROP TABLE IF EXISTS model_blog_type_configuration CASCADE;
@@ -140,18 +140,21 @@ CREATE TABLE model_aggregator_feed
 
 CREATE INDEX m_agf_um5_idx ON model_aggregator_feed (url_md5, enabled);
 
-CREATE TABLE model_aggregator_feed_item
+CREATE TABLE model_aggregator_feed_news
 (
-    aggregator_feed_item_id INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
+    aggregator_feed_news_id INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
     aggregator_feed_id INTEGER UNSIGNED NOT NULL, 
     title TEXT NOT NULL, 
     url TEXT NOT NULL,
+    url_md5 VARCHAR(32) NOT NULL,
     description TEXT NOT NULL DEFAULT '',
     created_at TIMESTAMP NOT NULL DEFAULT NOW(), 
-    PRIMARY KEY (aggregator_feed_item_id),
+    PRIMARY KEY (aggregator_feed_news_id),
     CONSTRAINT m_afi_m_agf_fk FOREIGN KEY (aggregator_feed_id) 
         REFERENCES model_aggregator_feed (aggregator_feed_id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET='utf8';
+
+CREATE INDEX m_agn_um5_idx ON model_aggregator_feed (url_md5);
 
 -- user --
 
@@ -241,7 +244,7 @@ CREATE TABLE model_user_blog_queue_config
 CREATE TABLE model_user_blog_queue_item
 (
     user_blog_queue_item_id INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
-    aggregator_feed_item_id INTEGER UNSIGNED NOT NULL,
+    aggregator_feed_news_id INTEGER UNSIGNED NOT NULL,
     user_blog_id INTEGER UNSIGNED NOT NULL,
     hash CHAR(8) NOT NULL,
     title TEXT NOT NULL, 
@@ -249,8 +252,8 @@ CREATE TABLE model_user_blog_queue_item
     created_at TIMESTAMP NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
     PRIMARY KEY (user_blog_queue_item_id),
-    CONSTRAINT m_bqi_m_afi_fk FOREIGN KEY (aggregator_feed_item_id) 
-        REFERENCES model_aggregator_feed_item (aggregator_feed_item_id) ON DELETE RESTRICT,
+    CONSTRAINT m_bqi_m_afi_fk FOREIGN KEY (aggregator_feed_news_id) 
+        REFERENCES model_aggregator_feed_news (aggregator_feed_news_id) ON DELETE RESTRICT,
     CONSTRAINT m_bqi_m_ubl_fk FOREIGN KEY (user_blog_id) 
         REFERENCES model_user_blog (user_blog_id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET='utf8';

@@ -57,7 +57,7 @@ $(document).ready(function()
         _c.height(_h);
         maxcontent(_c);
 
-        _c = $("#itemscontainer");
+        _c = $("#newscontainer");
         _c.css('top', 0);
         _c.css('left', _l + _b);
 
@@ -82,12 +82,12 @@ $(document).ready(function()
     /* set default blog */
 
     <?php if(count($this->blogs) == 1) : ?>
-    blog = $("#blogcur").val();
-    <?php else : ?>
-    blog = $("select[name='bloglst'] > option:selected").val();
+    current_blog = $("#blogcur").val();
+    <?php elseif(count($this->blog) > 1) : ?>
+    current_blog = $("select[name='bloglst'] > option:selected").val();
     <?php endif ?>
 
-    set_blog(blog);
+    set_blog();
 
     <?php endif ?>
 
@@ -111,14 +111,14 @@ $(document).ready(function()
 
     /* load queue list */
 
-    function queue_list(blog)
+    function queue_list()
     {
         $.ajax
         ({
             type: "GET",
             url: "<?php B_Helper::url('queue', 'list') ?>",
             dataType: "xml",
-            data: { blog: blog },
+            data: { blog: current_blog },
             beforeSend: function()
             {
                 set_active_request(true);
@@ -126,7 +126,7 @@ $(document).ready(function()
             complete: function()
             {
                 set_active_request(false);
-                feed_list(blog);
+                feed_list();
             },
             success: function (xml) 
             { 
@@ -138,7 +138,7 @@ $(document).ready(function()
 
     /* load feed list */
 
-    function feed_list_populate(feeds)
+    function feed_populate(feeds)
     {
         _c = $("#feedscontainer > div.containercontentarea");
         _c.html("");
@@ -150,29 +150,43 @@ $(document).ready(function()
                 _feed = $(this).find('feed').text();
                 _title = $(this).find('title').text();
 
-                _item = "<div class=\"feeditem\" " +
-                        "feed=\"" + _feed + "\">" + 
-                        _title + "</div>";
+                _div = "<div class=\"feeditem\" " +
+                       "feed=\"" + _feed + "\">" + 
+                       _title + "</div>";
 
-                _c.append(_item);
+                _c.append(_div);
             });
         }
 
         /* this trigger must be created after populate, otherwise
-         * will not work (because feed items are created after document
+         * will not work (because feed list are created after document
          * loading */
 
         $("div.feeditem").click(function()
         {
             current_feed = $(this).attr('feed');
-            set_feed_auto();
+            set_feed();
         });
     }
 
-    function set_feed_auto()
+    function set_feed()
     {
         $("div.feeditem-selected").removeClass('feeditem-selected');
 
+        _i = $("div.feeditem[feed='" + current_feed + "']");
+
+        if(_i.length > 0)
+        {
+            _i.addClass('feeditem-selected');
+        }
+
+        /* load feed news */
+
+        feed_news();
+    }
+
+    function set_feed_default()
+    {
         if(current_feed == null)
         {
             _i = $("div.feeditem:first");
@@ -183,26 +197,17 @@ $(document).ready(function()
             }
         }
 
-        _i = $("div[feed='" + current_feed + "']");
-
-        if(_i.length > 0)
-        {
-            _i.addClass('feeditem-selected');
-        }
-
-        /* load feed items */
-
-        feed_item();
+        set_feed();
     }
 
-    function feed_list(blog)
+    function feed_list()
     {
         $.ajax
         ({
             type: "GET",
             url: "<?php B_Helper::url('feed', 'list') ?>",
             dataType: "xml",
-            data: { blog: blog },
+            data: { blog: current_blog },
             beforeSend: function()
             {
                 set_active_request(true);
@@ -210,25 +215,67 @@ $(document).ready(function()
             complete: function()
             {
                 set_active_request(false);
-                set_feed_auto();
+                set_feed_default();
             },
             success: function (xml) 
             { 
                 d = $(xml).find('data');
-                feed_list_populate(d.find('feeds').children());
+                feed_populate(d.find('feeds').children());
             }, 
             error: function () { err(); } 
         });
     }
 
-    /* load feed items */
+    /* load feed news */
 
-    function feed_item()
+    function news_populate(news)
+    {
+        _c = $("#newscontainer > div.containercontentarea");
+        _c.html("");
+
+        if(news.length > 0)
+        {
+            news.each(function()
+            {
+                _item = $(this).find('item').text();
+                _title = $(this).find('title').text();
+
+                _div = "<div class=\"newsitem\" " +
+                       "item=\"" + _item + "\">" + 
+                       _title + "</div>";
+
+                _c.append(_div);
+            });
+        }
+
+        /* this trigger must be created after populate, otherwise
+         * will not work (because news list are created after document
+         * loading */
+
+        $("div.newsitem").click(function()
+        {
+            set_news_item($(this).attr('item'));
+        });
+    }
+
+    function set_news_item(item)
+    {
+        $("div.newsitem-selected").removeClass('newsitem-selected');
+
+        _i = $("div.newsitem[item='" + item + "']");
+
+        if(_i.length > 0)
+        {
+            _i.addClass('newsitem-selected');
+        }
+    }
+
+    function feed_news()
     {
         $.ajax
         ({
             type: "GET",
-            url: "<?php B_Helper::url('feed', 'item') ?>",
+            url: "<?php B_Helper::url('feed', 'news') ?>",
             dataType: "xml",
             data: { blog: current_blog, feed: current_feed },
             beforeSend: function()
@@ -242,6 +289,7 @@ $(document).ready(function()
             success: function (xml) 
             { 
                 d = $(xml).find('data');
+                news_populate(d.find('news').children());
             }, 
             error: function () { err(); } 
         });
@@ -396,7 +444,7 @@ $(document).ready(function()
                 {
                     $.b_dialog({ selector: "#feedaddform" });
                     $.b_dialog_hide();
-                    feed_list(current_blog);
+                    feed_list();
                     current_feed = f;
                 }
                 else
@@ -408,14 +456,13 @@ $(document).ready(function()
         });
     }
 
-    /* set blog (run queue_list > feed_list > feed_item) */
+    /* set blog (run queue_list > feed_list > feed_news) */
 
-    function set_blog(blog)
+    function set_blog()
     {
-        current_blog = blog;
         current_feed = null;
         feedaddform_hide();
-        queue_list(blog);
+        queue_list();
     }
 
     /* TRIGGERS */
@@ -431,8 +478,8 @@ $(document).ready(function()
 
     $("select[name='bloglst']").change(function()
     {
-        blog = $("select[name='bloglst'] > option:selected").val();
-        set_blog(blog);
+        current_blog = $("select[name='bloglst'] > option:selected").val();
+        set_blog();
     });
 
     $("#feedaddlnk").click(function()
