@@ -53,5 +53,7 @@ HORAS TRABALHADAS: 2h
 
 - Inclusao de evento nos botoes que carregam um feed
 - Ajustes no DB, tabela de itens de notícias
+- Inclusao de método para listagem de notícias de um feed no controller Feed,
+action "news"
 
-HORAS TRABALHADAS: 2h
+HORAS TRABALHADAS: 4h

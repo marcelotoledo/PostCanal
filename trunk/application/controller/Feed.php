@@ -70,6 +70,44 @@ class C_Feed extends B_Controller
     public function A_news()
     {
         $this->response()->setXML(true);
+
+        $id = $this->session()->user_profile_id;
+        $blog_hash = $this->request()->blog;
+        $feed_hash = $this->request()->feed;
+
+        $blog = null;
+        $feed = null;
+
+        if(strlen($blog_hash) > 0)
+        {
+            $blog = UserBlog::findByHash($id, $blog_hash);
+        }
+
+        if(is_object($blog) && strlen($feed_hash) > 0)
+        {
+            $feed = UserBlogFeed::findByHash($blog->user_blog_id, $feed_hash);
+        }
+
+        if(is_object($feed) == false)
+        {
+            $_m = "user blog feed not found using " .
+                  "blog hash (" . $blog_hash . ") and " .
+                  "feed hash (" . $feed_hash . ")";
+            $_d = array ('method' => __METHOD__, 'user_profile_id' => $id);
+            throw new B_Exception($_m, E_USER_WARNING, $_d);
+        }
+
+        $news = AggregatorFeedNews::findByFeed($feed->aggregator_feed_id);
+
+        $results = array();
+
+        foreach($news as $item)
+        {
+            $results[] = array('item' => $item->url_md5,
+                               'title' => $item->title);
+        }
+
+        if(count($news) > 0) $this->view()->news = $results;
     }
 
     /**
@@ -199,7 +237,7 @@ class C_Feed extends B_Controller
                       "blog_hash (" . $blog_hash . ")";
                 $id = $user_profile_id;                          
                 $_d = array('method' => __METHOD__, 'user_profile_id' => $id);
-                throw new B_Exception($_m, E_USER_ERROR, $_d);
+                throw new B_Exception($_m, E_USER_WARNING, $_d);
             }
 
             if(is_object($blog_feed) == false)

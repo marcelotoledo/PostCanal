@@ -181,4 +181,18 @@ class UserBlogFeed extends B_Model
     {
         return current(self::findByBlog($blog_id, $id));
     }
+
+    /**
+     * Find Feed from Hash
+     *
+     * @param   integer $user_blog_id
+     * @param   string  $hash
+     * @return  UserBlog|null
+     */
+    public static function findByHash($user_blog_id, $hash)
+    {
+        return current(self::find(array(
+            'user_blog_id' => $user_blog_id,
+            'hash' => $hash)));
+    }
 }

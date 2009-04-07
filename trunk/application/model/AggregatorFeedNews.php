@@ -1,49 +1,41 @@
 <?php
 
-
 /**
- * UserBlog model class
+ * AggregatorFeedNews model class
  * 
  * @category    Blotomate
  * @package     Model
  * @author      Rafael Castilho <rafael@castilho.biz>
  */
-class UserBlog extends B_Model
+class AggregatorFeedNews extends B_Model
 {
-    const STATUS_OK                  = "ok";
-    const STATUS_NEW                 = "new";
-    const STATUS_FAILED_URL          = "failed_url";
-    const STATUS_FAILED_LOGIN        = "failed_login";
-    const STATUS_FAILED_PUBLICATION  = "failed_publication";
-
-
     /**
      * Table name
      *
      * @var string
      */
-    protected static $table_name = 'model_user_blog';
+    protected static $table_name = 'model_aggregator_feed_news';
 
     /**
      * Table structure
      *
      * @var array
      */
-    protected static $table_structure = array('user_blog_id'=>array('type'=>'integer','size'=>0,'required'=>false),'user_profile_id'=>array('type'=>'integer','size'=>0,'required'=>true),'blog_type_id'=>array('type'=>'integer','size'=>0,'required'=>true),'name'=>array('type'=>'string','size'=>100,'required'=>true),'url'=>array('type'=>'string','size'=>200,'required'=>true),'manager_url'=>array('type'=>'string','size'=>200,'required'=>true),'manager_username'=>array('type'=>'string','size'=>100,'required'=>true),'manager_password'=>array('type'=>'string','size'=>100,'required'=>true),'created_at'=>array('type'=>'date','size'=>0,'required'=>false),'updated_at'=>array('type'=>'date','size'=>0,'required'=>false),'enabled'=>array('type'=>'boolean','size'=>0,'required'=>false));
+    protected static $table_structure = array();
 
     /**
      * Sequence name
      *
      * @var string
      */
-    protected static $sequence_name = '';
+    protected static $sequence_name = null;
 
     /**
      * Primary key name
      *
      * @var string
      */
-    protected static $primary_key_name = 'user_blog_id';
+    protected static $primary_key_name = 'aggregator_feed_news_id';
 
 
     /**
@@ -87,24 +79,7 @@ class UserBlog extends B_Model
     }
 
     /**
-     * Save model
-     *
-     * @return  boolean
-     */
-    public function save()
-    {
-        /* generate Hash */
-
-        if($this->isNew()) 
-        {
-            $this->hash = L_Utility::randomString(8);
-        }
-
-        return parent::save();
-    }
-
-    /**
-     * Find UserBlog with an encapsulated SELECT command
+     * Find AggregatorFeedNews with an encapsulated SELECT command
      *
      * @param   array   $conditions WHERE parameters
      * @param   array   $order      ORDER parameters
@@ -126,7 +101,7 @@ class UserBlog extends B_Model
     }
 
     /**
-     * Get UserBlog with SQL
+     * Get AggregatorFeedNews with SQL
      *
      * @param   string  $sql    SQL query
      * @param   array   $data   values array
@@ -150,11 +125,11 @@ class UserBlog extends B_Model
     }
 
     /**
-     * Find UserBlog by primary key
+     * Find AggregatorFeedNews by primary key
      *
      * @param   integer $id    Primary key value
      *
-     * @return  UserBlog|null 
+     * @return  AggregatorFeedNews|null 
      */
     public static function findByPrimaryKey($id)
     {
@@ -162,31 +137,19 @@ class UserBlog extends B_Model
     }
 
     /**
-     * Find Blog by user profile
+     * Find AggregatorFeedNews by Feed
      *
-     * @param   integer         $user_profile_id    User profile PK
-     * @param   boolean|null    $enabled
-     * @return  array
-     */
-    public static function findByUserProfileId($user_profile_id, $enabled=null)
-    {
-        $args = array();
-        $args['user_profile_id'] = $user_profile_id;
-        if(is_bool($enabled)) $args['enabled'] = $enabled;
-        return self::find($args, array('name ASC, created_at ASC'));
-    }
-
-    /**
-     * Find Blog from Hash
+     * @param   integer $feed       AggregatorFeed ID
      *
-     * @param   integer $user_profile_id
-     * @param   string  $hash
-     * @return  UserBlog|null
+     * @return  AggregatorFeedNews|null 
      */
-    public static function findByHash($user_profile_id, $hash)
+    public static function findByFeed($feed, $limit=25, $offset=0)
     {
-        return current(self::find(array(
-            'user_profile_id' => $user_profile_id,
-            'hash' => $hash)));
+        return self::find(
+            array('aggregator_feed_id' => $feed),
+            array('created_at DESC'),
+            $limit,
+            $offset
+        );
     }
 }
