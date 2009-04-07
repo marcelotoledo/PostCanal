@@ -1,3 +1,10 @@
+/* avoid browser scrollbars */
+
+body
+{
+    overflow: hidden;
+}
+
 /* containers */
 
 .dashboardcontainers

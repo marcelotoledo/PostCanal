@@ -157,15 +157,25 @@ $(document).ready(function()
                 _c.append(_item);
             });
         }
+
+        /* this trigger must be created after populate, otherwise
+         * will not work (because feed items are created after document
+         * loading */
+
+        $("div.feeditem").click(function()
+        {
+            current_feed = $(this).attr('feed');
+            set_feed_auto();
+        });
     }
 
     function set_feed_auto()
     {
+        $("div.feeditem-selected").removeClass('feeditem-selected');
+
         if(current_feed == null)
         {
-            _i = $("#feedscontainer > " +
-                   "div.containercontentarea > " +
-                   "div.feeditem:first");
+            _i = $("div.feeditem:first");
 
             if(_i.length > 0)
             {
@@ -179,6 +189,10 @@ $(document).ready(function()
         {
             _i.addClass('feeditem-selected');
         }
+
+        /* load feed items */
+
+        feed_item();
     }
 
     function feed_list(blog)
@@ -197,7 +211,6 @@ $(document).ready(function()
             {
                 set_active_request(false);
                 set_feed_auto();
-                feed_item(blog);
             },
             success: function (xml) 
             { 
@@ -210,14 +223,14 @@ $(document).ready(function()
 
     /* load feed items */
 
-    function feed_item(blog)
+    function feed_item()
     {
         $.ajax
         ({
             type: "GET",
             url: "<?php B_Helper::url('feed', 'item') ?>",
             dataType: "xml",
-            data: { blog: blog, feed: current_feed },
+            data: { blog: current_blog, feed: current_feed },
             beforeSend: function()
             {
                 set_active_request(true);
