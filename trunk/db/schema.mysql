@@ -5,9 +5,9 @@ DROP TABLE IF EXISTS model_user_blog_queue_config CASCADE;
 DROP TABLE IF EXISTS model_user_blog_queue_item CASCADE;
 DROP TABLE IF EXISTS model_user_blog CASCADE;
 DROP TABLE IF EXISTS model_user_profile CASCADE;
-DROP TABLE IF EXISTS model_aggregator_feed_news CASCADE;
+DROP TABLE IF EXISTS model_aggregator_feed_item CASCADE;
+DROP TABLE IF EXISTS model_aggregator_feed_url CASCADE;
 DROP TABLE IF EXISTS model_aggregator_feed CASCADE;
-DROP TABLE IF EXISTS model_aggregator_feed_cache CASCADE;
 DROP TABLE IF EXISTS model_blog_type_configuration CASCADE;
 DROP TABLE IF EXISTS model_blog_type_discovery CASCADE;
 DROP TABLE IF EXISTS model_blog_type CASCADE;
@@ -110,51 +110,53 @@ CREATE INDEX m_btc_tpn_idx ON model_blog_type_configuration (blog_type_id, name)
 
 -- aggregator --
 
-CREATE TABLE model_aggregator_feed_cache
-(
-    aggregator_feed_cache_id INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
-    url VARCHAR(200) NOT NULL,
-    url_md5 VARCHAR(32) NOT NULL,
-    url_feed VARCHAR(200) NOT NULL DEFAULT '',
-    url_feed_md5 VARCHAR(32) NOT NULL DEFAULT '',
-    title VARCHAR(100) NOT NULL,
-    description TEXT NOT NULL DEFAULT '',
-    expires_in TIMESTAMP NOT NULL DEFAULT NOW(),
-    PRIMARY KEY (aggregator_feed_cache_id)
-) ENGINE=InnoDB DEFAULT CHARSET='utf8';
-
-CREATE INDEX m_agd_um5_idx ON model_aggregator_feed_cache (url_md5, url_feed_md5, expires_in);
-
 CREATE TABLE model_aggregator_feed
 (
     aggregator_feed_id INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
-    url VARCHAR(200) NOT NULL,
-    url_md5 VARCHAR(32) NOT NULL,
-    title VARCHAR(100) NOT NULL,
-    description TEXT NOT NULL DEFAULT '',
+    feed_url VARCHAR(200) NOT NULL,
+    feed_url_md5 VARCHAR(32) NOT NULL,
+    feed_title VARCHAR(200) NOT NULL,
+    feed_description TEXT NOT NULL DEFAULT '',
+    feed_link TEXT NOT NULL DEFAULT '',
+    feed_date TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
     created_at TIMESTAMP NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
     enabled TINYINT(1) NOT NULL DEFAULT 1,
     PRIMARY KEY (aggregator_feed_id)
 ) ENGINE=InnoDB DEFAULT CHARSET='utf8';
 
-CREATE INDEX m_agf_um5_idx ON model_aggregator_feed (url_md5, enabled);
+CREATE INDEX m_agf_um5_idx ON model_aggregator_feed (feed_url_md5, enabled);
 
-CREATE TABLE model_aggregator_feed_news
+CREATE TABLE model_aggregator_feed_url
 (
-    aggregator_feed_news_id INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
+    aggregator_feed_url_id INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
     aggregator_feed_id INTEGER UNSIGNED NOT NULL, 
-    title TEXT NOT NULL, 
-    url TEXT NOT NULL,
+    url VARCHAR(200) NOT NULL,
     url_md5 VARCHAR(32) NOT NULL,
-    description TEXT NOT NULL DEFAULT '',
+    PRIMARY KEY (aggregator_feed_url_id),
+    CONSTRAINT m_afu_m_agf_fk FOREIGN KEY (aggregator_feed_id) 
+        REFERENCES model_aggregator_feed (aggregator_feed_id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET='utf8';
+
+CREATE INDEX m_agu_um5_idx ON model_aggregator_feed_url (aggregator_feed_id, url_md5);
+
+CREATE TABLE model_aggregator_feed_item
+(
+    aggregator_feed_item_id INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
+    aggregator_feed_id INTEGER UNSIGNED NOT NULL, 
+    item_md5 VARCHAR(32) NOT NULL,
+    item_id TEXT NOT NULL,
+    item_title TEXT NOT NULL, 
+    item_link TEXT NOT NULL, 
+    item_description TEXT NOT NULL, 
+    item_date TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00', 
     created_at TIMESTAMP NOT NULL DEFAULT NOW(), 
-    PRIMARY KEY (aggregator_feed_news_id),
+    PRIMARY KEY (aggregator_feed_item_id),
     CONSTRAINT m_afi_m_agf_fk FOREIGN KEY (aggregator_feed_id) 
         REFERENCES model_aggregator_feed (aggregator_feed_id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET='utf8';
 
-CREATE INDEX m_agn_um5_idx ON model_aggregator_feed (url_md5);
+CREATE INDEX m_agi_um5_idx ON model_aggregator_feed_item (aggregator_feed_id, item_md5);
 
 -- user --
 
@@ -215,8 +217,8 @@ CREATE TABLE model_user_blog_feed
     user_blog_id INTEGER UNSIGNED NOT NULL,
     aggregator_feed_id INTEGER UNSIGNED NOT NULL,
     hash CHAR(8) NOT NULL,
-    title VARCHAR(100) NOT NULL,
-    description TEXT NOT NULL DEFAULT '',
+    feed_title VARCHAR(100) NOT NULL,
+    feed_description TEXT NOT NULL DEFAULT '',
     ordering SMALLINT UNSIGNED NOT NULL DEFAULT 1,
     created_at TIMESTAMP NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
@@ -244,7 +246,7 @@ CREATE TABLE model_user_blog_queue_config
 CREATE TABLE model_user_blog_queue_item
 (
     user_blog_queue_item_id INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
-    aggregator_feed_news_id INTEGER UNSIGNED NOT NULL,
+    aggregator_feed_item_id INTEGER UNSIGNED NOT NULL,
     user_blog_id INTEGER UNSIGNED NOT NULL,
     hash CHAR(8) NOT NULL,
     title TEXT NOT NULL, 
@@ -252,8 +254,8 @@ CREATE TABLE model_user_blog_queue_item
     created_at TIMESTAMP NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
     PRIMARY KEY (user_blog_queue_item_id),
-    CONSTRAINT m_bqi_m_afi_fk FOREIGN KEY (aggregator_feed_news_id) 
-        REFERENCES model_aggregator_feed_news (aggregator_feed_news_id) ON DELETE RESTRICT,
+    CONSTRAINT m_bqi_m_afi_fk FOREIGN KEY (aggregator_feed_item_id) 
+        REFERENCES model_aggregator_feed_item (aggregator_feed_item_id) ON DELETE RESTRICT,
     CONSTRAINT m_bqi_m_ubl_fk FOREIGN KEY (user_blog_id) 
         REFERENCES model_user_blog (user_blog_id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET='utf8';

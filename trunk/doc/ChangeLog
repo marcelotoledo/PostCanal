@@ -55,5 +55,6 @@ HORAS TRABALHADAS: 2h
 - Ajustes no DB, tabela de itens de notícias
 - Inclusao de método para listagem de notícias de um feed no controller Feed,
 action "news"
+- Bugfixes no cadastro de feeds
 
-HORAS TRABALHADAS: 4h
+HORAS TRABALHADAS: 6h

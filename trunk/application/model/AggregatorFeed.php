@@ -17,13 +17,6 @@ class AggregatorFeed extends B_Model
     protected static $table_name = 'model_aggregator_feed';
 
     /**
-     * Cache table name
-     *
-     * @var string
-     */
-    protected static $cache_table_name = 'model_aggregator_feed_cache';
-
-    /**
      * Table structure
      *
      * @var array
@@ -144,81 +137,93 @@ class AggregatorFeed extends B_Model
     }
 
     /**
-     * Discover Feeds
+     * Discover feeds from URL
      *
      * @param   string  $url
-     * @param   string  $url_feed
-     * @return  AggregatorFeed|null 
+     * @return  AggregatorFeed|null
      */
-    public static function discover($url, $url_feed=null)
+    public static function discover($url)
     {
-        $table = self::$cache_table_name;
-        $data = array();
-        $data[] = $url;
-        $sql = "SELECT * FROM " . self::$cache_table_name . " " .
-               "WHERE expires_in > NOW() AND url_md5 = MD5(?) ";
+        $um5 = md5($url);
 
-        if($url_feed != null)
+        if(count(($feeds = self::findByURL($url))) == 0)
         {
-            $sql.= "AND url_feed_md5 = MD5(?)";
-            $data[] = $url_feed;
+            /* request feeds to webservice */
+
+            $client = new L_WebService();
+            $results = $client->feed_discover(array('url' => $url));
+            $results_len = count($results);
+
+            for($i=0;$i<$results_len;$i++)
+            {
+                $feed_url = $results[$i]['url'];
+
+                self::transaction();
+
+                if(($feed = self::findByFeedURL($feed_url)) == null)
+                {
+                    $feed = new self();
+                    $feed->feed_url = $feed_url;
+                    $feed->feed_url_md5 = md5($feed_url);
+                    $feed->feed_title = $results[$i]['title'];
+                    $feed->feed_description = $results[$i]['description'];
+                    $feed->feed_link = $results[$i]['link'];
+                    $feed->feed_date = $results[$i]['date'];
+
+                    try
+                    {
+                        $feed->save();
+                    }
+                    catch(B_Exception $_e)
+                    {
+                        self::rollback();
+                        $_m = "new aggregator feed failed";
+                        $_d = array ('method' => __METHOD__);
+                        B_Exception::forward($_m, E_USER_ERROR, $_e, $_d);
+                    }
+                }
+
+                /* add feed to feed list */
+
+                $feeds[] = $feed;
+
+                self::commit();
+
+                /* save feed url */
+
+                self::transaction();
+
+                $sql = "SELECT COUNT(*) AS total " .
+                       "FROM model_aggregator_feed_url " .
+                       "WHERE aggregator_feed_id = ? AND url_md5 = ?";
+
+                $_d = array($feed->aggregator_feed_id, $um5);
+                $_r = current(self::select($sql, $_d));
+
+                if($_r->total == 0)
+                {
+                    $sql = "INSERT INTO model_aggregator_feed_url " .
+                           "(aggregator_feed_id, url, url_md5) VALUES (?, ?, ?)";
+                    $_d = array($feed->aggregator_feed_id, $url, $um5);
+
+                    try
+                    {
+                        self::execute($sql, $_d);
+                    }
+                    catch(B_Exception $_e)
+                    {
+                        self::rollback();
+                        $_m = "new aggregator feed url failed";
+                        $_d = array ('method' => __METHOD__);
+                        B_Exception::forward($_m, E_USER_ERROR, $_e, $_d);
+                    }
+                }
+
+                self::commit();
+            }
         }
 
-        return ($url_feed == null) ? 
-            self::select($sql, $data) : 
-            current(self::select($sql, $data));
-    }
-
-    /**
-     * Register Feeds on discovery table
-     *
-     * @param   array   $data           array('url' => "...", 'url_feed' => "...")
-     * @return  AggregatorFeed|null 
-     */
-    public static function register($data)
-    {
-        $pk = str_replace("model_", "", self::$cache_table_name) . "_id";
-
-        if(array_key_exists('url', $data) == false ||
-           array_key_exists('url_feed', $data) == false)
-        {
-            $_m = "url and url_feed keys are not found in data";
-            $_d = array('method' => __METHOD__);
-            throw new B_Exception($_m, E_USER_ERROR, $_d);
-        }
-
-        $um5 = ($data['url_md5'] = md5($data['url']));
-        $fm5 = ($data['url_feed_md5'] = md5($data['url_feed']));
-        $discovery = self::discover($data['url'], $data['url_feed']);
-
-        /* cache expiration */
-
-        $registry = B_Registry::singleton();
-        $config = $registry->application()->aggregator();
-
-        if(($url_life = $config->cacheURL) == null) $url_life = 259200;
-        if(($feed_life = $config->cacheFeed) == null) $feed_life = 604800;
-
-        $expires_in = date("Y-m-d H:i:s", time() + 
-            (($um5 == $fm5) ? $feed_life : $url_life));
-
-
-        if(is_object($discovery))
-        {
-            $sql = "UPDATE " . self::$cache_table_name . " " .
-                   "SET expires_in = ? WHERE " . $pk . " = ?";
-
-            self::execute($sql, array($expires_in, $discovery->{$pk}));
-        }
-        else
-        {
-            $data['expires_in'] = $expires_in;
-            $columns = array_keys($data);
-            $sql = "INSERT INTO " . self::$cache_table_name . " " .
-                   "(" . implode(", ", $columns) . ") VALUES " .
-                   "(?" . str_repeat(", ?", count($columns) - 1) . ")";
-            self::insert($sql, array_values($data));
-        }
+        return $feeds;
     }
 
     /**
@@ -229,6 +234,22 @@ class AggregatorFeed extends B_Model
      */
     public static function findByURL($url)
     {
-        return current(self::find(array('url_md5' => md5($url))));
+        $sql = "SELECT f.* FROM " . self::$table_name . " AS f " .
+               "LEFT JOIN model_aggregator_feed_url AS u " .
+               "ON f.aggregator_feed_id = u.aggregator_feed_id " .
+               "WHERE u.url_md5 = MD5(?)";
+
+        return self::selectModel($sql, array($url));
+    }
+
+    /**
+     * Find by Feed URL
+     *
+     * @param   string  $url
+     * @return  AggregatorFeed|null 
+     */
+    public static function findByFeedURL($feed_url)
+    {
+        return current(self::find(array('feed_url_md5' => md5($feed_url))));
     }
 }

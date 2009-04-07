@@ -56,7 +56,7 @@ class C_Feed extends B_Controller
         foreach($feeds as $feed)
         {
             $results[] = array('feed' => $feed->hash,
-                               'title' => $feed->title);
+                               'title' => $feed->feed_title);
         }
 
         $this->view()->feeds = $results;
@@ -97,7 +97,7 @@ class C_Feed extends B_Controller
             throw new B_Exception($_m, E_USER_WARNING, $_d);
         }
 
-        $news = AggregatorFeedNews::findByFeed($feed->aggregator_feed_id);
+        $news = AggregatorFeedItem::findByFeed($feed->aggregator_feed_id);
 
         $results = array();
 
@@ -120,40 +120,17 @@ class C_Feed extends B_Controller
         $this->response()->setXML(true);
 
         $url = $this->request()->url;
+
         $results = array();
 
-        /* check in aggregator feed cache */
-
-        $discovery = AggregatorFeed::discover($url);
-
-        if(($discovery_len = count($discovery)) > 0)
+        foreach(AggregatorFeed::discover($url) as $feed)
         {
-            for($i=0; $i<$discovery_len; $i++)
-            {
-                $results[] = array('title' => $discovery[$i]->title,
-                                   'url' => $discovery[$i]->url_feed);
-            }
+            $results[] = array(
+                'url' => $feed->feed_url,
+                'title' => $feed->feed_title,
+                'description' => $feed->feed_description);
         }
 
-        /* discover feeds through webservice */
-
-        else
-        {
-            $client = new L_WebService();
-            $results = $client->feed_discover(array('url' => $url));
-            
-            $results_len = count($results);
-
-            for($i=0;$i<$results_len;$i++)
-            {
-                $data = array('url' => $url,
-                              'url_feed' => $results[$i]['url'],
-                              'title' => $results[$i]['title']);
-                AggregatorFeed::register($data);
-            }
-        }
-
-        $this->session()->c_feed_discover_results = $results;
         if(count($results) > 0) $this->view()->results = $results;
     }
 
@@ -166,62 +143,13 @@ class C_Feed extends B_Controller
     {
         $this->response()->setXML(true);
 
-        $feed_key = intval($this->request()->key);
+        $url = $this->request()->url;
         $blog_hash = $this->request()->blog;
-        $feed_results = $this->session()->c_feed_discover_results;
         $user_profile_id = $this->session()->user_profile_id;
-
-        $url = null;
-        $url_len = 0;
-        $title = null;
-
-        if(array_key_exists($feed_key, $feed_results))
-        {
-            $url = $feed_results[$feed_key]['url'];
-            $url_len = strlen($url);
-            $title = $feed_results[$feed_key]['title'];
-        }
-
-        $feed = null;
-
-        /* check for existing feed */
-
-        AggregatorFeed::transaction();
-
-        if($url_len > 0)
-        {
-            $feed = AggregatorFeed::findByURL($url);
-        }
-
-        /* add new feed */
-
-        if($url_len > 0 && is_object($feed) == false)
-        {
-            $feed = new AggregatorFeed();
-            $feed->title = strlen($title) > 0 ? $title : "default";
-            $feed->url = $url;
-            $feed->url_md5 = md5($url);
-
-            try
-            {
-                $feed->save();
-            }
-            catch(B_Exception $exception)
-            {
-                AggregatorFeed::rollback();
-                $_m = "aggregator feed transaction failed";
-                $_d = array ('method' => __METHOD__);
-                B_Exception::forward($_m, E_USER_ERROR, $exception, $_d);
-            }
-        }
-
-        AggregatorFeed::commit();
-
-        /* add feed to user blog feed */
 
         $blog_feed = null;
 
-        if(is_object($feed))
+        if(is_object(($feed = AggregatorFeed::findByFeedURL($url))))
         {
             $blog = UserBlog::findByHash($user_profile_id, $blog_hash);
 
@@ -232,11 +160,9 @@ class C_Feed extends B_Controller
             }
             else
             {
-                $_m = "invalid user blog from " .
-                      "user_profile_id (" . $user_profile_id . ") and " .
-                      "blog_hash (" . $blog_hash . ")";
-                $id = $user_profile_id;                          
-                $_d = array('method' => __METHOD__, 'user_profile_id' => $id);
+                $_m = "invalid user blog from hash (" . $blog_hash . ")";
+                $_i = $user_profile_id;                          
+                $_d = array('method' => __METHOD__, 'user_profile_id' => $_i);
                 throw new B_Exception($_m, E_USER_WARNING, $_d);
             }
 
@@ -245,7 +171,8 @@ class C_Feed extends B_Controller
                 $blog_feed = new UserBlogFeed();
                 $blog_feed->user_blog_id = $blog->user_blog_id;
                 $blog_feed->aggregator_feed_id = $feed->aggregator_feed_id;
-                $blog_feed->title = $feed->title;
+                $blog_feed->feed_title = $feed->feed_title;
+                $blog_feed->feed_description = $feed->feed_description;
                 $blog_feed->save();
             }
         }

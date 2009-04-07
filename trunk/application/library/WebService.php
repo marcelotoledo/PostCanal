@@ -79,9 +79,8 @@ class L_WebService
             }
             catch(Exception $e)
             {
-                $_m = "failed to call webservice method (" . $method . ") " .
-                      "with args [" . implode(", ", ((array) $args)) . "] " .
-                      "as client, using token (" . $this->token . ");\n" .
+                $_m = "failed to call webservice method (" . $method . ") as client, " .
+                      "with args [" . implode(", ", ((array) $args)) . "];\n" .
                       "exception: " . $e->getMessage();
                 $_d = array('method' => __METHOD__);
 

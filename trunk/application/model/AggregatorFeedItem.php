@@ -1,20 +1,20 @@
 <?php
 
 /**
- * AggregatorFeedNews model class
+ * AggregatorFeedItem model class
  * 
  * @category    Blotomate
  * @package     Model
  * @author      Rafael Castilho <rafael@castilho.biz>
  */
-class AggregatorFeedNews extends B_Model
+class AggregatorFeedItem extends B_Model
 {
     /**
      * Table name
      *
      * @var string
      */
-    protected static $table_name = 'model_aggregator_feed_news';
+    protected static $table_name = 'model_aggregator_feed_item';
 
     /**
      * Table structure
@@ -35,7 +35,7 @@ class AggregatorFeedNews extends B_Model
      *
      * @var string
      */
-    protected static $primary_key_name = 'aggregator_feed_news_id';
+    protected static $primary_key_name = 'aggregator_feed_item_id';
 
 
     /**
@@ -79,7 +79,7 @@ class AggregatorFeedNews extends B_Model
     }
 
     /**
-     * Find AggregatorFeedNews with an encapsulated SELECT command
+     * Find AggregatorFeedItem with an encapsulated SELECT command
      *
      * @param   array   $conditions WHERE parameters
      * @param   array   $order      ORDER parameters
@@ -101,7 +101,7 @@ class AggregatorFeedNews extends B_Model
     }
 
     /**
-     * Get AggregatorFeedNews with SQL
+     * Get AggregatorFeedItem with SQL
      *
      * @param   string  $sql    SQL query
      * @param   array   $data   values array
@@ -125,11 +125,11 @@ class AggregatorFeedNews extends B_Model
     }
 
     /**
-     * Find AggregatorFeedNews by primary key
+     * Find AggregatorFeedItem by primary key
      *
      * @param   integer $id    Primary key value
      *
-     * @return  AggregatorFeedNews|null 
+     * @return  AggregatorFeedItem|null 
      */
     public static function findByPrimaryKey($id)
     {
@@ -137,11 +137,11 @@ class AggregatorFeedNews extends B_Model
     }
 
     /**
-     * Find AggregatorFeedNews by Feed
+     * Find AggregatorFeedItem by Feed
      *
      * @param   integer $feed       AggregatorFeed ID
      *
-     * @return  AggregatorFeedNews|null 
+     * @return  AggregatorFeedItem|null 
      */
     public static function findByFeed($feed, $limit=25, $offset=0)
     {

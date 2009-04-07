@@ -171,18 +171,21 @@ $(document).ready(function()
 
     function set_feed()
     {
-        $("div.feeditem-selected").removeClass('feeditem-selected');
-
-        _i = $("div.feeditem[feed='" + current_feed + "']");
-
-        if(_i.length > 0)
+        if(current_feed)
         {
-            _i.addClass('feeditem-selected');
+            $("div.feeditem-selected").removeClass('feeditem-selected');
+
+            _i = $("div.feeditem[feed='" + current_feed + "']");
+
+            if(_i.length > 0)
+            {
+                _i.addClass('feeditem-selected');
+            }
+
+            /* load feed news */
+
+            feed_news();
         }
-
-        /* load feed news */
-
-        feed_news();
     }
 
     function set_feed_default()
@@ -320,9 +323,9 @@ $(document).ready(function()
 
     function feedaddform_submit()
     {
-        if((k = $("input[name='feedaddoption']:checked").attr('key')) != undefined)
+        if((url = $("input[name='feedaddoption']:checked").attr('url')) != undefined)
         {
-            feed_add(k);
+            feed_add(url);
         }
         else 
         {
@@ -343,14 +346,14 @@ $(document).ready(function()
 
         feeds.each(function()
         {
-            _key = $(this).attr('key');
             _url = $(this).find('url').text();
             _title = $(this).find('title').text();
+            _description = $(this).find('description').text();
 
             if(_title.length == 0) _title = _url;
 
             item = "<input name=\"feedaddoption\" " +
-                   "type=\"radio\" key=\"" + _key + "\">" +
+                   "type=\"radio\" url=\"" + _url + "\">" +
                    ( (_title.length > 50) ? 
                      (_title.substring(0, 50) + "...") : 
                      (_title) ) + "<br/>";
@@ -403,7 +406,7 @@ $(document).ready(function()
 
                 if(r.length == 1)
                 {
-                    feed_add(r.attr('key'));
+                    feed_add(r.find('url').text());
                 }
                 else if(r.length >  1)
                 {
@@ -418,14 +421,14 @@ $(document).ready(function()
         });
     }
 
-    function feed_add(key)
+    function feed_add(url)
     {
         $.ajax
         ({
             type: "POST",
             url: "<?php B_Helper::url('feed', 'add') ?>",
             dataType: "xml",
-            data: { key: key, blog: current_blog },
+            data: { url: url, blog: current_blog },
             beforeSend: function()
             {
                 set_active_request(true);

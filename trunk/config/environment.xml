@@ -70,13 +70,5 @@
                 <url>/webservice/frontend</url>
             </frontend>
         </webservice>
-        <aggregator>
-            <!-- expiration time increment on aggregator feed cache. 
-                 cache indirect url (websites) and feeds in different way,
-                 because websites can change it's feed list and
-                 a direct feed is expected to not change -->
-            <cacheURL>259200</cacheURL>
-            <cacheFeed>1296000</cacheFeed>
-        </aggregator>
     </application>
 </environment>

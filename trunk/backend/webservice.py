@@ -48,7 +48,19 @@ class WebService:
 
             for i in range(0, len(feeds)):
                 d = feedparser.parse(feeds[i])
-                result.append({ "title": d.feed.title, "url": feeds[i] })
+                e = []
+                for j in d['entries']:
+                    e.append({ 'title': j.title,
+                               'link': j.link,
+                               'description': j.description,
+                               'date': j.date if hasattr(j, "date") else "",
+                               'id': j.id if hasattr(j, "id") else "" })
+                result.append({ 'url': feeds[i],
+                                'title': d.feed.title, 
+                                'description': d.feed.description,
+                                'link': d.feed.link,
+                                'date': d.feed.date if hasattr(d.feed, "date") else "",
+                                'entries': e })
 
         return result
 
@@ -69,7 +81,8 @@ def test_remote(token, url, remote):
 
 if __name__ == '__main__':
     token = "c4z5mYW1pYWSJe2BzcIq1wv6n95o1E2kwuD1B0Wuo3XbHx82Vk"
-    url = "http://slashdot.org/"
+    #url = "http://slashdot.org/"
+    url = "http://www.uol.com.br/"
     print test(token, url)
-    remote = "http://localhost:8080/webservice/backend"
-    print test_remote(token, url, remote)
+    # remote = "http://localhost:8080/webservice/backend"
+    # print test_remote(token, url, remote)
