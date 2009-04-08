@@ -30,7 +30,7 @@ class UserBlog extends B_Model
      * @var array
      */
     protected static $table_structure = array (
-		'user_blog_id' => array ('type' => 'integer','size' => 0,'required' => true),
+		'user_blog_id' => array ('type' => 'integer','size' => 0,'required' => false),
 		'user_profile_id' => array ('type' => 'integer','size' => 0,'required' => true),
 		'blog_type_id' => array ('type' => 'integer','size' => 0,'required' => true),
 		'hash' => array ('type' => 'string','size' => 8,'required' => true),

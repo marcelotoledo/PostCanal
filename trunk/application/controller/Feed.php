@@ -44,22 +44,9 @@ class C_Feed extends B_Controller
             $blog = UserBlog::findByHash($user_profile_id, $blog_hash);
         }
 
-        $feeds = array();
-
-        if(is_object($blog))
-        {
-            $feeds = UserBlogFeed::findByBlog($blog->user_blog_id);
-        }
-
-        $results = array();
-
-        foreach($feeds as $feed)
-        {
-            $results[] = array('feed' => $feed->hash,
-                               'title' => $feed->feed_title);
-        }
-
-        $this->view()->feeds = $results;
+        $this->view()->feeds = is_object($blog) ? 
+            UserBlogFeed::findByBlog($blog->user_blog_id, null, true) :
+            array();$feeds;
     }
 
     /**
@@ -97,20 +84,10 @@ class C_Feed extends B_Controller
             throw new B_Exception($_m, E_USER_WARNING, $_d);
         }
 
-        $news = AggregatorFeedItem::findByFeed($feed->aggregator_feed_id);
+        $news = AggregatorFeedItem::findByFeed(
+            $feed->aggregator_feed_id, null, null, true);
 
-        $results = array();
-
-        foreach($news as $item)
-        {
-            $results[] = array('item' => $item->item_md5,
-                               'title' => $item->item_title,
-                               'link' => $item->item_link,
-                               'description' => $item->item_description,
-                               'date' => $item->item_date);
-        }
-
-        if(count($news) > 0) $this->view()->news = $results;
+        if(count($news) > 0) $this->view()->news = $news;
     }
 
     /**

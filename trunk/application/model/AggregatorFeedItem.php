@@ -22,7 +22,7 @@ class AggregatorFeedItem extends B_Model
      * @var array
      */
     protected static $table_structure = array (
-		'aggregator_feed_item_id' => array ('type' => 'integer','size' => 0,'required' => true),
+		'aggregator_feed_item_id' => array ('type' => 'integer','size' => 0,'required' => false),
 		'aggregator_feed_id' => array ('type' => 'integer','size' => 0,'required' => true),
 		'item_md5' => array ('type' => 'string','size' => 32,'required' => true),
 		'item_id' => array ('type' => 'string','size' => 0,'required' => true),
@@ -151,10 +151,20 @@ class AggregatorFeedItem extends B_Model
      * Find AggregatorFeedItem by Feed
      *
      * @param   integer $feed       AggregatorFeed ID
+     * @param   integer $limit      Limit
+     * @param   integer $offset     Offset
+     * @param   boolean $assoc
      *
-     * @return  AggregatorFeedItem|null 
+     * @return  AggregatorFeedItem|array|null 
      */
-    public static function findByFeed($feed, $limit=25, $offset=0)
+    public static function findByFeed($feed, $limit=25, $offset=0, $assoc=false)
+    {
+        return $assoc ? 
+            self::_findByFeed_Assoc($feed, $limit, $offset) :
+            self::_findByFeed_Obj($feed, $limit, $offset);
+    }
+
+    protected static function _findByFeed_Obj($feed, $limit=25, $offset=0)
     {
         return self::find(
             array('aggregator_feed_id' => $feed),
@@ -162,5 +172,22 @@ class AggregatorFeedItem extends B_Model
             $limit,
             $offset
         );
+    }
+
+    protected static function _findByFeed_Assoc($feed, $limit=25, $offset=0)
+    {
+        $_s = "SELECT item_md5 AS item, item_title AS title, item_link AS link, item_description AS description, item_date AS date FROM " . self::$table_name . " WHERE aggregator_feed_id = ? ORDER BY created_at DESC";
+
+        if(($limit = intval($limit)) > 0)
+        {
+            $_s .= " LIMIT " . $limit;
+
+            if(($offset = intval($offset)) > 0)
+            {
+                $_s .= ", " . $offset;
+            }
+        }
+
+        return self::select($_s, array($feed), PDO::FETCH_ASSOC);
     }
 }

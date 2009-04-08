@@ -22,7 +22,7 @@ class UserBlogFeed extends B_Model
      * @var array
      */
     protected static $table_structure = array (
-		'user_blog_feed_id' => array ('type' => 'integer','size' => 0,'required' => true),
+		'user_blog_feed_id' => array ('type' => 'integer','size' => 0,'required' => false),
 		'user_blog_id' => array ('type' => 'integer','size' => 0,'required' => true),
 		'aggregator_feed_id' => array ('type' => 'integer','size' => 0,'required' => true),
 		'hash' => array ('type' => 'string','size' => 8,'required' => true),
@@ -170,15 +170,30 @@ class UserBlogFeed extends B_Model
      *
      * @param   integer     $id         UserBlog ID
      * @param   integer     $feed_id    AggregatorFeed ID
+     * @param   boolean     $assoc
      *
-     * @return  UserBlogFeed|null 
+     * @return  UserBlogFeed|array|null 
      */
-    public static function findByBlog($id, $feed_id=null)
+    public static function findByBlog($id, $feed_id=null, $assoc=false)
+    {
+        return $assoc ? 
+            self::_findByBlog_Assoc($id) :
+            self::_findByBlog_Obj($id, $feed_id);
+    }
+
+    protected static function _findByBlog_Obj($id, $feed_id=null)
     {
         $params = array();
         $params['user_blog_id'] = $id;
         if($feed_id != null) $params['aggregator_feed_id'] = $feed_id;
-        return self::find($params);
+        return self::find($params, array('ordering ASC, user_blog_id ASC'));
+    }
+
+    protected static function _findByBlog_Assoc($id)
+    {
+        $_s = "SELECT hash AS feed, feed_title AS title, feed_description AS description, ordering FROM " . self::$table_name . " WHERE user_blog_id = ? ORDER BY ordering ASC, user_blog_id ASC";
+
+        return self::select($_s, array($id), PDO::FETCH_ASSOC);
     }
 
     /**

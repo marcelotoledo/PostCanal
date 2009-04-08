@@ -59,3 +59,13 @@ action "news"
 - Exibicao de items de feed no dashboard
 
 HORAS TRABALHADAS: 7h
+
+==========
+08/04/2009
+==========
+
+- Ajustes nos models para reconhecimento de estrutura de dados (formatacao de
+data, etc)
+- Ajustes no cadastro de feeds
+
+HORAS TRABALHADAS: 2h

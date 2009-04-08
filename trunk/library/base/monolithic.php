@@ -903,6 +903,13 @@ abstract class B_Model
     protected static $table_name;
 
     /**
+     * Table structure
+     *
+     * @var array
+     */
+    protected static $table_structure;
+
+    /**
      * Sequence name
      *
      * @var string
@@ -1322,9 +1329,10 @@ abstract class B_Model
      *
      * @param   string  $sql    SQL query
      * @param   array   $data   values array
+     * @param   integer $mode   @see http://br.php.net/manual/en/pdo.constants.php
      * @return  array
      */
-    public static function select($sql, $data=array())
+    public static function select($sql, $data=array(), $mode=PDO::FETCH_OBJ)
     {
         $statement = null;
 
@@ -1333,7 +1341,7 @@ abstract class B_Model
             try
             {
                 $statement = self::connection()->prepare($sql);
-                $statement->setFetchMode(PDO::FETCH_OBJ);
+                $statement->setFetchMode($mode);
                 $statement->execute($data);
             }
             catch(PDOException $exception)
@@ -1347,7 +1355,7 @@ abstract class B_Model
         {
             try
             {
-                $statement = self::connection()->query($sql, PDO::FETCH_OBJ);
+                $statement = self::connection()->query($sql, $mode);
             }
             catch(PDOException $exception)
             {
@@ -2564,7 +2572,7 @@ class B_View
      *
      * @return  string
      */
-    public function __toString()
+    public function __toXML()
     {
         $xml = new XmlWriter();
         $xml->openMemory();
@@ -2576,7 +2584,7 @@ class B_View
 
     /**
      * Deep recursion in array to write xml
-     * Auxiliar method for __toString
+     * Auxiliar method for __toXML
      */
     private static function __xml_recursive($a, &$xml)
     {
@@ -2591,9 +2599,12 @@ class B_View
                 self::__xml_recursive($v, $xml);
                 $xml->endElement();
             }
+            elseif(is_bool($v))
+            {
+                $xml->writeElement($element, ($v == true) ? "true" : "false");
+            }
             else
             {
-                if(is_bool($v)) $v = ($v == true) ? "true" : "false";
                 $xml->writeElement($element, $v);
             }
         }
@@ -2653,7 +2664,7 @@ class B_View
         {
             if(strlen($this->template) == 0)
             {
-                echo ((string) $this); /* render view data as xml */
+                echo $this->__toXML(); /* render view data as xml */
             }
 
             /* render view template */

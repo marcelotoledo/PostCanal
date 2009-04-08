@@ -85,7 +85,7 @@ class B_View
      *
      * @return  string
      */
-    public function __toString()
+    public function __toXML()
     {
         $xml = new XmlWriter();
         $xml->openMemory();
@@ -97,7 +97,7 @@ class B_View
 
     /**
      * Deep recursion in array to write xml
-     * Auxiliar method for __toString
+     * Auxiliar method for __toXML
      */
     private static function __xml_recursive($a, &$xml)
     {
@@ -112,9 +112,12 @@ class B_View
                 self::__xml_recursive($v, $xml);
                 $xml->endElement();
             }
+            elseif(is_bool($v))
+            {
+                $xml->writeElement($element, ($v == true) ? "true" : "false");
+            }
             else
             {
-                if(is_bool($v)) $v = ($v == true) ? "true" : "false";
                 $xml->writeElement($element, $v);
             }
         }
@@ -174,7 +177,7 @@ class B_View
         {
             if(strlen($this->template) == 0)
             {
-                echo ((string) $this); /* render view data as xml */
+                echo $this->__toXML(); /* render view data as xml */
             }
 
             /* render view template */

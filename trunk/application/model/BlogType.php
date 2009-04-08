@@ -45,7 +45,7 @@ class BlogType extends B_Model
      * @var array
      */
     protected static $table_structure = array (
-		'blog_type_id' => array ('type' => 'integer','size' => 0,'required' => true),
+		'blog_type_id' => array ('type' => 'integer','size' => 0,'required' => false),
 		'name' => array ('type' => 'string','size' => 50,'required' => true),
 		'version' => array ('type' => 'string','size' => 50,'required' => true),
 		'maintenance' => array ('type' => 'boolean','size' => 0,'required' => false),

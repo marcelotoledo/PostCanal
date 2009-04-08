@@ -41,6 +41,13 @@ abstract class B_Model
     protected static $table_name;
 
     /**
+     * Table structure
+     *
+     * @var array
+     */
+    protected static $table_structure;
+
+    /**
      * Sequence name
      *
      * @var string
@@ -460,9 +467,10 @@ abstract class B_Model
      *
      * @param   string  $sql    SQL query
      * @param   array   $data   values array
+     * @param   integer $mode   @see http://br.php.net/manual/en/pdo.constants.php
      * @return  array
      */
-    public static function select($sql, $data=array())
+    public static function select($sql, $data=array(), $mode=PDO::FETCH_OBJ)
     {
         $statement = null;
 
@@ -471,7 +479,7 @@ abstract class B_Model
             try
             {
                 $statement = self::connection()->prepare($sql);
-                $statement->setFetchMode(PDO::FETCH_OBJ);
+                $statement->setFetchMode($mode);
                 $statement->execute($data);
             }
             catch(PDOException $exception)
@@ -485,7 +493,7 @@ abstract class B_Model
         {
             try
             {
-                $statement = self::connection()->query($sql, PDO::FETCH_OBJ);
+                $statement = self::connection()->query($sql, $mode);
             }
             catch(PDOException $exception)
             {

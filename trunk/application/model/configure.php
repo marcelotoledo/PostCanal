@@ -79,7 +79,8 @@ foreach(B_Model::select("EXPLAIN " . $_table) as $r)
     $f[B_Model::STRUCTURE_SIZE] = ($k == B_Model::TYPE_STRING) ? 
         ((int) preg_replace("/^.+\(([0-9]+)\)+.*$/", "\\1", $r->Type)) : 0;
 
-    $f[B_Model::STRUCTURE_REQUIRED] = ($r->Null == "NO" && strlen($r->Default) == 0);
+    if($r->Field != $_pk)
+        $f[B_Model::STRUCTURE_REQUIRED] = ($r->Null == "NO" && strlen($r->Default) == 0);
 
     $structure[$r->Field] = $f;
 }

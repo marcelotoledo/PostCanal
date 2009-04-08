@@ -18,7 +18,7 @@
 </div>
 
 <div class="dashboardcontainers" id="newscontainer">
-<h2><?php echo $this->translation()->application_news ?></h2>
+<h2><?php echo $this->translation()->application_feed_items ?></h2>
 <div class="containercontentarea">
 </div>
 <div class="containerfooter">&nbsp;</div>

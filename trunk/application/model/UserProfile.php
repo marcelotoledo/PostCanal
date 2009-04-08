@@ -22,7 +22,7 @@ class UserProfile extends B_Model
      * @var array
      */
     protected static $table_structure = array (
-		'user_profile_id' => array ('type' => 'integer','size' => 0,'required' => true),
+		'user_profile_id' => array ('type' => 'integer','size' => 0,'required' => false),
 		'hash' => array ('type' => 'string','size' => 8,'required' => true),
 		'login_email' => array ('type' => 'string','size' => 100,'required' => true),
 		'login_password_md5' => array ('type' => 'string','size' => 32,'required' => true),
