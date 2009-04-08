@@ -21,7 +21,18 @@ class AggregatorFeedItem extends B_Model
      *
      * @var array
      */
-    protected static $table_structure = array();
+    protected static $table_structure = array (
+		'aggregator_feed_item_id' => array ('type' => 'integer','size' => 0,'required' => true),
+		'aggregator_feed_id' => array ('type' => 'integer','size' => 0,'required' => true),
+		'item_md5' => array ('type' => 'string','size' => 32,'required' => true),
+		'item_id' => array ('type' => 'string','size' => 0,'required' => true),
+		'item_title' => array ('type' => 'string','size' => 0,'required' => true),
+		'item_link' => array ('type' => 'string','size' => 0,'required' => true),
+		'item_description' => array ('type' => 'string','size' => 0,'required' => true),
+		'item_date' => array ('type' => 'date','size' => 0,'required' => false),
+		'created_at' => array ('type' => 'date','size' => 0,'required' => false));
+
+
 
     /**
      * Sequence name

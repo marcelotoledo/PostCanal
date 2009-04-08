@@ -21,7 +21,19 @@ class UserBlogFeed extends B_Model
      *
      * @var array
      */
-    protected static $table_structure = array();
+    protected static $table_structure = array (
+		'user_blog_feed_id' => array ('type' => 'integer','size' => 0,'required' => true),
+		'user_blog_id' => array ('type' => 'integer','size' => 0,'required' => true),
+		'aggregator_feed_id' => array ('type' => 'integer','size' => 0,'required' => true),
+		'hash' => array ('type' => 'string','size' => 8,'required' => true),
+		'feed_title' => array ('type' => 'string','size' => 100,'required' => true),
+		'feed_description' => array ('type' => 'string','size' => 0,'required' => true),
+		'ordering' => array ('type' => 'integer','size' => 0,'required' => false),
+		'created_at' => array ('type' => 'date','size' => 0,'required' => false),
+		'updated_at' => array ('type' => 'date','size' => 0,'required' => false),
+		'enabled' => array ('type' => 'boolean','size' => 0,'required' => false));
+
+
 
     /**
      * Sequence name

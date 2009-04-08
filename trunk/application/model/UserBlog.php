@@ -29,7 +29,19 @@ class UserBlog extends B_Model
      *
      * @var array
      */
-    protected static $table_structure = array('user_blog_id'=>array('type'=>'integer','size'=>0,'required'=>false),'user_profile_id'=>array('type'=>'integer','size'=>0,'required'=>true),'blog_type_id'=>array('type'=>'integer','size'=>0,'required'=>true),'name'=>array('type'=>'string','size'=>100,'required'=>true),'url'=>array('type'=>'string','size'=>200,'required'=>true),'manager_url'=>array('type'=>'string','size'=>200,'required'=>true),'manager_username'=>array('type'=>'string','size'=>100,'required'=>true),'manager_password'=>array('type'=>'string','size'=>100,'required'=>true),'created_at'=>array('type'=>'date','size'=>0,'required'=>false),'updated_at'=>array('type'=>'date','size'=>0,'required'=>false),'enabled'=>array('type'=>'boolean','size'=>0,'required'=>false));
+    protected static $table_structure = array (
+		'user_blog_id' => array ('type' => 'integer','size' => 0,'required' => true),
+		'user_profile_id' => array ('type' => 'integer','size' => 0,'required' => true),
+		'blog_type_id' => array ('type' => 'integer','size' => 0,'required' => true),
+		'hash' => array ('type' => 'string','size' => 8,'required' => true),
+		'name' => array ('type' => 'string','size' => 100,'required' => true),
+		'url' => array ('type' => 'string','size' => 200,'required' => true),
+		'manager_url' => array ('type' => 'string','size' => 200,'required' => true),
+		'manager_username' => array ('type' => 'string','size' => 100,'required' => true),
+		'manager_password' => array ('type' => 'string','size' => 100,'required' => true),
+		'created_at' => array ('type' => 'date','size' => 0,'required' => false),
+		'updated_at' => array ('type' => 'date','size' => 0,'required' => false),
+		'enabled' => array ('type' => 'boolean','size' => 0,'required' => false));
 
     /**
      * Sequence name

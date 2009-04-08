@@ -21,7 +21,23 @@ class UserProfile extends B_Model
      *
      * @var array
      */
-    protected static $table_structure = array('user_profile_id'=>array('type'=>'integer','size'=>0,'required'=>false),'login_email'=>array('type'=>'string','size'=>100,'required'=>true),'login_password_md5'=>array('type'=>'string','size'=>32,'required'=>true),'register_confirmation'=>array('type'=>'boolean','size'=>0,'required'=>false),'created_at'=>array('type'=>'date','size'=>0,'required'=>false),'updated_at'=>array('type'=>'date','size'=>0,'required'=>false),'enabled'=>array('type'=>'boolean','size'=>0,'required'=>false),'name'=>array('type'=>'string','size'=>100,'required'=>false),'email_update'=>array('type'=>'string','size'=>100,'required'=>false),'register_message_time'=>array('type'=>'date','size'=>0,'required'=>false),'register_confirmation_time'=>array('type'=>'date','size'=>0,'required'=>false),'recovery_message_time'=>array('type'=>'date','size'=>0,'required'=>false),'created_at'=>array('type'=>'date','size'=>0,'required'=>false),'updated_at'=>array('type'=>'date','size'=>0,'required'=>false));
+    protected static $table_structure = array (
+		'user_profile_id' => array ('type' => 'integer','size' => 0,'required' => true),
+		'hash' => array ('type' => 'string','size' => 8,'required' => true),
+		'login_email' => array ('type' => 'string','size' => 100,'required' => true),
+		'login_password_md5' => array ('type' => 'string','size' => 32,'required' => true),
+		'name' => array ('type' => 'string','size' => 100,'required' => true),
+		'register_confirmation' => array ('type' => 'boolean','size' => 0,'required' => false),
+		'email_update' => array ('type' => 'string','size' => 100,'required' => true),
+		'register_message_time' => array ('type' => 'date','size' => 0,'required' => false),
+		'register_confirmation_time' => array ('type' => 'date','size' => 0,'required' => false),
+		'last_login_time' => array ('type' => 'date','size' => 0,'required' => false),
+		'recovery_message_time' => array ('type' => 'date','size' => 0,'required' => false),
+		'recovery_allowed' => array ('type' => 'boolean','size' => 0,'required' => false),
+		'email_update_message_time' => array ('type' => 'date','size' => 0,'required' => false),
+		'created_at' => array ('type' => 'date','size' => 0,'required' => false),
+		'updated_at' => array ('type' => 'date','size' => 0,'required' => false),
+		'enabled' => array ('type' => 'boolean','size' => 0,'required' => false));
 
     /**
      * Sequence name

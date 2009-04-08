@@ -14,96 +14,6 @@ require "../../config/environment.php";
 $registry = B_Registry::singleton();
 
 
-/* ROUTINES */
-
-function pgsqlIntrospection($_table)
-{
-    $_structure = null;
-
-    $sql = <<<EOS
-SELECT
-    attrs.attname as attribute,
-    "type",
-    attrs.attnotnull as nn,
-    "default"
-FROM (
-    SELECT c.oid, n.nspname, c.relname
-    FROM pg_catalog.pg_class c 
-    LEFT JOIN pg_catalog.pg_namespace n ON n.oid = c.relnamespace
-    WHERE pg_catalog.pg_table_is_visible(c.oid)) rel 
-JOIN (
-    SELECT 
-        a.attname, 
-        a.attrelid, 
-        pg_catalog.format_type(a.atttypid, a.atttypmod) AS "type",
-    (SELECT substring(d.adsrc for 128) FROM pg_catalog.pg_attrdef d 
-        WHERE d.adrelid = a.attrelid AND d.adnum = a.attnum AND a.atthasdef) as "default",
-        a.attnotnull, 
-        a.attnum
-    FROM pg_catalog.pg_attribute a WHERE a.attnum > 0 AND NOT a.attisdropped) attrs 
-    ON (attrs.attrelid = rel.oid )
-    WHERE relname = '<table>' ORDER BY attrs.attnum;
-EOS;
-
-    /* known types */
-
-    $type_b = "boolean";
-    $type_s = "varbit|varchar|text|(bit|character)(varying)*";
-    $type_i = "integer|(small|big)*(int|serial)[248]*";
-    $type_f = "real|double|float[48]*";
-    $type_d = "date|timestamp";
-
-    /* table structure */
-
-    $structure = array();
-
-    /* iterate over fields */
-
-    foreach(B_Model::select(str_replace("<table>", $_table, $sql)) as $r)
-    {
-        $f = array();
-
-        if    (preg_match("/(" . $type_b . ")+/i", $r->type) > 0) 
-            $k = B_Model::TYPE_BOOLEAN;
-        elseif(preg_match("/(" . $type_d . ")+/i", $r->type) > 0) 
-            $k = B_Model::TYPE_DATE;
-        elseif(preg_match("/(" . $type_f . ")+/i", $r->type) > 0) 
-            $k = B_Model::TYPE_FLOAT;
-        elseif(preg_match("/(" . $type_i . ")+/i", $r->type) > 0) 
-            $k = B_Model::TYPE_INTEGER;
-        else                                                      
-            $k = B_Model::TYPE_STRING;
-
-        /* field type */
-
-        $f[B_Model::STRUCTURE_TYPE] = $k;
-
-        /* field size (only for string); 0 = inf */
-
-        $f[B_Model::STRUCTURE_SIZE] = ($k == B_Model::TYPE_STRING) ? 
-            ((int) preg_replace("/^.+\(([0-9]+)\)+.*$/", "\\1", $r->type)) : 
-            0;
-
-        $f[B_Model::STRUCTURE_REQUIRED] = ($r->nn && strlen($r->default) == 0);
-
-        $structure[$r->attribute] = $f;
-    }
-
-    $_structure = var_export($structure, true);
-    $_structure = preg_replace("/[[:space:]]+/", "", $_structure);
-    $_structure = preg_replace("/,\)/", ")", $_structure);
-
-    return $_structure;
-}
-
-function mysqlIntrospection($_table) /* TODO */
-{
-    return null;
-}
-
-
-/* MAIN */
-
 @$_class     = $argv[1];
 @$_table     = $argv[2];
 @$_pk        = $argv[3];
@@ -121,9 +31,9 @@ if(empty($_class) ||
     exit(1);
 }
 
-
 /* backup */
 
+/*
 if(file_exists($_class . ".php"))
 {
     $suffix = date("ymd") . "_";
@@ -134,21 +44,56 @@ if(file_exists($_class . ".php"))
     echo "file \"" . $_class . ".php\" has been renamed to ";
     echo "\"" . $_class . ".php-" . $suffix . "\"\n";
 }
+*/
 
+/* introspection */
 
-/* structure introspection */
+$type_b = "tinyint\(1\)";
+$type_s = "char|varchar|text";
+$type_i = "tinyint|smallint|mediumint|int";
+$type_f = "float";
+$type_d = "date|timestamp";
 
-$driver = $registry->database->default->driver;
+$structure = array();
 
-if($driver == "pgsql")
+foreach(B_Model::select("EXPLAIN " . $_table) as $r)
 {
-    $_structure = pgsqlIntrospection($_table);
-}
-elseif($driver == "mysql")
-{
-    $_structure = mysqlIntrospection($_table);
+    $f = array();
+
+    if    (preg_match("/(" . $type_b . ")+/i", $r->Type) > 0) 
+        $k = B_Model::TYPE_BOOLEAN;
+    elseif(preg_match("/(" . $type_d . ")+/i", $r->Type) > 0) 
+        $k = B_Model::TYPE_DATE;
+    elseif(preg_match("/(" . $type_f . ")+/i", $r->Type) > 0) 
+        $k = B_Model::TYPE_FLOAT;
+    elseif(preg_match("/(" . $type_i . ")+/i", $r->Type) > 0) 
+        $k = B_Model::TYPE_INTEGER;
+    else                                                      
+        $k = B_Model::TYPE_STRING;
+
+
+    $f[B_Model::STRUCTURE_TYPE] = $k;
+
+    /* field size (only for string); 0 = inf */
+
+    $f[B_Model::STRUCTURE_SIZE] = ($k == B_Model::TYPE_STRING) ? 
+        ((int) preg_replace("/^.+\(([0-9]+)\)+.*$/", "\\1", $r->Type)) : 0;
+
+    $f[B_Model::STRUCTURE_REQUIRED] = ($r->Null == "NO" && strlen($r->Default) == 0);
+
+    $structure[$r->Field] = $f;
 }
 
+$_structure = var_export($structure, true);
+$_structure = preg_replace("/,\n/", ",", $_structure);
+$_structure = preg_replace("/\(\n/", "(", $_structure);
+$_structure = preg_replace("/\),/", "),\n", $_structure);
+$_structure = preg_replace("/=>\s+\n\s+/", "=> ", $_structure);
+$_structure = preg_replace("/\(\s+/", "(", $_structure);
+$_structure = preg_replace("/,\s+\'/", ",'", $_structure);
+$_structure = preg_replace("/\),\'/", "),\n\t\t'", $_structure);
+$_structure = preg_replace("/,\s+\)/", ")", $_structure);
+$_structure = preg_replace("/^array\s+\(/", "array (\n\t\t", $_structure);
 
 /* output */
 
