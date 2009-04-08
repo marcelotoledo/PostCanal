@@ -189,6 +189,45 @@ class AggregatorFeed extends B_Model
 
                 self::commit();
 
+                /* save feed items */
+
+                $entries = is_array($results[$i]['entries']) ? 
+                    $results[$i]['entries'] :
+                    array();
+
+                self::transaction();
+
+                foreach($entries as $entry)
+                {
+                    $item = new AggregatorFeedItem();
+                    $item->aggregator_feed_id = $feed->aggregator_feed_id;
+                    $item->item_id = $entry['id'];
+                    $item->item_title = $entry['title'];
+                    $item->item_link = $entry['link'];
+                    $item->item_description = $entry['description'];
+                    $item->item_date = $entry['date'];
+
+                    $item_md5 = null;
+                    if(strlen($item->item_link) > 0) $item_md5 = md5($item->item_link);
+                    if($item_md5 == null) $item_md5 = md5(L_Utility::randomString(8));
+                    $item->item_md5 = $item_md5;
+
+                    try
+                    {
+                        $item->save();
+                    }
+                    catch(B_Exception $_e)
+                    {
+                        self::rollback();
+                        $_m = "new aggregator feed item failed from " .
+                              "item link (" . $item->item_link . ")";
+                        $_d = array ('method' => __METHOD__);
+                        B_Exception::forward($_m, E_USER_ERROR, $_e, $_d);
+                    }
+                }
+
+                self::commit();
+
                 /* save feed url */
 
                 self::transaction();

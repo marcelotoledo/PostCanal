@@ -56,5 +56,6 @@ HORAS TRABALHADAS: 2h
 - Inclusao de método para listagem de notícias de um feed no controller Feed,
 action "news"
 - Bugfixes no cadastro de feeds
+- Exibicao de items de feed no dashboard
 
-HORAS TRABALHADAS: 6h
+HORAS TRABALHADAS: 7h

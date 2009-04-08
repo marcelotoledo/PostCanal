@@ -103,8 +103,11 @@ class C_Feed extends B_Controller
 
         foreach($news as $item)
         {
-            $results[] = array('item' => $item->url_md5,
-                               'title' => $item->title);
+            $results[] = array('item' => $item->item_md5,
+                               'title' => $item->item_title,
+                               'link' => $item->item_link,
+                               'description' => $item->item_description,
+                               'date' => $item->item_date);
         }
 
         if(count($news) > 0) $this->view()->news = $results;
