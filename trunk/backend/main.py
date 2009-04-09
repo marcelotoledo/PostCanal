@@ -16,7 +16,7 @@
 VERSION = "1.0.0"
 
 import sys
-import feedfinder
+from vendor import feedfinder
 
 def usage():
     print 'Blotomate Backend %s - Backend system for blotomate.com' % VERSION

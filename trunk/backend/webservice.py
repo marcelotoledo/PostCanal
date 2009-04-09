@@ -31,7 +31,7 @@ class WebService:
 
         # feed discover with feedfinder
 
-        import feedfinder
+        from vendor import feedfinder
 
         feeds = []
         if len(args['url']) > 0:
@@ -44,7 +44,7 @@ class WebService:
 
         if feeds_len > 0:
 
-            import feedparser
+            from vendor import feedparser
 
             for i in range(0, len(feeds)):
                 d = feedparser.parse(feeds[i])
