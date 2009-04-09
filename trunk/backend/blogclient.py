@@ -53,12 +53,15 @@ def gettype(url):
             port = split.port if split.port != None else D_PORT
             client = httplib.HTTPConnection(split.netloc, port, timeout=D_TIMEOUT)
             client.request("GET", "/")
-            response = client.getresponse()
-            if response.status == 200:
-                #soup = BeautifulSoup(''.join(response.read()))
-                soup = BeautifulSoup(response.read())
 
-    if type == None:
+            try:
+                response = client.getresponse()
+                if response.status == 200:
+                    soup = BeautifulSoup(response.read())
+            except:
+                pass
+
+    if type == None and soup:
 
         ### WordPress.com ###
 
@@ -67,7 +70,7 @@ def gettype(url):
             type = TypeWordPress(split.netloc, client)
             type.setver(V_WPRESS_COM)
 
-    if type == None:
+    if type == None and soup:
 
         ### Other... ###
 
@@ -164,4 +167,6 @@ if __name__ == '__main__':
     #url = "http://asdqwezxcwer.wordpress.com/"
     #print gettype(url)
     #url = "http://www.cnn.com/"
+    #print gettype(url)
+    #url = "http://www.uol.com.br/"
     #print gettype(url)
