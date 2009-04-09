@@ -40,6 +40,7 @@ def gettype(url):
     if type == None:
 
         ### WordPress.com ###
+
         if re.match("(.+)\.wordpress\.com", split.netloc):
             type = TypeWordPress(split.netloc, client)
             type.setver(V_WPRESS_COM)
@@ -77,17 +78,6 @@ def gettype(url):
         pass
 
     return type
-
-
-def from_location(location, client=None):
-    type = None
-
-    if re.match("(.+)\.wordpress\.com", location):
-        type = TypeWordPress(location, client)
-        type.setver(V_WPRESS_COM)
-        
-    return type
-
 
 
 class BlogType(object):
