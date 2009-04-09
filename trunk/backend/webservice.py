@@ -1,4 +1,4 @@
-# webservice.py --- web service client/server of backend system of blotomate
+# webservice.py --- web service client/server for backend system of blotomate
 
 # Copyright  (C)  2009  Rafael Castilho <rafel@castilho.biz>
 

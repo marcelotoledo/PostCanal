@@ -67,5 +67,7 @@ HORAS TRABALHADAS: 7h
 - Ajustes nos models para reconhecimento de estrutura de dados (formatacao de
 data, etc)
 - Ajustes no cadastro de feeds
+- Inclusao de script para gerenciamento de deteccao / publicacao de blogs no
+backend
 
-HORAS TRABALHADAS: 2h
+HORAS TRABALHADAS: 7h
