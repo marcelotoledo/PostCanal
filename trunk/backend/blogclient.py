@@ -65,32 +65,38 @@ def gettype(url):
             except:
                 pass
 
+    ### WordPress.com ###
+
     if type == None and body:
-
-        ### WordPress.com ###
-
-        if re.search("WordPress\.com", str(body.find("meta", content="WordPress.com"))):
+        _meta = str(body.find("meta", content="WordPress.com"))
+        if re.search("WordPress\.com", _meta):
             from blogtype import wordpress
             type = wordpress.WordPress(url.netloc, client)
-            type.setver(wordpress.VERSION_WORDPRESS_COM)
+            type.setver(wordpress.VERSION_WORDPRESS_COM if re.match("(.+)\.wordpress\.com", url.netloc) else wordpress.VERSION_WORDPRESS_DOMAIN)
+
+    ### Other... ###
 
     if type == None and body:
-
-        ### Other... ###
-
         pass
 
     return type
 
 
 if __name__ == '__main__':
-    #url = "http://test.wordpress.com/"
-    #print gettype(url)
-    url = "http://blog100nexo.com/"
-    print gettype(url)
+    url = "http://test.wordpress.com/"
+    #url = "http://blog100nexo.com/"
     #url = "http://asdqwezxcwer.wordpress.com/"
-    #print gettype(url)
     #url = "http://www.cnn.com/"
-    #print gettype(url)
     #url = "http://www.uol.com.br/"
-    #print gettype(url)
+    type = gettype(url)
+
+    if type:
+        print "location: %s"     % (type.location)
+        print "id: %s"           % (type.id)
+        print "name: %s"         % (type.name)
+        print "version: %s"      % (type.version)
+        print "version_name: %s" % (type.version_name)
+        print "url: %s"          % (type.url)
+        print "url_ok: %s"       % (type.url_ok)
+        print "url_admin: %s"    % (type.url_admin)
+        print "url_admin_ok: %s" % (type.url_admin_ok)
