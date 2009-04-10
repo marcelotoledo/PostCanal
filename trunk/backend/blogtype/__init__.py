@@ -1,1 +1,3 @@
-__all__ = ["wordpress"]
+import config
+
+__all__ = [config.WORDPRESS]

@@ -20,6 +20,30 @@ class WebService:
     def __init__(self):
         self.token = ""
 
+    # blog discover
+
+    def blog_discover(self, args):
+        if args['token'] == None or args['url'] == None:
+            return None
+
+        if args['token'] != self.token:
+            return None
+        
+        import blogclient
+        return blogclient.type_dictionary(blogclient.guess_type(args['url']))
+
+    # blog url admin test
+
+    def blog_check_url_admin(self, args):
+        if args['token'] == None or args['url'] == None or args['type'] == None or args['version'] == None: 
+           return None
+
+        if args['token'] != self.token:
+            return None
+ 
+        import blogclient
+        return blogclient.type_dictionary(blogclient.check_url_admin(args['url'], args['type'], args['version']))
+
     # feed discover
 
     def feed_discover(self, args):

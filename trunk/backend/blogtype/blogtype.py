@@ -14,17 +14,26 @@
 # abstract blog type class
 
 class BlogType(object):
-    location         = None
-    client           = None
-    id               = 0
-    name             = None
-    version          = None
-    version_name     = None
+    id               = None
+    label            = None
+    version_id       = None
+    version_label    = None
+    version_revision = 0
     url              = None
     url_ok           = False
     url_admin        = None
     url_admin_ok     = False
     login            = None
 
-    def setver(self, version):
+    def factory(self, url, client):
+        pass
+    def set_version(self, version_id):
+        pass
+    def set_url(self, url):
+        pass
+    def check_url(self, client):
+        pass
+    def set_url_admin(self, url_admin):
+        pass
+    def check_url_admin(self, client):
         pass

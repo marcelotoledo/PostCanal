@@ -16,75 +16,68 @@
 VERSION = "1.0.0"
 
 
-from blogtype import BlogType
 import urlparse, re, httplib
-###from vendor.BeautifulSoup import BeautifulSoup
+import config
+import blogtype
 
 
-D_PORT = 80
-D_TIMEOUT = 15
+class WordPress(blogtype.BlogType):
+    url_spl = None # url split
+    loc_spl = None # location split
+    url_admin_spl = None # url admin split
+    loc_admin_spl = None # url admin location split
 
-TYPE_ID          = "wordpress"
-TYPE_NAME        = "WordPress"
-URL_ADMIN_SUFFIX = "/wp-login.php"
+    def __init__(self):
+        self.id    = config.WORDPRESS
+        self.label = config.WORDPRESS_LABEL
 
-VERSION_WORDPRESS_COM    = "wordpress_com"
-VERSION_WORDPRESS_DOMAIN = "wordpress_domain"
+    def factory(self, url, client):
+        self.set_url(url)
+        self.check_url(client)
+        self.set_url_admin(self.url_spl.scheme + "://" + self.url_spl.netloc + self.url_spl.path + config.WORDPRESS_URL_ADMIN_SUFFIX)
+        self.check_url_admin(client)
 
-#           version                      name                revision
-VERSION = { VERSION_WORDPRESS_COM    : [ "wordpress.com",    1 ],
-            VERSION_WORDPRESS_DOMAIN : [ "wordpress domain", 1 ] }
+    def set_version(self, version_id):
+        self.version_id = version_id
+        self.version_label = config.WORDPRESS_VERSION[version_id][0]
+        self.version_revision = config.WORDPRESS_VERSION[version_id][1]
 
+    def set_url(self, url):
+        self.url = url
+        self.url_spl = urlparse.urlsplit(url)
+        self.loc_spl = re.split("\.", self.url_spl.netloc)
 
-class WordPress(BlogType):
-
-    def __init__(self, location, client=None):
-        self.location = location
-        self.client   = client
-        self.id       = TYPE_ID
-        self.name     = TYPE_NAME
-
-    def setver(self, version):
-        self.version = version
-        _ver = VERSION[version]
-        self.version_name = "%s (%s)" % (_ver[0], _ver[1])
-        self.url = "http://" + self.location
-
-        if self.version == VERSION_WORDPRESS_COM:
-            _spl = re.split("\.", self.location)
-            self.login = _spl[0]
-            self.url_admin = self.url + URL_ADMIN_SUFFIX
-
-        # test url
-
-        if self.url_ok == False:
-            self.client.request("GET", "/")
-
-            try:
-                response = self.client.getresponse()
-                self.url_ok = True if response.status == 200 else False
-            except:
-                self.url_ok = False
-
-        # test url admin
-
-        self.client.request("GET", URL_ADMIN_SUFFIX)
-
+    def check_url(self, client):
         try:
-            response = self.client.getresponse()
+            client.request("GET", self.url_spl.path if self.url_spl.path else "/")
+            response = client.getresponse()
+            self.url_ok = True if response.status == 200 else False
+        except:
+            self.url_ok = False
 
-            # url admin redirects for wordpress domain
+    def set_url_admin(self, url_admin):
+        _sub = config.WORDPRESS_URL_ADMIN_SUFFIX_SUB
+        url_admin = re.sub(_sub[0], _sub[1], url_admin)
+        self.url_admin = url_admin
+        self.url_admin_spl = urlparse.urlsplit(url_admin)
+        self.loc_admin_spl = re.split("\.", self.url_admin_spl.netloc)
+        self.login = self.loc_admin_spl[0]
 
-            if self.version == VERSION_WORDPRESS_DOMAIN and response.status == 302:
-                _url = urlparse.urlsplit(response.getheader('Location'))
-                _spl = re.split("\.", _url.netloc)
-                self.login = _spl[0]
-                self.url_admin = "http://" + _url.netloc + URL_ADMIN_SUFFIX
-                _cli = httplib.HTTPConnection(_url.netloc, 
-                                              port=D_PORT, 
-                                              timeout=D_TIMEOUT)
-                _cli.request("GET", _url.path)
-                response = _cli.getresponse()
+    def check_url_admin(self, client):
+        try:
+            client.request("GET", self.url_admin_spl.path if self.url_admin_spl.path else "/" + config.WORDPRESS_URL_ADMIN_SUFFIX)
+            response = client.getresponse()
+
+            # casual redirects
+            # domain.com > domain.wordpress.com
+
+            if response.status in [301, 302]:
+                _loc = response.getheader('Location')
+                if re.search(config.WORDPRESS_URL_ADMIN_SUFFIX_SEARCH, _loc):
+                    self.set_url_admin(_loc)
+                    _cli = httplib.HTTPSConnection(self.url_admin_spl.netloc, httplib.HTTPS_PORT, timeout=config.WORDPRESS_CLIENT_TIMEOUT) if self.url_admin_spl.scheme == "https" else httplib.HTTPConnection(self.url_admin_spl.netloc, httplib.HTTP_PORT, timeout=config.WORDPRESS_CLIENT_TIMEOUT)
+                    _cli.request("GET", self.url_admin_spl.path + self.url_admin_spl.query + self.url_admin_spl.fragment)
+                    response = _cli.getresponse()
 
             self.url_admin_ok = True if response.status == 200 else False
         except:
