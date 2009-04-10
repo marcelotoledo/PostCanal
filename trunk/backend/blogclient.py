@@ -80,6 +80,7 @@ def guess_type(url):
         _meta = str(body.find("meta", content=config.WORDPRESS_BODY_META_FIND))
         if re.search(config.WORDPRESS_BODY_META_SEARCH, _meta):
             type = init_type(config.WORDPRESS, config.WORDPRESS_VERSION_COM if re.match(config.WORDPRESS_URL_MATCH, url.netloc) else config.WORDPRESS_VERSION_DOMAIN)
+            type.url_ok = True # avoid url re-check
             type.factory("http://" + url.netloc, client)
 
     ### etc... ###
@@ -113,9 +114,9 @@ def type_dictionary(type):
 
 if __name__ == '__main__':
 
-    url = "http://test.wordpress.com/"
+    #url = "http://test.wordpress.com/"
     #url = "http://test1.wordpress.com/wp-admin"
-    #url = "http://blog100nexo.com/"
+    url = "http://blog100nexo.com/"
     #url = "http://asdqwezxcwer.wordpress.com/"
     #url = "http://www.cnn.com/"
     #url = "http://www.uol.com.br/"

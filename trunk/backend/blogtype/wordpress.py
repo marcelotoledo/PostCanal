@@ -33,7 +33,7 @@ class WordPress(blogtype.BlogType):
 
     def factory(self, url, client):
         self.set_url(url)
-        self.check_url(client)
+        if self.url_ok == False: self.check_url(client)
         self.set_url_admin(self.url_spl.scheme + "://" + self.url_spl.netloc + self.url_spl.path + config.WORDPRESS_URL_ADMIN_SUFFIX)
         self.check_url_admin(client)
 
