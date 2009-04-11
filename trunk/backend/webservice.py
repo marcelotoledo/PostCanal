@@ -16,6 +16,10 @@
 VERSION = "1.0.0"
 
 
+def validate_args(args, names, token):
+    return ((args['token'] == None or args['token'] != token) ^ True) and len(filter(lambda n: n in args, names)) == len(names)
+
+
 class WebService:
     def __init__(self):
         self.token = ""
@@ -23,35 +27,21 @@ class WebService:
     # blog discover
 
     def blog_discover(self, args):
-        if args['token'] == None or args['url'] == None:
-            return None
-
-        if args['token'] != self.token:
-            return None
-        
+        if not validate_args(args, ['url'], self.token): return None
         import blogclient
         return blogclient.type_dictionary(blogclient.guess_type(args['url']))
 
-    # blog url admin test
+    # blog url manager test
 
-    def blog_check_url_admin(self, args):
-        if args['token'] == None or args['url'] == None or args['type'] == None or args['version'] == None: 
-           return None
-
-        if args['token'] != self.token:
-            return None
- 
+    def blog_manager_url_check(self, args):
+        if not validate_args(args, ['url', 'type', 'version'], self.token): return None
         import blogclient
-        return blogclient.type_dictionary(blogclient.check_url_admin(args['url'], args['type'], args['version']))
+        return blogclient.type_dictionary(blogclient.manager_url_check(args['url'], args['type'], args['version']))
 
     # feed discover
 
     def feed_discover(self, args):
-        if args['token'] == None or args['url'] == None:
-            return None
-
-        if args['token'] != self.token:
-            return None
+        if not validate_args(args, ['url'], self.token): return None
 
         # feed discover with feedfinder
 
@@ -88,25 +78,23 @@ class WebService:
 
         return result
 
-
-# test local
-
-def test(token, url):
-    ws = WebService()
-    ws.token = token
-    return ws.feed_discover({'token': token, 'url': url})
-
-# test remote (with xmlrpc call)
-
-def test_remote(token, url, remote):
-    import xmlrpclib
-    server = xmlrpclib.ServerProxy(remote)
-    return server.feed_discover({'token': token, 'url': url})
-
 if __name__ == '__main__':
     token = "c4z5mYW1pYWSJe2BzcIq1wv6n95o1E2kwuD1B0Wuo3XbHx82Vk"
-    #url = "http://slashdot.org/"
-    url = "http://www.uol.com.br/"
-    print test(token, url)
+
+    # blog discover
+    url = "http://test.wordpress.com"
+    ws = WebService()
+    ws.token = token
+    print ws.blog_discover({'token': token, 'url': url})
+
+    # feed discover
+
+    # url = "http://www.uol.com.br/"
+    # ws = WebService()
+    # ws.token = token
+    # print ws.feed_discover({'token': token, 'url': url})
+
+    # import xmlrpclib
     # remote = "http://localhost:8080/webservice/backend"
-    # print test_remote(token, url, remote)
+    # server = xmlrpclib.ServerProxy(remote)
+    # print server.feed_discover({'token': token, 'url': url})

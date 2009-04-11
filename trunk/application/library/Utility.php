@@ -10,33 +10,6 @@
 class L_Utility
 {
     /**
-     * PREG
-     * 
-     * @param   string      $subject
-     * @param   array       $replace    preg_replace parameters
-     * @param   array       $match      preg_match parameters
-     * @return  integer
-     */
-    public static function preg(&$subject, $replace, $match)
-    {
-        foreach($replace as $r)
-        {
-            $p = array_merge($r, array($subject));
-            $subject = call_user_func_array('preg_replace', $p);
-        }
-
-        $i = 0;
-    
-        foreach($match as $m)
-        {
-            $p = array_merge($m, array($subject));
-            if(call_user_func_array('preg_match', $p) > 0) $i++;
-        }
-
-        return $i;
-    }
-
-    /**
      * Fix URL
      * 
      * @param   string      $url

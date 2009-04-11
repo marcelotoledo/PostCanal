@@ -9,7 +9,6 @@ DROP TABLE IF EXISTS model_aggregator_feed_item CASCADE;
 DROP TABLE IF EXISTS model_aggregator_feed_url CASCADE;
 DROP TABLE IF EXISTS model_aggregator_feed CASCADE;
 DROP TABLE IF EXISTS model_blog_type_configuration CASCADE;
-DROP TABLE IF EXISTS model_blog_type_discovery CASCADE;
 DROP TABLE IF EXISTS model_blog_type CASCADE;
 DROP TABLE IF EXISTS application_mailer_relay CASCADE;
 DROP TABLE IF EXISTS base_translation CASCADE;
@@ -62,38 +61,30 @@ CREATE TABLE application_mailer_relay
 (
     id INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
     recipient CHAR(100) NOT NULL,
-    identifier CHAR(8) DEFAULT NULL,
+    identifier_md5 CHAR(32) DEFAULT NULL,
     created_at TIMESTAMP NOT NULL DEFAULT NOW(),
     PRIMARY KEY (id)
 ) ENGINE=InnoDB DEFAULT CHARSET='utf8';
 
-CREATE INDEX a_mry_rid_idx ON application_mailer_relay (recipient, identifier, created_at);
+CREATE INDEX a_mry_rid_idx ON application_mailer_relay (created_at, recipient, identifier_md5);
 
 -- blog type --
 
 CREATE TABLE model_blog_type
 (
     blog_type_id SMALLINT UNSIGNED NOT NULL AUTO_INCREMENT,
-    name CHAR(50) NOT NULL,
-    version CHAR(50) NOT NULL,
+    type_name CHAR(50) NOT NULL,
+    type_label CHAR(50) NOT NULL,
+    version_name CHAR(50) NOT NULL,
+    version_label CHAR(50) NOT NULL,
+    current_revision SMALLINT UNSIGNED NOT NULL DEFAULT 0,
     maintenance TINYINT(1) NOT NULL DEFAULT 0,
     enabled TINYINT(1) NOT NULL DEFAULT 0,
     PRIMARY KEY (blog_type_id),
     CONSTRAINT m_btp_unq UNIQUE (blog_type_id)
 ) ENGINE=InnoDB DEFAULT CHARSET='utf8';
 
-CREATE TABLE model_blog_type_discovery
-(
-    blog_type_discovery_id MEDIUMINT UNSIGNED NOT NULL AUTO_INCREMENT,
-    blog_type_id SMALLINT UNSIGNED NOT NULL,
-    name VARCHAR(50) NOT NULL,
-    value TEXT NOT NULL,
-    PRIMARY KEY (blog_type_discovery_id),
-    CONSTRAINT m_btd_m_btp_fk FOREIGN KEY (blog_type_id) 
-        REFERENCES model_blog_type (blog_type_id) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET='utf8';
-
-CREATE INDEX m_btd_tpn_idx ON model_blog_type_discovery (blog_type_id, name);
+CREATE INDEX m_btp_idx ON model_blog_type (type_name, version_name);
 
 CREATE TABLE model_blog_type_configuration
 (
@@ -193,6 +184,7 @@ CREATE TABLE model_user_blog
     user_blog_id INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
     user_profile_id INTEGER UNSIGNED NOT NULL,
     blog_type_id SMALLINT UNSIGNED NOT NULL,
+    blog_type_revision SMALLINT UNSIGNED NOT NULL DEFAULT 0,
     hash CHAR(8) NOT NULL,
     name CHAR(100) NOT NULL,
     url CHAR(200) NOT NULL,

@@ -10,13 +10,6 @@
  */
 class UserBlog extends B_Model
 {
-    const STATUS_OK                  = "ok";
-    const STATUS_NEW                 = "new";
-    const STATUS_FAILED_URL          = "failed_url";
-    const STATUS_FAILED_LOGIN        = "failed_login";
-    const STATUS_FAILED_PUBLICATION  = "failed_publication";
-
-
     /**
      * Table name
      *
@@ -30,9 +23,10 @@ class UserBlog extends B_Model
      * @var array
      */
     protected static $table_structure = array (
-		'user_blog_id' => array ('type' => 'integer','size' => 0,'required' => false),
+		'user_blog_id' => array ('type' => 'integer','size' => 0, 'required' => false),
 		'user_profile_id' => array ('type' => 'integer','size' => 0,'required' => true),
 		'blog_type_id' => array ('type' => 'integer','size' => 0,'required' => true),
+		'blog_type_revision' => array ('type' => 'integer','size' => 0,'required' => false),
 		'hash' => array ('type' => 'string','size' => 8,'required' => true),
 		'name' => array ('type' => 'string','size' => 100,'required' => true),
 		'url' => array ('type' => 'string','size' => 200,'required' => true),

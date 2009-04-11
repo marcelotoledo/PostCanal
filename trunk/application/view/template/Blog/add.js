@@ -3,7 +3,14 @@ $(document).ready(function()
     /* DEFAULTS */
 
     var ar = false; /* active request */
-    var fc = false; /* form complete */
+
+    /* blog discovery / add */
+
+    var blog_url = ""
+    var blog_manager_url = ""
+    var blog_type = ""
+    var blog_version = ""
+    var blog_revision = 0
 
     /* spinner */
 
@@ -26,36 +33,44 @@ $(document).ready(function()
 
     function commitURL(url)
     {
-        $("input[name='input_url']").val(url);
-        $("input[name='input_url']").hide();
-        $("#input_url_ro").text(url);
-        $("#input_url_ro").show();
-        $("#check_url").hide();
+        blog_url = url;
+        $("input[name='discover_url']").val(url);
+        $("input[name='discover_url']").hide();
+        $("#discover_url_display").text(url);
+        $("#discover_url_display").show();
+        $("#discover_url").hide();
         $("#change_url").show();
     }
 
     function changeURL()
     {
-        $("#input_url_ro").text("");
-        $("#input_url_ro").hide();
-        $("input[name='input_url']").show();
+        blog_url = "";
+        $("#discover_url_display").text("");
+        $("#discover_url_display").hide();
+        $("input[name='discover_url']").show();
         $("#change_url").hide();
-        $("#check_url").show();
+        $("#discover_url").show();
         changeBlogType();
         resetManagerURL();
     }
 
     /* blog type */
 
-    function commitBlogType(name)
+    function commitBlogType(label, type_name, version_name, revision)
     {
+        blog_type = type_name;
+        blog_version = version_name;
+        blog_revision = revision;
         $("#blog_type_row").show();
-        $("#input_blog_type_ro").text(name);
+        $("#blog_type_display").text(label);
     }
 
     function changeBlogType()
     {
-        $("#input_blog_type_ro").text("");
+        blog_type = "";
+        blog_version = "";
+        revision = 0;
+        $("#blog_type_display").text("");
         $("#blog_type_row").hide();
     }
 
@@ -63,36 +78,36 @@ $(document).ready(function()
 
     function commitManagerURL(url)
     {
+        blog_manager_url = url;
         $("input[name='manager_url']").val(url);
         $("input[name='manager_url']").hide();
         $("#check_manager_url").hide();
-        $("#input_manager_url_ro").show();
-        $("#input_manager_url_ro").text(url);
+        $("#manager_url_display").show();
+        $("#manager_url_display").text(url);
         $("#check_manager_login").show();
         $("#manager_login_row").show();
-        fc = true;
     }
 
     function changeManagerURL()
     {
+        blog_manager_url = "";
         $("#manager_url_row").show();
-        $("#input_manager_url_ro").text("");
-        $("#input_manager_url_ro").hide();
+        $("#manager_url_display").text("");
+        $("#manager_url_display").hide();
         $("input[name='manager_url']").show();
         $("#check_manager_url").show();
         $("#check_manager_login").hide();
         $("#manager_login_row").hide();
-        fc = false;
     }
 
     function resetManagerURL()
     {
+        blog_manager_url = "";
         $("input[name='manager_url']").val("");
-        $("#input_manager_url_ro").text("");
+        $("#manager_url_display").text("");
         $("#manager_url_row").hide();
         $("#check_manager_login").hide();
         $("#manager_login_row").hide();
-        fc = false;
     }
 
     /* ACTIONS */
@@ -102,7 +117,6 @@ $(document).ready(function()
     function onError()
     {
         alert('erro!');
-        /* window.location = "<?php B_Helper::url('blog','add') ?>"; */
     }
 
     /* check url action */
@@ -113,18 +127,13 @@ $(document).ready(function()
         (m=="") ? (_tr.hide()) : (_tr.show());
     }
 
-    function checkURL()
+    function discoverURL()
     {
-        if(ar == true)
-        {
-            return null;
-        }
-
-        var url = $("input[name='input_url']").val();
+        var url = $("input[name='discover_url']").val();
 
         if(url == "")
         {
-            $.b_alert("informe o endereço do Blog");
+            $.b_alert("<?php echo $this->translation()->form_incomplete ?>");
             return null;
         }
 
@@ -133,61 +142,63 @@ $(document).ready(function()
         $.ajax
         ({
             type: "POST",
-            url: "<?php B_Helper::url('blog', 'check') ?>",
+            url: "<?php B_Helper::url('blog', 'discover') ?>",
             dataType: "xml",
             data: parameters,
             beforeSend: function () { sp(true); blogaddmsg(""); },
             complete: function ()   { sp(false); },
             success: function (xml) 
             { 
-                data                 = $(xml).find('data');
-                url                  = data.find('url').text();
-                url_accepted         = data.find('url_accepted').text();
-                blog_type_name        = data.find('blog_type_name').text();
-                blog_type_version     = data.find('blog_type_version').text();
-                blog_type_accepted    = data.find('blog_type_accepted').text();
-                blog_type_maintenance = data.find('blog_type_maintenance').text();
-                manager_url          = data.find('manager_url').text();
-                manager_url_accepted = data.find('manager_url_accepted').text();
+                data = $(xml).find('data');
+                result = data.find('result');
 
-                /* url */
+                type_name = result.find('type').text();
+                type_label = result.find('type_label').text();
+                type_accepted = (result.find('type_accepted').text() == "true");
+                maintenance = (result.find('maintenance').text() == "true");
+                version_name = result.find('version').text();
+                version_label = result.find('version_label').text();
+                revision = result.find('revision').text();
+                url = result.find('url').text();
+                url_accepted = (result.find('url_accepted').text() == "true");
+                manager_url = result.find('manager_url').text();
+                manager_url_accepted = (result.find('manager_url_accepted').text() == "true");
+                username = result.find('username').text();
 
-                if(url_accepted == "true") 
+                failed = false;
+
+                if(failed == false && type_accepted == false)
+                {
+                    failed = true;
+                    blogaddmsg("<?php echo $this->translation()->type_failed ?>");
+                    changeURL();
+                }
+
+                if(failed == false && maintenance == true)
+                {
+                    failed = true;
+                    blogaddmsg("<?php echo $this->translation()->type_maintenance ?>");
+                }
+
+                if(failed == false && url_accepted == false)
+                {
+                    failed = true;
+                    blogaddmsg("<?php echo $this->translation()->url_not_accepted ?>");
+                    changeURL();
+                }
+
+                if(failed == false)
                 {
                     commitURL(url);
-                }
-                else
-                {
-                    changeURL();
-                    blogaddmsg("<?php echo $this->translation()->url_not_accepted ?>");
-                }
-
-                /* blog type */
-
-                if(blog_type_accepted == "true")
-                {
-                    commitBlogType(blog_type_name + " (" + blog_type_version + ")");
-                }
-                else
-                {
-                    changeURL();
-                    blogaddmsg("<?php echo $this->translation()->blog_type_not_accepted ?>");
-                }
-
-                if(blog_type_maintenance == "true")
-                {
-                    blogaddmsg("<?php echo $this->translation()->blog_type_maintenance ?>");
-                }
-
-                /* manager url */
-
-                if(blog_type_accepted == "true")
-                {
+                    label = type_label + " / " + version_label;
+                    commitBlogType(label, type_name, version_name, revision);
                     commitManagerURL(manager_url);
+                    $("input[name='manager_username']").val(username);
 
-                    if(manager_url_accepted == "false")
+                    if(manager_url_accepted == false)
                     {
-                        blogaddmsg("<?php echo $this->translation()->url_manager_not_accepted ?>");
+                        failed = true;
+                        blogaddmsg("<?php echo $this->translation()->manager_url_not_accepted ?>");
                         changeManagerURL();
                     }
                 }
@@ -200,20 +211,15 @@ $(document).ready(function()
 
     function checkManagerURL()
     {
-        if(ar == true)
-        {
-            return null;
-        }
-
         var manager_url = $("input[name='manager_url']").val();
 
         if(manager_url == "")
         {
-            blogaddmsg("<?php echo $this->translation()->manager_url_blank ?>");
+            blogaddmsg("<?php echo $this->translation()->form_incomplete ?>");
             return null;
         }
 
-        var parameters = { manager: manager_url }
+        var parameters = { url: manager_url, type: blog_type , version: blog_version}
 
         $.ajax
         ({
@@ -225,15 +231,18 @@ $(document).ready(function()
             complete: function ()   { sp(false); },
             success: function (xml) 
             { 
-                data                 = $(xml).find('data');
-                manager_url          = data.find('manager_url').text();
-                manager_url_accepted = data.find('manager_url_accepted').text();
+                data = $(xml).find('data');
+                result = data.find('result');
 
-                commitManagerURL(manager_url);
-
-                if(manager_url_accepted == "false")
+                manager_url = result.find('manager_url').text();
+                manager_url_accepted = (result.find('manager_url_accepted').text() == "true");
+                if(manager_url_accepted == true)
                 {
-                    blogaddmsg("<?php echo $this->translation()->url_manager_not_accepted ?>");
+                    commitManagerURL(manager_url);
+                }
+                else
+                {
+                    blogaddmsg("<?php echo $this->translation()->manager_url_not_accepted ?>");
                     changeManagerURL();
                 }
             }, 
@@ -241,79 +250,52 @@ $(document).ready(function()
         });
     }
 
-    /* check manager login */
-
     function checkManagerLogin()
     {
-        if(ar == true)
-        {
-            return null;
-        }
-
-        var username = $("input[name='manager_username']").val();
-        var password = $("input[name='manager_password']").val();
-
-        if(username == "" || password == "")
-        {
-            blogaddmsg("informe o usuário e senha do gerenciador");
-            return null;
-        }
-
-        var parameters = { username: username, password: password }
-
-        $.ajax
-        ({
-            type: "POST",
-            url: "<?php B_Helper::url('blog', 'check') ?>",
-            dataType: "xml",
-            data: parameters,
-            beforeSend: function () { sp(true);  },
-            complete: function ()   { sp(false); },
-            success: function (xml) 
-            { 
-                var login_status = $(xml).find('login_status').text();
-
-                if(login_status = "ok")
-                {
-                    blogaddmsg("<?php echo $this->translation()->login_verified ?>");
-                }
-                else
-                {
-                    blogaddmsg("<?php echo $this->translation()->login_invalid ?>");
-                }
-            }, 
-            error: function () { onError(); }
-        });
+        alert('-- TODO --');
     }
-
-    /* submit */
 
     function addSubmit()
     {
-        if(ar == true)
-        {
-            return null;
-        }
-
-        name = $("input[name='name']").val();
+        blog_name = $("input[name='blog_name']").val();
         username = $("input[name='manager_username']").val();
         password = $("input[name='manager_password']").val();
 
-        if(name == "" || username == "" || password == "")
+        if(blog_url == "")
         {
-            blogaddmsg("<?php echo $this->translation()->invalid_form ?>");
-            return null;
-        }
-
-        if(fc == false)
-        {
+            changeURL();
             blogaddmsg("<?php echo $this->translation()->blog_url_not_verified ?>");
             return null;
         }
 
-        parameters = { name: name, 
-                       username: username, 
-                       password: password }
+        if(blog_manager_url == "")
+        {
+            changeURL();
+            blogaddmsg("<?php echo $this->translation()->blog_manager_url_not_verified ?>");
+            return null;
+        }
+
+        if(blog_name == "" || username == "" || password == "")
+        {
+            blogaddmsg("<?php echo $this->translation()->form_incomplete ?>");
+            return null;
+        }
+
+        if(blog_type == "" || blog_version == "")
+        {
+            changeURL();
+            blogaddmsg("<?php echo $this->translation()->form_error ?>");
+            return null;
+        }
+
+        var parameters = { name: blog_name, 
+                           url: blog_url,
+                           manager_url: blog_manager_url,
+                           blog_type: blog_type,
+                           blog_version: blog_version,
+                           blog_revision: blog_revision,
+                           username: username, 
+                           password: password }
 
         $.ajax
         ({
@@ -345,43 +327,58 @@ $(document).ready(function()
     /* TRIGGERS */
 
     /* 
-    $("input[name='input_url']").blur(function()
+    $("input[name='discover_url']").blur(function()
     {
         check();
     });
     */
 
-    $("#check_url").click(function()
+    $("#discover_url").click(function()
     {
-        checkURL();
+        if(ar == false)
+        {
+            discoverURL();
+        }
     });
 
-    $("input[name='input_url']").keypress(function(e) 
+    $("input[name='discover_url']").keypress(function(e) 
     {
         if((e.which && e.which == 13) || (e.keyCode && e.keyCode == 13))
         {
-            $("#check_url").click();
+            $("#discover_url").click();
         }
     });
 
     $("#change_url").click(function()
     {
-        changeURL();
+        if(ar == false)
+        {
+            changeURL();
+        }
     });
 
     $("#check_manager_url").click(function()
     {
-        checkManagerURL();
+        if(ar == false)
+        {
+            checkManagerURL();
+        }
     });
 
     $("#check_manager_login").click(function()
     {
-        checkManagerLogin();
+        if(ar == false)
+        {
+            checkManagerLogin();
+        }
     });
 
     $("input[name='addsubmit']").click(function() 
     {
-        addSubmit();
+        if(ar == false)
+        {
+            addSubmit();
+        }
     });
 
     $("input[name='addcancel']").click(function() 

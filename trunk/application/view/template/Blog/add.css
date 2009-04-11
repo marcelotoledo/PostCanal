@@ -10,20 +10,20 @@ table th
 {
     width: 180px;
 }
-#input_url_ro
+#discover_url_display
 {
     float: left;
     font-size: x-large;
     margin-right: 5px;
 }
 
-#input_blog_type_ro
+#blog_type_display
 {
     float: left;
     font-size: large;
 }
 
-#input_manager_url_ro
+#manager_url_display
 {
     float: left;
     font-size: medium;

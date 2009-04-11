@@ -24,12 +24,12 @@ from vendor.BeautifulSoup import BeautifulSoup
 CLIENT_TIMEOUT = 15
 
 
-def init_type(type_id, version_id):
+def init_type(name, version_id):
     type = None
 
     ### wordpress ###
 
-    if type_id == config.WORDPRESS:
+    if name == config.WORDPRESS:
         from blogtype import wordpress
         type = wordpress.WordPress()
         type.set_version(version_id)
@@ -80,7 +80,7 @@ def guess_type(url):
         _meta = str(body.find("meta", content=config.WORDPRESS_BODY_META_FIND))
         if re.search(config.WORDPRESS_BODY_META_SEARCH, _meta):
             type = init_type(config.WORDPRESS, config.WORDPRESS_VERSION_COM if re.match(config.WORDPRESS_URL_MATCH, url.netloc) else config.WORDPRESS_VERSION_DOMAIN)
-            type.url_ok = True # avoid url re-check
+            type.url_accepted = True # avoid url re-check
             type.factory("http://" + url.netloc, client)
 
     ### etc... ###
@@ -90,44 +90,35 @@ def guess_type(url):
 
     return type
 
-def check_url_admin(url_admin, type_id, version_id):
-    type = init_type(type_id, version_id)
-    type.set_url_admin(url_fix(url_admin))
-    type.check_url_admin(init_client(url_admin))
+def manager_url_check(manager_url, type_name, version_name):
+    type = init_type(type_name, version_name)
+    type.set_manager_url(url_fix(manager_url))
+    type.check_manager_url(init_client(manager_url))
     return type
 
 def type_dictionary(type):
     result = {}
-    result['id']               = type.id               if type else ""
-    result['label']            = type.label            if type else ""
-    result['version_id']       = type.version_id       if type else ""
-    result['version_label']    = type.version_label    if type else ""
-    result['version_revision'] = type.version_revision if type else 0
-    result['url']              = type.url              if type else ""
-    result['url_ok']           = type.url_ok           if type else False
-    result['url_admin']        = type.url_admin        if type else ""
-    result['url_admin_ok']     = type.url_admin_ok     if type else False
-    result['login']            = type.login            if type else ""
-
+    result['type']                 = type.type                 if type else ""
+    result['version']              = type.version              if type else ""
+    result['revision']             = type.revision             if type else 0
+    result['url']                  = type.url                  if type else ""
+    result['url_accepted']         = type.url_accepted         if type else False
+    result['manager_url']          = type.manager_url          if type else ""
+    result['manager_url_accepted'] = type.manager_url_accepted if type else False
+    result['username']             = type.username             if type else ""
     return result
 
 
 if __name__ == '__main__':
 
     #url = "http://test.wordpress.com/"
-    #url = "http://test1.wordpress.com/wp-admin"
+    #url = "http://test1.wordpress.com/wp-manager"
     url = "http://blog100nexo.com/"
     #url = "http://asdqwezxcwer.wordpress.com/"
     #url = "http://www.cnn.com/"
     #url = "http://www.uol.com.br/"
 
-    type = guess_type(url)
-    print type_dictionary(type)
-
-    if type:
-        url_admin = type.url_admin
-        type_id = type.id
-        version_id = type.version_id
-
-        type = check_url_admin(url_admin, type_id, version_id)
-        print type_dictionary(type)
+    d = type_dictionary(guess_type(url))
+    print d
+    m = type_dictionary(manager_url_check(d['manager_url'], d['type'], d['version']))
+    print m

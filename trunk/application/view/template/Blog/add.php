@@ -3,27 +3,27 @@
     <table>
     <tr>
     <th><?php echo $this->translation()->blog_name ?>:</th>
-    <td><input type="text" name="name" value="<?php echo $this->blog->name ?>"></td>
+    <td><input type="text" name="blog_name" value="<?php echo $this->blog->name ?>"></td>
     </tr>
     <tr>
     <th><?php echo $this->translation()->blog_url ?>:</th>
     <td>
-        <input type="text" name="input_url" value="">
-        <div id="input_url_ro" style="display:none"></div>
-        <a id="check_url"><?php echo $this->translation()->blog_check_url ?></a>
+        <input type="text" name="discover_url" value="">
+        <div id="discover_url_display" style="display:none"></div>
+        <a id="discover_url"><?php echo $this->translation()->blog_discover_url ?></a>
         <a id="change_url" style="display:none"><?php echo $this->translation()->blog_change_url ?></a>
     </td>
     </tr>
     <tr id="blog_type_row" style="display:none">
     <th><?php echo $this->translation()->blog_type ?>:</th>
-    <td><div id="input_blog_type_ro"></div></td>
+    <td><div id="blog_type_display"></div></td>
     </tr>
     <tr id="manager_url_row" style="display:none">
     <th><?php echo $this->translation()->blog_manager_url ?>:</th>
     <td>
         <input type="text" name="manager_url" value="">
-        <a id="check_manager_url"><?php echo $this->translation()->blog_manager_check_url ?></a>
-        <div id="input_manager_url_ro" style="display:none"></div>
+        <a id="check_manager_url"><?php echo $this->translation()->blog_manager_url_check ?></a>
+        <div id="manager_url_display" style="display:none"></div>
     </td>
     </tr>
     </table>

@@ -88,3 +88,11 @@ HORAS TRABALHADAS: 4h
 - Ajustes no backend
 
 HORAS TRABALHADAS: 2h
+
+==========
+11/04/2009
+==========
+
+- Ajuste no cadastro de blogs (passa a utilizar script blogclient do backend)
+
+HORAS TRABALHADAS: 3h
