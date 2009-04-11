@@ -17,7 +17,7 @@ VERSION = "1.0.0"
 
 
 def validate_args(args, names, token):
-    return ((args['token'] == None or args['token'] != token) ^ True) and len(filter(lambda n: n in args, names)) == len(names)
+    return (((args['token'] == None or args['token'] != token) ^ True) if 'token' in args.keys() else False) and len(filter(lambda n: n in args, names)) == len(names)
 
 
 class WebService:
