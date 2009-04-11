@@ -94,5 +94,6 @@ HORAS TRABALHADAS: 2h
 ==========
 
 - Ajuste no cadastro de blogs (passa a utilizar script blogclient do backend)
+- Exibicao do description de um item de feed selecionado (dashboard)
 
-HORAS TRABALHADAS: 3h
+HORAS TRABALHADAS: 4h

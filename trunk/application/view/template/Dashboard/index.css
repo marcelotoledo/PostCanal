@@ -2,7 +2,7 @@
 
 body
 {
-    overflow: hidden;
+    overflow: hidden; /* avoid body scrollbars */
 }
 
 /* containers */
@@ -66,6 +66,12 @@ body
     border-bottom: 1px solid silver;
     cursor: pointer;
     cursor: hand;
+}
+#newscontainer .newsbody
+{
+    padding: 25px;
+    background-color: lightgray;
+    border: 1px solid silver;
 }
 #newscontainer .newsitem-selected
 {

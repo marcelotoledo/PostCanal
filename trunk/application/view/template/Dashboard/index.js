@@ -1,11 +1,13 @@
 $(document).ready(function()
 {
-    /* DEFAULTS */
-    
     var active_request = false;
 
     var current_blog = null;
     var current_feed = null;
+
+    var feeds_content_area = $("#feedscontainer > div.containercontentarea");
+    var news_content_area = $("#newscontainer > div.containercontentarea");
+    var queue_content_area = $("#queuecontainer > div.containercontentarea");
 
     /* spinner */
 
@@ -140,8 +142,7 @@ $(document).ready(function()
 
     function feed_populate(feeds)
     {
-        _c = $("#feedscontainer > div.containercontentarea");
-        _c.html("");
+        feeds_content_area.html("");
 
         if(feeds.length > 0)
         {
@@ -154,7 +155,7 @@ $(document).ready(function()
                        "feed=\"" + _feed + "\">" + 
                        _title + "</div>";
 
-                _c.append(_div);
+                feeds_content_area.append(_div);
             });
         }
 
@@ -233,8 +234,7 @@ $(document).ready(function()
 
     function news_populate(news)
     {
-        _c = $("#newscontainer > div.containercontentarea");
-        _c.html("");
+        news_content_area.html("");
 
         if(news.length > 0)
         {
@@ -242,12 +242,11 @@ $(document).ready(function()
             {
                 _item = $(this).find('item').text();
                 _title = $(this).find('title').text();
+                _description = $(this).find('description').text();
 
-                _div = "<div class=\"newsitem\" " +
-                       "item=\"" + _item + "\">" + 
-                       _title + "</div>";
+                _div = "<div class=\"newsitem\" item=\"" + _item + "\">" + _title + "</div><div class=\"newsbody\" item=\"" + _item + "\" style=\"display:none\">" + _description + "</div>";
 
-                _c.append(_div);
+                news_content_area.append(_div);
             });
         }
 
@@ -264,12 +263,15 @@ $(document).ready(function()
     function set_news_item(item)
     {
         $("div.newsitem-selected").removeClass('newsitem-selected');
+        $("div.newsbody").hide();
 
         _i = $("div.newsitem[item='" + item + "']");
 
         if(_i.length > 0)
         {
             _i.addClass('newsitem-selected');
+            $("div.newsbody[item='" + item + "']").show();
+            news_content_area.scrollTop(news_content_area.scrollTop() + _i.offset().top - news_content_area.offset().top);
         }
     }
 
