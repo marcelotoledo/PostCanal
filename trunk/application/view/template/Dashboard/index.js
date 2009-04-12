@@ -241,14 +241,19 @@ $(document).ready(function()
             news.each(function()
             {
                 _item = $(this).find('item').text();
+                _date = $(this).find('date').text();
+                _link = $(this).find('link').text();
                 _title = $(this).find('title').text();
-                _description = $(this).find('description').text();
+                _author = $(this).find('author').text();
+                __content = $(this).find('content').text();
 
-                _div = "<div class=\"newsitem\" item=\"" + _item + "\">" + _title + "</div><div class=\"newsbody\" item=\"" + _item + "\" style=\"display:none\">" + _description + "</div>";
+                _div = "<div class=\"newsitem\" item=\"" + _item + "\">" + _title + " <i>on " + _date + " by " + _author + "</i></div><div class=\"newsbody\" item=\"" + _item + "\" style=\"display:none\">" + __content + "<br/>&nbsp;<br/><a href=\"" + _link + "\" target=\"_blank\">" + _link + "</a></div>";
 
                 news_content_area.append(_div);
             });
         }
+
+        news_content_area.scrollTop(0);
 
         /* this trigger must be created after populate, otherwise
          * will not work (because news list are created after document

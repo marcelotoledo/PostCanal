@@ -104,19 +104,20 @@ CREATE INDEX m_btc_tpn_idx ON model_blog_type_configuration (blog_type_id, name)
 CREATE TABLE model_aggregator_feed
 (
     aggregator_feed_id INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
-    feed_url VARCHAR(200) NOT NULL,
-    feed_url_md5 VARCHAR(32) NOT NULL,
-    feed_title VARCHAR(200) NOT NULL,
-    feed_description TEXT NOT NULL DEFAULT '',
+    feed_md5 VARCHAR(32) NOT NULL,
+    feed_url TEXT NOT NULL,
     feed_link TEXT NOT NULL DEFAULT '',
-    feed_date TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
+    feed_title VARCHAR(100) NOT NULL,
+    feed_description TEXT NOT NULL DEFAULT '',
+    feed_modified VARCHAR(100) NOT NULL DEFAULT '',
+    feed_status VARCHAR(3) NOT NULL DEFAULT '200',
     created_at TIMESTAMP NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
     enabled TINYINT(1) NOT NULL DEFAULT 1,
     PRIMARY KEY (aggregator_feed_id)
 ) ENGINE=InnoDB DEFAULT CHARSET='utf8';
 
-CREATE INDEX m_agf_um5_idx ON model_aggregator_feed (feed_url_md5, enabled);
+CREATE INDEX m_agf_um5_idx ON model_aggregator_feed (feed_md5, enabled);
 
 CREATE TABLE model_aggregator_feed_url
 (
@@ -136,11 +137,11 @@ CREATE TABLE model_aggregator_feed_item
     aggregator_feed_item_id INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
     aggregator_feed_id INTEGER UNSIGNED NOT NULL, 
     item_md5 VARCHAR(32) NOT NULL,
-    item_id TEXT NOT NULL,
-    item_title TEXT NOT NULL, 
-    item_link TEXT NOT NULL, 
-    item_description TEXT NOT NULL, 
     item_date TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00', 
+    item_link TEXT NOT NULL, 
+    item_title TEXT NOT NULL, 
+    item_author VARCHAR(200) NOT NULL DEFAULT '', 
+    item_content TEXT NOT NULL, 
     created_at TIMESTAMP NOT NULL DEFAULT NOW(), 
     PRIMARY KEY (aggregator_feed_item_id),
     CONSTRAINT m_afi_m_agf_fk FOREIGN KEY (aggregator_feed_id) 

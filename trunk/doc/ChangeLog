@@ -95,5 +95,7 @@ HORAS TRABALHADAS: 2h
 
 - Ajuste no cadastro de blogs (passa a utilizar script blogclient do backend)
 - Exibicao do description de um item de feed selecionado (dashboard)
+- Melhorias na exibicao de um item de feed selecionado
+- Alteracao no backend, inclusao de script para gerenciamento do aggregator
 
-HORAS TRABALHADAS: 4h
+HORAS TRABALHADAS: 8h

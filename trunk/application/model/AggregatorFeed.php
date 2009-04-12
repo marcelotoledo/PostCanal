@@ -23,12 +23,13 @@ class AggregatorFeed extends B_Model
      */
     protected static $table_structure = array (
 		'aggregator_feed_id' => array ('type' => 'integer','size' => 0,'required' => false),
-		'feed_url' => array ('type' => 'string','size' => 200,'required' => true),
-		'feed_url_md5' => array ('type' => 'string','size' => 32,'required' => true),
-		'feed_title' => array ('type' => 'string','size' => 200,'required' => true),
-		'feed_description' => array ('type' => 'string','size' => 0,'required' => true),
+		'feed_md5' => array ('type' => 'string','size' => 32,'required' => true),
+		'feed_url' => array ('type' => 'string','size' => 0,'required' => true),
 		'feed_link' => array ('type' => 'string','size' => 0,'required' => true),
-		'feed_date' => array ('type' => 'date','size' => 0,'required' => false),
+		'feed_title' => array ('type' => 'string','size' => 100,'required' => true),
+		'feed_description' => array ('type' => 'string','size' => 0,'required' => true),
+		'feed_modified' => array ('type' => 'string','size' => 100,'required' => false),
+		'feed_status' => array ('type' => 'string','size' => 3,'required' => false),
 		'created_at' => array ('type' => 'date','size' => 0,'required' => false),
 		'updated_at' => array ('type' => 'date','size' => 0,'required' => false),
 		'enabled' => array ('type' => 'boolean','size' => 0,'required' => false));
@@ -175,12 +176,13 @@ class AggregatorFeed extends B_Model
                 if(($feed = self::findByFeedURL($feed_url)) == null)
                 {
                     $feed = new self();
+                    $feed->feed_md5 = md5($feed_url);
                     $feed->feed_url = $feed_url;
-                    $feed->feed_url_md5 = md5($feed_url);
+                    $feed->feed_link = $results[$i]['link'];
                     $feed->feed_title = $results[$i]['title'];
                     $feed->feed_description = $results[$i]['description'];
-                    $feed->feed_link = $results[$i]['link'];
-                    $feed->feed_date = $results[$i]['date'];
+                    $feed->feed_modified = $results[$i]['modified'];
+                    $feed->feed_status = $results[$i]['status'];
 
                     try
                     {
@@ -213,11 +215,11 @@ class AggregatorFeed extends B_Model
                 {
                     $item = new AggregatorFeedItem();
                     $item->aggregator_feed_id = $feed->aggregator_feed_id;
-                    $item->item_id = $entry['id'];
-                    $item->item_title = $entry['title'];
-                    $item->item_link = $entry['link'];
-                    $item->item_description = $entry['description'];
                     $item->item_date = $entry['date'];
+                    $item->item_link = $entry['link'];
+                    $item->item_title = $entry['title'];
+                    $item->item_author = $entry['author'];
+                    $item->item_content = $entry['content'];
 
                     $item_md5 = null;
                     if(strlen($item->item_link) > 0) $item_md5 = md5($item->item_link);
@@ -301,6 +303,6 @@ class AggregatorFeed extends B_Model
      */
     public static function findByFeedURL($feed_url)
     {
-        return current(self::find(array('feed_url_md5' => md5($feed_url))));
+        return current(self::find(array('feed_md5' => md5($feed_url))));
     }
 }

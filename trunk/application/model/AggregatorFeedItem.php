@@ -25,11 +25,11 @@ class AggregatorFeedItem extends B_Model
 		'aggregator_feed_item_id' => array ('type' => 'integer','size' => 0,'required' => false),
 		'aggregator_feed_id' => array ('type' => 'integer','size' => 0,'required' => true),
 		'item_md5' => array ('type' => 'string','size' => 32,'required' => true),
-		'item_id' => array ('type' => 'string','size' => 0,'required' => true),
-		'item_title' => array ('type' => 'string','size' => 0,'required' => true),
-		'item_link' => array ('type' => 'string','size' => 0,'required' => true),
-		'item_description' => array ('type' => 'string','size' => 0,'required' => true),
 		'item_date' => array ('type' => 'date','size' => 0,'required' => false),
+		'item_link' => array ('type' => 'string','size' => 0,'required' => true),
+		'item_title' => array ('type' => 'string','size' => 0,'required' => true),
+		'item_author' => array ('type' => 'string','size' => 200,'required' => true),
+		'item_content' => array ('type' => 'string','size' => 0,'required' => true),
 		'created_at' => array ('type' => 'date','size' => 0,'required' => false));
 
 
@@ -176,7 +176,7 @@ class AggregatorFeedItem extends B_Model
 
     protected static function _findByFeed_Assoc($feed, $limit=25, $offset=0)
     {
-        $_s = "SELECT item_md5 AS item, item_title AS title, item_link AS link, item_description AS description, item_date AS date FROM " . self::$table_name . " WHERE aggregator_feed_id = ? ORDER BY created_at DESC";
+        $_s = "SELECT item_md5 AS item, item_date AS date, item_link AS link, item_title AS title, item_author as author, item_content AS content FROM " . self::$table_name . " WHERE aggregator_feed_id = ? ORDER BY created_at DESC";
 
         if(($limit = intval($limit)) > 0)
         {
