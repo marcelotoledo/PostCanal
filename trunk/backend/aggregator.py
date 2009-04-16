@@ -80,12 +80,14 @@ def get_feed(url, modified=None):
 if __name__ == '__main__':
     url = "http://www.slashdot.org"
     
-    feeds = []
-    for f in guess_feeds(url):
-       feeds.append(feed_dictionary(f))
+    # feeds = []
+    # for f in guess_feeds(url):
+    #    feeds.append(feed_dictionary(f))
 
-    print feeds
+    # print feeds
 
-    # feed = "http://wergeeks.net/feed/"
-    # d = feed_dictionary(get_feed(feed))
-    # print feed_dictionary(get_feed(feed, d['modified']))
+    feed = "http://www.gazetaesportiva.net/rss/jogoRapido.xml"
+    d = feed_dictionary(get_feed(feed))
+    print d
+    #print feed_dictionary(get_feed(feed, d['modified']))
+    #print feed_dictionary(d)

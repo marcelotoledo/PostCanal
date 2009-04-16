@@ -53,17 +53,18 @@ if __name__ == '__main__':
     token = "c4z5mYW1pYWSJe2BzcIq1wv6n95o1E2kwuD1B0Wuo3XbHx82Vk"
 
     # blog discover
-    url = "http://test.wordpress.com"
-    ws = WebService()
-    ws.token = token
-    print ws.blog_discover({'token': token, 'url': url})
+
+    # url = "http://test.wordpress.com"
+    # ws = WebService()
+    # ws.token = token
+    # print ws.blog_discover({'token': token, 'url': url})
 
     # feed discover
 
-    # url = "http://www.uol.com.br/"
-    # ws = WebService()
-    # ws.token = token
-    # print ws.feed_discover({'token': token, 'url': url})
+    url = "http://www.slashdot.net/"
+    ws = WebService()
+    ws.token = token
+    print ws.feed_discover({'token': token, 'url': url})
 
     # import xmlrpclib
     # remote = "http://localhost:8080/webservice/backend"

@@ -5,6 +5,10 @@ $(document).ready(function()
     var current_blog = null;
     var current_feed = null;
 
+    var feeds_container = $("#feedscontainer");
+    var news_container = $("#newscontainer");
+    var queue_container = $("#queuecontainer");
+
     var feeds_content_area = $("#feedscontainer > div.containercontentarea");
     var news_content_area = $("#newscontainer > div.containercontentarea");
     var queue_content_area = $("#queuecontainer > div.containercontentarea");
@@ -49,34 +53,37 @@ $(document).ready(function()
         _l = 250; /* left bar width */
         _b = 5;   /* container spacing */
 
-        _c = $("#feedscontainer");
-        _c.css('top', 0);
-        _c.css('left', 0);
-        _c.css('width', _l);
+        feeds_container.css('top', 0);
+        feeds_container.css('left', 0);
+        feeds_container.css('width', _l);
 
-        _h = wh - _c.offset().top + _c.height() - _c.outerHeight();
+        _h = wh - feeds_container.offset().top + 
+                  feeds_container.height() - 
+                  feeds_container.outerHeight();
 
-        _c.height(_h);
-        maxcontent(_c);
+        feeds_container.height(_h);
+        maxcontent(feeds_container);
 
-        _c = $("#newscontainer");
-        _c.css('top', 0);
-        _c.css('left', _l + _b);
+        news_container.css('top', 0);
+        news_container.css('left', _l + _b);
 
-        _w = ww - _c.offset().left + _c.width() - _c.outerWidth();
+        _w = ww - news_container.offset().left + 
+                  news_container.width() - 
+                  news_container.outerWidth();
 
-        _c.width(_w);
-        _c.height(_h * 0.5);
-        maxcontent(_c);
+        news_container.width(_w);
+        news_container.height(_h * 0.5);
+        maxcontent(news_container);
 
-        _t = _c.offset().top + _c.position().top + _c.height();
+        _t = news_container.offset().top + 
+             news_container.position().top + 
+             news_container.height();
 
-        _c = $("#queuecontainer");
-        _c.css('top', (_h * 0.5) + _b);
-        _c.css('left', _l + _b);
-        _c.width(_w);
-        _c.height((_h * 0.5) - _b);
-        maxcontent(_c);
+        queue_container.css('top', (_h * 0.5) + _b);
+        queue_container.css('left', _l + _b);
+        queue_container.width(_w);
+        queue_container.height((_h * 0.5) - _b);
+        maxcontent(queue_container);
     }
 
     maxcontainers();
@@ -142,6 +149,7 @@ $(document).ready(function()
 
     function feed_populate(feeds)
     {
+        news_content_area.html("");
         feeds_content_area.html("");
 
         if(feeds.length > 0)
@@ -240,16 +248,31 @@ $(document).ready(function()
         {
             news.each(function()
             {
-                _item = $(this).find('item').text();
-                _date = $(this).find('date').text();
-                _link = $(this).find('link').text();
-                _title = $(this).find('title').text();
-                _author = $(this).find('author').text();
-                __content = $(this).find('content').text();
+                news_item = $(this).find('item').text();
+                news_date = $(this).find('date').text();
+                news_link = $(this).find('link').text();
+                news_title = $(this).find('title').text();
+                news_author = $(this).find('author').text();
+                news_content = $(this).find('content').text();
 
-                _div = "<div class=\"newsitem\" item=\"" + _item + "\">" + _title + " <i>on " + _date + " by " + _author + "</i></div><div class=\"newsbody\" item=\"" + _item + "\" style=\"display:none\">" + __content + "<br/>&nbsp;<br/><a href=\"" + _link + "\" target=\"_blank\">" + _link + "</a></div>";
+                if (news_content.match(/\w+/,"") == false)
+                {
+                    news_content = "<br/>&nbsp;<br/>";
+                }
 
-                news_content_area.append(_div);
+                news_content += "<a href=\"" + news_link + 
+                                "\" target=\"_blank\">" + news_link + 
+                                "</a>";
+
+                output = "<div class=\"newsitem\" item=\"" + news_item + 
+                         "\">" + news_title + 
+                         " <i>on " + news_date + 
+                         " by " + news_author + 
+                         "</i></div><div class=\"newsbody\" item=\"" + news_item + 
+                         "\" style=\"display:none\">" + news_content + 
+                         "</div>";
+
+                news_content_area.append(output);
             });
         }
 
@@ -267,15 +290,22 @@ $(document).ready(function()
 
     function set_news_item(item)
     {
-        $("div.newsitem-selected").removeClass('newsitem-selected');
-        $("div.newsbody").hide();
-
         _i = $("div.newsitem[item='" + item + "']");
 
         if(_i.length > 0)
         {
-            _i.addClass('newsitem-selected');
-            $("div.newsbody[item='" + item + "']").show();
+            if(_i.hasClass('newsitem-selected'))
+            {
+                _i.removeClass('newsitem-selected');
+                $("div.newsbody[item='" + item + "']").hide();
+            }
+            else
+            {
+                $("div.newsitem-selected").removeClass('newsitem-selected');
+                $("div.newsbody").hide();
+                _i.addClass('newsitem-selected');
+                $("div.newsbody[item='" + item + "']").show();
+            }
             news_content_area.scrollTop(news_content_area.scrollTop() + _i.offset().top - news_content_area.offset().top);
         }
     }
