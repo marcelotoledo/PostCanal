@@ -29,12 +29,11 @@ class AggregatorFeed extends B_Model
 		'feed_title' => array ('type' => 'string','size' => 100,'required' => true),
 		'feed_description' => array ('type' => 'string','size' => 0,'required' => true),
 		'feed_modified' => array ('type' => 'string','size' => 100,'required' => false),
+        'feed_update_time' => array ('type' => 'integer', 'size' => 0, 'required' => false),
 		'feed_status' => array ('type' => 'string','size' => 3,'required' => false),
 		'created_at' => array ('type' => 'date','size' => 0,'required' => false),
 		'updated_at' => array ('type' => 'date','size' => 0,'required' => false),
 		'enabled' => array ('type' => 'boolean','size' => 0,'required' => false));
-
-
 
     /**
      * Sequence name
@@ -89,6 +88,18 @@ class AggregatorFeed extends B_Model
     public function getPrimaryKeyName()
     {
         return self::$primary_key_name;
+    }
+
+    /**
+     * Save model
+     *
+     * @return  boolean
+     */
+    public function save()
+    {
+        $this->updated_at = time(); // required together with update_time
+
+        return parent::save();
     }
 
     /**
@@ -182,6 +193,7 @@ class AggregatorFeed extends B_Model
                     $feed->feed_title = $results[$i]['title'];
                     $feed->feed_description = $results[$i]['description'];
                     $feed->feed_modified = $results[$i]['modified'];
+                    $feed->feed_update_time = $results[$i]['update_time'];
                     $feed->feed_status = $results[$i]['status'];
 
                     try
@@ -304,5 +316,19 @@ class AggregatorFeed extends B_Model
     public static function findByFeedURL($feed_url)
     {
         return current(self::find(array('feed_md5' => md5($feed_url))));
+    }
+
+    /**
+     * Get feed that need update
+     *
+     * @return  AggregatorFeed
+     */
+    public static function findNeedUpdate()
+    {
+        $sql = "SELECT * FROM model_aggregator_feed " .
+               "WHERE (feed_update_time + UNIX_TIMESTAMP(updated_at)) < UNIX_TIMESTAMP(UTC_TIMESTAMP()) " .
+               "ORDER BY (feed_update_time + UNIX_TIMESTAMP(updated_at)) ASC LIMIT 1";
+
+        return current(self::selectModel($sql));
     }
 }

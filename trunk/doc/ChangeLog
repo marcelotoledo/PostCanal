@@ -107,3 +107,12 @@ HORAS TRABALHADAS: 8h
 - Ajustes na exibição de feeds
 
 HORAS TRABALHADAS: 2h
+
+==========
+19/04/2009
+==========
+
+- Ajustes no script aggregator do backend
+- Inclusao de metodo no WebService frontend para obter feed a ser atualizado
+
+HORAS TRABALHADAS: 4h

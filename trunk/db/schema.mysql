@@ -26,7 +26,7 @@ CREATE TABLE base_log
     data_controller VARCHAR(100) NOT NULL DEFAULT '',
     data_action VARCHAR(100) NOT NULL DEFAULT '',
     data_user_profile_id INTEGER UNSIGNED NOT NULL DEFAULT 0,
-    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    created_at TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
     PRIMARY KEY (id)
 ) ENGINE=InnoDB DEFAULT CHARSET='utf8';
 
@@ -62,7 +62,7 @@ CREATE TABLE application_mailer_relay
     id INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
     recipient CHAR(100) NOT NULL,
     identifier_md5 CHAR(32) DEFAULT NULL,
-    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    created_at TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
     PRIMARY KEY (id)
 ) ENGINE=InnoDB DEFAULT CHARSET='utf8';
 
@@ -110,14 +110,15 @@ CREATE TABLE model_aggregator_feed
     feed_title VARCHAR(100) NOT NULL,
     feed_description TEXT NOT NULL DEFAULT '',
     feed_modified VARCHAR(100) NOT NULL DEFAULT '',
+    feed_update_time INTEGER UNSIGNED NOT NULL DEFAULT 0,
     feed_status VARCHAR(3) NOT NULL DEFAULT '200',
-    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    created_at TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
     updated_at TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
     enabled TINYINT(1) NOT NULL DEFAULT 1,
     PRIMARY KEY (aggregator_feed_id)
 ) ENGINE=InnoDB DEFAULT CHARSET='utf8';
 
-CREATE INDEX m_agf_um5_idx ON model_aggregator_feed (feed_md5, enabled);
+CREATE INDEX m_agf_um5_idx ON model_aggregator_feed (feed_md5, feed_update_time, updated_at, enabled);
 
 CREATE TABLE model_aggregator_feed_url
 (
@@ -142,7 +143,7 @@ CREATE TABLE model_aggregator_feed_item
     item_title TEXT NOT NULL, 
     item_author VARCHAR(200) NOT NULL DEFAULT '', 
     item_content TEXT NOT NULL, 
-    created_at TIMESTAMP NOT NULL DEFAULT NOW(), 
+    created_at TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00', 
     PRIMARY KEY (aggregator_feed_item_id),
     CONSTRAINT m_afi_m_agf_fk FOREIGN KEY (aggregator_feed_id) 
         REFERENCES model_aggregator_feed (aggregator_feed_id) ON DELETE CASCADE
@@ -170,7 +171,7 @@ CREATE TABLE model_user_profile
     recovery_allowed TINYINT(1) NOT NULL DEFAULT 0,
     email_update_message_time TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
     -- -------------------------------------------------------------------------
-    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    created_at TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
     updated_at TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
     enabled TINYINT(1) NOT NULL DEFAULT 1,
     PRIMARY KEY (user_profile_id)
@@ -192,7 +193,7 @@ CREATE TABLE model_user_blog
     manager_url CHAR(200) NOT NULL,
     manager_username CHAR(100) NOT NULL,
     manager_password CHAR(100) NOT NULL,
-    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    created_at TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
     updated_at TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
     enabled TINYINT(1) NOT NULL DEFAULT 1,
     PRIMARY KEY (user_blog_id),
@@ -213,7 +214,7 @@ CREATE TABLE model_user_blog_feed
     feed_title VARCHAR(100) NOT NULL,
     feed_description TEXT NOT NULL DEFAULT '',
     ordering SMALLINT UNSIGNED NOT NULL DEFAULT 1,
-    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    created_at TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
     updated_at TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
     enabled TINYINT(1) NOT NULL DEFAULT 1,
     PRIMARY KEY (user_blog_feed_id),
@@ -244,7 +245,7 @@ CREATE TABLE model_user_blog_queue_item
     hash CHAR(8) NOT NULL,
     title TEXT NOT NULL, 
     description TEXT NOT NULL DEFAULT '',
-    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    created_at TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
     updated_at TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
     PRIMARY KEY (user_blog_queue_item_id),
     CONSTRAINT m_bqi_m_afi_fk FOREIGN KEY (aggregator_feed_item_id) 

@@ -1,25 +1,17 @@
 #!/usr/bin/env python
 
-BLOTOMATE_BACKEND_PATH = "../../../backend"
-BLOTOMATE_CONFIG_PATH  = "../../../config/environment.xml"
-
-import sys
+import sys, os
 from SimpleXMLRPCServer import CGIXMLRPCRequestHandler
 
-sys.path.append(BLOTOMATE_BACKEND_PATH)
+cwd = os.getcwd()
+sys_path = cwd.replace("public/cgi-bin/ws", "") + "backend"
+config_path = cwd.replace("public/cgi-bin/ws", "") + "config/environment.xml"
 
-import blotomate
-from blotomate import BlotomateConfig
-
-config = BlotomateConfig(BLOTOMATE_CONFIG_PATH)
+sys.path.append(sys_path)
 
 import webservice
 from webservice import WebService
 
-ws = WebService()
-ws.token = config.get(['application','webservice','token'])
-
-
 handler = CGIXMLRPCRequestHandler(allow_none=True, encoding=False)
-handler.register_instance(ws)
+handler.register_instance(WebService(config_path))
 handler.handle_request()

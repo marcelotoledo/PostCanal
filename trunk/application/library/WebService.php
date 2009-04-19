@@ -17,7 +17,7 @@ class L_WebService
     private $token;
 
     /**
-     * Web Service is Server?
+     * Web Service is server?
      *
      * @var boolean
      */
@@ -48,11 +48,11 @@ class L_WebService
 
         if(($this->is_server = $is_server) === true)
         {
-            $this->initializeServer();
+            $this->initializeServer(__CLASS__);
         }
         else
         {
-            $url = BASE_URL . $registry->application->webservice->backend->url;
+            $url = BASE_URL . $registry->application()->webservice()->backend()->url;
             $this->initializeClient($url);
         }
 
@@ -60,38 +60,31 @@ class L_WebService
     }
 
     /**
-     * Call Web Service Method
+     * Call Web Service Method (Client only)
      */
     public function __call($method, $args)
     {
         $args = array_merge(array('token' => $this->token), current($args));
-        $results = array();
+        $results = null;
 
-        if($this->is_server)
+        try
         {
-            /* TODO */
+            $results = $this->xmlrpc->call($method, array($args));
         }
-        else
+        catch(Exception $e)
         {
-            try
-            {
-                $results = $this->xmlrpc->call($method, array($args));
-            }
-            catch(Exception $e)
-            {
-                $_m = "failed to call webservice method (" . $method . ") as client, " .
-                      "with args [" . implode(", ", ((array) $args)) . "];\n" .
-                      "exception: " . $e->getMessage();
-                $_d = array('method' => __METHOD__);
+            $_m = "failed to call webservice method (" . $method . ") as client, " .
+                  "with args [" . implode(", ", ((array) $args)) . "];\n" .
+                  "exception: " . $e->getMessage();
+            $_d = array('method' => __METHOD__);
 
-                if($this->throw_exception)
-                {
-                    throw new B_Exception($_m, E_USER_WARNING, $_d);
-                }
-                else
-                {
-                    B_Log::write($_m, E_USER_WARNING, $_d);
-                }
+            if($this->throw_exception)
+            {
+                throw new B_Exception($_m, E_USER_WARNING, $_d);
+            }
+            else
+            {
+                B_Log::write($_m, E_USER_WARNING, $_d);
             }
         }
 
@@ -99,11 +92,14 @@ class L_WebService
     }
 
     /**
-     * Web Service Server (TODO)
+     * Web Service Server
      */
     protected function initializeServer()
     {
-        /* void */
+        $this->xmlrpc = new Zend_XmlRpc_Server();
+        $this->xmlrpc->setClass(__CLASS__);
+        echo $this->xmlrpc->handle();
+        exit(0); // avoid junk
     }
 
     /**
@@ -114,5 +110,42 @@ class L_WebService
     protected function initializeClient($url)
     {
         $this->xmlrpc = new Zend_XmlRpc_Client($url);
+    }
+
+    /* SERVER METHODS */
+
+    protected function validate_args($args, $names=array())
+    {
+        $token_ok = (array_key_exists('token', $args) && $args['token'] == $this->token);
+        $keys_ok = true;
+
+        foreach($names as $name)
+        {
+            if(!array_key_exists($name, $args))
+            {
+                $keys_ok = false;
+            }
+        }
+
+        return $token_ok && $keys_ok;
+    }
+
+    /**
+     * Get a feed that needs update
+     */
+    public function feed_update($args)
+    {
+        if($this->validate_args($args, array()) == false) return null;
+
+        $feed = AggregatorFeed::findNeedUpdate();
+        $result = array();
+
+        if(is_object($feed))
+        {
+            $result = array('url'      => $feed->feed_url,
+                            'modified' => $feed->feed_modified);
+        }
+
+        return $result;
     }
 }

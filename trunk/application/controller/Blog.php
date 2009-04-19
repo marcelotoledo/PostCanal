@@ -101,28 +101,8 @@ class C_Blog extends C_Abstract
     public function A_discover()
     {
         $this->response()->setXML(true);
-
         $url = $this->request()->url;
-
-        $client = new L_WebService();
-        $args = array('url' => $url);
-        $result = $client->blog_discover($args);
-        $result['type_accepted'] = false;
-        $result['maintenance'] = false;
-
-        if(strlen($result['type']) > 0 && strlen($result['version']) > 0)
-        {
-            if(is_object(($blog_type = BlogType::findByName($result['type'], 
-                                                            $result['version']))))
-            {
-                $result['type_label'] = $blog_type->type_label;
-                $result['version_label'] = $blog_type->version_label;
-                $result['type_accepted'] = true;
-                $result['maintenance'] = $blog_type->maintenance;
-            }
-        }
-
-        $this->view()->result = $result;
+        $this->view()->result = BlogType::discover($url);
     }
 
     /**
@@ -131,15 +111,9 @@ class C_Blog extends C_Abstract
     public function A_check()
     {
         $this->response()->setXML(true);
-
         $url = $this->request()->url;
         $blog_type = $this->request()->type;
         $blog_version = $this->request()->version;
-
-        $client = new L_WebService();
-        $args = array('url' => $url, 'type' => $blog_type, 'version' => $blog_version);
-        $result = $client->blog_manager_url_check($args);
-
-        $this->view()->result = $result;
+        $this->view()->result = BlogType::checkAdmin($url, $blog_type, $blog_version);
     }
 }

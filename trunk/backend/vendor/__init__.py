@@ -1,1 +1,1 @@
-__all__ = [ "feedfinder", "feedparser", "BeautifulSoup" ]
+__all__ = [ "feedfinder", "feedparser", "BeautifulSoup", "linreg" ]

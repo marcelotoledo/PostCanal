@@ -22,5 +22,6 @@ class C_Webservice extends B_Controller
      */
     public function A_frontend()
     {
+        new L_WebService($is_server=true);
     }
 }

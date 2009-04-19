@@ -165,4 +165,46 @@ class BlogType extends B_Model
             'version_name' => $version_name)));
         return current(self::find(array(self::$primary_key_name => $id)));
     }
+
+    /**
+     * Discover blog type from URL
+     *  
+     * @param   string  $url 
+     * @return  array
+     */ 
+    public static function discover($url)
+    {
+        $client = new L_WebService();
+        $args = array('url' => $url);
+        $result = $client->blog_discover($args);
+        $result['type_accepted'] = false;
+        $result['maintenance'] = false;
+
+        if(strlen($result['type']) > 0 && strlen($result['version']) > 0)
+        {
+            if(is_object(($blog_type = BlogType::findByName($result['type'], 
+                                                            $result['version']))))
+            {
+                $result['type_label'] = $blog_type->type_label;
+                $result['version_label'] = $blog_type->version_label;
+                $result['type_accepted'] = true;
+                $result['maintenance'] = $blog_type->maintenance;
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * Check URL admin
+     *  
+     * @param   string  $url 
+     * @return  array
+     */ 
+    public static function checkAdmin($url, $blog_type, $blog_version)
+    {
+        $client = new L_WebService();
+        $args = array('url' => $url, 'type' => $blog_type, 'version' => $blog_version);
+        return $client->blog_manager_url_check($args);
+    } 
 }
