@@ -30,7 +30,7 @@ def feed_update_time(entries):
         from vendor import linreg
         x = range(0, l)
         y = []
-        for i in entries: y.append(i['date'])
+        for i in entries: y.append(i.get('item_date', 0))
         y.sort()
 
         l = linreg.linreg(x,y) # linear regression
@@ -44,26 +44,26 @@ def feed_update_time(entries):
 
     return t 
 
-def item_dictionary(item):
+def item_dump(item):
     r = {}
     # date, link, title, author
     _date = item.get('date_parsed', "")
     if _date != "": _date = time.mktime(_date)
     if _date == "": _date = time.time()
-    r['date'] = int(_date)
-    r['link'] = item.get('link', "")
-    r['title'] = item.get('title', "")
-    r['author'] = item.get('author', "")
+    r['item_date'] = int(_date)
+    r['item_link'] = item.get('link', "")
+    r['item_title'] = item.get('title', "")
+    r['item_author'] = item.get('author', "")
     # content
     _content = item.get('content', "")
     if _content == "": _content = item.get('description', "")
     if _content == "": _content = item.get('summary', "")
-    r['content'] = _content
+    r['item_content'] = _content
     return r
 
-def feed_dictionary(feed):
+def feed_dump(feed):
     r = {}
-    r['url'] = feed['url']
+    r['feed_url'] = feed['url']
     parsed = feed['parsed']
     
     if parsed:
@@ -71,26 +71,26 @@ def feed_dictionary(feed):
         _modified = parsed.get('etag', "")
         if _modified != "": _modified = "etag: " + _modified
         if _modified == "": parsed.get('modified', "")
-        r['modified'] = _modified
+        r['feed_modified'] = _modified
 
         # status
-        r['status'] = parsed.get('status', "200")
+        r['feed_status'] = parsed.get('status', "200")
 
         # link, title, description
-        r['link'] = parsed.get('link', "")
-        r['title'] = parsed.get('title', "")
+        r['feed_link'] = parsed.get('link', "")
+        r['feed_title'] = parsed.get('title', "")
         _description = parsed.get('description', "")
         if _description == "": _description = parsed.get('info', "")
-        r['description'] = _description
+        r['feed_description'] = _description
 
         # entries
         _entries = []
         for i in feed['entries']:
-            _entries.append(item_dictionary(i))
+            _entries.append(item_dump(i))
         r['entries'] = _entries
 
         # update time
-        r['update_time'] = feed_update_time(_entries)
+        r['feed_update_time'] = feed_update_time(_entries)
 
     return r
 
@@ -110,13 +110,17 @@ def guess_feeds(url):
 
 def get_feed(url, modified=None):
     from vendor import feedparser
+
     p = None
+    if modified == '': modified = None
+
     if modified != None and re.search("etag: ", modified):
         p = feedparser.parse(url, etag=re.sub("etag: ", "", modified))
     elif modified != None and len(modified) > 0:
         p = feedparser.parse(url, modified=modified)
     else:
         p = feedparser.parse(url)
+
     return { 'url': url, 'parsed': p.feed, 'entries': p['entries'] }
 
 
@@ -130,13 +134,13 @@ if __name__ == '__main__':
     
     feeds = []
     for f in guess_feeds(url):
-        feeds.append(feed_dictionary(f))
+        feeds.append(feed_dump(f))
 
     print feeds
 
 
     #feed = "http://www.gazetaesportiva.net/rss/jogoRapido.xml"
-    #d = feed_dictionary(get_feed(feed))
+    #d = feed_dump(get_feed(feed))
     #print d
-    #print feed_dictionary(get_feed(feed, d['modified']))
-    #print feed_dictionary(d)
+    #print feed_dump(get_feed(feed, d['modified']))
+    #print feed_dump(d)

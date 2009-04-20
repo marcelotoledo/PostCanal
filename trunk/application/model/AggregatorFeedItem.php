@@ -90,6 +90,29 @@ class AggregatorFeedItem extends B_Model
     }
 
     /**
+     * Populate model data
+     *
+     * @param   array   $data
+     */
+    public function populate($data)
+    {
+        if($this->item_md5 == null)
+        {
+            if(array_key_exists('item_link', $data) && strlen($data['item_link']) > 0)
+            {
+                $this->item_md5 = md5($data['item_link']);
+            }
+
+            if($this->item_md5 == null)
+            {
+                $item_md5 = md5(L_Utility::randomString(8));
+            }
+        }
+
+        parent::populate($data);
+    }
+
+    /**
      * Find AggregatorFeedItem with an encapsulated SELECT command
      *
      * @param   array   $conditions WHERE parameters

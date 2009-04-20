@@ -91,6 +91,21 @@ class AggregatorFeed extends B_Model
     }
 
     /**
+     * Populate model data
+     *
+     * @param   array   $data
+     */
+    public function populate($data)
+    {
+        if(array_key_exists('feed_url', $data))
+        {
+            $this->feed_md5 = md5($data['feed_url']);
+        }
+
+        parent::populate($data);
+    }
+
+    /**
      * Save model
      *
      * @return  boolean
@@ -187,14 +202,7 @@ class AggregatorFeed extends B_Model
                 if(($feed = self::findByFeedURL($feed_url)) == null)
                 {
                     $feed = new self();
-                    $feed->feed_md5 = md5($feed_url);
-                    $feed->feed_url = $feed_url;
-                    $feed->feed_link = $results[$i]['link'];
-                    $feed->feed_title = $results[$i]['title'];
-                    $feed->feed_description = $results[$i]['description'];
-                    $feed->feed_modified = $results[$i]['modified'];
-                    $feed->feed_update_time = $results[$i]['update_time'];
-                    $feed->feed_status = $results[$i]['status'];
+                    $feed->populate($results[$i]);
 
                     try
                     {
@@ -227,16 +235,7 @@ class AggregatorFeed extends B_Model
                 {
                     $item = new AggregatorFeedItem();
                     $item->aggregator_feed_id = $feed->aggregator_feed_id;
-                    $item->item_date = $entry['date'];
-                    $item->item_link = $entry['link'];
-                    $item->item_title = $entry['title'];
-                    $item->item_author = $entry['author'];
-                    $item->item_content = $entry['content'];
-
-                    $item_md5 = null;
-                    if(strlen($item->item_link) > 0) $item_md5 = md5($item->item_link);
-                    if($item_md5 == null) $item_md5 = md5(L_Utility::randomString(8));
-                    $item->item_md5 = $item_md5;
+                    $item->populate($entry);
 
                     try
                     {
@@ -289,6 +288,54 @@ class AggregatorFeed extends B_Model
         }
 
         return $feeds;
+    }
+
+    public static function rawInsert()
+    {
+        /* TODO */
+    }
+
+    /**
+     * Update feed
+     *
+     * @param   integer     $id     AggregatorFeed ID
+     * @param   array       $data
+     * @return  boolean
+     */
+    public static function rawUpdate($id, $data)
+    {
+        #self::transation();
+        
+        $updated = false;
+
+        if(is_object(($feed = self::findByPrimaryKey($id))))
+        {
+            $feed->populate($data);
+
+            $entries = array();
+
+            if(array_key_exists('entries', $data))
+            {
+                $entries = $data['entries'];
+            }
+            
+            // ...
+
+            try
+            {
+                $feed->save();
+                $updated = true;
+            }
+            catch(B_Exception $_e)
+            {
+                #self::rollback();
+                $updated = false;
+            }
+        }
+
+        #self::commit();
+
+        return $updated;
     }
 
     /**

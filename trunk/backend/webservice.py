@@ -30,14 +30,14 @@ class WebService:
     def blog_discover(self, args):
         if not self.validate_args(args, ['url']): return None
         import blog
-        return blog.type_dictionary(blog.guess_type(args['url']))
+        return blog.type_dump(blog.guess_type(args['url']))
 
     # blog url manager test
 
     def blog_manager_url_check(self, args):
         if not self.validate_args(args, ['url', 'type', 'version']): return None
         import blog
-        return blog.type_dictionary(blog.manager_url_check(args['url'], args['type'], args['version']))
+        return blog.type_dump(blog.manager_url_check(args['url'], args['type'], args['version']))
 
     # feed discover
 
@@ -46,7 +46,7 @@ class WebService:
         import aggregator
         feeds = []
         for f in aggregator.guess_feeds(args['url']):
-            feeds.append(aggregator.feed_dictionary(f))
+            feeds.append(aggregator.feed_dump(f))
         return feeds
 
 def usage(argv):

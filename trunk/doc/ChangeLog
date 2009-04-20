@@ -116,3 +116,12 @@ HORAS TRABALHADAS: 2h
 - Inclusao de metodo no WebService frontend para obter feed a ser atualizado
 
 HORAS TRABALHADAS: 4h
+
+==========
+20/04/2009
+==========
+
+- Inclusao de metodo no WebService frontend para atualizar feed
+- Atualização do Python para 2.6.2
+
+HORAS TRABALHADAS: 4h

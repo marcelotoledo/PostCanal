@@ -96,7 +96,7 @@ def manager_url_check(manager_url, type_name, version_name):
     type.check_manager_url(init_client(manager_url))
     return type
 
-def type_dictionary(type):
+def type_dump(type):
     result = {}
     result['type']                 = type.type                 if type else ""
     result['version']              = type.version              if type else ""
@@ -118,7 +118,7 @@ if __name__ == '__main__':
     #url = "http://www.cnn.com/"
     #url = "http://www.uol.com.br/"
 
-    d = type_dictionary(guess_type(url))
+    d = type_dump(guess_type(url))
     print d
-    m = type_dictionary(manager_url_check(d['manager_url'], d['type'], d['version']))
+    m = type_dump(manager_url_check(d['manager_url'], d['type'], d['version']))
     print m

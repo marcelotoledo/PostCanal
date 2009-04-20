@@ -1000,6 +1000,47 @@ abstract class B_Model
     }
 
     /**
+     * Populate model data
+     *
+     * @param   array   $data
+     */
+    public function populate($data)
+    {
+        $structure = $this->getTableStructure();
+
+        foreach($data as $name => $value)
+        {
+            if(array_key_exists($name, $structure))
+            {
+                $this->{$name} = $value;
+            }
+        }
+    }
+
+    /**
+     * Dump model data
+     *
+     * @param   array   $keys
+     * @return  array
+     */
+    public function dump($keys=array())
+    {
+        if(count($keys) == 0)
+        {
+            $keys = array_keys($this->getTableStructure());
+        }
+
+        $dump = array();
+
+        foreach($keys as $name)
+        {
+            $dump[$name] = $this->{$name};
+        }
+
+        return $dump;
+    }
+
+    /**
      * Save model
      *
      * @return  boolean

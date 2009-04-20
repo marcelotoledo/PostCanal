@@ -15,15 +15,15 @@ error_reporting (E_ALL);
 /* PATH */
 
 define('BASE_PATH', "/var/www/blotomate");
-define('BASE_URL', "http://localhost:8080");
-##define('BASE_URL', "http://192.168.1.100:8080");
 define('APPLICATION_PATH', BASE_PATH . "/application");
 define('LIBRARY_PATH', BASE_PATH . "/library");
 
 set_include_path (LIBRARY_PATH . PATH_SEPARATOR . get_include_path());
 
-
 $registry = B_Registry::singleton(BASE_PATH . '/config/environment.xml');
+
+define('BASE_URL', $registry->base()->url);
+
 
 $registry->request()->object = null;
 $registry->response()->object = null;

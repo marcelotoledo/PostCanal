@@ -133,7 +133,7 @@ class L_WebService
     /**
      * Get a feed that needs update
      */
-    public function feed_update($args)
+    public function feed_update_get($args)
     {
         if($this->validate_args($args, array()) == false) return null;
 
@@ -142,10 +142,30 @@ class L_WebService
 
         if(is_object($feed))
         {
-            $result = array('url'      => $feed->feed_url,
-                            'modified' => $feed->feed_modified);
+            $result = $feed->dump(array('aggregator_feed_id', 'feed_url', 'feed_modified'));
         }
 
         return $result;
+    }
+
+    /**
+     * Post feed updates
+     */
+    public function feed_update_post($args)
+    {
+        if($this->validate_args($args, array('id', 'data')) == false) return null;
+
+        $updated = false;
+
+        try
+        {
+            $updated = AggregatorFeed::rawUpdate($args['id'], $args['data']);
+        }
+        catch(B_Exception $_e)
+        {
+            $updated = false;
+        }
+
+        return $updated;
     }
 }
