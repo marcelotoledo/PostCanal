@@ -213,4 +213,51 @@ class AggregatorFeedItem extends B_Model
 
         return self::select($_s, array($feed), PDO::FETCH_ASSOC);
     }
+
+    /**
+     * Insert feed item (raw)
+     *
+     * @param   AggregatorFeed  $feed
+     * @param   array           $data
+     * @return  integer
+     */
+    public static function rawInsert($feed, $data)
+    {
+        self::transaction();
+
+        $last_item_time = $feed->getLastItemTime();
+        $inserted = 0;
+
+        foreach($data as $entry)
+        {
+#            B_Log::write(date("Y-m-d H:i:s", $entry['item_date']) . ", " . 
+#                         date("Y-m-d H:i:s", $last_item_time));
+
+            if($entry['item_date'] > $last_item_time) // avoid repeated items
+            {
+                $item = new self();
+                $item->aggregator_feed_id = $feed->aggregator_feed_id;
+                $item->populate($entry);
+
+                try
+                {
+                    $item->save();
+                    $inserted++;
+                }
+                catch(B_Exception $_e)
+                {
+                    $saved = false;
+                    self::rollback();
+                    $_m = "new aggregator feed item failed from " .
+                          "item link (" . $item->item_link . ")";
+                    $_d = array ('method' => __METHOD__);
+                    B_Exception::forward($_m, E_USER_ERROR, $_e, $_d);
+                }
+            }
+        }
+
+        self::commit();
+
+        return $inserted;
+    }
 }

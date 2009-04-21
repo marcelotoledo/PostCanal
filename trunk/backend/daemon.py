@@ -35,6 +35,8 @@ class Daemon:
     def feed_update(self):
         update = self.client.feed_update_get({'token': self.token})
 
+        if len(update) == 0: update = {}
+
         id = update.get('aggregator_feed_id')
         url = update.get('feed_url')
         modified = update.get('feed_modified')
@@ -49,13 +51,10 @@ class Daemon:
             total_entries = len(dump.get('entries'))
 
             logging.info("getting feed update returned with status (%s) and (%d) entries" % (status, total_entries))
-
-            if self.client.feed_update_post({'token': self.token, 'id': id, 'data': dump}):
-                logging.info("posting feed update successfully with id (%d)" % (id))
-            else:
-                logging.error("posting feed update failed width id (%d)" % (id))
+            inserted = self.client.feed_update_post({'token': self.token, 'id': id, 'data': dump})
+            logging.info("posting feed with id (%d) updated successfully with (%d) rows inserted" % (id, inserted))
         else:
-            logging.warn("no feed to update")
+            logging.info("no feed to update")
 
 def start(argv):
     cwd = os.getcwd()

@@ -123,5 +123,6 @@ HORAS TRABALHADAS: 4h
 
 - Inclusao de metodo no WebService frontend para atualizar feed
 - Atualização do Python para 2.6.2
+- Correcao de bug com timezone na atualizacao de feed
 
-HORAS TRABALHADAS: 4h
+HORAS TRABALHADAS: 10h

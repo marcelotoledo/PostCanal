@@ -148,24 +148,22 @@ class L_WebService
         return $result;
     }
 
-    /**
-     * Post feed updates
-     */
     public function feed_update_post($args)
     {
-        if($this->validate_args($args, array('id', 'data')) == false) return null;
+        if($this->validate_args($args, array('id', 'data')) == false) return false;
 
-        $updated = false;
+        $feed = null;
+        $inserted = 0;
 
         try
         {
-            $updated = AggregatorFeed::rawUpdate($args['id'], $args['data']);
+            $feed = AggregatorFeed::rawUpdate($args['id'], $args['data'], $inserted);
         }
         catch(B_Exception $_e)
         {
-            $updated = false;
+            /* void */
         }
 
-        return $updated;
+        return $inserted;
     }
 }

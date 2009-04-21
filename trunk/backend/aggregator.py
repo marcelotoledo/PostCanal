@@ -126,11 +126,12 @@ def get_feed(url, modified=None):
 
 if __name__ == '__main__':
     #url = "http://www.slashdot.org"
-    url = "http://www.terra.com.br"
+    #url = "http://www.terra.com.br"
     #url = "http://www.cnn.com"
     #url = "rtp.pt"
     #url = "http://wergeeks.wordpress.com/feed/"
     #url = "www.uol.com.br"
+    url = "http://rss.terra.com.br/0,,EI1,00.xml"
     
     feeds = []
     for f in guess_feeds(url):

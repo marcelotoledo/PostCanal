@@ -118,6 +118,23 @@ class AggregatorFeed extends B_Model
     }
 
     /**
+     * Get last item time
+     *
+     * @return  integer
+     */
+    public function getLastItemTime()
+    {
+        $sql = "SELECT UNIX_TIMESTAMP(item_date) AS last_item_time " .
+               "FROM model_aggregator_feed_item " .
+               "WHERE aggregator_feed_id = ? " .
+               "ORDER BY item_date DESC LIMIT 1";
+
+        $result = current(self::select($sql, array($this->aggregator_feed_id)));
+
+        return is_object($result) ? $result->last_item_time : 0;
+    }
+
+    /**
      * Find AggregatorFeed with an encapsulated SELECT command
      *
      * @param   array   $conditions WHERE parameters
@@ -176,166 +193,115 @@ class AggregatorFeed extends B_Model
     }
 
     /**
-     * Discover feeds from URL
+     * Insert feed (raw)
      *
-     * @param   string  $url
-     * @return  AggregatorFeed|null
+     * @param   array           $data
+     * @param   integer         $inserted
+     * @return  AggregatorFeed
      */
-    public static function discover($url)
+    public static function rawInsert($data, &$inserted=null)
     {
-        $um5 = md5($url);
+        $url = $data['feed_url'];
+        $url_md5 = md5($url);
 
-        if(count(($feeds = self::findByURL($url))) == 0)
+        self::transaction();
+
+        if(($feed = self::findByFeedURL($url)) == null)
         {
-            /* request feeds to webservice */
+            $feed = new self();
+            $feed->populate($data);
 
-            $client = new L_WebService();
-            $results = $client->feed_discover(array('url' => $url));
-            $results_len = count($results);
-
-            for($i=0;$i<$results_len;$i++)
+            try
             {
-                $feed_url = $results[$i]['url'];
-
-                self::transaction();
-
-                if(($feed = self::findByFeedURL($feed_url)) == null)
-                {
-                    $feed = new self();
-                    $feed->populate($results[$i]);
-
-                    try
-                    {
-                        $feed->save();
-                    }
-                    catch(B_Exception $_e)
-                    {
-                        self::rollback();
-                        $_m = "new aggregator feed failed";
-                        $_d = array ('method' => __METHOD__);
-                        B_Exception::forward($_m, E_USER_ERROR, $_e, $_d);
-                    }
-                }
-
-                /* add feed to feed list */
-
-                $feeds[] = $feed;
-
-                self::commit();
-
-                /* save feed items */
-
-                $entries = is_array($results[$i]['entries']) ? 
-                    $results[$i]['entries'] :
-                    array();
-
-                self::transaction();
-
-                foreach($entries as $entry)
-                {
-                    $item = new AggregatorFeedItem();
-                    $item->aggregator_feed_id = $feed->aggregator_feed_id;
-                    $item->populate($entry);
-
-                    try
-                    {
-                        $item->save();
-                    }
-                    catch(B_Exception $_e)
-                    {
-                        self::rollback();
-                        $_m = "new aggregator feed item failed from " .
-                              "item link (" . $item->item_link . ")";
-                        $_d = array ('method' => __METHOD__);
-                        B_Exception::forward($_m, E_USER_ERROR, $_e, $_d);
-                    }
-                }
-
-                self::commit();
-
-                /* save feed url */
-
-                self::transaction();
-
-                $sql = "SELECT COUNT(*) AS total " .
-                       "FROM model_aggregator_feed_url " .
-                       "WHERE aggregator_feed_id = ? AND url_md5 = ?";
-
-                $_d = array($feed->aggregator_feed_id, $um5);
-                $_r = current(self::select($sql, $_d));
-
-                if($_r->total == 0)
-                {
-                    $sql = "INSERT INTO model_aggregator_feed_url " .
-                           "(aggregator_feed_id, url, url_md5) VALUES (?, ?, ?)";
-                    $_d = array($feed->aggregator_feed_id, $url, $um5);
-
-                    try
-                    {
-                        self::execute($sql, $_d);
-                    }
-                    catch(B_Exception $_e)
-                    {
-                        self::rollback();
-                        $_m = "new aggregator feed url failed";
-                        $_d = array ('method' => __METHOD__);
-                        B_Exception::forward($_m, E_USER_ERROR, $_e, $_d);
-                    }
-                }
-
-                self::commit();
+                $feed->save();
+            }
+            catch(B_Exception $_e)
+            {
+                self::rollback();
+                $_m = "new aggregator feed failed";
+                $_d = array ('method' => __METHOD__);
+                B_Exception::forward($_m, E_USER_ERROR, $_e, $_d);
             }
         }
 
-        return $feeds;
-    }
+        self::commit();
 
-    public static function rawInsert()
-    {
-        /* TODO */
+        if(array_key_exists('entries', $data) && is_object($feed))
+        {
+            $inserted = AggregatorFeedItem::rawInsert($feed, $data['entries']);
+        }
+
+        /* save feed url */
+
+        self::transaction();
+
+        $sql = "SELECT COUNT(*) AS total " .
+               "FROM model_aggregator_feed_url " .
+               "WHERE aggregator_feed_id = ? AND url_md5 = ?";
+
+        $_d = array($feed->aggregator_feed_id, $url_md5);
+        $_r = current(self::select($sql, $_d));
+
+        if($_r->total == 0)
+        {
+            $sql = "INSERT INTO model_aggregator_feed_url " .
+                   "(aggregator_feed_id, url, url_md5) VALUES (?, ?, ?)";
+            $_d = array($feed->aggregator_feed_id, $url, $url_md5);
+
+            try
+            {
+                self::execute($sql, $_d);
+            }
+            catch(B_Exception $_e)
+            {
+                self::rollback();
+                $_m = "new aggregator feed url failed";
+                $_d = array ('method' => __METHOD__);
+                B_Exception::forward($_m, E_USER_ERROR, $_e, $_d);
+            }
+        }
+
+        self::commit();
+
+        return $feed;
     }
 
     /**
      * Update feed
      *
-     * @param   integer     $id     AggregatorFeed ID
-     * @param   array       $data
-     * @return  boolean
+     * @param   integer         $id         AggregatorFeed ID
+     * @param   array           $data
+     * @param   integer         $inserted
+     * @return  AggregatorFeed
      */
-    public static function rawUpdate($id, $data)
+    public static function rawUpdate($id, $data, &$inserted=null)
     {
         #self::transation();
         
-        $updated = false;
-
         if(is_object(($feed = self::findByPrimaryKey($id))))
         {
             $feed->populate($data);
 
             $entries = array();
 
-            if(array_key_exists('entries', $data))
-            {
-                $entries = $data['entries'];
-            }
-            
-            // ...
-
             try
             {
                 $feed->save();
-                $updated = true;
             }
             catch(B_Exception $_e)
             {
                 #self::rollback();
-                $updated = false;
             }
         }
 
         #self::commit();
 
-        return $updated;
+        if(array_key_exists('entries', $data) && is_object($feed))
+        {
+            $inserted = AggregatorFeedItem::rawInsert($feed, $data['entries']);
+        }
+
+        return $feed;
     }
 
     /**
@@ -377,5 +343,29 @@ class AggregatorFeed extends B_Model
                "ORDER BY (feed_update_time + UNIX_TIMESTAMP(updated_at)) ASC LIMIT 1";
 
         return current(self::selectModel($sql));
+    }
+
+    /**
+     * Discover feeds from URL
+     *
+     * @param   string  $url
+     * @return  array
+     */
+    public static function discover($url)
+    {
+        if(count(($feeds = self::findByURL($url))) == 0)
+        {
+            /* request feeds to webservice */
+
+            $feeds = array();
+            $client = new L_WebService();
+
+            foreach($client->feed_discover(array('url' => $url)) as $data)
+            {
+                $feeds[] = self::rawInsert($data);
+            }
+        }
+
+        return $feeds;
     }
 }
