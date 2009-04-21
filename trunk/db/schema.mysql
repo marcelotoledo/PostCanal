@@ -144,6 +144,7 @@ CREATE TABLE model_aggregator_feed_item
     item_author VARCHAR(200) NOT NULL DEFAULT '', 
     item_content TEXT NOT NULL, 
     created_at TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00', 
+    updated_at TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
     PRIMARY KEY (aggregator_feed_item_id),
     CONSTRAINT m_afi_m_agf_fk FOREIGN KEY (aggregator_feed_id) 
         REFERENCES model_aggregator_feed (aggregator_feed_id) ON DELETE CASCADE

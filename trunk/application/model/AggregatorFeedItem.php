@@ -263,16 +263,14 @@ class AggregatorFeedItem extends B_Model
     {
         self::transaction();
 
+        $feed_id = $feed->aggregator_feed_id;
         $last_item_time = self::getLastItemTime($feed->aggregator_feed_id);
+        $total = count($data);
         $inserted = 0;
+        $rewritten = 0;
 
         foreach($data as $entry)
         {
-            B_Log::write(date("Y-m-d H:i:s", $entry['item_date']) . "\t" .
-                                             $entry['item_date'] . "\t" . 
-                         date("Y-m-d H:i:s", $last_item_time) . "\t" .
-                                             $last_item_time . "\t" . 
-                                             $entry['item_title']);
 
             if($entry['item_date'] > $last_item_time) // only new items based on item date
             {
@@ -280,18 +278,21 @@ class AggregatorFeedItem extends B_Model
                 $item->aggregator_feed_id = $feed->aggregator_feed_id;
                 $item->populate($entry);
 
-                // check item md5 (replace existing item)
+                // check item md5 (rewrite existing item)
+
+                $is_rewrite = false;
 
                 if(is_object($_i = self::findByItemMD5(
                     $feed->aggregator_feed_id, $item->item_md5)))
                 {
                     $item->setPrimaryKey($_i->getPrimaryKey());
+                    $is_rewrite = true;
                 }
 
                 try
                 {
                     $item->save();
-                    $inserted++;
+                    $is_rewrite ? $rewritten++ : $inserted++;
                 }
                 catch(B_Exception $_e)
                 {
@@ -307,6 +308,13 @@ class AggregatorFeedItem extends B_Model
 
         self::commit();
 
-        return $inserted;
+        $_m = "aggregator feed id (" . $feed_id . ") " .
+              "updated with a total of (" . $total . ") items, " .
+              "inserted (" . $inserted . ") " .
+              "and rewritten (" . $rewritten . ")";
+        $_d = array ('method' => __METHOD__);
+        B_Log::write($_m);
+
+        return ($inserted + $rewritten);
     }
 }

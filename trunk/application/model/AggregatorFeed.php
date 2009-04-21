@@ -254,12 +254,12 @@ class AggregatorFeed extends B_Model
      *
      * @param   integer         $id         AggregatorFeed ID
      * @param   array           $data
-     * @param   integer         $inserted
+     * @param   integer         $updated
      * @return  AggregatorFeed
      */
-    public static function rawUpdate($id, $data, &$inserted=null)
+    public static function rawUpdate($id, $data, &$updated=null)
     {
-        #self::transation();
+        self::transaction();
         
         if(is_object(($feed = self::findByPrimaryKey($id))))
         {
@@ -273,15 +273,18 @@ class AggregatorFeed extends B_Model
             }
             catch(B_Exception $_e)
             {
-                #self::rollback();
+                self::rollback();
+                $_m = "aggregator feed update failed";
+                $_d = array ('method' => __METHOD__);
+                B_Exception::forward($_m, E_USER_ERROR, $_e, $_d);
             }
         }
 
-        #self::commit();
+        self::commit();
 
         if(array_key_exists('entries', $data) && is_object($feed))
         {
-            $inserted = AggregatorFeedItem::rawInsert($feed, $data['entries']);
+            $updated = AggregatorFeedItem::rawInsert($feed, $data['entries']);
         }
 
         return $feed;

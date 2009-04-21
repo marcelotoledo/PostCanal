@@ -49,8 +49,8 @@ class Daemon:
             total_entries = len(dump.get('entries'))
 
             logging.info("getting feed update returned with status (%s) and (%d) entries" % (status, total_entries))
-            inserted = self.client.feed_update_post({'token': self.token, 'id': id, 'data': dump})
-            logging.info("posting feed with id (%d) updated successfully with (%d) updated items" % (id, inserted))
+            updated = self.client.feed_update_post({'token': self.token, 'id': id, 'data': dump})
+            logging.info("posting feed with id (%d) updated successfully with (%d) updated items" % (id, updated))
         else:
             logging.info("no feed to update")
 

@@ -153,17 +153,19 @@ class L_WebService
         if($this->validate_args($args, array('id', 'data')) == false) return false;
 
         $feed = null;
-        $inserted = 0;
+        $updated = 0;
 
         try
         {
-            $feed = AggregatorFeed::rawUpdate($args['id'], $args['data'], $inserted);
+            $feed = AggregatorFeed::rawUpdate($args['id'], $args['data'], $updated);
         }
         catch(B_Exception $_e)
         {
-            /* void */
+            $_m = "feed update post webservice failed";
+            $_d = array ('method' => __METHOD__);
+            B_Log::write($_m, E_USER_ERROR, $_d);
         }
 
-        return $inserted;
+        return $updated;
     }
 }

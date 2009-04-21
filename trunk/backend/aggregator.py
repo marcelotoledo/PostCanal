@@ -144,9 +144,9 @@ def get_feed(url, modified=None):
 
 
 if __name__ == '__main__':
-    #url = "http://www.slashdot.org"
+    url = "http://www.slashdot.org"
     #url = "http://www.terra.com.br"
-    url = "http://www.cnn.com"
+    #url = "http://www.cnn.com"
     #url = "rtp.pt"
     #url = "http://wergeeks.wordpress.com/feed/"
     #url = "www.uol.com.br"
