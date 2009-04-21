@@ -100,16 +100,7 @@ class C_Feed extends B_Controller
         $this->response()->setXML(true);
 
         $url = $this->request()->url;
-
-        $results = array();
-
-        foreach(AggregatorFeed::discover($url) as $feed)
-        {
-            $results[] = array(
-                'url' => $feed->feed_url,
-                'title' => $feed->feed_title,
-                'description' => $feed->feed_description);
-        }
+        $results = AggregatorFeed::discover($url);
 
         if(count($results) > 0) $this->view()->results = $results;
     }

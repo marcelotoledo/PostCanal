@@ -467,9 +467,8 @@ A linguagem escolhida para o desenvolvimento da aplicação foi o \textbf{PHP}. 
 \item \textbf{config}: arquivos de configuração;
 \item \textbf{db}: arquivos de base de dados (\textbf{SQL});
 \item \textbf{library}: arquivos de biblioteca de framework;
-\subitem \textbf{AB}: \emph{core} \textbf{MVC};
+\subitem \textbf{base}: \emph{core} \textbf{MVC};
 \subitem \textbf{Zend}: \emph{Zend Framework};
-\item \textbf{log}: arquivos de histórico;
 \item \textbf{public}: \emph{bootstrap}, deve ser visível para \emph{WEB};
 \end{itemize}
 
@@ -539,15 +538,6 @@ conter o valor do tipo \emph{string} e vazio);
 
 \paragraph{}
 Todos os caminhos acima devem suprimir o separador "/" no final.
-
-\subsection{Permissões}
-
-\paragraph{}
-Deve-se ajustar a permissão dos arquivos abaixo, conforme segue:
-
-\begin{verbatim}
-$ chmod a+w ./log/error_log
-\end{verbatim}
 
 \subsection{Base de dados}
 

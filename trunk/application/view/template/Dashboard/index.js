@@ -383,9 +383,9 @@ $(document).ready(function()
 
         feeds.each(function()
         {
-            _url = $(this).find('url').text();
-            _title = $(this).find('title').text();
-            _description = $(this).find('description').text();
+            _url = $(this).find('feed_url').text();
+            _title = $(this).find('feed_title').text();
+            _description = $(this).find('feed_description').text();
 
             if(_title.length == 0) _title = _url;
 

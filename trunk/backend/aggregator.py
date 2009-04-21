@@ -16,14 +16,22 @@
 
 VERSION = "1.0.0"
 
-
 import re
 import time
 
 ##feedparser.USER_AGENT = "BLOTOMATE/1.0 +http://blotomate.com"
 
+DEFAULT_UPDATE_TIME = 3600 # 1 hour
+MINIMUM_UPDATE_TIME = 300  # 5 minutes
+
+# FEED UPDATE TIME
+# 
+# default update time for void feeds
+# minimum update time for massive updated feeds
+# update time is calculated with linear regression of its items times
+# 
 def feed_update_time(entries):
-    t = 3600 # defaults to 1 hour
+    t = DEFAULT_UPDATE_TIME
     l = len(entries)
 
     if l > 2: # linear regression requires at least 3 points
@@ -33,37 +41,48 @@ def feed_update_time(entries):
         for i in entries: y.append(i.get('item_date', 0))
         y.sort()
 
-        l = linreg.linreg(x,y) # linear regression
-        t = int(l[0])
-        r = int(l[2] * 100) / 100.0 # chi square
+        try:
+            l = linreg.linreg(x,y) # linear regression
+            t = int(l[0])
+            r = int(l[2] * 100) / 100.0 # chi square
 
-        # minimum of 5 minutes
-        if t <= 300 : t = 300
-        # decrease time depending on the regularity
-        t = int((t - 300) * r) + 300
+            # minimum of 5 minutes
+            if t <= MINIMUM_UPDATE_TIME : t = MINIMUM_UPDATE_TIME
+            # decrease time depending on the regularity
+            t = int((t - MINIMUM_UPDATE_TIME) * r) + MINIMUM_UPDATE_TIME
+        except:
+            t = DEFAULT_UPDATE_TIME
 
     return t 
 
 def item_dump(item):
     r = {}
-    # date, link, title, author
-    _date = item.get('date_parsed', "")
-    if _date != "": _date = time.mktime(_date)
-    if _date == "": _date = time.time()
+
+    # try to parse item date, otherwise, uses the current time
+    _date = item.get('date_parsed')
+    if _date: _date = time.mktime(_date)
+    if _date == None: _date = time.time()
     r['item_date'] = int(_date)
+
+    # link, title, author
     r['item_link'] = item.get('link', "")
     r['item_title'] = item.get('title', "")
     r['item_author'] = item.get('author', "")
+
     # content
     _content = item.get('content', "")
     if _content == "": _content = item.get('description', "")
     if _content == "": _content = item.get('summary', "")
     r['item_content'] = _content
+
     return r
 
 def feed_dump(feed):
     r = {}
     r['feed_url'] = feed['url']
+    r['feed_title'] = ''
+    r['feed_description'] = ''
+
     parsed = feed['parsed']
     
     if parsed:
@@ -127,11 +146,12 @@ def get_feed(url, modified=None):
 if __name__ == '__main__':
     #url = "http://www.slashdot.org"
     #url = "http://www.terra.com.br"
-    #url = "http://www.cnn.com"
+    url = "http://www.cnn.com"
     #url = "rtp.pt"
     #url = "http://wergeeks.wordpress.com/feed/"
     #url = "www.uol.com.br"
-    url = "http://rss.terra.com.br/0,,EI1,00.xml"
+    #url = "http://rss.terra.com.br/0,,EI1,00.xml"
+    #url = "http://www.bovespa.com.br/rss/"
     
     feeds = []
     for f in guess_feeds(url):

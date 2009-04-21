@@ -8,7 +8,9 @@
 
 /* PHP */
 
-date_default_timezone_set ("UTC");
+/* for the proper functioning, it is necessary to change server's timezone to UTC */
+//date_default_timezone_set ("UTC"); 
+
 error_reporting (E_ALL);
 
 

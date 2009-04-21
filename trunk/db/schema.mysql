@@ -149,7 +149,7 @@ CREATE TABLE model_aggregator_feed_item
         REFERENCES model_aggregator_feed (aggregator_feed_id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET='utf8';
 
-CREATE INDEX m_agi_um5_idx ON model_aggregator_feed_item (aggregator_feed_id, item_md5);
+CREATE INDEX m_agi_um5_idx ON model_aggregator_feed_item (aggregator_feed_id, item_md5, item_date, created_at);
 
 -- user --
 

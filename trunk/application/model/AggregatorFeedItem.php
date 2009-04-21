@@ -102,11 +102,17 @@ class AggregatorFeedItem extends B_Model
             {
                 $this->item_md5 = md5($data['item_link']);
             }
-
-            if($this->item_md5 == null)
+        }
+        if($this->item_md5 == null)
+        {
+            if(array_key_exists('item_title', $data) && strlen($data['item_title']) > 0)
             {
-                $item_md5 = md5(L_Utility::randomString(8));
+                $this->item_md5 = md5($data['item_title']);
             }
+        }
+        if($this->item_md5 == null)
+        {
+            $item_md5 = md5(L_Utility::randomString(8));
         }
 
         parent::populate($data);
@@ -171,6 +177,19 @@ class AggregatorFeedItem extends B_Model
     }
 
     /**
+     * Find AggregatorFeedItem by primary key
+     *
+     * @param   integer $feed_id    AggregatorFeed ID
+     * @param   string  $md5
+     *
+     * @return  AggregatorFeedItem|null 
+     */
+    public static function findByItemMD5($feed_id, $md5)
+    {
+        return current(self::find(array('aggregator_feed_id' => $feed_id, 'item_md5' => $md5)));
+    }
+
+    /**
      * Find AggregatorFeedItem by Feed
      *
      * @param   integer $feed       AggregatorFeed ID
@@ -191,7 +210,7 @@ class AggregatorFeedItem extends B_Model
     {
         return self::find(
             array('aggregator_feed_id' => $feed),
-            array('created_at DESC'),
+            array('item_date DESC', 'created_at DESC'),
             $limit,
             $offset
         );
@@ -199,7 +218,7 @@ class AggregatorFeedItem extends B_Model
 
     protected static function _findByFeed_Assoc($feed, $limit=25, $offset=0)
     {
-        $_s = "SELECT item_md5 AS item, item_date AS date, item_link AS link, item_title AS title, item_author as author, item_content AS content FROM " . self::$table_name . " WHERE aggregator_feed_id = ? ORDER BY created_at DESC";
+        $_s = "SELECT item_md5 AS item, item_date AS date, item_link AS link, item_title AS title, item_author as author, item_content AS content FROM " . self::$table_name . " WHERE aggregator_feed_id = ? ORDER BY item_date DESC, created_at DESC";
 
         if(($limit = intval($limit)) > 0)
         {
@@ -215,6 +234,25 @@ class AggregatorFeedItem extends B_Model
     }
 
     /**
+     * Get last item time
+     *
+     * @param   integer $feed_id    AggregatorFeed ID
+     *
+     * @return  integer
+     */
+    public static function getLastItemTime($feed_id)
+    {
+        $sql = "SELECT UNIX_TIMESTAMP(item_date) AS last_item_time " .
+               "FROM " . self::$table_name . " " .
+               "WHERE aggregator_feed_id = ? " .
+               "ORDER BY item_date DESC, created_at DESC LIMIT 1";
+
+        $result = current(self::select($sql, array($feed_id)));
+
+        return is_object($result) ? $result->last_item_time : 0;
+    }
+
+    /**
      * Insert feed item (raw)
      *
      * @param   AggregatorFeed  $feed
@@ -225,19 +263,30 @@ class AggregatorFeedItem extends B_Model
     {
         self::transaction();
 
-        $last_item_time = $feed->getLastItemTime();
+        $last_item_time = self::getLastItemTime($feed->aggregator_feed_id);
         $inserted = 0;
 
         foreach($data as $entry)
         {
-#            B_Log::write(date("Y-m-d H:i:s", $entry['item_date']) . ", " . 
-#                         date("Y-m-d H:i:s", $last_item_time));
+            B_Log::write(date("Y-m-d H:i:s", $entry['item_date']) . "\t" .
+                                             $entry['item_date'] . "\t" . 
+                         date("Y-m-d H:i:s", $last_item_time) . "\t" .
+                                             $last_item_time . "\t" . 
+                                             $entry['item_title']);
 
-            if($entry['item_date'] > $last_item_time) // avoid repeated items
+            if($entry['item_date'] > $last_item_time) // only new items based on item date
             {
                 $item = new self();
                 $item->aggregator_feed_id = $feed->aggregator_feed_id;
                 $item->populate($entry);
+
+                // check item md5 (replace existing item)
+
+                if(is_object($_i = self::findByItemMD5(
+                    $feed->aggregator_feed_id, $item->item_md5)))
+                {
+                    $item->setPrimaryKey($_i->getPrimaryKey());
+                }
 
                 try
                 {

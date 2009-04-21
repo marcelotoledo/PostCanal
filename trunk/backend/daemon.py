@@ -16,11 +16,9 @@
 
 VERSION = "1.0.0"
 
-
 import sys, os, time, logging, xmlrpclib
 
-TIME_SLEEP = 1
-
+TIME_SLEEP = 5
 
 class Daemon:
     def __init__(self, config_path=None):
@@ -52,7 +50,7 @@ class Daemon:
 
             logging.info("getting feed update returned with status (%s) and (%d) entries" % (status, total_entries))
             inserted = self.client.feed_update_post({'token': self.token, 'id': id, 'data': dump})
-            logging.info("posting feed with id (%d) updated successfully with (%d) rows inserted" % (id, inserted))
+            logging.info("posting feed with id (%d) updated successfully with (%d) updated items" % (id, inserted))
         else:
             logging.info("no feed to update")
 
@@ -70,7 +68,6 @@ def start(argv):
     while True:
         time.sleep(TIME_SLEEP)
         daemon.feed_update()
-        sys.exit(-1)
 
 def usage(argv):
     print 'Blotomate Daemon %s - Daemon system for blotomate.com' % VERSION

@@ -25,7 +25,7 @@ class AggregatorFeed extends B_Model
 		'aggregator_feed_id' => array ('type' => 'integer','size' => 0,'required' => false),
 		'feed_md5' => array ('type' => 'string','size' => 32,'required' => true),
 		'feed_url' => array ('type' => 'string','size' => 0,'required' => true),
-		'feed_link' => array ('type' => 'string','size' => 0,'required' => true),
+		'feed_link' => array ('type' => 'string','size' => 0,'required' => false),
 		'feed_title' => array ('type' => 'string','size' => 100,'required' => true),
 		'feed_description' => array ('type' => 'string','size' => 0,'required' => true),
 		'feed_modified' => array ('type' => 'string','size' => 100,'required' => false),
@@ -115,23 +115,6 @@ class AggregatorFeed extends B_Model
         $this->updated_at = time(); // required together with update_time
 
         return parent::save();
-    }
-
-    /**
-     * Get last item time
-     *
-     * @return  integer
-     */
-    public function getLastItemTime()
-    {
-        $sql = "SELECT UNIX_TIMESTAMP(item_date) AS last_item_time " .
-               "FROM model_aggregator_feed_item " .
-               "WHERE aggregator_feed_id = ? " .
-               "ORDER BY item_date DESC LIMIT 1";
-
-        $result = current(self::select($sql, array($this->aggregator_feed_id)));
-
-        return is_object($result) ? $result->last_item_time : 0;
     }
 
     /**
@@ -360,9 +343,21 @@ class AggregatorFeed extends B_Model
             $feeds = array();
             $client = new L_WebService();
 
-            foreach($client->feed_discover(array('url' => $url)) as $data)
+            /* if discover return more than one feed
+             * do not insert on database, but give it back to user */
+
+            $discover = $client->feed_discover(array('url' => $url));
+
+            if(count($discover) == 1)
             {
-                $feeds[] = self::rawInsert($data);
+                if(is_object(($feed = self::rawInsert(current($discover)))))
+                {
+                    $feeds[] = $feed->dump(array('feed_url', 'feed_title', 'feed_description'));
+                }
+            }
+            else
+            {
+                $feeds = $discover;
             }
         }
 
