@@ -1,20 +1,20 @@
 <?php
 
 /**
- * UserBlogFeed model class
+ * QueueItem model class
  * 
  * @category    Blotomate
  * @package     Model
  * @author      Rafael Castilho <rafael@castilho.biz>
  */
-class UserBlogFeed extends B_Model
+class QueueItem extends B_Model
 {
     /**
      * Table name
      *
      * @var string
      */
-    protected static $table_name = 'model_user_blog_feed';
+    protected static $table_name = 'model_user_blog_queue_item';
 
     /**
      * Table structure
@@ -22,18 +22,14 @@ class UserBlogFeed extends B_Model
      * @var array
      */
     protected static $table_structure = array (
-		'user_blog_feed_id' => array ('type' => 'integer','size' => 0,'required' => false),
+		'user_blog_queue_item_id' => array ('type' => 'integer','size' => 0, 'required' => false),
+		'aggregator_feed_item_id' => array ('type' => 'integer','size' => 0,'required' => true),
 		'user_blog_id' => array ('type' => 'integer','size' => 0,'required' => true),
-		'aggregator_feed_id' => array ('type' => 'integer','size' => 0,'required' => true),
 		'hash' => array ('type' => 'string','size' => 8,'required' => true),
-		'feed_title' => array ('type' => 'string','size' => 100,'required' => true),
-		'feed_description' => array ('type' => 'string','size' => 0,'required' => true),
-		'ordering' => array ('type' => 'integer','size' => 0,'required' => false),
+		'item_title' => array ('type' => 'string','size' => 0,'required' => true),
+		'item_content' => array ('type' => 'string','size' => 0,'required' => true),
 		'created_at' => array ('type' => 'date','size' => 0,'required' => false),
-		'updated_at' => array ('type' => 'date','size' => 0,'required' => false),
-		'enabled' => array ('type' => 'boolean','size' => 0,'required' => false));
-
-
+		'updated_at' => array ('type' => 'date','size' => 0,'required' => false));
 
     /**
      * Sequence name
@@ -47,7 +43,7 @@ class UserBlogFeed extends B_Model
      *
      * @var string
      */
-    protected static $primary_key_name = 'user_blog_feed_id';
+    protected static $primary_key_name = 'user_blog_queue_item_id';
 
 
     /**
@@ -108,7 +104,7 @@ class UserBlogFeed extends B_Model
     }
 
     /**
-     * Find UserBlogFeed with an encapsulated SELECT command
+     * Find QueueItem with an encapsulated SELECT command
      *
      * @param   array   $conditions WHERE parameters
      * @param   array   $order      ORDER parameters
@@ -130,7 +126,7 @@ class UserBlogFeed extends B_Model
     }
 
     /**
-     * Get UserBlogFeed with SQL
+     * Get QueueItem with SQL
      *
      * @param   string  $sql    SQL query
      * @param   array   $data   values array
@@ -154,11 +150,11 @@ class UserBlogFeed extends B_Model
     }
 
     /**
-     * Find UserBlogFeed by primary key
+     * Find QueueItem by primary key
      *
      * @param   integer $id    Primary key value
      *
-     * @return  UserBlogFeed|null 
+     * @return  QueueItem|null 
      */
     public static function findByPrimaryKey($id)
     {
@@ -166,60 +162,66 @@ class UserBlogFeed extends B_Model
     }
 
     /**
-     * Find by User Blog (and Aggregator Feed)
+     * Copy item to queue from feed item
      *
-     * @param   integer     $id         UserBlog ID
-     * @param   integer     $feed_id    AggregatorFeed ID
-     * @param   boolean     $assoc
+     * @param   string  $feed_item_md5
+     * @param   string  $blog_hash
+     * @param   string  $feed_hash
+     * @param   string  $user_profile_id
      *
-     * @return  UserBlogFeed|array|null 
-     */
-    public static function findByBlog($id, $feed_id=null, $assoc=false)
+     * @return  QueueItem
+     */ 
+    public static function newFromFeedItem($feed_item_md5, 
+                                           $blog_hash, 
+                                           $feed_hash, 
+                                           $user_profile_id)
     {
-        return $assoc ? 
-            self::_findByBlog_Assoc($id) :
-            self::_findByBlog_Obj($id, $feed_id);
-    }
+        /* get blog */
 
-    protected static function _findByBlog_Obj($id, $feed_id=null)
-    {
-        $params = array();
-        $params['user_blog_id'] = $id;
-        if($feed_id != null) $params['aggregator_feed_id'] = $feed_id;
-        return self::find($params, array('ordering ASC, user_blog_id ASC'));
-    }
+        if(!is_object(($blog = UserBlog::findByHash($user_profile_id, $blog_hash))))
+        {
+            $_m = "invalid user blog from hash (" . $blog_hash . ")";
+            $_i = $user_profile_id;                          
+            $_d = array('method' => __METHOD__, 'user_profile_id' => $_i);
+            throw new B_Exception($_m, E_USER_WARNING, $_d);
+        }
 
-    protected static function _findByBlog_Assoc($id)
-    {
-        $_s = "SELECT hash AS feed, feed_title AS title, feed_description AS description, ordering FROM " . self::$table_name . " WHERE user_blog_id = ? ORDER BY ordering ASC, user_blog_id ASC";
+        $blog_id = $blog->user_blog_id;
 
-        return self::select($_s, array($id), PDO::FETCH_ASSOC);
-    }
+        /* get feed */
 
-    /**
-     * Find by Aggregator Feed
-     *
-     * @param   integer     $blog_id    UserBlog ID
-     * @param   integer     $id         AggregatorFeed ID
-     *
-     * @return  UserBlogFeed|null 
-     */
-    public static function findByFeed($blog_id, $id)
-    {
-        return current(self::findByBlog($blog_id, $id));
-    }
+        if(!is_object(($feed = UserBlogFeed::findByHash($blog_id, $feed_hash))))
+        {
+            $_m = "invalid user blog feed from blog id (" . $blog_id . ") " .
+                  "and hash (" . $feed_hash . ")";
+            $_i = $user_profile_id;                          
+            $_d = array('method' => __METHOD__, 'user_profile_id' => $_i);
+            throw new B_Exception($_m, E_USER_WARNING, $_d);
+        }
 
-    /**
-     * Find Feed from Hash
-     *
-     * @param   integer $user_blog_id
-     * @param   string  $hash
-     * @return  UserBlog|null
-     */
-    public static function findByHash($user_blog_id, $hash)
-    {
-        return current(self::find(array(
-            'user_blog_id' => $user_blog_id,
-            'hash' => $hash)));
+        $feed_id = $feed->aggregator_feed_id;
+
+        /* get feed item */
+
+        if(!is_object(($feed_item = AggregatorFeedItem::findByItemMD5($feed_id, $feed_item_md5))))
+        {
+            $_m = "invalid aggregator feed item from aggregator feed id (" . $feed_id . ") " .
+                  "and md5 (" . $feed_item_md5 . ")";
+            $_i = $user_profile_id;                          
+            $_d = array('method' => __METHOD__, 'user_profile_id' => $_i);
+            throw new B_Exception($_m, E_USER_WARNING, $_d);
+        }
+
+        $feed_item_id = $feed_item->aggregator_feed_item_id;
+
+        /* new queue item */
+
+        $queue_item = new QueueItem();
+        $queue_item->aggregator_feed_item_id = $feed_item_id;
+        $queue_item->user_blog_id = $blog_id;
+        $queue_item->populate($feed_item->dump());
+        $queue_item->save();
+
+        return $queue_item;
     }
 }

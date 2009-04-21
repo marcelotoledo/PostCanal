@@ -88,6 +88,21 @@ $(document).ready(function()
 
     maxcontainers();
 
+    /* add droppable to queue content area */
+
+    function queuedroppable()
+    {
+        _c = $("#queuecontainer > div.containercontentarea");
+        _c.droppable({
+            drop: function(event, ui) {
+                add_to_queue(ui.helper.attr('item'));
+            },
+            scope: 'queue'
+        });
+    }
+
+    queuedroppable();
+
     /* set default blog */
 
     <?php if(count($this->blogs) == 1) : ?>
@@ -278,13 +293,23 @@ $(document).ready(function()
 
         news_content_area.scrollTop(0);
 
-        /* this trigger must be created after populate, otherwise
+        /* these triggers must be created after populate, otherwise they
          * will not work (because news list are created after document
          * loading */
 
         $("div.newsitem").click(function()
         {
             set_news_item($(this).attr('item'));
+        });
+
+        $("div.newsitem").draggable({
+            appendTo: '#queuecontainer > div.containercontentarea',
+            axis: 'y',
+            containment: 'window',
+            helper: 'clone',
+            opacity: 0.5,
+            scope: 'queue',
+            scroll: false
         });
     }
 
@@ -504,6 +529,47 @@ $(document).ready(function()
         current_feed = null;
         feedaddform_hide();
         queue_list();
+    }
+
+    /* add feed news to queue */
+
+    function add_to_queue(item)
+    {
+        $.ajax
+        ({
+            type: "POST",
+            url: "<?php B_Helper::url('queue', 'add') ?>",
+            dataType: "xml",
+            data: { item: item, blog: current_blog, feed: current_feed },
+            beforeSend: function()
+            {
+                set_active_request(true);
+            },
+            complete: function()
+            {
+                set_active_request(false);
+            },
+            success: function (xml) 
+            { 
+                /*
+                d = $(xml).find('data');
+                f = d.find('feed').text();
+
+                if(f.length > 0)
+                {
+                    $.b_dialog({ selector: "#feedaddform" });
+                    $.b_dialog_hide();
+                    feed_list();
+                    current_feed = f;
+                }
+                else
+                {
+                    err();
+                }
+                */
+            }, 
+            error: function () { err(); } 
+        });
     }
 
     /* TRIGGERS */

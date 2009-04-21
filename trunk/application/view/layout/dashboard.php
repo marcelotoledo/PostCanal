@@ -4,6 +4,8 @@
 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
 <title>Blotomate</title>
 <script type="text/javascript" src="/jquery/jquery-1.3.2.min.js"></script>
+<script type="text/javascript" src="/jquery/ui/js/jquery-ui-1.7.1.custom.min.js"></script>
+<link rel="stylesheet" href="/jquery/ui/css/smoothness/jquery-ui-1.7.1.custom.css" type="text/css" media="screen">
 <?php B_Helper::script("application.js") ?>
 <?php B_Helper::style("application.css") ?>
 <?php B_Helper::style("dashboard.css") ?>

@@ -80,7 +80,13 @@ foreach(B_Model::select("EXPLAIN " . $_table) as $r)
         ((int) preg_replace("/^.+\(([0-9]+)\)+.*$/", "\\1", $r->Type)) : 0;
 
     if($r->Field != $_pk)
+    {
         $f[B_Model::STRUCTURE_REQUIRED] = ($r->Null == "NO" && strlen($r->Default) == 0);
+    }
+    else
+    {
+        $f[B_Model::STRUCTURE_REQUIRED] = false;
+    }
 
     $structure[$r->Field] = $f;
 }

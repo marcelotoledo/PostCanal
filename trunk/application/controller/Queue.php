@@ -25,4 +25,32 @@ class C_Queue extends B_Controller
     {
         $this->response()->setXML(true);
     }
+
+    /**
+     * Add item to queue
+     *
+     * @return void
+     */
+    public function A_add()
+    {
+        $this->response()->setXML(true);
+
+        $feed_item_md5 = $this->request()->item;
+        $blog_hash = $this->request()->blog;
+        $feed_hash = $this->request()->feed;
+        $user_profile_id = $this->session()->user_profile_id;
+
+        $queue_item = QueueItem::newFromFeedItem($feed_item_md5,
+                                                 $blog_hash,
+                                                 $feed_hash,
+                                                 $user_profile_id);
+
+        $this->view->result = array(
+            'blog' => $blog_hash,
+            'feed' => $feed_hash,
+            'item' => $queue_item->hash,
+            'item_title' => $queue_item->item_title,
+            'item_content' => $queue_item->item_content
+        );
+    }
 }
