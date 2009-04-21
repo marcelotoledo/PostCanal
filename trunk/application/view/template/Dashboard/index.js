@@ -362,7 +362,8 @@ $(document).ready(function()
     {
         if((url = $("input[name='feedaddoption']:checked").attr('url')) != undefined)
         {
-            feed_add(url);
+            //feed_add(url);
+            feed_discover(url);
         }
         else 
         {
@@ -443,7 +444,7 @@ $(document).ready(function()
 
                 if(r.length == 1)
                 {
-                    feed_add(r.find('url').text());
+                    feed_add(r.find('feed_url').text());
                 }
                 else if(r.length >  1)
                 {

@@ -339,7 +339,17 @@ class AggregatorFeed extends B_Model
      */
     public static function discover($url)
     {
-        if(count(($feeds = self::findByURL($url))) == 0)
+        if(($_i = count(($feeds = self::findByURL($url)))) > 0)
+        {
+            for($i=0;$i<$_i;$i++)
+            {
+                if(is_object($feeds[$i]))
+                {
+                    $feeds[$i] = $feeds[$i]->dump(array('feed_url', 'feed_title', 'feed_description'));
+                }
+            }
+        }
+        else
         {
             /* request feeds to webservice */
 
