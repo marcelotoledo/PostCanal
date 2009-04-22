@@ -134,5 +134,6 @@ HORAS TRABALHADAS: 10h
 - Correcao de bug com timezone na atualizacao de feed
 - Bugfixes
 - Inclusao de metodo para inclusao de item no Queue
+- Listagem de items no Queue
 
-HORAS TRABALHADAS: 6h
+HORAS TRABALHADAS: 8h

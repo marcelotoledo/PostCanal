@@ -27,7 +27,6 @@
 <div class="dashboardcontainers" id="queuecontainer">
 <h2><?php echo $this->translation()->application_queue ?></h2>
 <div class="containercontentarea">
-queue container
 </div>
 <div class="containerfooter">&nbsp;</div>
 </div>

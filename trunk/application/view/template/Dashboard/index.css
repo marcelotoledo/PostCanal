@@ -82,6 +82,24 @@ body
 {
     background-color: snow;
 }
+#queuecontainer .queueitem
+{
+    padding: 5px;
+    border-bottom: 1px solid silver;
+    cursor: pointer;
+    cursor: hand;
+}
+#queuecontainer .queuebody
+{
+    padding: 25px;
+    background-color: lightgray;
+    border: 1px solid silver;
+}
+#queuecontainer .queueitem-selected
+{
+    background-color: #FFD700;
+    font-weight: bold;
+}
 
 /* dialogs */
 

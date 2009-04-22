@@ -162,6 +162,28 @@ class QueueItem extends B_Model
     }
 
     /**
+     * Find by user blog
+     */ 
+    public static function findByUserBlog($user_profile_id, $blog_hash)
+    {
+        /* get blog */
+
+        if(!is_object(($blog = UserBlog::findByHash($user_profile_id, $blog_hash))))
+        {
+            $_m = "invalid user blog from hash (" . $blog_hash . ")";
+            $_i = $user_profile_id;                          
+            $_d = array('method' => __METHOD__, 'user_profile_id' => $_i);
+            throw new B_Exception($_m, E_USER_WARNING, $_d);
+        }
+
+        $blog_id = $blog->user_blog_id;
+
+        return self::find(array('user_blog_id' => $blog_id),
+                          array('created_at DESC'));
+    }
+
+
+    /**
      * Copy item to queue from feed item
      *
      * @param   string  $feed_item_md5

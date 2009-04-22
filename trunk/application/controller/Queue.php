@@ -24,6 +24,20 @@ class C_Queue extends B_Controller
     public function A_list()
     {
         $this->response()->setXML(true);
+
+        $blog_hash = $this->request()->blog;
+        $user_profile_id = $this->session()->user_profile_id;
+
+        $queue = array();
+
+        foreach(QueueItem::findByUserBlog($user_profile_id, $blog_hash) as $_i)
+        {
+            $queue[] = array('item' => $_i->hash,
+                             'item_title' => $_i->item_title,
+                             'item_content' => $_i->item_content);
+        }
+
+        $this->view()->queue = $queue;
     }
 
     /**
