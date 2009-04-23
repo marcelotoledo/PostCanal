@@ -107,7 +107,7 @@ $(document).ready(function()
 
     <?php if(count($this->blogs) == 1) : ?>
     current_blog = $("#blogcur").val();
-    <?php elseif(count($this->blog) > 1) : ?>
+    <?php elseif(count($this->blogs) > 1) : ?>
     current_blog = $("select[name='bloglst'] > option:selected").val();
     <?php endif ?>
 
@@ -545,11 +545,6 @@ $(document).ready(function()
                 queue_populate_item($(this));
             });
         }
-
-        $("div.queueitem").click(function()
-        {
-            set_queue_item($(this).attr('item'));
-        });
     }
 
     function queue_populate_item(item)
@@ -590,7 +585,7 @@ $(document).ready(function()
                 _i.addClass('queueitem-selected');
                 $("div.queuebody[item='" + item + "']").show();
             }
-            //queue_content_area.scrollTop(queue_content_area.scrollTop() + _i.offset().top - queue_content_area.offset().top);
+            queue_content_area.scrollTop(queue_content_area.scrollTop() + _i.offset().top - queue_content_area.offset().top);
         }
     }
 
@@ -617,6 +612,7 @@ $(document).ready(function()
             }, 
             error: function () { err(); } 
         });
+        queue_content_area.scrollTop(0);
     }
 
     /* TRIGGERS */
