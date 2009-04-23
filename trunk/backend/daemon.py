@@ -54,6 +54,11 @@ class Daemon:
         else:
             logging.info("no feed to update")
 
+    def blog_publish(self):
+        item = self.client.queue_publication_queue({'token': self.token})
+
+        # TODO...
+
 def start(argv):
     cwd = os.getcwd()
     config_path = cwd.replace("backend", "") + "config/environment.xml"

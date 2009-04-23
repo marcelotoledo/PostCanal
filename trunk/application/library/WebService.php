@@ -132,6 +132,9 @@ class L_WebService
 
     /**
      * Get a feed that needs update
+     *
+     * @param   array   $args
+     * @return  array
      */
     public function feed_update_get($args)
     {
@@ -148,6 +151,12 @@ class L_WebService
         return $result;
     }
 
+    /**
+     * Post a updated feed
+     *
+     * @param   array   $args
+     * @return  array
+     */
     public function feed_update_post($args)
     {
         if($this->validate_args($args, array('id', 'data')) == false) return false;
@@ -167,5 +176,31 @@ class L_WebService
         }
 
         return $updated;
+    }
+
+    /**
+     * Get a queue item that needs publication
+     *
+     * @param   array   $args
+     * @return  array
+     */
+    public function queue_publication_get($args)
+    {
+        if($this->validate_args($args, array()) == false) return null;
+
+        return QueueItem::findNeedPublish();
+    }
+
+    /**
+     * Result for a published queue item
+     *
+     * @param   array   $args
+     * @return  array
+     */
+    public function queue_publication_result($args)
+    {
+        if($this->validate_args($args, array('id', 'data')) == false) return false;
+
+        /* TODO */
     }
 }

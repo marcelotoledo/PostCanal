@@ -182,6 +182,32 @@ class QueueItem extends B_Model
                           array('created_at DESC'));
     }
 
+    /**
+     * Get queue item that need publication
+     * 
+     * @return  array
+     */
+    public static function findNeedPublish()
+    {
+        $sql = "SELECT 
+                    a.user_blog_queue_item_id as id, 
+                    a.item_title AS item_title,
+                    a.item_content AS item_content,
+                    b.manager_url as manager_url,
+                    b.manager_username as manager_username,
+                    b.manager_password as manager_password,
+                    c.type_name as blog_type,
+                    c.version_name as blog_version 
+                FROM 
+                    model_user_blog_queue_item AS a 
+                LEFT JOIN 
+                    model_user_blog AS b ON (a.user_blog_id = b.user_blog_id) 
+                LEFT JOIN 
+                    model_blog_type AS c ON (b.blog_type_id = c.blog_type_id) 
+                LIMIT 1"; /* < todo: order by ... publish flags ... */
+
+        return array();
+    }
 
     /**
      * Copy item to queue from feed item
