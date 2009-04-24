@@ -73,3 +73,5 @@ INSERT INTO base_translation VALUES (NULL, "dashboard/index", "us_EN", "feed_add
 INSERT INTO base_translation VALUES (NULL, "dashboard/index", "us_EN", "feed_not_found", "Feed not found");
 INSERT INTO base_translation VALUES (NULL, "dashboard/index", "us_EN", "view_feed_item", "view");
 INSERT INTO base_translation VALUES (NULL, "dashboard/index", "us_EN", "publish_queue_item", "publish");
+INSERT INTO base_translation VALUES (NULL, "dashboard/index", "us_EN", "edit_queue_item", "edit");
+INSERT INTO base_translation VALUES (NULL, "dashboard/index", "us_EN", "delete_queue_item", "delete");

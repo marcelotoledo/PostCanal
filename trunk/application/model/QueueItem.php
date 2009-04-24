@@ -272,4 +272,35 @@ class QueueItem extends B_Model
 
         return $queue_item;
     }
+
+    /**
+     * Set publish mode on to queue item
+     *
+     * @param   string  $feed_item_md5
+     * @param   string  $blog_hash
+     * @param   string  $feed_hash
+     * @param   string  $user_profile_id
+     *
+     * @return  QueueItem
+     */ 
+    public static function publishItem($item_hash, 
+                                       $blog_hash,
+                                       $user_profile_id)
+    {
+        $result = false;
+
+        /* get blog */
+
+        if(!is_object(($blog = UserBlog::findByHash($user_profile_id, $blog_hash))))
+        {
+            $_m = "invalid user blog from hash (" . $blog_hash . ")";
+            $_i = $user_profile_id;                          
+            $_d = array('method' => __METHOD__, 'user_profile_id' => $_i);
+            throw new B_Exception($_m, E_USER_WARNING, $_d);
+        }
+
+        $blog_id = $blog->user_blog_id;
+
+        return $result;
+    }
 }

@@ -33,7 +33,11 @@
 <div class="containercontentarea">
 </div>
 <div class="containerfooter">&nbsp;
-<a id="queuepublnk" item="" style="display:none"><?php echo $this->translation()->publish_queue_item ?></a>
+<span id="queuelnks" style="display:none">
+<a id="queuepublnk" item=""><?php echo $this->translation()->publish_queue_item ?></a> |
+<a id="queueeditlnk" item=""><?php echo $this->translation()->edit_queue_item ?></a> | 
+<a id="queuedellnk" item=""><?php echo $this->translation()->delete_queue_item ?></a>
+</div>
 </div>
 </div>
 

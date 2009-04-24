@@ -67,4 +67,22 @@ class C_Queue extends B_Controller
             'item_content' => $queue_item->item_content
         );
     }
+
+    /**
+     * Publish queue item
+     *
+     * @return void
+     */
+    public function A_publish()
+    {
+        $this->response()->setXML(true);
+
+        $item_hash = $this->request()->item;
+        $blog_hash = $this->request()->blog;
+        $user_profile_id = $this->session()->user_profile_id;
+
+        $this->view->result = QueueItem::publishItem($item_hash,
+                                                     $blog_hash,
+                                                     $user_profile_id);
+    }
 }

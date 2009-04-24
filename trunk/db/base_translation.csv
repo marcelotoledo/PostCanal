@@ -73,3 +73,5 @@
 "dashboard/index","us_EN","feed_not_found","Feed not found"
 "dashboard/index","us_EN","view_feed_item","view"
 "dashboard/index","us_EN","publish_queue_item","publish"
+"dashboard/index","us_EN","edit_queue_item","edit"
+"dashboard/index","us_EN","delete_queue_item","delete"

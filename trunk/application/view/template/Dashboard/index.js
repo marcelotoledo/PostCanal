@@ -580,7 +580,8 @@ $(document).ready(function()
             {
                 _i.removeClass('queueitem-selected');
                 $("div.queuebody[item='" + item + "']").hide();
-                $("a#queuepublnk").attr('item', item).show();
+                $("span#queuelnks > a").attr('item', "");
+                $("span#queuelnks").hide();
             }
             else
             {
@@ -588,7 +589,8 @@ $(document).ready(function()
                 $("div.queuebody").hide();
                 _i.addClass('queueitem-selected');
                 $("div.queuebody[item='" + item + "']").show();
-                $("a#queuepublnk").attr('item', item).show();
+                $("span#queuelnks > a").attr('item', item);
+                $("span#queuelnks").show();
             }
             queue_content_area.scrollTop(queue_content_area.scrollTop() + _i.offset().top - queue_content_area.offset().top);
         }
@@ -622,7 +624,27 @@ $(document).ready(function()
 
     function publish_queue_item(item)
     {
-        alert(item);
+        $.ajax
+        ({
+            type: "POST",
+            url: "<?php B_Helper::url('queue', 'publish') ?>",
+            dataType: "xml",
+            data: { item: item, blog: current_blog },
+            beforeSend: function()
+            {
+                set_active_request(true);
+            },
+            complete: function()
+            {
+                set_active_request(false);
+            },
+            success: function (xml) 
+            { 
+                d = $(xml).find('data');
+                alert(d.find('result').text());
+            }, 
+            error: function () { err(); } 
+        });
     }
 
     /* TRIGGERS */
