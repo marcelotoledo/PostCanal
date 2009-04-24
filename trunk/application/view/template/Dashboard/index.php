@@ -14,21 +14,27 @@
 <h2><?php echo $this->translation()->application_feeds ?></h2>
 <div class="containercontentarea">
 </div>
-<div class="containerfooter"><a id="feedaddlnk"><?php echo $this->translation()->feed_add ?></a></div>
+<div class="containerfooter">&nbsp;
+<a id="feedaddlnk"><?php echo $this->translation()->feed_add ?></a>
+</div>
 </div>
 
 <div class="dashboardcontainers" id="newscontainer">
 <h2><?php echo $this->translation()->application_feed_items ?></h2>
 <div class="containercontentarea">
 </div>
-<div class="containerfooter">&nbsp;</div>
+<div class="containerfooter">&nbsp;
+<a id="feedviewlnk" item="" style="display:none"><?php echo $this->translation()->view_feed_item ?></a>
+</div>
 </div>
 
 <div class="dashboardcontainers" id="queuecontainer">
 <h2><?php echo $this->translation()->application_queue ?></h2>
 <div class="containercontentarea">
 </div>
-<div class="containerfooter">&nbsp;</div>
+<div class="containerfooter">&nbsp;
+<a id="queuepublnk" item="" style="display:none"><?php echo $this->translation()->publish_queue_item ?></a>
+</div>
 </div>
 
 <div id="feedaddform" class="b-dialog" style="display:none">

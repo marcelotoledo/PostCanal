@@ -271,20 +271,15 @@ $(document).ready(function()
                 news_author = $(this).find('author').text();
                 news_content = $(this).find('content').text();
 
-                if (news_content.match(/\w+/,"") == false)
+                if(news_content.match(/^[\s]*$/,""))
                 {
-                    news_content = "<br/>&nbsp;<br/>";
+                    news_content = "<i>no content</i>";
                 }
 
-                news_content += "<a href=\"" + news_link + 
-                                "\" target=\"_blank\">" + news_link + 
-                                "</a>";
-
-                output = "<div class=\"newsitem\" item=\"" + news_item + 
+                output = "<div class=\"newsitem\" item=\"" + news_item + "\" link=\"" + news_link +
                          "\">" + news_title + 
-                         " <i>on " + news_date + 
-                         " by " + news_author + 
-                         "</i></div><div class=\"newsbody\" item=\"" + news_item + 
+                         " [" + news_date + "] " +
+                         "</div><div class=\"newsbody\" item=\"" + news_item + 
                          "\" style=\"display:none\">" + news_content + 
                          "</div>";
 
@@ -324,6 +319,7 @@ $(document).ready(function()
             {
                 _i.removeClass('newsitem-selected');
                 $("div.newsbody[item='" + item + "']").hide();
+                $("a#feedviewlnk").attr('item', "").hide();
             }
             else
             {
@@ -331,9 +327,16 @@ $(document).ready(function()
                 $("div.newsbody").hide();
                 _i.addClass('newsitem-selected');
                 $("div.newsbody[item='" + item + "']").show();
+                $("a#feedviewlnk").attr('item', item).show();
             }
             news_content_area.scrollTop(news_content_area.scrollTop() + _i.offset().top - news_content_area.offset().top);
         }
+    }
+
+    function view_news_item(item)
+    {
+        url = $("div.newsitem[item='" + item + "']").attr('link');
+        window.open(url);
     }
 
     function feed_news()
@@ -577,6 +580,7 @@ $(document).ready(function()
             {
                 _i.removeClass('queueitem-selected');
                 $("div.queuebody[item='" + item + "']").hide();
+                $("a#queuepublnk").attr('item', item).show();
             }
             else
             {
@@ -584,6 +588,7 @@ $(document).ready(function()
                 $("div.queuebody").hide();
                 _i.addClass('queueitem-selected');
                 $("div.queuebody[item='" + item + "']").show();
+                $("a#queuepublnk").attr('item', item).show();
             }
             queue_content_area.scrollTop(queue_content_area.scrollTop() + _i.offset().top - queue_content_area.offset().top);
         }
@@ -613,6 +618,11 @@ $(document).ready(function()
             error: function () { err(); } 
         });
         queue_content_area.scrollTop(0);
+    }
+
+    function publish_queue_item(item)
+    {
+        alert(item);
     }
 
     /* TRIGGERS */
@@ -648,5 +658,15 @@ $(document).ready(function()
         {
             $("input[name='feedaddsubmit']").click();
         }
+    });
+
+    $("#feedviewlnk").click(function()
+    {
+        view_news_item($(this).attr('item'));
+    });
+
+    $("#queuepublnk").click(function()
+    {
+        publish_queue_item($(this).attr('item'));
     });
 });

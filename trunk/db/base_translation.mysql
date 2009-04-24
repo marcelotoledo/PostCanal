@@ -67,7 +67,9 @@ INSERT INTO base_translation VALUES (NULL, "blog/add", "us_EN", "blog_password",
 INSERT INTO base_translation VALUES (NULL, "blog/add", "us_EN", "blog_login_check", "check");
 INSERT INTO base_translation VALUES (NULL, "dashboard/index", "us_EN", "no_registered_blog", "No registered <b>blog</b>");
 INSERT INTO base_translation VALUES (NULL, "dashboard/index", "us_EN", "new_blog_instruction", "to add a new blog, or use the item \"blogs\" in menu");
-INSERT INTO base_translation VALUES (NULL, "dashboard/index", "us_EN", "feed_add", "feed add");
+INSERT INTO base_translation VALUES (NULL, "dashboard/index", "us_EN", "feed_add", "add");
 INSERT INTO base_translation VALUES (NULL, "dashboard/index", "us_EN", "feed_add_form_title", "Feed add");
 INSERT INTO base_translation VALUES (NULL, "dashboard/index", "us_EN", "feed_add_url", "URL");
 INSERT INTO base_translation VALUES (NULL, "dashboard/index", "us_EN", "feed_not_found", "Feed not found");
+INSERT INTO base_translation VALUES (NULL, "dashboard/index", "us_EN", "view_feed_item", "view");
+INSERT INTO base_translation VALUES (NULL, "dashboard/index", "us_EN", "publish_queue_item", "publish");

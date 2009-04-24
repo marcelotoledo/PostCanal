@@ -35,7 +35,7 @@ body
     vertical-align: middle;
     padding-right: 5px;
     background-color: #FDF8F2;
-    border-top: 1px solid gainsboro;
+    border-top: 3px double gainsboro;
     color: dimgray;
     text-align: right;
 }
