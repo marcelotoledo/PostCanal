@@ -28,6 +28,9 @@ class QueueItem extends B_Model
 		'hash' => array ('type' => 'string','size' => 8,'required' => true),
 		'item_title' => array ('type' => 'string','size' => 0,'required' => true),
 		'item_content' => array ('type' => 'string','size' => 0,'required' => true),
+		'to_publish' => array ('type' => 'boolean','size' => 0,'required' => false),
+		'to_publish_date' => array ('type' => 'date','size' => 0,'required' => false),
+		'published' => array ('type' => 'boolean','size' => 0,'required' => false),
 		'created_at' => array ('type' => 'date','size' => 0,'required' => false),
 		'updated_at' => array ('type' => 'date','size' => 0,'required' => false));
 
@@ -204,9 +207,15 @@ class QueueItem extends B_Model
                     model_user_blog AS b ON (a.user_blog_id = b.user_blog_id) 
                 LEFT JOIN 
                     model_blog_type AS c ON (b.blog_type_id = c.blog_type_id) 
-                LIMIT 1"; /* < todo: order by ... publish flags ... */
+                WHERE
+                    a.to_publish = 1 AND
+                    a.to_publish_date < NOW() AND
+                    a.published = 0
+                ORDER BY
+                    a.updated_at ASC
+                LIMIT 1";
 
-        return array();
+        return current(self::select($sql, array(), PDO::FETCH_ASSOC));
     }
 
     /**
@@ -321,6 +330,7 @@ class QueueItem extends B_Model
         }
 
         $item->to_publish = true;
+        $item->to_publish_date = time(); // asap
         $item->save();
     }
 

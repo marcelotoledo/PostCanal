@@ -112,8 +112,17 @@ class L_WebService
         $this->xmlrpc = new Zend_XmlRpc_Client($url);
     }
 
-    /* SERVER METHODS */
+    /* SERVER METHODS 
+     *
+     * VERY IMPORTANT: Do not use docblocks here
+     * Zend_XmlRpc_Server use docblock to do introspection (UNECESSARY IN OUR CASE!)
+     * http://framework.zend.com/manual/en/zend.xmlrpc.server.html#zend.xmlrpc.server.conventions
+     *
+     */
 
+    /**
+     * Validate WebService args (token, etc.)
+     */
     protected function validate_args($args, $names=array())
     {
         $token_ok = (array_key_exists('token', $args) && $args['token'] == $this->token);
@@ -132,9 +141,6 @@ class L_WebService
 
     /**
      * Get a feed that needs update
-     *
-     * @param   array   $args
-     * @return  array
      */
     public function feed_update_get($args)
     {
@@ -153,9 +159,6 @@ class L_WebService
 
     /**
      * Post a updated feed
-     *
-     * @param   array   $args
-     * @return  array
      */
     public function feed_update_post($args)
     {
@@ -180,9 +183,6 @@ class L_WebService
 
     /**
      * Get a queue item that needs publication
-     *
-     * @param   array   $args
-     * @return  array
      */
     public function queue_publication_get($args)
     {
@@ -193,9 +193,6 @@ class L_WebService
 
     /**
      * Result for a published queue item
-     *
-     * @param   array   $args
-     * @return  array
      */
     public function queue_publication_result($args)
     {

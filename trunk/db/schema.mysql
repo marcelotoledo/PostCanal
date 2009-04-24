@@ -4,11 +4,11 @@ DROP TABLE IF EXISTS model_user_blog_feed CASCADE;
 DROP TABLE IF EXISTS model_user_blog_queue_config CASCADE;
 DROP TABLE IF EXISTS model_user_blog_queue_item CASCADE;
 DROP TABLE IF EXISTS model_user_blog CASCADE;
+DROP TABLE IF EXISTS model_user_blog_config CASCADE;
 DROP TABLE IF EXISTS model_user_profile CASCADE;
 DROP TABLE IF EXISTS model_aggregator_feed_item CASCADE;
 DROP TABLE IF EXISTS model_aggregator_feed_url CASCADE;
 DROP TABLE IF EXISTS model_aggregator_feed CASCADE;
-DROP TABLE IF EXISTS model_blog_type_configuration CASCADE;
 DROP TABLE IF EXISTS model_blog_type CASCADE;
 DROP TABLE IF EXISTS application_mailer_relay CASCADE;
 DROP TABLE IF EXISTS base_translation CASCADE;
@@ -85,19 +85,6 @@ CREATE TABLE model_blog_type
 ) ENGINE=InnoDB DEFAULT CHARSET='utf8';
 
 CREATE INDEX m_btp_idx ON model_blog_type (type_name, version_name);
-
-CREATE TABLE model_blog_type_configuration
-(
-    blog_type_configuration_id MEDIUMINT UNSIGNED NOT NULL AUTO_INCREMENT,
-    blog_type_id SMALLINT UNSIGNED NOT NULL,
-    name VARCHAR(50) NOT NULL,
-    value TEXT NOT NULL,
-    PRIMARY KEY (blog_type_configuration_id),
-    CONSTRAINT m_btc_m_mtp_fk FOREIGN KEY (blog_type_id) 
-        REFERENCES model_blog_type (blog_type_id) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET='utf8';
-
-CREATE INDEX m_btc_tpn_idx ON model_blog_type_configuration (blog_type_id, name);
 
 -- aggregator --
 
@@ -206,6 +193,19 @@ CREATE TABLE model_user_blog
 
 CREATE INDEX m_ubl_phs_idx ON model_user_blog (user_profile_id, hash);
 
+CREATE TABLE model_user_blog_config
+(
+    user_blog_config_id INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
+    user_blog_id INTEGER UNSIGNED NOT NULL,
+    name VARCHAR(50) NOT NULL,
+    value TEXT NOT NULL,
+    PRIMARY KEY (user_blog_config_id),
+    CONSTRAINT m_ubc_m_ubl_fk FOREIGN KEY (user_blog_id) 
+        REFERENCES model_user_blog (user_blog_id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET='utf8';
+
+CREATE INDEX m_ubc_nm_idx ON model_user_blog_config (name);
+
 CREATE TABLE model_user_blog_feed
 (
     user_blog_feed_id INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -247,6 +247,7 @@ CREATE TABLE model_user_blog_queue_item
     item_title TEXT NOT NULL, 
     item_content TEXT NOT NULL,
     to_publish TINYINT(1) NOT NULL DEFAULT 0,
+    to_publish_date TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
     published TINYINT(1) NOT NULL DEFAULT 0,
     created_at TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
     updated_at TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
@@ -257,4 +258,4 @@ CREATE TABLE model_user_blog_queue_item
         REFERENCES model_user_blog (user_blog_id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET='utf8';
 
-CREATE INDEX m_bqi_bhs_idx ON model_user_blog_queue_item (user_blog_id, hash, to_publish, published);
+CREATE INDEX m_bqi_bhs_idx ON model_user_blog_queue_item (user_blog_id, hash, to_publish, to_publish_date, published, updated_at);
