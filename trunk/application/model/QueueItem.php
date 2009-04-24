@@ -210,6 +210,20 @@ class QueueItem extends B_Model
     }
 
     /**
+     * Find Queue item from Hash
+     *
+     * @param   integer $blog_id
+     * @param   string  $hash
+     * @return  QueueItem|null
+     */
+    public static function findByHash($blog_id, $hash)
+    {
+        return current(self::find(array(
+            'user_blog_id' => $blog_id,
+            'hash' => $hash)));
+    }
+
+    /**
      * Copy item to queue from feed item
      *
      * @param   string  $feed_item_md5
@@ -274,21 +288,16 @@ class QueueItem extends B_Model
     }
 
     /**
-     * Set publish mode on to queue item
+     * Set queue item to publish
      *
-     * @param   string  $feed_item_md5
+     * @param   string  $item_hash
      * @param   string  $blog_hash
-     * @param   string  $feed_hash
-     * @param   string  $user_profile_id
-     *
-     * @return  QueueItem
+     * @param   integer $user_profile_id
      */ 
-    public static function publishItem($item_hash, 
-                                       $blog_hash,
-                                       $user_profile_id)
+    public static function itemToPublish($item_hash, 
+                                         $blog_hash,
+                                         $user_profile_id)
     {
-        $result = false;
-
         /* get blog */
 
         if(!is_object(($blog = UserBlog::findByHash($user_profile_id, $blog_hash))))
@@ -301,6 +310,44 @@ class QueueItem extends B_Model
 
         $blog_id = $blog->user_blog_id;
 
-        return $result;
+        /* get queue item */
+
+        if(!is_object(($item = self::findByHash($blog_id, $item_hash))))
+        {
+            $_m = "invalid queue item from hash (" . $tem_hash . ")";
+            $_i = $user_profile_id;                          
+            $_d = array('method' => __METHOD__, 'user_profile_id' => $_i);
+            throw new B_Exception($_m, E_USER_WARNING, $_d);
+        }
+
+        $item->to_publish = true;
+        $item->save();
+    }
+
+    /**
+     * Check queue items status
+     *
+     * @param   array   $array_item_hash
+     * @param   string  $blog_hash
+     * @param   integer $user_profile_id
+     */ 
+    public static function checkToPublish($array_item_hash,
+                                          $blog_hash,
+                                          $user_profile_id)
+    {
+        $sql = "SELECT hash FROM " . self::$table_name . " " . 
+               "WHERE user_blog_id = (" .
+                    "SELECT user_blog_id FROM model_user_blog " .
+                    "WHERE hash = ? and user_profile_id = ?) " .
+               "AND to_publish = 1 AND published = 0";
+
+        $to_publish = array();
+
+        foreach(self::select($sql, array($blog_hash, $user_profile_id), PDO::FETCH_ASSOC) as $i)
+        {
+            $to_publish[] = $i['hash'];
+        }
+
+        return array_diff($array_item_hash, $to_publish);
     }
 }

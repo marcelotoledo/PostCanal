@@ -574,6 +574,8 @@ $(document).ready(function()
     {
         _i = $("div.queueitem[item='" + item + "']");
 
+        if(_i.hasClass('queueitem-pub')) { return null; } // to publish
+
         if(_i.length > 0)
         {
             if(_i.hasClass('queueitem-selected'))
@@ -622,6 +624,60 @@ $(document).ready(function()
         queue_content_area.scrollTop(0);
     }
 
+    function set_queue_item_pub(item)
+    {
+        _i = $("div.queueitem[item='" + item + "']");
+
+        if(_i.hasClass('queueitem-selected'))
+        {
+            set_queue_item(item); // unset
+        }
+        
+        _i.addClass('queueitem-pub');
+        _i.append(" (<?php echo $this->translation()->to_publish ?>)");
+    }
+
+    /* check queue publication */
+
+    function check_queue_pub()
+    {
+        if(active_request == true) { return null; }
+
+        pub = new Array(); 
+
+        $("div.queueitem-pub").each(function()
+        {
+            pub.push($(this).attr('item'));
+        });
+
+        if(pub.length == 0) { return null; }
+
+        $.ajax
+        ({
+            type: "POST",
+            url: "<?php B_Helper::url('queue', 'check') ?>",
+            dataType: "xml",
+            data: { pub: pub.join(), blog: current_blog },
+            beforeSend: function()
+            {
+                active_request = true; // silent (no spinner)
+            },
+            complete: function()
+            {
+                active_request = false;
+            },
+            success: function (xml) 
+            { 
+                d = $(xml).find('data');
+                d.find('result').children().each(function()
+                {
+                    $("div.queueitem[item='" + $(this).text() + "']").remove();
+                });
+            }, 
+            error: function () { err(); } 
+        });
+    }
+
     function publish_queue_item(item)
     {
         $.ajax
@@ -638,10 +694,9 @@ $(document).ready(function()
             {
                 set_active_request(false);
             },
-            success: function (xml) 
+            success: function () 
             { 
-                d = $(xml).find('data');
-                alert(d.find('result').text());
+                set_queue_item_pub(item);
             }, 
             error: function () { err(); } 
         });
@@ -691,4 +746,11 @@ $(document).ready(function()
     {
         publish_queue_item($(this).attr('item'));
     });
+
+    /* OBSERVER */
+
+    setInterval(function()
+    {
+        check_queue_pub();
+    }, 5000); // every 5 seconds
 });

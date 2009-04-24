@@ -81,8 +81,28 @@ class C_Queue extends B_Controller
         $blog_hash = $this->request()->blog;
         $user_profile_id = $this->session()->user_profile_id;
 
-        $this->view->result = QueueItem::publishItem($item_hash,
-                                                     $blog_hash,
-                                                     $user_profile_id);
+        QueueItem::itemToPublish($item_hash, 
+                                 $blog_hash, 
+                                 $user_profile_id);
+    }
+
+    /**
+     * Publish queue item
+     *
+     * @return void
+     */
+    public function A_check()
+    {
+        $this->response()->setXML(true);
+
+        $to_publish = explode(",", $this->request()->pub);
+        $blog_hash = $this->request()->blog;
+        $user_profile_id = $this->session()->user_profile_id;
+
+        $published = QueueItem::checkToPublish($to_publish,
+                                               $blog_hash, 
+                                               $user_profile_id);
+
+        $this->view->result = $published;
     }
 }
