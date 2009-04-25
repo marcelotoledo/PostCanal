@@ -55,9 +55,26 @@ class Daemon:
             logging.info("no feed to update")
 
     def blog_publish(self):
-        item = self.client.queue_publication_queue({'token': self.token})
+        pub = self.client.queue_publication_get({'token': self.token})
 
-        # TODO...
+        if type(pub)==type(dict()):
+            from blog import init_type
+
+            id = int(pub.get('id'))
+
+            t = init_type(pub.get('blog_type'),pub.get('blog_version'))
+            t.set_manager_url(pub.get('manager_url'))
+            t.username = pub.get('manager_username')
+            t.password = pub.get('manager_password')
+
+            logging.info("starting to publish queue item id (%d)" % (id))
+
+            p = t.publish({'title'  : pub.get('item_title'),
+                           'content': pub.get('item_content')})
+
+            logging.info("post id (%d) published successfully" % (p))
+        else:
+            logging.info("no queue item to publish")
 
 def start(argv):
     cwd = os.getcwd()
@@ -72,7 +89,9 @@ def start(argv):
 
     while True:
         time.sleep(TIME_SLEEP)
-        daemon.feed_update()
+        ##daemon.feed_update()
+        daemon.blog_publish()
+        sys.exit(-1)
 
 def usage(argv):
     print 'Blotomate Daemon %s - Daemon system for blotomate.com' % VERSION

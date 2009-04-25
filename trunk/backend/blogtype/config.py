@@ -3,9 +3,8 @@
 WORDPRESS = "wordpress"
 
 WORDPRESS_URL_MATCH                 = "(.+)\.wordpress\.com"
-WORDPRESS_MANAGER_URL_SUFFIX        = "/wp-login.php"
-WORDPRESS_MANAGER_URL_SUFFIX_SUB    = [ "\/wp-admin[\/]*", "/wp-login.php" ]
-WORDPRESS_MANAGER_URL_SUFFIX_SEARCH = "\/wp\-login\.php"
+WORDPRESS_MANAGER_URL_SUFFIX        = "/xmlrpc.php"
+WORDPRESS_MANAGER_URL_SUFFIX_SEARCH = "\/xmlrpc\.php"
 WORDPRESS_BODY_META_FIND            = "WordPress.com"
 WORDPRESS_BODY_META_SEARCH          = "WordPress\.com"
 
