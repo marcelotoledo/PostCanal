@@ -3,8 +3,8 @@
 DROP TABLE IF EXISTS model_user_blog_feed CASCADE;
 DROP TABLE IF EXISTS model_user_blog_queue_config CASCADE;
 DROP TABLE IF EXISTS model_user_blog_queue_item CASCADE;
-DROP TABLE IF EXISTS model_user_blog CASCADE;
 DROP TABLE IF EXISTS model_user_blog_config CASCADE;
+DROP TABLE IF EXISTS model_user_blog CASCADE;
 DROP TABLE IF EXISTS model_user_profile CASCADE;
 DROP TABLE IF EXISTS model_aggregator_feed_item CASCADE;
 DROP TABLE IF EXISTS model_aggregator_feed_url CASCADE;

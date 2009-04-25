@@ -181,8 +181,9 @@ class QueueItem extends B_Model
 
         $blog_id = $blog->user_blog_id;
 
-        return self::find(array('user_blog_id' => $blog_id),
-                          array('created_at DESC'));
+        return self::find(array('user_blog_id' => $blog_id,
+                                'published' => false),
+                          array('updated_at ASC, created_at DESC'));
     }
 
     /**

@@ -34,7 +34,8 @@ class C_Queue extends B_Controller
         {
             $queue[] = array('item' => $_i->hash,
                              'item_title' => $_i->item_title,
-                             'item_content' => $_i->item_content);
+                             'item_content' => $_i->item_content,
+                             'to_publish' => $_i->to_publish);
         }
 
         $this->view()->queue = $queue;

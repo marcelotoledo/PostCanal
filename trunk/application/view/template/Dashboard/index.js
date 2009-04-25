@@ -552,11 +552,20 @@ $(document).ready(function()
 
     function queue_populate_item(item)
     {
+        to_publish = (item.find('to_publish').text() == "true");
+
         queue_item = item.find('item').text();
         queue_title = item.find('item_title').text();
-        queue_content = item.find('item_content').text();
 
-        output = "<div class=\"queueitem\" item=\"" + queue_item + 
+        if(to_publish)
+        {
+            queue_title += " (<?php echo $this->translation()->to_publish ?>)";
+        }
+
+        queue_content = item.find('item_content').text();
+        div_class = to_publish ? "queueitem-pub" : "queueitem";
+
+        output = "<div class=\"" + div_class + "\" item=\"" + queue_item + 
                  "\">" + queue_title + 
                  "</div><div class=\"queuebody\" item=\"" + queue_item + 
                  "\" style=\"display:none\">" + queue_content + 
