@@ -61,7 +61,7 @@ h2
 
 .b-dialog-modal
 {
-    z-indeX: 2501;
+    z-index: 2501;
     position: absolute;
     top: 0;
     left: 0;

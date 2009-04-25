@@ -1,4 +1,4 @@
-<?php if(count($this->blogs) == 0) : ?>
+<?php if(count($this->blogs) == -1) : ?>
 
 <div id="noblogmsg" class="b-dialog" style="display:none">
 <?php echo $this->translation()->no_registered_blog ?>. <?php B_Helper::a(ucfirst($this->translation()->application_click_here), "blog", "add") ?> <?php echo $this->translation()->new_blog_instruction ?>.
@@ -64,5 +64,17 @@
     </table>
 </form>
 </div>
+
+<div id="queueeditform" style="display:none">
+    <form method="post" action="somepage">
+        <textarea name="content" style="width:100%"></textarea>
+    </form>
+</div>
+<script type="text/javascript">
+tinyMCE.init({
+    mode : "textareas",
+    theme : "simple"
+});
+</script>
 
 <?php endif ?>

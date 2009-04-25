@@ -107,9 +107,15 @@ body
     color: gray;
 }
 
-/* dialogs */
+/* dialogs & forms */
 
 #noblogmsg
 {
     width: 240px;
+}
+#queueeditform
+{
+    z-index: 3001;
+    position: absolute;
+    background-color: whitesmoke;
 }

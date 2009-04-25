@@ -6,6 +6,7 @@
 <script type="text/javascript" src="/jquery/jquery-1.3.2.min.js"></script>
 <script type="text/javascript" src="/jquery/ui/js/jquery-ui-1.7.1.custom.min.js"></script>
 <link rel="stylesheet" href="/jquery/ui/css/smoothness/jquery-ui-1.7.1.custom.css" type="text/css" media="screen">
+<script type="text/javascript" src="/tiny_mce/tiny_mce.js"></script>
 <?php B_Helper::script("application.js") ?>
 <?php B_Helper::style("application.css") ?>
 <?php B_Helper::style("dashboard.css") ?>
