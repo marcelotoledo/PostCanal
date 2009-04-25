@@ -18,7 +18,7 @@ VERSION = "1.0.0"
 
 import sys, os, time, logging, xmlrpclib
 
-TIME_SLEEP = 1
+TIME_SLEEP = 5
 
 class Daemon:
     def __init__(self, config_path=None):
@@ -72,7 +72,11 @@ class Daemon:
             p = t.publish({'title'  : pub.get('item_title'),
                            'content': pub.get('item_content')})
 
-            logging.info("post id (%d) published successfully" % (p))
+            if p:
+                self.client.queue_publication_done({'token': self.token, 'id': id})
+                logging.info("post id (%d) published successfully for queue item id (%d)" % (p, id))
+            else:
+                logging.info("post failed to publish for queue item id (%d)" % (id))
         else:
             logging.info("no queue item to publish")
 
@@ -89,9 +93,8 @@ def start(argv):
 
     while True:
         time.sleep(TIME_SLEEP)
-        ##daemon.feed_update()
+        daemon.feed_update()
         daemon.blog_publish()
-        sys.exit(-1)
 
 def usage(argv):
     print 'Blotomate Daemon %s - Daemon system for blotomate.com' % VERSION

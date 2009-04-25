@@ -192,12 +192,27 @@ class L_WebService
     }
 
     /**
-     * Result for a published queue item
+     * Set queue item as published
      */
-    public function queue_publication_result($args)
+    public function queue_publication_done($args)
     {
-        if($this->validate_args($args, array('id', 'data')) == false) return false;
+        if($this->validate_args($args, array('id')) == false) return false;
 
-        /* TODO */
+        $item = QueueItem::findByPrimaryKey($args['id']);
+
+        try
+        {
+            $item->published = true;
+            $item->to_publish = false;
+            $item->save();
+        }
+        catch(B_Exception $_e)
+        {
+            $_m = "queue item set published webservice failed";
+            $_d = array ('method' => __METHOD__);
+            B_Log::write($_m, E_USER_ERROR, $_d);
+        }
+        
+        return true;
     }
 }
