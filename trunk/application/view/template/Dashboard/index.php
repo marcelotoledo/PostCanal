@@ -66,15 +66,11 @@
 </div>
 
 <div id="queueeditform" style="display:none">
-    <form method="post" action="somepage">
-        <textarea name="content" style="width:100%"></textarea>
+    <form>
+        <label for="title"><?php echo $this->translation()->label_title ?></label>
+        <input type="text" name="title"><br/>
+        <textarea></textarea>
     </form>
 </div>
-<script type="text/javascript">
-tinyMCE.init({
-    mode : "textareas",
-    theme : "simple"
-});
-</script>
 
 <?php endif ?>

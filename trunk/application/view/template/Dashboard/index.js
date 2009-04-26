@@ -14,6 +14,7 @@ $(document).ready(function()
     var queue_content_area = $("#queuecontainer > div.containercontentarea");
 
     var queue_edit_form = $("#queueeditform");
+    var queue_edit_textarea = $("#queueeditform > form > textarea");
 
     /* spinner */
 
@@ -87,7 +88,7 @@ $(document).ready(function()
         queue_container.height((_h * 0.5) - _b);
         maxcontent(queue_container);
 
-        queue_edit_form.css('opacity', 0.9);
+        // queue_edit_form.css('opacity', 0.9);
         queue_edit_form.css('top', 40 + 1);
         queue_edit_form.css('left', _l + _b);
         queue_edit_form.width(_w + _b);
@@ -722,6 +723,7 @@ $(document).ready(function()
     function edit_queue_item(item)
     {
         queue_edit_form.show();
+        queue_edit_textarea.markItUp(mySettings);
     }
 
     /* TRIGGERS */
