@@ -69,7 +69,15 @@
     <form>
         <label for="title"><?php echo $this->translation()->label_title ?></label>
         <input type="text" name="title"><br/>
-        <textarea></textarea>
+        <script type="text/javascript">
+        var e = new FCKeditor('queueeditcontent');
+        e.BasePath = "/fckeditor/";
+        e.Config["CustomConfigurationsPath"] = "/script/fckconfig.js";
+        e.Config['AutoDetectLanguage'] = false ;
+        e.Config['DefaultLanguage'] = "<?php echo substr($this->registry()->translation()->culture, 0, 2) ?>" ;
+
+        e.Create();
+        </script>
     </form>
 </div>
 

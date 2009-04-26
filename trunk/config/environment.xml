@@ -19,7 +19,7 @@
     </session>
     <translation>
         <!-- default culture to use when it's not set by user -->
-        <culture>us_EN</culture>
+        <culture>en_US</culture>
     </translation>
     <application>
         <mailer>

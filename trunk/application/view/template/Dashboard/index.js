@@ -723,7 +723,7 @@ $(document).ready(function()
     function edit_queue_item(item)
     {
         queue_edit_form.show();
-        queue_edit_textarea.markItUp(mySettings);
+        // queue_edit_textarea.markItUp(mySettings);
     }
 
     /* TRIGGERS */
