@@ -1,12 +1,13 @@
 <?php
 
 /**
- * Request
+ * Base Request
  * 
  * @category    Blotomate
- * @package     Base
+ * @package     Base Library
  * @author      Rafael Castilho <rafael@castilho.biz>
  */
+
 class B_Request
 {
     /**

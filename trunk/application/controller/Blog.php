@@ -4,10 +4,11 @@
  * Blog controller class
  * 
  * @category    Blotomate
- * @package     Controller
+ * @package     Application Controller
  * @author      Rafael Castilho <rafael@castilho.biz>
  */
-class C_Blog extends C_Abstract
+
+class C_Blog extends B_Controller
 {
     /**
      * Before action

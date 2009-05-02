@@ -1,12 +1,13 @@
 <?php
 
 /**
- * Class loader
+ * Base Loader
  *
  * @category    Blotomate
- * @package     Base
+ * @package     Base Library
  * @author      Rafael Castilho <rafael@castilho.biz>
  */
+
 class B_Loader
 {
     /**
@@ -29,28 +30,30 @@ class B_Loader
     {
         if(class_exists($name) == false)
         {
-            if    (strpos($name, "B_") === 0)    self::base($name);
+            if    (strpos($name, "A_") === 0)    self::application($name);
             elseif(strpos($name, "C_") === 0)    self::controller($name);
-            elseif(strpos($name, "L_") === 0)    self::library($name);
-            elseif(strpos($name, "H_") > 0)      self::helper($name);
+            elseif(strpos($name, "H_") === 0)    self::helper($name);
             elseif(strpos($name, "Zend_") === 0) self::zend($name);
             else                                 self::model($name);
         }
     }
 
     /**
-     * Base loader
+     * Application library loader
      *
      * @param   string  $name   Class name
      * @return  void
      */
-    public static function base($name)
+    public static function application($name)
     {
-        $path = LIBRARY_PATH . "/base/" . substr($name, 2) . ".php";
+        $path = APPLICATION_PATH . "/library/" . substr($name, 2) . ".php";
 
-        if(file_exists($path))
+        if(class_exists($name) == false)
         {
-            include $path;
+            if(file_exists($path))
+            {
+                include $path;
+            }
         }
     }
 
@@ -67,25 +70,6 @@ class B_Loader
         if(file_exists($path))
         {
             include $path;
-        }
-    }
-
-    /**
-     * Library loader
-     *
-     * @param   string  $name   Class name
-     * @return  void
-     */
-    public static function library($name)
-    {
-        $path = APPLICATION_PATH . "/library/" . substr($name, 2) . ".php";
-
-        if(class_exists($name) == false)
-        {
-            if(file_exists($path))
-            {
-                include $path;
-            }
         }
     }
 

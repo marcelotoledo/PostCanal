@@ -1,12 +1,13 @@
 <?php
 
 /**
- * Translation
+ * Base Translation
  * 
  * @category    Blotomate
- * @package     Base
+ * @package     Base Library
  * @author      Rafael Castilho <rafael@castilho.biz>
  */
+
 class B_Translation
 {
     /**
@@ -90,15 +91,21 @@ class B_Translation
     /**
      * Load translation data
      *
-     * @param   string  $template
+     * @param   mixed   $template   Template name or array
      * @return  void
      */
     public function load($template)
     {
-        $result = B_Model::select("SELECT name, value FROM " . self::$table_name . " " .
-                                   "WHERE template = ? AND culture = ?", 
-                                   array($template, $this->culture));
+        $sql = "SELECT name, value FROM " . self::$table_name . " WHERE (" .
+               substr(str_repeat("template = ? OR ", count($template)), 0, -4) .
+               ") AND culture = ?";
 
-        foreach($result as $i) $this->data[$i->name] = $i->value;
+        $arg = is_array($template) ? $template : array($template);
+        $arg[] = $this->culture;
+
+        foreach(B_Model::select($sql, $arg) as $_t)
+        {
+            $this->data[$_t->name] = $_t->value;
+        }
     }
 }

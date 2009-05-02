@@ -4,10 +4,11 @@
  * Application utility class
  * 
  * @category    Blotomate
- * @package     Library
+ * @package     Application Library
  * @author      Rafael Castilho <rafael@castilho.biz>
  */
-class L_Utility
+
+class A_Utility
 {
     /**
      * Fix URL

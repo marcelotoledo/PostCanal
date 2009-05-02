@@ -100,11 +100,17 @@ body
     background-color: #FFD700;
     font-weight: bold;
 }
-#queuecontainer .queueitem-pub
+#queuecontainer .queueitem-waiting
 {
     padding: 5px;
     border-bottom: 1px solid silver;
     color: gray;
+}
+#queuecontainer .queueitem-failed
+{
+    padding: 5px;
+    border-bottom: 1px solid silver;
+    color: red;
 }
 
 /* dialogs & forms */

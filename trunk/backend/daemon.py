@@ -18,16 +18,16 @@ VERSION = "1.0.0"
 
 import sys, os, time, logging, xmlrpclib
 
-TIME_SLEEP = 10
+TIME_SLEEP = 1
 
 class Daemon:
     def __init__(self, config_path=None):
         from blotomate import BlotomateConfig
         config = BlotomateConfig(config_path)
 
-        self.token = config.get('application/webservice/token')
+        self.token = config.get('webservice/token')
         frontend_url = config.get('base/url')
-        frontend_url = frontend_url + config.get('application/webservice/frontend/url')
+        frontend_url = frontend_url + config.get('webservice/frontendUrl')
         self.client = xmlrpclib.ServerProxy(frontend_url)
 
     def feed_update(self):
@@ -69,20 +69,24 @@ class Daemon:
 
             logging.info("starting to publish queue item id (%d)" % (id))
 
-            p = t.publish({'title'  : pub.get('item_title'),
-                           'content': pub.get('item_content')})
-
-            if p:
-                self.client.queue_publication_done({'token': self.token, 'id': id})
+            try:
+                p = t.publish({'title'  : pub.get('item_title'),
+                               'content': pub.get('item_content')})
+                self.client.queue_publication_status({'token': self.token, 
+                                                      'id': id, 
+                                                      'published': True})
                 logging.info("post id (%d) published successfully for queue item id (%d)" % (p, id))
-            else:
+            except:
                 logging.info("post failed to publish for queue item id (%d)" % (id))
+                self.client.queue_publication_status({'token': self.token, 
+                                                      'id': id, 
+                                                      'published': False})
         else:
             logging.info("no queue item to publish")
 
 def start(argv):
-    cwd = os.getcwd()
-    config_path = cwd.replace("backend", "") + "config/environment.xml"
+    base_path = os.path.abspath("../")
+    config_path = base_path + "/config/environment.xml"
     daemon = Daemon(config_path)
 
     # logger

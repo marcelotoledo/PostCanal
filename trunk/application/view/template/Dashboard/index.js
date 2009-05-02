@@ -561,20 +561,23 @@ $(document).ready(function()
 
     function queue_populate_item(item)
     {
-        to_publish = (item.find('to_publish').text() == "true");
-
+        publish_status = item.find('publish_status').text();
         queue_item = item.find('item').text();
         queue_title = item.find('item_title').text();
 
-        if(to_publish)
+        if(publish_status == '<?php echo QueueItem::PS_WAITING ?>')
         {
-            queue_title += " (<?php echo $this->translation()->to_publish ?>)";
+            queue_title += " (<?php echo $this->translation()->waiting ?>)";
+        }
+
+        if(publish_status == '<?php echo QueueItem::PS_FAILED ?>')
+        {
+            queue_title += " (<?php echo $this->translation()->failed ?>)";
         }
 
         queue_content = item.find('item_content').text();
-        div_class = to_publish ? "queueitem-pub" : "queueitem";
 
-        output = "<div class=\"" + div_class + "\" item=\"" + queue_item + 
+        output = "<div class=\"queueitem queueitem-" + publish_status + "\" item=\"" + queue_item + 
                  "\">" + queue_title + 
                  "</div><div class=\"queuebody\" item=\"" + queue_item + 
                  "\" style=\"display:none\">" + queue_content + 
@@ -592,7 +595,7 @@ $(document).ready(function()
     {
         _i = $("div.queueitem[item='" + item + "']");
 
-        if(_i.hasClass('queueitem-pub')) { return null; } // to publish
+        if(_i.hasClass('queueitem-waiting')) { return null; } // waiting to publish
 
         if(_i.length > 0)
         {
@@ -651,8 +654,28 @@ $(document).ready(function()
             set_queue_item(item); // unset
         }
         
-        _i.addClass('queueitem-pub');
-        _i.append(" (<?php echo $this->translation()->to_publish ?>)");
+        _i.addClass('queueitem-waiting');
+        _i.append(" (<?php echo $this->translation()->waiting ?>)");
+    }
+
+    function update_queue_item_status(data)
+    {
+        data.find('result').children().each(function()
+        {
+            _i = $(this).find('item').text();
+            _s = $(this).find('status').text();
+            _o = $("div.queueitem[item='" + _i + "']");
+
+            if(_s == '<?php echo QueueItem::PS_FAILED ?>')
+            {
+                _o.removeClass('queueitem-waiting');
+                _o.addClass('queueitem-failed');
+            }
+            else if(_s == '<?php echo QueueItem::PS_PUBLISHED ?>')
+            {
+                _o.remove();
+            }
+        });
     }
 
     /* check queue publication */
@@ -661,21 +684,21 @@ $(document).ready(function()
     {
         if(active_request == true) { return null; }
 
-        pub = new Array(); 
+        waiting = new Array(); 
 
-        $("div.queueitem-pub").each(function()
+        $("div.queueitem-waiting").each(function()
         {
-            pub.push($(this).attr('item'));
+            waiting.push($(this).attr('item'));
         });
 
-        if(pub.length == 0) { return null; }
+        if(waiting.length == 0) { return null; }
 
         $.ajax
         ({
             type: "POST",
             url: "<?php B_Helper::url('queue', 'check') ?>",
             dataType: "xml",
-            data: { pub: pub.join(), blog: current_blog },
+            data: { waiting: waiting.join(), blog: current_blog },
             beforeSend: function()
             {
                 active_request = true; // silent (no spinner)
@@ -686,11 +709,7 @@ $(document).ready(function()
             },
             success: function (xml) 
             { 
-                d = $(xml).find('data');
-                d.find('result').children().each(function()
-                {
-                    $("div.queueitem[item='" + $(this).text() + "']").remove();
-                });
+                update_queue_item_status($(xml).find('data'));
             }, 
             error: function () { err(); } 
         });
@@ -730,10 +749,14 @@ $(document).ready(function()
 
     /* reload when window resizes */
 
+    <?php if(count($this->blogs) > 0) : ?>
+
     $(window).resize(function()
     {
         maxcontainers();
     });
+
+    <?php endif ?>
 
     /* disable form submit */
 
@@ -781,5 +804,5 @@ $(document).ready(function()
     setInterval(function()
     {
         check_queue_pub();
-    }, 5000); // every 5 seconds
+    }, 3000); // every 5 seconds
 });

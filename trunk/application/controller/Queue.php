@@ -4,8 +4,10 @@
  * Queue controller class
  * 
  * @category    Blotomate
- * @package     Controller
+ * @package     Application Controller
+ * @author      Rafael Castilho <rafael@castilho.biz>
  */
+
 class C_Queue extends B_Controller
 {
     /**
@@ -35,7 +37,8 @@ class C_Queue extends B_Controller
             $queue[] = array('item' => $_i->hash,
                              'item_title' => $_i->item_title,
                              'item_content' => $_i->item_content,
-                             'to_publish' => $_i->to_publish);
+                             'publish_status' => $_i->publish_status,
+                             'publish_date' => $_i->publish_date);
         }
 
         $this->view()->queue = $queue;
@@ -96,14 +99,12 @@ class C_Queue extends B_Controller
     {
         $this->response()->setXML(true);
 
-        $to_publish = explode(",", $this->request()->pub);
+        $waiting = explode(",", $this->request()->waiting);
         $blog_hash = $this->request()->blog;
         $user_profile_id = $this->session()->user_profile_id;
 
-        $published = QueueItem::checkToPublish($to_publish,
-                                               $blog_hash, 
-                                               $user_profile_id);
-
-        $this->view->result = $published;
+        $this->view->result = QueueItem::checkStatus($waiting,
+                                                     $blog_hash, 
+                                                     $user_profile_id);
     }
 }

@@ -1,36 +1,59 @@
 <?php
 
 /**
- * Main application controller
- * 
+ * Base Bootstrap
+ *
  * @category    Blotomate
- * @package     Base
+ * @package     Base Library
  * @author      Rafael Castilho <rafael@castilho.biz>
  */
-class B_Main
+
+class B_Bootstrap
 {
     /**
-     * Run application
+     * Default controller name
      *
+     * @var string
      */
-    public static function run()
-    {
-        $main = new self();
-        $main->dispatch();
-    }
+    public $default_controller = "index";
 
     /**
-     * Dispatch application
+     * Default action name
      *
-     * @return void
+     * @var string
      */
-    public function dispatch()
+    public $default_action = "index";
+
+    /**
+     * Translation loading for (controller) / action ?
+     *
+     * @var boolean
+     */
+    public $translation_action = false;
+
+    /**
+     * Translation loading list
+     *
+     * @var array
+     */
+    public $translation_load = array();
+
+
+    /**
+     * Run bootstrap
+     */
+    public function run()
     {
         $has_error = false;
         $message = ((string) null); 
 
         $registry = B_Registry::singleton();
         $view = null;
+
+        $registry->request()->object = null;
+        $registry->response()->object = null;
+        $registry->session()->object = null;
+        $registry->translation()->object = null;
 
         /* initialize request and response */
 
@@ -42,7 +65,11 @@ class B_Main
         /* check controller */
 
         $controller_name = $request->getController();
-        if(strlen($controller_name) == 0) $controller_name = "index";
+
+        if(strlen($controller_name) == 0)
+        {
+            $controller_name = $this->default_controller;
+        }
 
         if(($controller = self::factory($controller_name)) == null)
         {
@@ -59,7 +86,11 @@ class B_Main
             /* check action */
 
             $action_name = $request->getAction();
-            if(strlen($action_name) == 0) $action_name = "index";
+
+            if(strlen($action_name) == 0)
+            {
+                $action_name = $this->default_action;
+            }
 
             if($controller->check($action_name) == false)
             {
@@ -92,6 +123,15 @@ class B_Main
                 $translation = new B_Translation($culture);
                 $controller->translation = $translation;
                 $registry->translation()->object = $translation;
+
+                /* translation load */
+
+                if($this->translation_action == true)
+                {
+                    $this->translation_load[] = $controller_name . "/" . $action_name;
+                }
+
+                $translation->load($this->translation_load);
 
                 /* run action */
 
@@ -163,7 +203,6 @@ class B_Main
             {
                 $response->setBody($message);
             }
-
         }
 
         /* send response */
@@ -172,11 +211,31 @@ class B_Main
     }
 
     /**
+     * Controller factory
+     *
+     * @param   string          $name   Controller name
+     *
+     * @return  B_Controller
+     */
+    protected static function factory($name)
+    {
+        $controller = null;
+        $class_name = 'C_' . ucfirst($name);
+
+        if(class_exists($class_name))
+        {
+            $controller = new $class_name();
+        }
+
+        return $controller;
+    }
+
+    /**
      * Error response body
      *
      * @param   integer $status
      */
-    private static function error($status)
+    protected static function error($status)
     {
         $path = BASE_PATH . "/public/" . $status . ".html";
         $s = "<h1>error " . $status . "</h2>";
@@ -189,30 +248,5 @@ class B_Main
         }
 
         return $s;
-    }
-
-
-    /**
-     * Initialize controller class
-     *
-     * @param   string          $name   Controller name
-     * @return  B_Controller
-     */
-    private static function factory($name)
-    {
-        $controller = null;
-        $class_name = 'C_' . ucfirst($name);
-
-        if(class_exists($class_name))
-        {
-            $reflection = new ReflectionClass($class_name);
-
-            if($reflection->isAbstract() == false)
-            {
-                $controller = new $class_name();
-            }
-        }
-
-        return $controller;
     }
 }

@@ -1,14 +1,15 @@
 <?php
 
 /**
- * Data registry
+ * Base Registry
  *
- * Generic storage class helps to manage global data
+ * Generic storage class to manage global data
  *
  * @category    Blotomate
- * @package     Base
+ * @package     Base Library
  * @author      Rafael Castilho <rafael@castilho.biz>
  */
+
 class B_Registry
 {
     /**

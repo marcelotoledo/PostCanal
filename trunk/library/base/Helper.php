@@ -1,12 +1,13 @@
 <?php
 
 /**
- * Helper class
+ * Base Helper
  * 
  * @category    Blotomate
- * @package     Base
+ * @package     Base Library
  * @author      Rafael Castilho <rafael@castilho.biz>
  */
+
 class B_Helper
 {
     /**
@@ -60,7 +61,7 @@ class B_Helper
      */
     public static function script_src($name)
     {
-        echo self::relative(BASE_URL) . "/script/" . $name;
+        echo self::relative(BASE_URL) . "/js/" . $name;
     }
 
     /**
@@ -85,7 +86,7 @@ class B_Helper
      */
     public static function style_url($name)
     {
-        echo self::relative(BASE_URL) . "/style/" . $name;
+        echo self::relative(BASE_URL) . "/css/" . $name;
     }
 
     /**

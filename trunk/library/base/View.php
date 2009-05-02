@@ -1,12 +1,13 @@
 <?php
 
 /**
- * View
+ * Base View
  * 
  * @category    Blotomate
- * @package     Base
+ * @package     Base Library
  * @author      Rafael Castilho <rafael@castilho.biz>
  */
+
 class B_View
 {
     /**

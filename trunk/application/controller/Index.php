@@ -4,10 +4,11 @@
  * Index controller class
  * 
  * @category    Blotomate
- * @package     Controller
+ * @package     Application Controller
  * @author      Rafael Castilho <rafael@castilho.biz>
  */
-class C_Index extends C_Abstract
+
+class C_Index extends B_Controller
 {
     /**
      * Default action

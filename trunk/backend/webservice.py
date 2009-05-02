@@ -18,7 +18,7 @@ VERSION = "1.0.0"
 class WebService:
     def __init__(self, config_path=None):
         from blotomate import BlotomateConfig
-        self.token = BlotomateConfig(config_path).get('application/webservice/token')
+        self.token = BlotomateConfig(config_path).get('webservice/token')
 
     # validate args
 
@@ -57,7 +57,7 @@ def usage(argv):
 
 def test(argv):
     from blotomate import BlotomateConfig
-    token = BlotomateConfig().get('application/webservice/token')
+    token = BlotomateConfig().get('webservice/token')
 
     # blog discover
 

@@ -4,10 +4,11 @@
  * Application mailer class
  * 
  * @category    Blotomate
- * @package     Library
+ * @package     Application Library
  * @author      Rafael Castilho <rafael@castilho.biz>
  */
-class L_Mailer
+
+class A_Mailer
 {
     /**
      * From
@@ -66,8 +67,8 @@ class L_Mailer
     public function __construct($mailer='default', $sender='default')
     {
         $registry = B_Registry::singleton();
-        $mailer_config = $registry->application->mailer->{$mailer};
-        $sender_config = $mailer_config->sender->{$sender};
+        $mailer_config = $registry->mailer()->{$mailer}();
+        $sender_config = $mailer_config->sender()->{$sender}();
 
         if($mailer_config->transport == "smtp")
         {

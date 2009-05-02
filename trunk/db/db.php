@@ -1,4 +1,4 @@
-#!/usr/bin/php
+#!/usr/bin/env php
 <?php
 
 /**
@@ -7,10 +7,7 @@
  * @author      Rafael Castilho <rafael@castilho.biz>
  */
 
-require "../library/base/Loader.php";
-B_Loader::register();
-
-require "../config/environment.php";
+require "../application/console.php";
 
 
 function read_sql ($filename)
@@ -50,7 +47,7 @@ function read_and_run_sql ($filename)
 
 if ($argc == 1)
 {
-    echo "usage: ./configure.php file1.sql file2.sql ...\n";
+    echo "usage: ./db.php file1.sql file2.sql ...\n";
 
     exit(1);
 }

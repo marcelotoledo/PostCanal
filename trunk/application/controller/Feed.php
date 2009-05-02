@@ -4,8 +4,10 @@
  * Feed controller class
  * 
  * @category    Blotomate
- * @package     Controller
+ * @package     Application Controller
+ * @author      Rafael Castilho <rafael@castilho.biz>
  */
+
 class C_Feed extends B_Controller
 {
     /**
@@ -45,8 +47,8 @@ class C_Feed extends B_Controller
         }
 
         $this->view()->feeds = is_object($blog) ? 
-            UserBlogFeed::findByBlog($blog->user_blog_id, null, true) :
-            array();$feeds;
+            UserBlogFeed::findByBlog($blog->user_blog_id, $feed_id=null, true) :
+            array();
     }
 
     /**

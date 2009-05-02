@@ -4,11 +4,23 @@
  * QueueItem model class
  * 
  * @category    Blotomate
- * @package     Model
+ * @package     Application Model
  * @author      Rafael Castilho <rafael@castilho.biz>
  */
+
 class QueueItem extends B_Model
 {
+    /**
+     * publish_status column options 
+     * 
+     * The ordering of these status are relevant
+     */
+    const PS_NEW       = 'new';
+    const PS_WAITING   = 'waiting';
+    const PS_FAILED    = 'failed';
+    const PS_PUBLISHED = 'published';
+
+
     /**
      * Table name
      *
@@ -28,9 +40,8 @@ class QueueItem extends B_Model
 		'hash' => array ('type' => 'string','size' => 8,'required' => true),
 		'item_title' => array ('type' => 'string','size' => 0,'required' => true),
 		'item_content' => array ('type' => 'string','size' => 0,'required' => true),
-		'to_publish' => array ('type' => 'boolean','size' => 0,'required' => false),
-		'to_publish_date' => array ('type' => 'date','size' => 0,'required' => false),
-		'published' => array ('type' => 'boolean','size' => 0,'required' => false),
+		'publish_status' => array ('type' => 'string','size' => 0,'required' => false),
+		'publish_date' => array ('type' => 'date','size' => 0,'required' => false),
 		'created_at' => array ('type' => 'date','size' => 0,'required' => false),
 		'updated_at' => array ('type' => 'date','size' => 0,'required' => false));
 
@@ -100,7 +111,7 @@ class QueueItem extends B_Model
 
         if($this->isNew()) 
         {
-            $this->hash = L_Utility::randomString(8);
+            $this->hash = A_Utility::randomString(8);
         }
 
         return parent::save();
@@ -181,9 +192,16 @@ class QueueItem extends B_Model
 
         $blog_id = $blog->user_blog_id;
 
-        return self::find(array('user_blog_id' => $blog_id,
-                                'published' => false),
-                          array('updated_at ASC, created_at DESC'));
+        $_in = "'" . implode("','", array(self::PS_NEW, 
+                                          self::PS_WAITING, 
+                                          self::PS_FAILED)) . "'";
+
+        $sql = "SELECT * FROM " . self::$table_name . "
+                WHERE user_blog_id = ?
+                AND publish_status IN (" . $_in . ")
+                ORDER BY updated_at ASC, created_at DESC";
+               
+        return self::selectModel($sql, array($blog_id));
     }
 
     /**
@@ -209,14 +227,15 @@ class QueueItem extends B_Model
                 LEFT JOIN 
                     model_blog_type AS c ON (b.blog_type_id = c.blog_type_id) 
                 WHERE
-                    a.to_publish = 1 AND
-                    a.to_publish_date < NOW() AND
-                    a.published = 0
+                    a.publish_status = ? AND
+                    a.publish_date < NOW()
                 ORDER BY
                     a.updated_at ASC
                 LIMIT 1";
 
-        return current(self::select($sql, array(), PDO::FETCH_ASSOC));
+        return current(self::select($sql, 
+                                    array(self::PS_WAITING), 
+                                    PDO::FETCH_ASSOC));
     }
 
     /**
@@ -330,35 +349,40 @@ class QueueItem extends B_Model
             throw new B_Exception($_m, E_USER_WARNING, $_d);
         }
 
-        $item->to_publish = true;
-        $item->to_publish_date = time(); // asap
+        $item->publish_status = self::PS_WAITING;
+        $item->publish_date = time(); // asap
         $item->save();
     }
 
     /**
-     * Check queue items status
+     * Check queue items publish status
      *
      * @param   array   $array_item_hash
      * @param   string  $blog_hash
      * @param   integer $user_profile_id
      */ 
-    public static function checkToPublish($array_item_hash,
-                                          $blog_hash,
-                                          $user_profile_id)
+    public static function checkStatus($array_item_hash,
+                                       $blog_hash,
+                                       $user_profile_id)
     {
-        $sql = "SELECT hash FROM " . self::$table_name . " " . 
-               "WHERE user_blog_id = (" .
-                    "SELECT user_blog_id FROM model_user_blog " .
-                    "WHERE hash = ? and user_profile_id = ?) " .
-               "AND to_publish = 1 AND published = 0";
+        /* sanitize hash list */
 
-        $to_publish = array();
-
-        foreach(self::select($sql, array($blog_hash, $user_profile_id), PDO::FETCH_ASSOC) as $i)
+        for($i=0;$i<count($array_item_hash);$i++)
         {
-            $to_publish[] = $i['hash'];
+            $array_item_hash[$i] = preg_replace("/[^\w]+/", "", $array_item_hash[$i]);
         }
 
-        return array_diff($array_item_hash, $to_publish);
+        $_in = "'" . implode("','", $array_item_hash) . "'";
+
+        $_q = "SELECT hash AS item, publish_status AS status 
+               FROM " . self::$table_name . "
+               WHERE user_blog_id = (
+                    SELECT user_blog_id FROM model_user_blog
+                    WHERE hash = ? and user_profile_id = ?)
+               AND hash IN (" . $_in . ")";
+
+        $result = array();
+
+        return self::select($_q, array($blog_hash, $user_profile_id), PDO::FETCH_ASSOC);
     }
 }

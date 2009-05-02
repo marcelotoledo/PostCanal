@@ -1,12 +1,13 @@
 <?php
 
 /**
- * Log
+ * Base Log
  * 
  * @category    Blotomate
- * @package     Base
+ * @package     Base Library
  * @author      Rafael Castilho <rafael@castilho.biz>
  */
+
 class B_Log
 {
     /**

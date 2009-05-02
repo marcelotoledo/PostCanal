@@ -4,9 +4,10 @@
  * BlogType model class
  * 
  * @category    Blotomate
- * @package     Model
+ * @package     Application Model
  * @author      Rafael Castilho <rafael@castilho.biz>
  */
+
 class BlogType extends B_Model
 {
     /**
@@ -174,7 +175,7 @@ class BlogType extends B_Model
      */ 
     public static function discover($url)
     {
-        $client = new L_WebService();
+        $client = new A_WebService();
         $args = array('url' => $url);
         $result = $client->blog_discover($args);
         $result['type_accepted'] = false;
@@ -203,7 +204,7 @@ class BlogType extends B_Model
      */ 
     public static function checkAdmin($url, $blog_type, $blog_version)
     {
-        $client = new L_WebService();
+        $client = new A_WebService();
         $args = array('url' => $url, 'type' => $blog_type, 'version' => $blog_version);
         return $client->blog_manager_url_check($args);
     } 

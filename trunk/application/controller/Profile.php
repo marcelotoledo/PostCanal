@@ -4,10 +4,11 @@
  * Profile controller class
  * 
  * @category    Blotomate
- * @package     Controller
+ * @package     Application Controller
  * @author      Rafael Castilho <rafael@castilho.biz>
  */
-class C_Profile extends C_Abstract
+
+class C_Profile extends B_Controller
 {
     /**
      * Login
@@ -245,7 +246,7 @@ class C_Profile extends C_Abstract
             }
             else
             {
-                $profile->hash = L_Utility::randomString(8);
+                $profile->hash = A_Utility::randomString(8);
                 $profile->register_confirmation = true;
                 $profile->register_confirmation_time = time();
                 $profile->save();
@@ -400,7 +401,7 @@ class C_Profile extends C_Abstract
             }
             else
             {
-                $profile->hash = L_Utility::randomString(8);
+                $profile->hash = A_Utility::randomString(8);
                 $profile->login_password_md5 = md5($password);
                 $profile->recovery_allowed = false;
                 $profile->save();
@@ -566,7 +567,7 @@ class C_Profile extends C_Abstract
                 {
                     $profile->login_email = $new_email;
                     $profile->email_update = "";
-                    $profile->hash = L_Utility::randomString(8);
+                    $profile->hash = A_Utility::randomString(8);
                     $profile->save();
 
                     $accepted = true;
@@ -662,7 +663,7 @@ class C_Profile extends C_Abstract
      */
     private function notify ($email, $template, $profile=null)
     {
-        $mailer = new L_Mailer();
+        $mailer = new A_Mailer();
 
         $subject = "mail_" . $template . "_subject";
         $mailer->setSubject($this->translation()->{$subject});

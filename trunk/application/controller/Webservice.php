@@ -4,7 +4,8 @@
  * Webservice controller class
  * 
  * @category    Blotomate
- * @package     Controller
+ * @package     Application Controller
+ * @author      Rafael Castilho <rafael@castilho.biz>
  */
 class C_Webservice extends B_Controller
 {
@@ -20,8 +21,8 @@ class C_Webservice extends B_Controller
     /**
      * Frontend
      */
-    public function A_frontend()
+    public function A_index()
     {
-        new L_WebService($is_server=true);
+        new A_WebService($is_server=true);
     }
 }

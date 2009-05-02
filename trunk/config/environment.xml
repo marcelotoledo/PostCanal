@@ -10,7 +10,6 @@
             <username>blotomate</username>
             <password>blotomate</password>
             <db>blotomate</db>
-            <timezone>UTC</timezone>
         </default>
     </database>
     <session>
@@ -21,57 +20,51 @@
         <!-- default culture to use when it's not set by user -->
         <culture>en_US</culture>
     </translation>
-    <application>
-        <mailer>
-            <default>
-                <transport>smtp</transport>
-                <server>smtp.gmail.com</server>
-                <auth>login</auth>
-                <ssl>ssl</ssl>
-                <port>465</port>
-                <sender>
-                    <default>
-                        <username>john.doe@castilho.biz</username>
-                        <password>fulano</password>
-                        <email>john.doe@castilho.biz</email>
-                    </default>
-                </sender>
-                <!-- relay time and count prevent mailer spamming
-                     blocking excessive number of messages from the same sender -->
-                <relay>
-                    <time>43200</time>
-                    <count>10</count>
-                </relay>
-            </default>
-            <!--
-            <default>
-                <transport>sendmail</transport>
-                <sender>
-                    <default>
-                        <email>blotomate@localhost</email>
-                    </default>
-                </sender>
-                <relay>
-                    <time>43200</time>
-                    <count>1000</count>
-                </relay>
-            </default>
-            -->
-        </mailer>
-        <httpClient>
-            <maxHeaders>30</maxHeaders>
-            <maxBodyLenght>5242880</maxBodyLenght>
-        </httpClient>
-        <webservice>
-            <!-- validates communication between frontend and backend. avoiding
-               direct access in webservices -->
-            <token>c4z5mYW1pYWSJe2BzcIq1wv6n95o1E2kwuD1B0Wuo3XbHx82Vk</token>
-            <backend>
-                <url>/webservice/backend</url>
-            </backend>
-            <frontend>
-                <url>/webservice/frontend</url>
-            </frontend>
-        </webservice>
-    </application>
+    <mailer>
+        <default>
+            <transport>smtp</transport>
+            <server>smtp.gmail.com</server>
+            <auth>login</auth>
+            <ssl>ssl</ssl>
+            <port>465</port>
+            <sender>
+                <default>
+                    <username>john.doe@castilho.biz</username>
+                    <password>fulano</password>
+                    <email>john.doe@castilho.biz</email>
+                </default>
+            </sender>
+            <!-- relay time and count prevent mailer spamming
+                 blocking excessive number of messages from the same sender -->
+            <relay>
+                <time>43200</time>
+                <count>10</count>
+            </relay>
+        </default>
+        <!--
+        <default>
+            <transport>sendmail</transport>
+            <sender>
+                <default>
+                    <email>blotomate@localhost</email>
+                </default>
+            </sender>
+            <relay>
+                <time>43200</time>
+                <count>1000</count>
+            </relay>
+        </default>
+        -->
+    </mailer>
+    <httpClient>
+        <maxHeaders>30</maxHeaders>
+        <maxBodyLenght>5242880</maxBodyLenght>
+    </httpClient>
+    <webservice>
+        <!-- validates communication between frontend and backend. avoiding
+           direct access in webservices -->
+        <token>k20Wuo3W1pYWwuD1Bc4z5mYn9Iq1wv6XbHx82Vk5o1ESJe2Bzc</token>
+        <backendUrl>/backend.py</backendUrl>
+        <frontendUrl>/webservice</frontendUrl>
+    </webservice>
 </environment>

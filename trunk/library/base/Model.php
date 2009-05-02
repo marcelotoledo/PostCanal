@@ -1,12 +1,13 @@
 <?php
 
 /**
- * Model
+ * Base Model
  * 
  * @category    Blotomate
- * @package     Base
+ * @package     Base Library
  * @author      Rafael Castilho <rafael@castilho.biz>
  */
+
 abstract class B_Model
 {
     /** 
@@ -289,14 +290,14 @@ abstract class B_Model
 
         /* auto set created_at */
 
-        if($this->isNew() && in_array('created_at', $columns))
+        if($this->isNew() == true && in_array('created_at', $columns))
         {
             $this->created_at = time();
         }
 
         /* auto set updated_at */
 
-        if(!$this->isNew() && in_array('updated_at', $columns))
+        if($this->isNew() == false && in_array('updated_at', $columns))
         {
             $this->updated_at = time();
         }
@@ -590,7 +591,8 @@ abstract class B_Model
      */
     public static function transaction()
     {
-        self::execute("START TRANSACTION");
+        PDO::beginTransaction();
+        // self::execute("START TRANSACTION");
     }
 
     /**
@@ -598,7 +600,8 @@ abstract class B_Model
      */
     public static function commit()
     {
-        self::execute("COMMIT");
+        PDO::commit();
+        // self::execute("COMMIT");
     }
 
     /**
@@ -606,7 +609,8 @@ abstract class B_Model
      */
     public static function rollback()
     {
-        self::execute("ROLLBACK");
+        PDO::rollBack();
+        // self::execute("ROLLBACK");
     }
 
     /**

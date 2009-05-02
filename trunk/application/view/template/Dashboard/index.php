@@ -67,12 +67,13 @@
 
 <div id="queueeditform" style="display:none">
     <form>
-        <label for="title"><?php echo $this->translation()->label_title ?></label>
+        <h1><?php echo $this->translation()->queue_edit_article ?></h1>
+        <label for="title"><?php echo $this->translation()->queue_title_label ?></label>
         <input type="text" name="title"><br/>
         <script type="text/javascript">
         var e = new FCKeditor('queueeditcontent');
         e.BasePath = "/fckeditor/";
-        e.Config["CustomConfigurationsPath"] = "/script/fckconfig.js";
+        e.Config["CustomConfigurationsPath"] = "<?php B_Helper::script_src("fckconfig.js") ?>";
         e.Config['AutoDetectLanguage'] = false ;
         e.Config['DefaultLanguage'] = "<?php echo substr($this->registry()->translation()->culture, 0, 2) ?>" ;
 

@@ -34,8 +34,9 @@ $output = <<<EOS
  * <controller> controller class
  * 
  * @category    Blotomate
- * @package     Controller
+ * @package     Application Controller
  */
+
 class C_<controller> extends B_Controller
 {
     /**

@@ -4,9 +4,10 @@
  * AggregatorFeed model class
  * 
  * @category    Blotomate
- * @package     Model
+ * @package     Application Model
  * @author      Rafael Castilho <rafael@castilho.biz>
  */
+
 class AggregatorFeed extends B_Model
 {
     /**
@@ -354,7 +355,7 @@ class AggregatorFeed extends B_Model
             /* request feeds to webservice */
 
             $feeds = array();
-            $client = new L_WebService();
+            $client = new A_WebService();
 
             /* if discover return more than one feed
              * do not insert on database, but give it back to user */

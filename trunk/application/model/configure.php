@@ -111,9 +111,10 @@ $output = <<<EOS
  * <class> model class
  * 
  * @category    Blotomate
- * @package     Model
+ * @package     Application Model
  * @author      Rafael Castilho <rafael@castilho.biz>
  */
+
 class <class> extends B_Model
 {
     /**

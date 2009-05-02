@@ -4,10 +4,11 @@
  * Application HTTP Client
  * 
  * @category    Blotomate
- * @package     Library
+ * @package     Application Library
  * @author      Rafael Castilho <rafael@castilho.biz>
  */
-class L_HTTPClient
+
+class A_HTTPClient
 {
     /**
      * Status constants 
@@ -128,7 +129,7 @@ class L_HTTPClient
         }
 
         $registry = B_Registry::singleton();
-        $max = intval($registry->application->httpClient->maxHeaders);
+        $max = intval($registry->httpClient()->maxHeaders);
         $total = count($headers);
 
         if($max > 0 && $total > $max)
@@ -157,7 +158,7 @@ class L_HTTPClient
         {
             $body = $this->response->getBody();
             $registry = B_Registry::singleton();
-            $max = intval($registry->application->httpClient->maxBodyLenght);
+            $max = intval($registry->httpClient()->maxBodyLenght);
             $lenght = strlen($body);
 
             if($max > 0 && $lenght > $max)

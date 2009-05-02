@@ -4,10 +4,11 @@
  * Application Web Service Client/Server
  * 
  * @category    Blotomate
- * @package     Library
+ * @package     Application Library
  * @author      Rafael Castilho <rafael@castilho.biz>
  */
-class L_WebService
+
+class A_WebService
 {
     /**
      * Web Service token
@@ -44,7 +45,7 @@ class L_WebService
     public function __construct($is_server=false, $throw_exception=false)
     {
         $registry = B_Registry::singleton();
-        $this->token = $registry->application()->webservice()->token;
+        $this->token = $registry->webservice()->token;
 
         if(($this->is_server = $is_server) === true)
         {
@@ -52,7 +53,7 @@ class L_WebService
         }
         else
         {
-            $url = BASE_URL . $registry->application()->webservice()->backend()->url;
+            $url = BASE_URL . $registry->webservice()->backendUrl;
             $this->initializeClient($url);
         }
 
@@ -194,16 +195,18 @@ class L_WebService
     /**
      * Set queue item as published
      */
-    public function queue_publication_done($args)
+    public function queue_publication_status($args)
     {
-        if($this->validate_args($args, array('id')) == false) return false;
+        if($this->validate_args($args, array('id','published')) == false) return false;
 
         $item = QueueItem::findByPrimaryKey($args['id']);
+        $published = ((boolean) $args['published']);
 
         try
         {
-            $item->published = true;
-            $item->to_publish = false;
+            $item->publish_status = $published ? 
+                QueueItem::PS_PUBLISHED : 
+                QueueItem::PS_FAILED;
             $item->save();
         }
         catch(B_Exception $_e)

@@ -4,9 +4,10 @@
  * AggregatorFeedItem model class
  * 
  * @category    Blotomate
- * @package     Model
+ * @package     Application Model
  * @author      Rafael Castilho <rafael@castilho.biz>
  */
+
 class AggregatorFeedItem extends B_Model
 {
     /**
@@ -112,7 +113,7 @@ class AggregatorFeedItem extends B_Model
         }
         if($this->item_md5 == null)
         {
-            $item_md5 = md5(L_Utility::randomString(8));
+            $item_md5 = md5(A_Utility::randomString(8));
         }
 
         parent::populate($data);

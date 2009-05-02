@@ -246,9 +246,8 @@ CREATE TABLE model_user_blog_queue_item
     hash CHAR(8) NOT NULL,
     item_title TEXT NOT NULL, 
     item_content TEXT NOT NULL,
-    to_publish TINYINT(1) NOT NULL DEFAULT 0,
-    to_publish_date TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
-    published TINYINT(1) NOT NULL DEFAULT 0,
+    publish_status ENUM('new', 'waiting', 'failed', 'published') NOT NULL DEFAULT 'new',
+    publish_date TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
     created_at TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
     updated_at TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
     PRIMARY KEY (user_blog_queue_item_id),
@@ -258,4 +257,4 @@ CREATE TABLE model_user_blog_queue_item
         REFERENCES model_user_blog (user_blog_id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET='utf8';
 
-CREATE INDEX m_bqi_bhs_idx ON model_user_blog_queue_item (user_blog_id, hash, to_publish, to_publish_date, published, updated_at);
+CREATE INDEX m_bqi_bhs_idx ON model_user_blog_queue_item (user_blog_id, hash, publish_status, publish_date, updated_at);

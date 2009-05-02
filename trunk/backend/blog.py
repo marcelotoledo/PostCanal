@@ -61,8 +61,8 @@ def guess_type(url):
     body = None
 
     if type == None:
-        client.request("GET", url.path + url.query + url.fragment)
         try:
+            client.request("GET", url.path + url.query + url.fragment)
             response = client.getresponse()
             if response.status == 200:
                 body = BeautifulSoup(response.read())

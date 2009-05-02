@@ -1,13 +1,13 @@
 <?php
 
-
 /**
  * UserBlog model class
  * 
  * @category    Blotomate
- * @package     Model
+ * @package     Application Model
  * @author      Rafael Castilho <rafael@castilho.biz>
  */
+
 class UserBlog extends B_Model
 {
     /**
@@ -103,7 +103,7 @@ class UserBlog extends B_Model
 
         if($this->isNew()) 
         {
-            $this->hash = L_Utility::randomString(8);
+            $this->hash = A_Utility::randomString(8);
         }
 
         return parent::save();
