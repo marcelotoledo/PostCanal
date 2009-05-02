@@ -591,8 +591,8 @@ abstract class B_Model
      */
     public static function transaction()
     {
-        PDO::beginTransaction();
-        // self::execute("START TRANSACTION");
+        // PDO::beginTransaction();
+        self::execute("START TRANSACTION");
     }
 
     /**
@@ -600,8 +600,8 @@ abstract class B_Model
      */
     public static function commit()
     {
-        PDO::commit();
-        // self::execute("COMMIT");
+        // PDO::commit();
+        self::execute("COMMIT");
     }
 
     /**
@@ -609,8 +609,8 @@ abstract class B_Model
      */
     public static function rollback()
     {
-        PDO::rollBack();
-        // self::execute("ROLLBACK");
+        // PDO::rollBack();
+        self::execute("ROLLBACK");
     }
 
     /**
