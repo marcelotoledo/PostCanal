@@ -3,9 +3,9 @@
 import sys, os
 from SimpleXMLRPCServer import CGIXMLRPCRequestHandler
 
-cwd = os.getcwd()
-sys_path = cwd.replace("public/cgi-bin/ws", "") + "backend"
-config_path = cwd.replace("public/cgi-bin/ws", "") + "config/environment.xml"
+base_path = os.path.abspath("../")
+sys_path = base_path + "/backend"
+config_path = base_path + "/config/environment.xml"
 
 sys.path.append(sys_path)
 
