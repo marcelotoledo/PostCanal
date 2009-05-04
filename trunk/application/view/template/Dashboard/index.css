@@ -1,116 +1,6 @@
-/* avoid browser scrollbars */
-
 body
 {
     overflow: hidden; /* avoid body scrollbars */
-}
-
-/* containers */
-
-.dashboardcontainers
-{
-    position: absolute;
-    background-color: ghostwhite;
-    padding: 2px;
-}
-.dashboardcontainers h2
-{
-    margin: 0;
-    padding-left: 5px;
-    background-color: sienna;
-    color: ghostwhite;
-    border-bottom: 1px solid tan;
-    line-height: 30px;
-    font-size: large;
-    font-weight: bold;
-    cursor: pointer;
-}
-.containercontentarea
-{
-    overflow: auto;
-}
-.containerfooter
-{
-    line-height: 20px;
-    vertical-align: middle;
-    padding-right: 5px;
-    background-color: #FDF8F2;
-    border-top: 3px double gainsboro;
-    color: dimgray;
-    text-align: right;
-}
-#feedscontainer
-{
-    border-right: 1px solid silver;
-    background-color: snow;
-}
-#feedscontainer .feeditem
-{
-    padding: 5px;
-    border-bottom: 1px solid silver;
-    cursor: pointer;
-    cursor: hand;
-}
-#feedscontainer .feeditem-selected
-{
-    background-color: #FFD700;
-    font-weight: bold;
-}
-#newscontainer
-{
-    background-color: snow;
-}
-#newscontainer .newsitem
-{
-    padding: 5px;
-    border-bottom: 1px solid silver;
-    cursor: pointer;
-    cursor: hand;
-}
-#newscontainer .newsbody
-{
-    padding: 25px;
-    background-color: lightgray;
-    border: 1px solid silver;
-}
-#newscontainer .newsitem-selected
-{
-    background-color: #FFD700;
-    font-weight: bold;
-}
-#queuecontainer
-{
-    background-color: snow;
-}
-#queuecontainer .queueitem
-{
-    padding: 5px;
-    border-bottom: 1px solid silver;
-    cursor: pointer;
-    cursor: hand;
-}
-#queuecontainer .queuebody
-{
-    padding: 25px;
-    background-color: lightgray;
-    border: 1px solid silver;
-}
-#queuecontainer .queueitem-selected
-{
-    background-color: #FFD700;
-    font-weight: bold;
-}
-#queuecontainer .queueitem-waiting
-{
-    padding: 5px;
-    border-bottom: 1px solid silver;
-    color: gray;
-}
-#queuecontainer .queueitem-failed
-{
-    padding: 5px;
-    border-bottom: 1px solid silver;
-    color: red;
 }
 
 /* dialogs & forms */
@@ -119,10 +9,59 @@ body
 {
     width: 240px;
 }
-#queueeditform
+
+/* bottom bar */
+
+#bottombar
 {
-    z-index: 3001;
     position: absolute;
-    background-color: whitesmoke;
-    padding: 25px;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 40px;
+    background-color: wheat;
+    border-top: 1px solid saddlebrown;
+}
+#bottomleftbar
+{
+    float: left;
+    height: 40px;
+    line-height: 40px;
+    vertical-align: middle;
+    margin-left: 15px;
+}
+#bottomleftbar span
+{
+    padding-right: 10px;
+}
+#bottomleftbar span.title
+{
+    font-weight: bold;
+}
+#bottomrightbar
+{
+    float: right;
+    height: 40px;
+    line-height: 40px;
+    vertical-align: middle;
+    margin-right: 15px;
+}
+#bottomrightbar span
+{
+    padding-left: 10px;
+}
+#bottomrightbar span.hctl
+{
+    cursor: pointer;
+    cursor: hand;
+}
+
+/* queue list bar */
+
+#queuelistbar
+{
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
 }

@@ -858,8 +858,8 @@ class B_Log
                                   $priority=E_USER_NOTICE,
                                   $data=array())
     {
-        $columns = array('message', 'priority');
-        $values = array($message, $priority);
+        $columns = array('message', 'priority', 'created_at');
+        $values = array($message, $priority, date('Y-m-d H:i:s'));
 
         /* set extra data */
 
@@ -1813,7 +1813,7 @@ class B_Request
      */
     public function getController()
     {
-        return array_key_exists(0, $this->arguments) ? $this->arguments[0] : null;
+        return array_key_exists(0, $this->arguments) ? $this->arguments[0] : "index";
     }
 
     /**
@@ -1823,7 +1823,7 @@ class B_Request
      */
     public function getAction()
     {
-        return array_key_exists(1, $this->arguments) ? $this->arguments[1] : null;
+        return array_key_exists(1, $this->arguments) ? $this->arguments[1] : "index";
     }
 
     /**

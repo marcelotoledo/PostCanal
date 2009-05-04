@@ -667,7 +667,7 @@ class C_Profile extends B_Controller
 
         $subject = "mail_" . $template . "_subject";
         $mailer->setSubject($this->translation()->{$subject});
-        $template = $this->request()->getController() . "/mail_" . $template;
+        $template = ucfirst($this->request()->getController()) . "/mail_" . $template;
 
         ob_start();
         include B_View::getTemplatePath($template);

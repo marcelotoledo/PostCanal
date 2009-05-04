@@ -56,12 +56,13 @@ div, form
     padding-left: 10px;
 }
 
-/* main */
+/* middle content */
 
-#main
+#middlecontent
 {
     position: absolute;
     top: 41px;
     left: 0;
     width: 100%;
+    overflow: auto;
 }

@@ -133,7 +133,7 @@ class B_Request
      */
     public function getController()
     {
-        return array_key_exists(0, $this->arguments) ? $this->arguments[0] : null;
+        return array_key_exists(0, $this->arguments) ? $this->arguments[0] : "index";
     }
 
     /**
@@ -143,7 +143,7 @@ class B_Request
      */
     public function getAction()
     {
-        return array_key_exists(1, $this->arguments) ? $this->arguments[1] : null;
+        return array_key_exists(1, $this->arguments) ? $this->arguments[1] : "index";
     }
 
     /**

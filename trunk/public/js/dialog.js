@@ -43,8 +43,7 @@ jQuery.b_dialog = function(config)
     if(dialog != null)
     {
         dialog.css('left', (ww * 0.5) - (dialog.outerWidth() * 0.5));
-        dialog.css('top', (wh * 0.5) - (dialog.outerHeight() * 0.5));
-
+        dialog.css('top', (wh * 0.5) - (dialog.outerHeight()));
     }
 
     /* actions */

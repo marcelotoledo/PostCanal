@@ -170,8 +170,9 @@ class A_Mailer
     private static function setRelay($recipient, $identifier)
     {
         return B_Model::execute("INSERT INTO " . self::$relay_table . " " .
-                                 "(recipient, identifier) VALUES (?, ?)",
-                                 array($recipient, substr(md5($identifier), 0, 8)));
+                                 "(recipient, identifier_md5, created_at) " .
+                                 "VALUES (?, ?, ?)",
+                                 array($recipient, md5($identifier), date("Y-m-d H:i:s")));
     }
 
     /**
@@ -198,8 +199,8 @@ class A_Mailer
         $sql.= "WHERE recipient = ? ";
         $data[] = $recipient;
 
-        $sql.= "AND identifier = ? ";
-        $identifier = substr(md5($identifier), 0, 8);
+        $sql.= "AND identifier_md5 = ? ";
+        $identifier = md5($identifier);
         $data[] = $identifier;
 
         $sql.= "AND created_at > ? ";
