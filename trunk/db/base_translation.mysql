@@ -6,6 +6,7 @@ INSERT INTO base_translation VALUES (NULL, "application", "en_US", "application_
 INSERT INTO base_translation VALUES (NULL, "application", "en_US", "application_blogs", "blogs");
 INSERT INTO base_translation VALUES (NULL, "application", "en_US", "application_feed", "feed");
 INSERT INTO base_translation VALUES (NULL, "application", "en_US", "application_feeds", "feeds");
+INSERT INTO base_translation VALUES (NULL, "application", "en_US", "application_Feeds", "Feeds");
 INSERT INTO base_translation VALUES (NULL, "application", "en_US", "application_feed_item", "item");
 INSERT INTO base_translation VALUES (NULL, "application", "en_US", "application_feed_items", "items");
 INSERT INTO base_translation VALUES (NULL, "application", "en_US", "application_queue", "queue");

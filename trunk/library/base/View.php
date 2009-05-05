@@ -169,10 +169,13 @@ class B_View
     /**
      * View render
      *
+     * @param   string  $type
+     * @param   string  $required
+     *
      * @throws  B_Exception
      * @return  void
      */
-    public function render()
+    public function render($type='php', $required=true)
     {
         if(strlen($this->layout) == 0)
         {
@@ -193,15 +196,24 @@ class B_View
 
         else
         {
-            if(($path = self::getLayoutPath($this->layout)))
+            if(($path = self::getLayoutPath($this->layout, $type)))
             {
+                if($type == 'js')  echo "<script type=\"text/javascript\">\n";
+                if($type == 'css') echo "<style type=\"text/css\">\n";
+
                 include $path;
+
+                if($type == 'js')  echo "</script>\n";
+                if($type == 'css') echo "</style>\n";
             }
             else
             {
-                $_m = "layout (" . $this->layout . ") not found";
-                $_d = array('method' => __METHOD__);
-                throw new B_Exception($_m, E_USER_ERROR, $_d);
+                if($required == true)
+                {
+                    $_m = "layout (" . $this->layout . "." . $type . ") not found";
+                    $_d = array('method' => __METHOD__);
+                    throw new B_Exception($_m, E_USER_ERROR, $_d);
+                }
             }
         }
     }
@@ -241,11 +253,12 @@ class B_View
      * get layout path
      *
      * @param   string  $layout
+     * @param   string  $type
      * @return  boolean
      */
-    public static function getLayoutPath($layout)
+    public static function getLayoutPath($layout, $type='php')
     {
-        $path = APPLICATION_PATH . "/view/layout/" . $layout . ".php";
+        $path = APPLICATION_PATH . "/view/layout/" . $layout . "." . $type;
         return file_exists($path) ? $path : null;
     }
 
@@ -253,6 +266,7 @@ class B_View
      * get template path
      *
      * @param   string  $template
+     * @param   string  $type
      * @return  boolean
      */
     public static function getTemplatePath($template, $type='php')

@@ -3,9 +3,10 @@
 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
 <title>Blotomate</title>
 <script type="text/javascript" src="/jquery/jquery-1.3.2.min.js"></script>
-<?php B_Helper::script("application.js") ?>
 <?php B_Helper::style("application.css") ?>
-<?php B_Helper::style("index.css") ?>
+<?php B_Helper::script("application.js") ?>
+<?php $this->render('css', false) ?>
+<?php $this->render('js', false) ?>
 <?php $this->renderTemplate('css', false) ?>
 <?php $this->renderTemplate('js', false) ?>
 </head>

@@ -1,3 +1,4 @@
+<div id="middlecontent" class="subpage">
 <form id="editform">
     <h1><?php echo $this->translation()->edit_profile ?></h1>
     <table>
@@ -76,3 +77,4 @@
         </tr>
     </table>
 </form>
+</div>

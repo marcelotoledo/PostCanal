@@ -6,11 +6,12 @@
 <script type="text/javascript" src="/jquery/jquery-1.3.2.min.js"></script>
 <script type="text/javascript" src="/jquery/jquery-ui-1.7.1.custom.min.js"></script>
 <script type="text/javascript" src="/fckeditor/fckeditor.js"></script>
-<?php B_Helper::script("application.js") ?>
 <?php B_Helper::style("application.css") ?>
-<?php B_Helper::style("dashboard.css") ?>
-<?php $this->renderTemplate('js', false) ?>
+<?php B_Helper::script("application.js") ?>
+<?php $this->render('css', true) ?>
+<?php $this->render('js', true) ?>
 <?php $this->renderTemplate('css', false) ?>
+<?php $this->renderTemplate('js', false) ?>
 </head>
 <body>
 
