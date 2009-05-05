@@ -21,6 +21,7 @@ body
     height: 40px;
     background-color: wheat;
     border-top: 1px solid saddlebrown;
+    overflow: hidden; /* avoid body scrollbars */
 }
 #bottomleftbar
 {
@@ -30,6 +31,10 @@ body
     vertical-align: middle;
     margin-left: 15px;
 }
+#bottomleftbar th
+{
+    border-left: 1px solid gray;
+}
 #bottomleftbar span
 {
     padding-right: 10px;
@@ -37,6 +42,33 @@ body
 #bottomleftbar span.title
 {
     font-weight: bold;
+}
+#bottomleftbar span.mode
+{
+    /* void */
+}
+#bottomleftbar span.qctl
+{
+    display: block;
+    width: 24px;
+    height: 24px;
+    line-height: 24px;
+}
+#bottomleftbar span.qctl-stop
+{
+    background: url(<?php B_Helper::img_src('queue_stop.png'); ?>) no-repeat 0px 0px;
+}
+#bottomleftbar span.qctl-play
+{
+    background: url(<?php B_Helper::img_src('queue_play.png'); ?>) no-repeat 0px 0px;
+    cursor: pointer;
+    cursor: hand;
+}
+#bottomleftbar span.qctl-pause
+{
+    background: url(<?php B_Helper::img_src('queue_pause.png'); ?>) no-repeat 0px 0px;
+    cursor: pointer;
+    cursor: hand;
 }
 #bottomrightbar
 {
@@ -52,8 +84,20 @@ body
 }
 #bottomrightbar span.hctl
 {
+    display: block;
+    width: 24px;
+    height: 24px;
+    line-height: 24px;
     cursor: pointer;
     cursor: hand;
+}
+#bottomrightbar span.hctl-open
+{
+    background: url(<?php B_Helper::img_src('queue_maximize.png'); ?>) no-repeat 0px 0px;
+}
+#bottomrightbar span.hctl-close
+{
+    background: url(<?php B_Helper::img_src('queue_minimize.png'); ?>) no-repeat 0px 0px;
 }
 
 /* queue list bar */

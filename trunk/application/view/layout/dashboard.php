@@ -40,28 +40,7 @@
 </nobr></div>
 </div>
 
-<div id="middlecontent">
 <?php $this->renderTemplate() ?>
-</div>
-
-<?php $_b = (count($this->blogs) > 0) ?>
-<?php $_d = ($this->registry()->request()->object->getAction() == "index") ?>
-<?php if($_b && $_d) : ?>
-
-<div id="bottombar">
-<div id="bottomleftbar"><nobr>
-<span class="title"><?php echo $this->translation()->queue ?></span>
-</nobr></div>
-<div id="bottomrightbar"><nobr>
-<span class="hctl"><img src="<?php B_Helper::img_src("nearrow.gif") ?>"></span>
-</nobr></div>
-</div>
-
-<div id="queuelistbar" style="display:none">
-queue
-</div>
-
-<?php endif ?>
 
 </body>
 </html>
