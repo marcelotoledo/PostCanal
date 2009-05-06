@@ -8,8 +8,8 @@
 <script type="text/javascript" src="/fckeditor/fckeditor.js"></script>
 <?php B_Helper::style("application.css") ?>
 <?php B_Helper::script("application.js") ?>
-<?php $this->render('css', true) ?>
-<?php $this->render('js', true) ?>
+<?php $this->renderLayout('css', true) ?>
+<?php $this->renderLayout('js', true) ?>
 <?php $this->renderTemplate('css', false) ?>
 <?php $this->renderTemplate('js', false) ?>
 </head>
@@ -41,7 +41,14 @@
 </nobr></div>
 </div>
 
+<?php if($this->registry()->request()->object->getController() != "dashboard"): ?>
+<div id="middlecontent">
 <?php $this->renderTemplate() ?>
+</div>
+<?php else: ?>
+<?php $this->renderTemplate() ?>
+<?php endif ?>
+
 
 </body>
 </html>

@@ -169,13 +169,23 @@ class B_View
     /**
      * View render
      *
-     * @param   string  $type
-     * @param   string  $required
-     *
      * @throws  B_Exception
      * @return  void
      */
-    public function render($type='php', $required=true)
+    public function render()
+    {
+        $this->renderLayout();
+    }
+
+    /**
+     * Layout render
+     *
+     * @param   string  $type
+     * @param   string  $required
+     * @throws  B_Exception
+     * @return  void
+     */
+    public function renderLayout($type='php', $required=true)
     {
         if(strlen($this->layout) == 0)
         {

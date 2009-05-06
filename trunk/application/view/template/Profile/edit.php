@@ -1,6 +1,6 @@
-<div id="middlecontent" class="subpage">
+<div class="subpage">
 <form id="editform">
-    <h1><?php echo $this->translation()->edit_profile ?></h1>
+    <h1><?php echo $this->translation()->profile ?></h1>
     <table>
         <tr>
         <th><?php echo $this->translation()->profile_name ?>:</th>

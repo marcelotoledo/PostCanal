@@ -26,6 +26,10 @@ class C_Feed extends B_Controller
     public function A_index()
     {
         $this->view()->setLayout('dashboard');
+
+        $id = $this->session()->user_profile_id;
+        $blogs = UserBlog::findByUserProfileId($id, $enabled=true);
+        $this->view()->blogs = $blogs;
     }
 
     /**
@@ -151,5 +155,17 @@ class C_Feed extends B_Controller
         }
 
         $this->view()->feed = is_object($blog_feed) ? $blog_feed->hash : '';
+    }
+
+    /**
+     * Update feed position
+     *
+     * @return void
+     */
+    public function A_position()
+    {
+        $this->response()->setXML(true);
+
+        $this->view()->updated = true;
     }
 }

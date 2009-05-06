@@ -66,12 +66,12 @@ INSERT INTO base_translation VALUES (NULL, "blog/add", "en_US", "blog_manager_ch
 INSERT INTO base_translation VALUES (NULL, "blog/add", "en_US", "blog_username", "Username");
 INSERT INTO base_translation VALUES (NULL, "blog/add", "en_US", "blog_password", "Password");
 INSERT INTO base_translation VALUES (NULL, "blog/add", "en_US", "blog_login_check", "check");
+INSERT INTO base_translation VALUES (NULL, "feed/index", "en_US", "feed_add", "feed add");
+INSERT INTO base_translation VALUES (NULL, "feed/index", "en_US", "feed_add_url", "URL");
+INSERT INTO base_translation VALUES (NULL, "feed/index", "en_US", "feed_not_found", "feed not found");
+INSERT INTO base_translation VALUES (NULL, "feed/index", "en_US", "no_registered_feeds", "no registered feeds");
 INSERT INTO base_translation VALUES (NULL, "dashboard/index", "en_US", "no_registered_blog", "No registered <b>blog</b>");
 INSERT INTO base_translation VALUES (NULL, "dashboard/index", "en_US", "new_blog_instruction", "to add a new blog, or use the item \"blogs\" in menu");
-INSERT INTO base_translation VALUES (NULL, "dashboard/index", "en_US", "feed_add", "add");
-INSERT INTO base_translation VALUES (NULL, "dashboard/index", "en_US", "feed_add_form_title", "Feed add");
-INSERT INTO base_translation VALUES (NULL, "dashboard/index", "en_US", "feed_add_url", "URL");
-INSERT INTO base_translation VALUES (NULL, "dashboard/index", "en_US", "feed_not_found", "Feed not found");
 INSERT INTO base_translation VALUES (NULL, "dashboard/index", "en_US", "view_feed_item", "view");
 INSERT INTO base_translation VALUES (NULL, "dashboard/index", "en_US", "publish_queue_item", "publish");
 INSERT INTO base_translation VALUES (NULL, "dashboard/index", "en_US", "edit_queue_item", "edit");

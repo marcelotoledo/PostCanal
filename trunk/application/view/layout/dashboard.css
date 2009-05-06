@@ -66,8 +66,7 @@ div, form
     width: 100%;
     overflow: auto;
 }
-#middlecontent.subpage
+#middlecontent div.subpage
 {
-    padding-left: 50px;
-    padding-top: 25px;
+    padding-left: 15px;
 }
