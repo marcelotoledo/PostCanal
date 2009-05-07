@@ -103,9 +103,22 @@ class UserBlogFeed extends B_Model
         if($this->isNew()) 
         {
             $this->hash = A_Utility::randomString(8);
+            $this->increaseOrdering();
         }
 
         return parent::save();
+    }
+
+    /**
+     * Increase feeds ordering
+     */
+    public function increaseOrdering()
+    {
+        if($this->user_blog_id)
+        {
+            $sql = "UPDATE " . self::$table_name . " SET ordering=(ordering+1) WHERE user_blog_id = ?";
+            self::execute($sql, array($this->user_blog_id));
+        }
     }
 
     /**
