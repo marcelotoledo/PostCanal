@@ -181,22 +181,11 @@ class UserProfile extends B_Model
      *
      * @return  UserProfile|null 
      */
-    public static function getByPrimaryKey($id)
+    public static function getByPrimaryKey($id, $enabled=true)
     {
-        return current(self::find(array(self::$primary_key_name => $id)));
-    }
-
-    /**
-     * Get UserProfile by primary key and enabled (user_profile_enabled_index)
-     * 
-     * @param   integer $id    Primary key value
-     *
-     * @return  UserProfile|null 
-     */
-    public static function getByPrimaryKeyEnabled($id)
-    {
-        return current(self::find(
-            array(self::$primary_key_name => $id, 'enabled' => true)));
+        return current(self::find(array(
+            self::$primary_key_name => $id,
+            'enabled' => $enabled)));
     }
 
     /**
@@ -205,7 +194,7 @@ class UserProfile extends B_Model
      * @param   string  $email
      * @return  UserProfile|null
      */
-    public static function findByEmail($email)
+    public static function getByEmail($email)
     {
         return current(self::find(array(
             'login_email' => strtolower($email),
@@ -219,7 +208,7 @@ class UserProfile extends B_Model
      * @param   string  $password_md5   md5($password)
      * @return  UserProfile|null
      */
-    public static function findByLogin($email, $password_md5)
+    public static function getByLogin($email, $password_md5)
     {
         return current(self::find(array(
             'login_email'        => strtolower($email),
@@ -234,7 +223,7 @@ class UserProfile extends B_Model
      * @param   string  $hash
      * @return  UserProfile|null
      */
-    public static function findByHash($email, $hash)
+    public static function getByHash($email, $hash)
     {
         return current(self::find(array(
             'login_email' => strtolower($email), 

@@ -1,3 +1,5 @@
+<div class="subpage">
+
 <form>
     <h1><?php echo $this->translation()->blog_add ?></h1>
     <table>
@@ -39,17 +41,19 @@
         <a id="check_manager_login"><?php echo $this->translation()->blog_login_check ?></a>
     </td>
     </tr>
-    </table>
-    <table>
     <tr>
     <th>&nbsp;</th>
     <td class="buttons">
         <input name="addsubmit" type="button" value="<?php echo $this->translation()->application_add ?>">
     </td>
     </tr>
+    </table>
+    <table>
     <tr id="blogaddmessage" style="display:none">
     <th>&nbsp;</th>
     <td class="message"></td>
     </tr>
     </table>
 </form>
+
+</div>

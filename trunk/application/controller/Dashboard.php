@@ -26,7 +26,7 @@ class C_Dashboard extends B_Controller
     public function A_index()
     {
         $id = $this->session()->user_profile_id;
-        $blogs = UserBlog::findByUserProfileId($id, $enabled=true);
+        $blogs = UserBlog::findByUser($id, $enabled=true);
         $this->view()->blogs = $blogs;
     }
 }

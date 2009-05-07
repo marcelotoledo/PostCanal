@@ -1,10 +1,11 @@
 <div class="subpage">
 
+<h1><?php echo $this->translation()->feeds ?></h1>
+<div id="feedaddlnkdiv">
+    <a id="feedaddlnk"><?php echo $this->translation()->feed_add ?>
+</div>
+
 <form>
-    <h1><?php echo $this->translation()->feeds ?></h1>
-    <div id="feedaddlnkdiv">
-        <a id="feedaddlnk"><?php echo $this->translation()->feed_add ?>
-    </div>
     <table id="feedaddformtable" style="display:none">
         <tr id="feedaddurlrow">
         <th><?php echo $this->translation()->feed_add_url ?>:</th>

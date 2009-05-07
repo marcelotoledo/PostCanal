@@ -313,7 +313,7 @@ $(document).ready(function()
 
                 if(added == "true")
                 {
-                    window.location = "<?php B_Helper::url('dashboard') ?>";
+                    window.location = "<?php B_Helper::url('blog') ?>";
                 }
                 else
                 {

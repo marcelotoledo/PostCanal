@@ -70,3 +70,10 @@ div, form
 {
     padding-left: 15px;
 }
+#middlecontent div.subpage h1
+{
+    text-decoration: underline;
+    font-size: x-large;
+    margin-bottom: 25px;
+    text-transform: capitalize;
+}

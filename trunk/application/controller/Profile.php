@@ -30,7 +30,7 @@ class C_Profile extends B_Controller
 
         if(strlen($email) > 0 && strlen($password) > 0)
         {
-            $profile = UserProfile::findByLogin($email, md5($password));
+            $profile = UserProfile::getByLogin($email, md5($password));
         }
 
         if(is_object($profile))
@@ -87,7 +87,7 @@ class C_Profile extends B_Controller
         if(strlen($email) > 0 && 
            strlen($password) > 0 && strlen($confirm) > 0 && $password == $confirm)
         {
-            $profile = UserProfile::findByEmail($email);
+            $profile = UserProfile::getByEmail($email);
 
             /* register new user profile */
 
@@ -171,7 +171,7 @@ class C_Profile extends B_Controller
         $this->response()->setXML(true);
 
         $email = $this->request()->email;
-        $profile = UserProfile::findByEmail($email);
+        $profile = UserProfile::getByEmail($email);
         $this->view()->recovery = false;
         $this->view()->message = $this->translation()->recovery_failed;
 
@@ -235,7 +235,7 @@ class C_Profile extends B_Controller
 
         if(strlen($email) > 0 && strlen($hash) > 0)
         {
-            $profile = UserProfile::findByHash($email, $hash);
+            $profile = UserProfile::getByHash($email, $hash);
         }
 
         if(is_object($profile))
@@ -286,7 +286,7 @@ class C_Profile extends B_Controller
 
         if(strlen($email) > 0 && strlen($hash) > 0)
         {
-            $profile = UserProfile::findByHash($email, $hash);
+            $profile = UserProfile::getByHash($email, $hash);
             $expired = is_object($profile) ? $profile->recovery_allowed : true;
         }
 
@@ -347,7 +347,7 @@ class C_Profile extends B_Controller
     {
         $updated = false;
 
-        if(is_object($profile = $profile = UserProfile::findByPrimaryKey($id)))
+        if(is_object($profile = $profile = UserProfile::getByPrimaryKey($id)))
         {
             if($password != $confirm)
             {
@@ -393,7 +393,7 @@ class C_Profile extends B_Controller
     {
         $updated = false;
 
-        if(is_object($profile = $profile = UserProfile::findByHash($email, $hash)))
+        if(is_object($profile = $profile = UserProfile::getByHash($email, $hash)))
         {
             if($password != $confirm)
             {
@@ -448,7 +448,7 @@ class C_Profile extends B_Controller
 
         if(strlen($email) > 0 && strlen($hash) > 0)
         {
-            $profile = UserProfile::findByHash($email, $hash);
+            $profile = UserProfile::getByHash($email, $hash);
             $new_email = is_object($profile) ? $profile->email_update : "";
         }
 
@@ -511,7 +511,7 @@ class C_Profile extends B_Controller
     {
         $accepted = false;
 
-        if(is_object($profile = UserProfile::findByPrimaryKey($id)))
+        if(is_object($profile = UserProfile::getByPrimaryKey($id)))
         {
             if($profile->login_email == $new_email)
             {
@@ -555,7 +555,7 @@ class C_Profile extends B_Controller
     {
         $accepted = false;
 
-        if(is_object($profile = UserProfile::findByHash($email, $hash)))
+        if(is_object($profile = UserProfile::getByHash($email, $hash)))
         {
             if($profile->login_password_md5 != md5($password))
             {
@@ -608,7 +608,7 @@ class C_Profile extends B_Controller
         $this->view()->setLayout('dashboard');
         
         $id = intval($this->session()->user_profile_id);
-        $this->view()->profile = UserProfile::findByPrimaryKeyEnabled($id);
+        $this->view()->profile = UserProfile::getByPrimaryKey($id);
 
         if(is_object($this->view()->profile) == false) 
         {
@@ -626,7 +626,7 @@ class C_Profile extends B_Controller
         $this->response()->setXML(true);
 
         $id = intval($this->session()->user_profile_id);
-        $profile = ($id > 0) ? UserProfile::findByPrimaryKeyEnabled($id) : null;
+        $profile = ($id > 0) ? UserProfile::getByPrimaryKey($id) : null;
         $this->view()->saved = false;
         $this->view()->message = $this->translation()->edit_failed;
 

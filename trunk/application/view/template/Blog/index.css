@@ -3,27 +3,20 @@ table th
     width: 100px;
 }
 
-#feedlistarea
+#bloglistarea
 {
     padding-top: 25px;
 }
 
-div.feeditem
+div.blogitem
 {
     padding: 5px;
     width: 600px;
     border-bottom: 1px solid silver;
-    cursor: pointer;
-    cursor: hand;
 }
 
-div.feeditem small
+div.blogitem small
 {
     color: gray;
     font-size: x-small;
-}
-
-div.feeditem:hover
-{
-    background-color: khaki;
 }

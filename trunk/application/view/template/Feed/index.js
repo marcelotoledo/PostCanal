@@ -185,11 +185,12 @@ $(document).ready(function()
             feeds.each(function()
             {
                 _feed = $(this).find('feed').text();
+                _ord = $(this).find('ordering').text();
                 _url = $(this).find('feed_url').text();
                 _title = $(this).find('feed_title').text();
 
                 _div = "<div class=\"feeditem\" " +
-                       "feed=\"" + _feed + "\">" +
+                       "feed=\"" + _feed + "\" ord=\"" + _ord + "\">" +
                        _title + "<br/><small>" + 
                        _url + "</small></div>";
 
@@ -259,16 +260,16 @@ $(document).ready(function()
 
     function sortable_callback(feed)
     {
-        var _feed_position = 1;
+        var __p = 1;
 
         feed_list_area.find('.feeditem').each(function()
         {
-            if(feed == $(this).attr('feed'))
+            if(feed == $(this).attr('feed') && __p != $(this).attr('ord'))
             {
-                update_feed_position(feed, _feed_position);
+                update_feed_position(feed, __p);
             }
 
-            _feed_position++;
+            __p++;
         });
     }
 

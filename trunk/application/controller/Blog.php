@@ -24,6 +24,8 @@ class C_Blog extends B_Controller
     public function A_index()
     {
         $this->view()->setLayout('dashboard');
+        $user_id = $this->session()->user_profile_id;
+        $this->view()->blogs = UserBlog::findByUser($user_id);
     }
 
     /**

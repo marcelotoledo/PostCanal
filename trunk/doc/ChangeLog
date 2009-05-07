@@ -26,5 +26,7 @@ HORAS TRABALHADAS: 6h
 - Organizacao e otimizacao das consultas SQL de feeds
 - Alteracao do Model para escrever objecto como XML
 - Exibicao de URL na listagem de feeds
+- Inclusao de listagem de blogs
+- Ajustes no controller Profile e model UserProfile
 
-HORAS TRABALHADAS: 2h
+HORAS TRABALHADAS: 4h

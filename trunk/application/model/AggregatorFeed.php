@@ -302,7 +302,7 @@ class AggregatorFeed extends B_Model
         $sql = "SELECT * FROM " . self::$table_name . "
                 WHERE aggregator_feed_id = (
                     SELECT aggregator_feed_id FROM model_aggregator_feed_url
-                    WHERE url_md5 = MD5(?)";
+                    WHERE url_md5 = MD5(?))";
 
         return self::selectModel($sql, array($url));
     }
