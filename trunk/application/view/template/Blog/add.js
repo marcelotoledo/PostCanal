@@ -133,7 +133,7 @@ $(document).ready(function()
 
         if(url == "")
         {
-            $.b_alert("<?php echo $this->translation()->form_incomplete ?>");
+            blogaddmsg("<?php echo $this->translation()->form_incomplete ?>");
             return null;
         }
 

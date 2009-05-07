@@ -109,3 +109,18 @@ body
     left: 0;
     width: 100%;
 }
+
+/* feed item */
+
+div.feeditem
+{
+    padding: 5px;
+    border-bottom: 1px solid silver;
+    cursor: pointer;
+    cursor: hand;
+}
+
+div.feeditem:hover
+{
+    background-color: khaki;
+}

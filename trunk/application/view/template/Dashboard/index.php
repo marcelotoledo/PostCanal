@@ -1,8 +1,6 @@
 <?php if(count($this->blogs) > 0) : ?>
 
-<div id="middlecontent">
-feeds
-</div>
+<div id="middlecontent"></div>
 
 <div id="bottombar">
 <div id="bottomleftbar"><nobr>

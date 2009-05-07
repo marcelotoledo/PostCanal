@@ -6,12 +6,12 @@
     * Ordenar item de queue
 
     * Testar login (e publicacao de draft) durante o cadastro de um blog
-    * Gerenciador de blogs cadastrados
+    @ Gerenciador de blogs cadastrados
     * Alterar blogs cadastrados
 
 03/05/09 a 09/05/09
 
-    * Gerenciador de feeds cadastrados
+    @ Gerenciador de feeds cadastrados
     * Desativar feed cadastrado
     * Remover feed cadastrado
     * Permitir importar feeds a partir de OPML
@@ -24,7 +24,7 @@
 
 10/05/09 a 16/05/09
 
-    * Novo feed incluir no topo da lista
+    @ Novo feed incluir no topo da lista
     * Exibir itens de todos os feeds
     * Exibir itens de feeds marcados com estrela
     * Ordenar canais de feed

@@ -56,6 +56,8 @@ $(document).ready(function()
         {
             $("#feedaddlnkdiv").show();
             $("#feedaddformtable").hide();
+            $("input[name='feedaddurl']").val("");
+            feed_msg("");
         }
     }
 
@@ -161,7 +163,6 @@ $(document).ready(function()
     {
         if((url = $("input[name='feedaddoption']:checked").attr('url')) != undefined)
         {
-            //feed_add(url);
             feed_discover(url);
         }
         else
@@ -300,17 +301,28 @@ $(document).ready(function()
         feedaddform_submit();
     });
 
+    $("select[name='bloglst']").change(function()
+    {
+        set_blog();
+    });
+
     /* INIT */
 
-    /* set default blog */
+    /* set blog */
 
-    <?php if(count($this->blogs) == 1) : ?>
-    current_blog = $("#blogcur").val();
-    <?php elseif(count($this->blogs) > 1) : ?>
-    current_blog = $("select[name='bloglst'] > option:selected").val();
-    <?php endif ?>
+    function set_blog()
+    {
+        <?php if(count($this->blogs) == 1) : ?>
+        current_blog = $("#blogcur").val();
+        <?php elseif(count($this->blogs) > 1) : ?>
+        current_blog = $("select[name='bloglst'] > option:selected").val();
+        <?php endif ?>
 
-    feed_list();
+        feed_list();
+        toggle_feed_add_form(false);
+    }
+
+    set_blog();
 
     /* feed list is sortable */
 
