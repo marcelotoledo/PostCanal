@@ -166,6 +166,13 @@ class C_Feed extends B_Controller
     {
         $this->response()->setXML(true);
 
+        $blog = $this->request()->blog;
+        $feed = $this->request()->feed;
+        $position = $this->request()->position;
+        $user_id = $this->session()->user_profile_id;
+
+        UserBlogFeed::updateOrdering($blog, $user_id, $feed, $position);
+
         $this->view()->updated = true;
     }
 }

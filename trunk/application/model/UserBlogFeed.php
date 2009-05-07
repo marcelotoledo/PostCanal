@@ -223,4 +223,54 @@ class UserBlogFeed extends B_Model
             'user_blog_id' => $user_blog_id,
             'hash' => $hash)));
     }
+
+    /**
+     * Update feed ordering
+     *
+     * @param   string      $blog_hash
+     * @param   integer     $user_id        
+     * @param   string      $feed_hash
+     * @param   integer     $ordering
+     */
+    public static function updateOrdering($blog_hash, $user_id, $feed_hash, $ordering)
+    {
+        $sql = "SELECT * FROM model_user_blog_feed WHERE user_blog_id = (SELECT user_blog_id FROM model_user_blog WHERE hash = ? AND user_profile_id = ?) AND hash = ?";
+        $cur = current(self::selectModel($sql, array($blog_hash, $user_id, $feed_hash)));
+
+        $i = $cur->ordering;
+        $j = $ordering;
+        $k = ($j < $i);
+
+        if($j == $i) return null;
+
+        $sql = "UPDATE model_user_blog_feed SET ";
+        
+        if($k)
+        {
+            $sql.= "ordering=(ordering+1) ";
+        }
+        else
+        {
+            $sql.= "ordering=(ordering-1) ";
+        }
+        
+        $sql.= "WHERE user_blog_id = (SELECT user_blog_id FROM model_user_blog WHERE hash = ? AND user_profile_id = ?) ";
+        $data = array($blog_hash, $user_id);
+
+        if($k)
+        {
+            $sql.= "AND ordering >= ? AND ordering < ?";
+            $data = array_merge($data, array($j, $i));
+        }
+        else
+        {
+            $sql.= "AND ordering > ? AND ordering <= ?";
+            $data = array_merge($data, array($i, $j));
+        }
+
+        self::execute($sql, $data);
+
+        $cur->ordering = $j;
+        $cur->save();
+    }
 }
