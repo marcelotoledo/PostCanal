@@ -106,6 +106,8 @@ class B_View
         {
             $element = is_integer($k) ? "item" : $k;
 
+            if(is_object($v)) $v = ((array) $v);
+
             if(is_array($v))
             {
                 $xml->startElement($element);

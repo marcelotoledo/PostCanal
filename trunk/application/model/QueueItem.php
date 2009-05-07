@@ -164,13 +164,13 @@ class QueueItem extends B_Model
     }
 
     /**
-     * Find QueueItem by primary key
+     * Get QueueItem by primary key
      *
      * @param   integer $id    Primary key value
      *
      * @return  QueueItem|null 
      */
-    public static function findByPrimaryKey($id)
+    public static function getByPrimaryKey($id)
     {
         return current(self::find(array(self::$primary_key_name => $id)));
     }

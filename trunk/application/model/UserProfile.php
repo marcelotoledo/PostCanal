@@ -181,19 +181,19 @@ class UserProfile extends B_Model
      *
      * @return  UserProfile|null 
      */
-    public static function findByPrimaryKey($id)
+    public static function getByPrimaryKey($id)
     {
         return current(self::find(array(self::$primary_key_name => $id)));
     }
 
     /**
-     * Find UserProfile by primary key and enabled (user_profile_enabled_index)
+     * Get UserProfile by primary key and enabled (user_profile_enabled_index)
      * 
      * @param   integer $id    Primary key value
      *
      * @return  UserProfile|null 
      */
-    public static function findByPrimaryKeyEnabled($id)
+    public static function getByPrimaryKeyEnabled($id)
     {
         return current(self::find(
             array(self::$primary_key_name => $id, 'enabled' => true)));

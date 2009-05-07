@@ -185,11 +185,13 @@ $(document).ready(function()
             feeds.each(function()
             {
                 _feed = $(this).find('feed').text();
-                _title = $(this).find('title').text();
+                _url = $(this).find('feed_url').text();
+                _title = $(this).find('feed_title').text();
 
                 _div = "<div class=\"feeditem\" " +
                        "feed=\"" + _feed + "\">" +
-                       _title + "</div>";
+                       _title + "<br/><small>" + 
+                       _url + "</small></div>";
 
                 feed_list_area.append(_div);
             });

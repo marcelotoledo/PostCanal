@@ -233,13 +233,13 @@ class <class> extends B_Model
     }
 
     /**
-     * Find <class> by primary key
+     * Get <class> by primary key
      *
      * @param   integer \$id    Primary key value
      *
      * @return  <class>|null 
      */
-    public static function findByPrimaryKey(\$id)
+    public static function getByPrimaryKey(\$id)
     {
         return current(self::find(array(self::\$primary_key_name => \$id)));
     }

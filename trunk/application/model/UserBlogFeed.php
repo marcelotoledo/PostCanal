@@ -116,7 +116,9 @@ class UserBlogFeed extends B_Model
     {
         if($this->user_blog_id)
         {
-            $sql = "UPDATE " . self::$table_name . " SET ordering=(ordering+1) WHERE user_blog_id = ?";
+            $sql = "UPDATE " . self::$table_name . " " . 
+                   "SET ordering=(ordering+1) " .
+                   "WHERE user_blog_id = ?";
             self::execute($sql, array($this->user_blog_id));
         }
     }
@@ -168,73 +170,71 @@ class UserBlogFeed extends B_Model
     }
 
     /**
-     * Find UserBlogFeed by primary key
+     * Get UserBlogFeed by primary key
      *
      * @param   integer $id    Primary key value
      *
      * @return  UserBlogFeed|null 
      */
-    public static function findByPrimaryKey($id)
+    public static function getByPrimaryKey($id)
     {
         return current(self::find(array(self::$primary_key_name => $id)));
     }
 
     /**
-     * Find by User Blog (and Aggregator Feed)
+     * Get by User Blog and Aggregator Feed
      *
-     * @param   integer     $id         UserBlog ID
-     * @param   integer     $feed_id    AggregatorFeed ID
-     * @param   boolean     $assoc
+     * @param   integer     $blog_id    User Blog ID
+     * @param   integer     $feed_id    Aggregator Feed ID
      *
-     * @return  UserBlogFeed|array|null 
+     * @return  UserBlogFeed|null
      */
-    public static function findByBlog($id, $feed_id=null, $assoc=false)
+    public static function getByBlogAndFeed($blog_id, $feed_id)
     {
-        return $assoc ? 
-            self::_findByBlog_Assoc($id) :
-            self::_findByBlog_Obj($id, $feed_id);
-    }
-
-    protected static function _findByBlog_Obj($id, $feed_id=null)
-    {
-        $params = array();
-        $params['user_blog_id'] = $id;
-        if($feed_id != null) $params['aggregator_feed_id'] = $feed_id;
-        return self::find($params, array('ordering ASC, user_blog_id ASC'));
-    }
-
-    protected static function _findByBlog_Assoc($id)
-    {
-        $_s = "SELECT hash AS feed, feed_title AS title, feed_description AS description, ordering FROM " . self::$table_name . " WHERE user_blog_id = ? ORDER BY ordering ASC, user_blog_id ASC";
-
-        return self::select($_s, array($id), PDO::FETCH_ASSOC);
+        return current(self::find(array(
+            'user_blog_id' => $blog_id,
+            'aggregator_feed_id' => $feed_id
+        )));
     }
 
     /**
-     * Find by Aggregator Feed
+     * Get by Blog and hash
      *
-     * @param   integer     $blog_id    UserBlog ID
-     * @param   integer     $id         AggregatorFeed ID
-     *
-     * @return  UserBlogFeed|null 
-     */
-    public static function findByFeed($blog_id, $id)
-    {
-        return current(self::findByBlog($blog_id, $id));
-    }
-
-    /**
-     * Find Feed from Hash
-     *
-     * @param   integer $user_blog_id
+     * @param   integer $blog_id
      * @param   string  $hash
      * @return  UserBlog|null
      */
-    public static function findByHash($user_blog_id, $hash)
+    public static function getByBlogAndHash($blog_id, $hash)
     {
         return current(self::find(array(
-            'user_blog_id' => $user_blog_id,
+            'user_blog_id' => $blog_id,
             'hash' => $hash)));
+    }
+
+    /**
+     * Partial by User Blog
+     *
+     * @param   string      $blog_hash
+     * @param   integer     $user_id
+     *
+     * @return  array
+     */
+    public static function partialByBlogAndUser($blog_hash, $user_id)
+    {
+        $sql = "SELECT a.hash as feed, b.feed_url, a.feed_title,
+                       a.feed_description, b.feed_update_time,
+                       b.feed_status, a.ordering
+                FROM " . self::$table_name . " AS a
+                LEFT JOIN model_aggregator_feed AS b
+                ON (a.aggregator_feed_id = b.aggregator_feed_id)
+                WHERE a.user_blog_id = (
+                    SELECT user_blog_id
+                    FROM model_user_blog
+                    WHERE hash = ? AND user_profile_id = ?)
+                AND b.enabled = 1
+                ORDER BY a.ordering ASC, a.created_at DESC";
+        
+        return self::select($sql, array($blog_hash, $user_id));
     }
 
     /**

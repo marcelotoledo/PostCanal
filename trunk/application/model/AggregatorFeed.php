@@ -165,13 +165,13 @@ class AggregatorFeed extends B_Model
     }
 
     /**
-     * Find AggregatorFeed by primary key
+     * Get AggregatorFeed by primary key
      *
      * @param   integer $id    Primary key value
      *
      * @return  AggregatorFeed|null 
      */
-    public static function findByPrimaryKey($id)
+    public static function getByPrimaryKey($id)
     {
         return current(self::find(array(self::$primary_key_name => $id)));
     }
@@ -190,7 +190,7 @@ class AggregatorFeed extends B_Model
 
         self::transaction();
 
-        if(($feed = self::findByFeedURL($url)) == null)
+        if(($feed = self::getByURL($url)) == null)
         {
             $feed = new self();
             $feed->populate($data);
@@ -262,7 +262,7 @@ class AggregatorFeed extends B_Model
     {
         self::transaction();
         
-        if(is_object(($feed = self::findByPrimaryKey($id))))
+        if(is_object(($feed = self::getByPrimaryKey($id))))
         {
             $feed->populate($data);
 
@@ -299,21 +299,21 @@ class AggregatorFeed extends B_Model
      */
     public static function findByURL($url)
     {
-        $sql = "SELECT f.* FROM " . self::$table_name . " AS f " .
-               "LEFT JOIN model_aggregator_feed_url AS u " .
-               "ON f.aggregator_feed_id = u.aggregator_feed_id " .
-               "WHERE u.url_md5 = MD5(?)";
+        $sql = "SELECT * FROM " . self::$table_name . "
+                WHERE aggregator_feed_id = (
+                    SELECT aggregator_feed_id FROM model_aggregator_feed_url
+                    WHERE url_md5 = MD5(?)";
 
         return self::selectModel($sql, array($url));
     }
 
     /**
-     * Find by Feed URL
+     * Get by Feed URL
      *
      * @param   string  $url
      * @return  AggregatorFeed|null 
      */
-    public static function findByFeedURL($feed_url)
+    public static function getByURL($feed_url)
     {
         return current(self::find(array('feed_md5' => md5($feed_url))));
     }

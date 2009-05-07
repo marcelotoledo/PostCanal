@@ -166,13 +166,13 @@ class AggregatorFeedItem extends B_Model
     }
 
     /**
-     * Find AggregatorFeedItem by primary key
+     * Get AggregatorFeedItem by primary key
      *
      * @param   integer $id    Primary key value
      *
      * @return  AggregatorFeedItem|null 
      */
-    public static function findByPrimaryKey($id)
+    public static function getByPrimaryKey($id)
     {
         return current(self::find(array(self::$primary_key_name => $id)));
     }

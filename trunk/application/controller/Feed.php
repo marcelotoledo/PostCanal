@@ -28,7 +28,7 @@ class C_Feed extends B_Controller
         $this->view()->setLayout('dashboard');
 
         $id = $this->session()->user_profile_id;
-        $blogs = UserBlog::findByUserProfileId($id, $enabled=true);
+        $blogs = UserBlog::findByUser($id, $enabled=true);
         $this->view()->blogs = $blogs;
     }
 
@@ -42,17 +42,9 @@ class C_Feed extends B_Controller
         $this->response()->setXML(true);
 
         $blog_hash = $this->request()->blog;
-        $user_profile_id = $this->session()->user_profile_id;
-        $blog = null;
+        $user_id = $this->session()->user_profile_id;
 
-        if(strlen($blog_hash) > 0 && $user_profile_id > 0)
-        {
-            $blog = UserBlog::findByHash($user_profile_id, $blog_hash);
-        }
-
-        $this->view()->feeds = is_object($blog) ? 
-            UserBlogFeed::findByBlog($blog->user_blog_id, $feed_id=null, true) :
-            array();
+        $this->view()->feeds = UserBlogFeed::partialByBlogAndUser($blog_hash, $user_id);
     }
 
     /**
@@ -73,12 +65,12 @@ class C_Feed extends B_Controller
 
         if(strlen($blog_hash) > 0)
         {
-            $blog = UserBlog::findByHash($id, $blog_hash);
+            $blog = UserBlog::getByUserAndHash($id, $blog_hash);
         }
 
         if(is_object($blog) && strlen($feed_hash) > 0)
         {
-            $feed = UserBlogFeed::findByHash($blog->user_blog_id, $feed_hash);
+            $feed = UserBlogFeed::getByUserAndHash($blog->user_blog_id, $feed_hash);
         }
 
         if(is_object($feed) == false)
@@ -122,24 +114,24 @@ class C_Feed extends B_Controller
 
         $url = $this->request()->url;
         $blog_hash = $this->request()->blog;
-        $user_profile_id = $this->session()->user_profile_id;
+        $user_id = $this->session()->user_profile_id;
 
         $blog_feed = null;
 
-        if(is_object(($feed = AggregatorFeed::findByFeedURL($url))))
+        if(is_object(($feed = AggregatorFeed::getByURL($url))))
         {
-            $blog = UserBlog::findByHash($user_profile_id, $blog_hash);
+            $blog = UserBlog::getByUserAndHash($user_id, $blog_hash);
 
             if(is_object($blog))
             {
-                $blog_feed = UserBlogFeed::findByFeed($blog->user_blog_id, 
-                                                      $feed->aggregator_feed_id);
+                $blog_feed = UserBlogFeed::getByBlogAndFeed(
+                    $blog->user_blog_id, 
+                    $feed->aggregator_feed_id);
             }
             else
             {
                 $_m = "invalid user blog from hash (" . $blog_hash . ")";
-                $_i = $user_profile_id;                          
-                $_d = array('method' => __METHOD__, 'user_profile_id' => $_i);
+                $_d = array('method' => __METHOD__, 'user_profile_id' => $user_id);
                 throw new B_Exception($_m, E_USER_WARNING, $_d);
             }
 

@@ -156,13 +156,13 @@ class UserBlog extends B_Model
     }
 
     /**
-     * Find UserBlog by primary key
+     * Get UserBlog by primary key
      *
      * @param   integer $id    Primary key value
      *
      * @return  UserBlog|null 
      */
-    public static function findByPrimaryKey($id)
+    public static function getByPrimaryKey($id)
     {
         return current(self::find(array(self::$primary_key_name => $id)));
     }
@@ -170,29 +170,29 @@ class UserBlog extends B_Model
     /**
      * Find Blog by user profile
      *
-     * @param   integer         $user_profile_id    User profile PK
+     * @param   integer         $user_id    User Profile ID
      * @param   boolean|null    $enabled
      * @return  array
      */
-    public static function findByUserProfileId($user_profile_id, $enabled=null)
+    public static function findByUser($user_id, $enabled=null)
     {
         $args = array();
-        $args['user_profile_id'] = $user_profile_id;
+        $args['user_profile_id'] = $user_id;
         if(is_bool($enabled)) $args['enabled'] = $enabled;
-        return self::find($args, array('name ASC, created_at ASC'));
+        return self::find($args, array('name ASC, created_at DESC'));
     }
 
     /**
-     * Find Blog from Hash
+     * get Blog from User and Blog Hash
      *
-     * @param   integer $user_profile_id
+     * @param   integer $user_id    User Profile ID_
      * @param   string  $hash
      * @return  UserBlog|null
      */
-    public static function findByHash($user_profile_id, $hash)
+    public static function getByUserAndHash($user_id, $hash)
     {
         return current(self::find(array(
-            'user_profile_id' => $user_profile_id,
+            'user_profile_id' => $user_id,
             'hash' => $hash)));
     }
 }

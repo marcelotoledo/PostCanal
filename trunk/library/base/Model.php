@@ -6,6 +6,14 @@
  * @category    Blotomate
  * @package     Base Library
  * @author      Rafael Castilho <rafael@castilho.biz>
+ *
+ * Use the following convention
+ * 
+ * getBySomething       obtain a single record and returns as an object of class
+ * findBySomething      obtain zero or more records as array of objects of class
+ * partialBySomething   obtain zero or mode records as array of custom objects
+ * 
+ * insertSomething, updateSomething, foobarSomething, etc
  */
 
 abstract class B_Model

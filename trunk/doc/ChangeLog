@@ -17,3 +17,14 @@ HORAS TRABALHADAS: 8h
 - Inclusao de algoritmo de ordenacao p/ feeds
 
 HORAS TRABALHADAS: 6h
+
+==========
+07/05/2009
+==========
+
+- Organizacao e padronizacao dos metodos no model
+- Organizacao e otimizacao das consultas SQL de feeds
+- Alteracao do Model para escrever objecto como XML
+- Exibicao de URL na listagem de feeds
+
+HORAS TRABALHADAS: 2h

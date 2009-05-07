@@ -140,13 +140,13 @@ class BlogType extends B_Model
     }
 
     /**
-     * Find BlogType by primary key
+     * Get BlogType by primary key
      *
      * @param   integer $id    Primary key value
      *
      * @return  BlogType|null 
      */
-    public static function findByPrimaryKey($id)
+    public static function getByPrimaryKey($id)
     {
         return current(self::find(array(self::$primary_key_name => $id)));
     }
