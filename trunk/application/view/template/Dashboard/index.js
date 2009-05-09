@@ -1,15 +1,18 @@
 $(document).ready(function()
 {
+    var active_request = false;
+
     var top_bar = $("#topbar");
-    var middle_content = $("#middlecontent");
+    var current_blog = null;
+
+    var feed_list_area = $("#feedlistarea");
+    var feed_display = 'all';
+
     var bottom_bar = $("#bottombar");
     var queue_list_bar = $("#queuelistbar");
     var queue_display = 0; // 0 none | 1 half | 2 max
     var queue_height_control = $("#bottomrightbar span.hctl");
-    var active_request = false;
-    var current_blog = null;
 
-    /* DISPLAY FUNCTIONS */
 
     /* spinner */
 
@@ -56,10 +59,10 @@ $(document).ready(function()
 
         _b_t = bottom_bar.position().top;
 
-        middle_content.css('top', _t_h);
-        middle_content.css('left', 0);
-        middle_content.width(ww);
-        middle_content.height(wh - _t_h - _b_h);
+        feed_list_area.css('top', _t_h);
+        feed_list_area.css('left', 0);
+        feed_list_area.width(ww);
+        feed_list_area.height(wh - _t_h - _b_h);
 
         if(queue_list_bar.is(':visible'))
         {
@@ -70,19 +73,6 @@ $(document).ready(function()
         }
     }
 
-    window_update();
-
-    <?php if(count($this->blogs) > 0) : ?>
-
-    /* todo */
-
-    <?php else : ?>
-
-    $.b_dialog({ selector: "#noblogmsg", modal: true });
-    $.b_dialog_show();
-
-    <?php endif ?>
-
     /* error */
 
     function err()
@@ -90,12 +80,14 @@ $(document).ready(function()
         alert("<?php echo $this->translation()->server_error ?>");
     }
 
-    /* dashboard actions */
+    /* dashboard */
 
     function dashboard_msg(m)
     {
         alert(m);
     }
+
+    /* feeds */
 
     function feed_item_populate(items)
     {
@@ -105,7 +97,7 @@ $(document).ready(function()
     {
         if(feeds.length > 0)
         {
-            middle_content.html("");
+            feed_list_area.html("");
             feeds.each(function()
             {
                 _feed = $(this).find('feed').text();
@@ -114,12 +106,12 @@ $(document).ready(function()
                 _div = "<div class=\"feeditem\" " +
                        "feed=\"" + _feed + "\">" + _title + "</div>";
 
-                middle_content.append(_div);
+                feed_list_area.append(_div);
             });
         }
         else
         {
-            middle_content.html("<p><?php echo $this->translation()->no_registered_feeds ?></p>");
+            feed_list_area.html("<p><?php echo $this->translation()->no_registered_feeds ?></p>");
         }
     }
 
@@ -148,6 +140,124 @@ $(document).ready(function()
         });
     }
 
+    /* articles */
+
+    function article_populate(articles)
+    {
+        if(articles.length > 0)
+        {
+            feed_list_area.html("");
+            articles.each(function()
+            {
+                _article = $(this).find('article').text();
+                _title = $(this).find('title').text();
+                _link = $(this).find('link').text();
+                _date = $(this).find('date').text();
+                _feed = null;
+                _label = null;
+
+                if(feed_display == 'all')
+                {
+                    _feed = $(this).find('feed').text();
+                }
+                else
+                {
+                    /* void */
+                }
+
+                feed_list_area.append("<div class=\"article article" + feed_display + "\" article=\"" + _article + "\"><table><tr><td class=\"articletitle\">" + _title + "</td><td class=\"articledate\">@ " + _date + "</td><td class=\"articlebuttons\"><a href=\"" + _link + "\" target=\"_blank\">[V]</a></td></tr></table></div>");
+            });
+        }
+        else
+        {
+            feed_list_area.html("<p><?php echo $this->translation()->no_articles ?></p>");
+        }
+    }
+
+    function article_list()
+    {
+        $.ajax
+        ({
+            type: "GET",
+            url: "<?php B_Helper::url('article', 'list') ?>",
+            dataType: "xml",
+            data: { blog: current_blog },
+            beforeSend: function()
+            {
+                set_active_request(true);
+            },
+            complete: function()
+            {
+                set_active_request(false);
+            },
+            success: function (xml)
+            {
+                d = $(xml).find('data');
+                article_populate(d.find('articles').children());
+            },
+            error: function () { err(); }
+        });
+    }
+
+    function article_all()
+    {
+        $.ajax
+        ({
+            type: "GET",
+            url: "<?php B_Helper::url('article', 'all') ?>",
+            dataType: "xml",
+            data: { blog: current_blog },
+            beforeSend: function()
+            {
+                set_active_request(true);
+            },
+            complete: function()
+            {
+                set_active_request(false);
+            },
+            success: function (xml)
+            {
+                d = $(xml).find('data');
+                article_populate(d.find('articles').children());
+            },
+            error: function () { err(); }
+        });
+    }
+
+    /* set feed display mode */
+
+    function set_feed_display(mode)
+    {
+        $("span.feedsdspall").hide();
+        $("span.feedsdspthr").hide();
+
+        if(mode=='all')
+        {
+            feed_display = mode;
+            $("span.feedsdspall").show();
+            article_all();
+        }
+        if(mode=='thr') /* threaded */
+        {
+            feed_display = mode;
+            $("span.feedsdspthr").show();
+            feed_list();
+        }
+    }
+
+    /* set blog */
+
+    function set_blog()
+    {
+        <?php if(count($this->blogs) == 1) : ?>
+        current_blog = $("#blogcur").val();
+        <?php elseif(count($this->blogs) > 1) : ?>
+        current_blog = $("select[name='bloglst'] > option:selected").val();
+        <?php endif ?>
+
+        set_feed_display('all');
+    }
+
     /* EVENTS */
 
     $(window).resize(function()
@@ -161,25 +271,37 @@ $(document).ready(function()
         window_update();
     });
     
+    /* blog selector */
+
     $("select[name='bloglst']").change(function()
     {
         set_blog();
     });
 
+    /* feed display */
+
+    $("a#feeddsplnkall").click(function()
+    {
+        set_feed_display('all');
+    });
+
+    $("a#feeddsplnkthr").click(function()
+    {
+        set_feed_display('thr');
+    });
+
     /* INIT */
 
-    /* set blog */
+    window_update();
 
-    function set_blog()
-    {
-        <?php if(count($this->blogs) == 1) : ?>
-        current_blog = $("#blogcur").val();
-        <?php elseif(count($this->blogs) > 1) : ?>
-        current_blog = $("select[name='bloglst'] > option:selected").val();
-        <?php endif ?>
-
-        feed_list();
-    }
+    <?php if(count($this->blogs) > 0) : ?>
 
     set_blog();
+
+    <?php else : ?>
+
+    $.b_dialog({ selector: "#noblogmsg", modal: true });
+    $.b_dialog_show();
+
+    <?php endif ?>
 });

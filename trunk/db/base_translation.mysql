@@ -81,3 +81,6 @@ INSERT INTO base_translation VALUES (NULL, "dashboard/index", "en_US", "queue_ti
 INSERT INTO base_translation VALUES (NULL, "dashboard/index", "en_US", "waiting", "waiting");
 INSERT INTO base_translation VALUES (NULL, "dashboard/index", "en_US", "failed", "failed");
 INSERT INTO base_translation VALUES (NULL, "dashboard/index", "en_US", "published", "published");
+INSERT INTO base_translation VALUES (NULL, "dashboard/index", "en_US", "feeds_display", "display");
+INSERT INTO base_translation VALUES (NULL, "dashboard/index", "en_US", "feeds_display_all", "all");
+INSERT INTO base_translation VALUES (NULL, "dashboard/index", "en_US", "feeds_display_threaded", "threaded");

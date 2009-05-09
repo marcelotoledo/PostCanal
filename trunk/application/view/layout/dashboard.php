@@ -22,11 +22,11 @@
 <span><?php B_Helper::a($this->translation()->application_blogs, "blog") ?></span>
 <span><?php B_Helper::a($this->translation()->application_feeds, "feed") ?></span>
 <span id="bloglstbar">
-<?php if(($i = count($this->blogs)) && $i == 1 && is_array($this->blogs)) : ?>
+<?php if(($i = count($this->blogs)) && $i == 1) : ?>
     <b><?php echo $this->translation()->application_blog ?>: </b><i><?php echo $this->blogs[0]->name ?></i>
     <input type="hidden" id="blogcur" value="<?php echo $this->blogs[0]->hash ?>">
 <?php elseif($i > 1) : ?>
-    <b><?php echo $this->translation()->application_blogs ?>: </b>
+    <b><?php echo $this->translation()->application_blog ?>: </b>
     <select name="bloglst">
     <?php foreach($this->blogs as $c) : ?>
     <option value="<?php echo $c->hash ?>" <?php if($this->registry()->session()->object->user_blog_hash == $c->hash) echo "selected"; ?>><?php echo $c->name ?></option>
@@ -36,19 +36,14 @@
 </span>
 </nobr></div>
 <div id="toprightbar"><nobr>
-<span><?php echo $this->session()->user_profile_login_email ?></span>
+<span id="profilebar"><b><?php echo $this->translation()->application_profile ?>: </b><?php echo $this->session()->user_profile_login_email ?></span>
 <span><?php B_Helper::a($this->translation()->application_exit, "profile", "logout") ?></span>
 </nobr></div>
 </div>
 
-<?php if($this->registry()->request()->object->getController() != "dashboard"): ?>
-<div id="middlecontent">
+<div id="maincontainer">
 <?php $this->renderTemplate() ?>
 </div>
-<?php else: ?>
-<?php $this->renderTemplate() ?>
-<?php endif ?>
-
 
 </body>
 </html>

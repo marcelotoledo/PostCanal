@@ -1,4 +1,4 @@
-<div class="subpage">
+<div class="subcontainer">
 
 <h1><?php echo $this->translation()->feeds ?></h1>
 <div id="feedaddlnkdiv">

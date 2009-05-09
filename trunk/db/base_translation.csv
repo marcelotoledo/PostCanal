@@ -81,3 +81,6 @@
 "dashboard/index","en_US","waiting","waiting"
 "dashboard/index","en_US","failed","failed"
 "dashboard/index","en_US","published","published"
+"dashboard/index","en_US","feeds_display","display"
+"dashboard/index","en_US","feeds_display_all","all"
+"dashboard/index","en_US","feeds_display_threaded","threaded"

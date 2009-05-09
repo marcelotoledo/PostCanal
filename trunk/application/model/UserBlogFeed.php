@@ -238,6 +238,78 @@ class UserBlogFeed extends B_Model
     }
 
     /**
+     * Get feed articles for a user blog feed
+     *
+     * @param   string      $blog_hash
+     * @param   integer     $user_id
+     * @param   integer     $feed_hash
+     * @param   integer     $start_time
+     * @param   integer     $limit
+     *
+     * @return  array
+     */
+    public static function partialArticles($blog_hash, 
+                                           $user_id, 
+                                           $feed_hash,
+                                           $start_time=null, 
+                                           $limit=25)
+    {
+        if(!$start_time) $start_time = time();
+
+        $sql = "SELECT item_md5 AS article, item_title AS title, item_link AS link, 
+                       item_date AS date, item_author AS author, item_content AS content
+                FROM model_user_blog_feed AS a
+                LEFT JOIN model_aggregator_feed_item AS b
+                ON (a.aggregator_feed_id = b.aggregator_feed_id)
+                WHERE a.enabled = true AND b.item_date < ? 
+                AND a.hash = ? AND a.user_blog_id = (
+                    SELECT user_blog_id
+                    FROM model_user_blog
+                    WHERE hash = ? AND user_profile_id = ?) 
+                ORDER BY b.item_date DESC, b.created_at DESC LIMIT " . intval($limit);
+
+        return self::select($sql, array(date("Y-m-d H:i:s", $start_time), 
+                                        $feed_hash,
+                                        $blog_hash, 
+                                        $user_id));
+    }
+
+    /**
+     * Get feed articles associated with user blog feeds
+     *
+     * @param   string      $blog_hash
+     * @param   integer     $user_id
+     * @param   integer     $start_time
+     * @param   integer     $limit
+     *
+     * @return  array
+     */
+    public static function partialArticlesAll($blog_hash, 
+                                              $user_id, 
+                                              $start_time=null, 
+                                              $limit=50)
+    {
+        if(!$start_time) $start_time = time();
+
+        $sql = "SELECT a.feed_title AS feed, b.item_md5 AS article, 
+                       b.item_title AS title, b.item_link AS link, 
+                       b.item_date AS date, b.item_author AS author, 
+                       b.item_content AS content
+                FROM model_user_blog_feed AS a 
+                LEFT JOIN model_aggregator_feed_item AS b 
+                ON (a.aggregator_feed_id = b.aggregator_feed_id) 
+                WHERE a.enabled = true AND b.item_date < ? AND a.user_blog_id = (
+                    SELECT user_blog_id
+                    FROM model_user_blog
+                    WHERE hash = ? AND user_profile_id = ?) 
+                ORDER BY b.item_date DESC, b.created_at DESC LIMIT " . intval($limit);
+
+        return self::select($sql, array(date("Y-m-d H:i:s", $start_time), 
+                                        $blog_hash, 
+                                        $user_id));
+    }
+
+    /**
      * Update feed ordering
      *
      * @param   string      $blog_hash

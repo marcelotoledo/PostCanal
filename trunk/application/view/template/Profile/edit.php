@@ -1,4 +1,4 @@
-<div class="subpage">
+<div class="subcontainer">
 <form id="editform">
     <h1><?php echo $this->translation()->profile ?></h1>
     <table>

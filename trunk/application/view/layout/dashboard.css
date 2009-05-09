@@ -41,7 +41,7 @@ div, form
 }
 #topleftbar span#bloglstbar
 {
-    padding-left: 50px;
+    padding-left: 30px;
 }
 #toprightbar
 {
@@ -55,10 +55,14 @@ div, form
 {
     padding-left: 10px;
 }
+#toprightbar span#profilebar
+{
+    padding-right: 30px;
+}
 
-/* middle content */
+/* main container */
 
-#middlecontent
+#maincontainer
 {
     position: absolute;
     top: 41px;
@@ -66,11 +70,12 @@ div, form
     width: 100%;
     overflow: auto;
 }
-#middlecontent div.subpage
+#maincontainer div.subcontainer
 {
     padding-left: 15px;
+    padding-bottom: 25px;
 }
-#middlecontent div.subpage h1
+#maincontainer div.subcontainer h1
 {
     text-decoration: underline;
     font-size: x-large;

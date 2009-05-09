@@ -49,47 +49,6 @@ class C_Feed extends B_Controller
     }
 
     /**
-     * List feed news items
-     *
-     * @return void
-     */
-    public function A_news()
-    {
-        $this->response()->setXML(true);
-
-        $id = $this->session()->user_profile_id;
-        $blog_hash = $this->request()->blog;
-        $feed_hash = $this->request()->feed;
-
-        $blog = null;
-        $feed = null;
-
-        if(strlen($blog_hash) > 0)
-        {
-            $blog = UserBlog::getByUserAndHash($id, $blog_hash);
-        }
-
-        if(is_object($blog) && strlen($feed_hash) > 0)
-        {
-            $feed = UserBlogFeed::getByUserAndHash($blog->user_blog_id, $feed_hash);
-        }
-
-        if(is_object($feed) == false)
-        {
-            $_m = "user blog feed not found using " .
-                  "blog hash (" . $blog_hash . ") and " .
-                  "feed hash (" . $feed_hash . ")";
-            $_d = array ('method' => __METHOD__, 'user_profile_id' => $id);
-            throw new B_Exception($_m, E_USER_WARNING, $_d);
-        }
-
-        $news = AggregatorFeedItem::findByFeed(
-            $feed->aggregator_feed_id, null, null, true);
-
-        if(count($news) > 0) $this->view()->news = $news;
-    }
-
-    /**
      * Discover feeds from URL
      *
      * @return void

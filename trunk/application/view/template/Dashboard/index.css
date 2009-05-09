@@ -1,6 +1,13 @@
+/* avoid unwanted scrollbars */
+
 body
 {
-    overflow: hidden; /* avoid body scrollbars */
+    overflow: hidden;
+}
+
+#maincontainer
+{
+    overflow: hidden;
 }
 
 /* dialogs & forms */
@@ -10,117 +17,78 @@ body
     width: 240px;
 }
 
-/* bottom bar */
+/* containers */
 
-#bottombar
+div.containerhead
 {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    height: 40px;
-    background-color: wheat;
-    border-top: 1px solid saddlebrown;
-    overflow: hidden; /* avoid body scrollbars */
+    padding: 10px 0px 10px 15px;
+    background-color: sienna;
+    color: white;
 }
-#bottomleftbar
+div.containerhead a
 {
-    float: left;
-    height: 40px;
-    line-height: 40px;
-    vertical-align: middle;
-    margin-left: 15px;
+    color: azure;
 }
-#bottomleftbar th
+div.containerhead a:hover
 {
-    border-left: 1px solid gray;
+    color: white;
 }
-#bottomleftbar span
+
+/* feeds */
+
+div#feedlistarea
 {
-    padding-right: 10px;
+    overflow: auto;
 }
-#bottomleftbar span.title
+
+div#feedareahead span.title
 {
+    font-size: medium;
     font-weight: bold;
+    text-transform: uppercase;
 }
-#bottomleftbar span.mode
+div#feedareahead span.feeddisplay
 {
-    /* void */
+    padding-left: 30px;
 }
-#bottomleftbar span.qctl
-{
-    display: block;
-    width: 24px;
-    height: 24px;
-    line-height: 24px;
-}
-#bottomleftbar span.qctl-stop
-{
-    background: url(<?php B_Helper::img_src('queue_stop.png'); ?>) no-repeat 0px 0px;
-}
-#bottomleftbar span.qctl-play
-{
-    background: url(<?php B_Helper::img_src('queue_play.png'); ?>) no-repeat 0px 0px;
-    cursor: pointer;
-    cursor: hand;
-}
-#bottomleftbar span.qctl-pause
-{
-    background: url(<?php B_Helper::img_src('queue_pause.png'); ?>) no-repeat 0px 0px;
-    cursor: pointer;
-    cursor: hand;
-}
-#bottomrightbar
-{
-    float: right;
-    height: 40px;
-    line-height: 40px;
-    vertical-align: middle;
-    margin-right: 15px;
-}
-#bottomrightbar span
-{
-    padding-left: 10px;
-}
-#bottomrightbar span.hctl
-{
-    display: block;
-    width: 24px;
-    height: 24px;
-    line-height: 24px;
-    cursor: pointer;
-    cursor: hand;
-}
-#bottomrightbar span.hctl-open
-{
-    background: url(<?php B_Helper::img_src('queue_maximize.png'); ?>) no-repeat 0px 0px;
-}
-#bottomrightbar span.hctl-close
-{
-    background: url(<?php B_Helper::img_src('queue_minimize.png'); ?>) no-repeat 0px 0px;
-}
-
-/* queue list bar */
-
-#queuelistbar
-{
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-}
-
-/* feed item */
-
 div.feeditem
 {
     padding: 5px;
+    padding-left: 15px;
     border-bottom: 1px solid silver;
     cursor: pointer;
     cursor: hand;
 }
-
 div.feeditem:hover
 {
     background-color: khaki;
+}
+
+/* articles */
+
+div.article
+{
+    padding: 2px;
+    padding-left: 15px;
+    border-bottom: 1px solid silver;
+}
+div.articleall
+{
+    /* void */
+}
+div.articlethr
+{
+    /* void */
+}
+td.articletitle
+{
+    text-align: left;
+}
+td.articledate
+{
+    text-align: right;
+}
+td.articlebuttons
+{
+    text-align: right;
 }

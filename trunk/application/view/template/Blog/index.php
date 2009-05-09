@@ -1,4 +1,4 @@
-<div class="subpage">
+<div class="subcontainer">
 
 <h1><?php echo $this->translation()->blogs ?></h1>
 
@@ -7,7 +7,7 @@
 </div>
 
 <div id="bloglistarea">
-    <?php foreach($this->blogs as $b): ?>
+    <?php foreach($this->blogs_ as $b): ?>
     <div class="blogitem" blog="<?php echo $b->hash ?>">
         <?php echo $b->name ?><br/>
         <small><?php echo $b->url ?></small>
