@@ -63,6 +63,15 @@ div.feeditem:hover
 {
     background-color: khaki;
 }
+div.feeditemarticles
+{
+    display: none;
+}
+div.feeditemthreaded
+{
+    font-weight: bold;
+    background-color: khaki;
+}
 
 /* articles */
 
@@ -74,21 +83,39 @@ div.article
 }
 div.articleall
 {
-    /* void */
+    line-height: 2.4em;
 }
 div.articlethr
 {
-    /* void */
+    line-height: 1.2em;
 }
-td.articletitle
+div.articlelabel
 {
+    float: left;
     text-align: left;
+    overflow: hidden;
+    margin-right: 15px;
 }
-td.articledate
+div.articlefeed
 {
-    text-align: right;
+    font-weight: xx-small;
+    font-style: oblique; 
+    color: gray;
+    line-height: 1.2em;
 }
-td.articlebuttons
+div.articletitle
 {
+    line-height: 1.2em;
+}
+div.articleinfo
+{
+    float: left;
     text-align: right;
+    margin-right: 15px;
+}
+div.articlebuttons
+{
+    float: right;
+    text-align: right;
+    margin-right: 15px;
 }

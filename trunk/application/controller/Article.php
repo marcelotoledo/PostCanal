@@ -22,17 +22,17 @@ class C_Article extends B_Controller
      * List articles for a specified user blog feed
      *
      */
-    public function A_list()
+    public function A_threaded()
     {
         $blog_hash = $this->request()->blog;
         $feed_hash = $this->request()->feed;
         $start_time = $this->request()->time;
         $user_id = $this->session()->user_profile_id;
 
-        $this->view()->articles = UserBlogFeed::partialArticles($blog_hash, 
-                                                                $user_id,
-                                                                $feed_hash,
-                                                                $start_time);
+        $this->view()->articles = UserBlogFeed::partialArticlesThreaded
+        (
+            $blog_hash, $user_id, $feed_hash, $start_time
+        );
     }
 
     /**
@@ -47,8 +47,9 @@ class C_Article extends B_Controller
         $start_time = $this->request()->time;
         $user_id = $this->session()->user_profile_id;
 
-        $this->view()->articles = UserBlogFeed::partialArticlesAll($blog_hash, 
-                                                                   $user_id,
-                                                                   $start_time);
+        $this->view()->articles = UserBlogFeed::partialArticlesAll
+        (
+            $blog_hash, $user_id, $start_time
+        );
     }
 }

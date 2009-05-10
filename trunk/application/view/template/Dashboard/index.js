@@ -71,6 +71,8 @@ $(document).ready(function()
             queue_list_bar.width(ww);
             queue_list_bar.height(wh - _b_t - _b_h);
         }
+
+        feed_list_area.find('div.articlelabel').width(ww * 0.6);
     }
 
     /* error */
@@ -102,17 +104,33 @@ $(document).ready(function()
             {
                 _feed = $(this).find('feed').text();
                 _title = $(this).find('feed_title').text();
-
-                _div = "<div class=\"feeditem\" " +
-                       "feed=\"" + _feed + "\">" + _title + "</div>";
-
-                feed_list_area.append(_div);
+                feed_list_area.append("<div class=\"feeditem\" feed=\"" + _feed + "\">" + _title + "</div><div class=\"feeditemarticles\" feed=\"" + _feed + "\"></div>");
             });
         }
         else
         {
             feed_list_area.html("<p><?php echo $this->translation()->no_registered_feeds ?></p>");
         }
+
+        /* this trigger must be created after populate, otherwise
+         * will not work (because feed list are created after document
+         * loading */
+
+        $("div.feeditem").click(function()
+        {
+            if($(this).hasClass('feeditemthreaded'))
+            {
+                c = $("div.feeditemarticles[feed='" + feed + "']"); 
+                c.html("");
+                c.hide();
+                $(this).removeClass('feeditemthreaded');
+            }
+            else
+            {
+                feed = $(this).attr('feed');
+                article_threaded(feed);
+            }
+        });
     }
 
     function feed_list()
@@ -142,46 +160,54 @@ $(document).ready(function()
 
     /* articles */
 
-    function article_populate(articles)
+    function article_populate_threaded(articles, feed)
+    {
+        b = $("div.feeditem[feed='" + feed + "']"); 
+        b.addClass('feeditemthreaded');
+        c = $("div.feeditemarticles[feed='" + feed + "']"); 
+        article_populate(d.find('articles').children(), c);
+        c.show();
+    }
+
+    function article_populate(articles, container)
     {
         if(articles.length > 0)
         {
-            feed_list_area.html("");
+            container.html("");
             articles.each(function()
             {
                 _article = $(this).find('article').text();
                 _title = $(this).find('title').text();
                 _link = $(this).find('link').text();
                 _date = $(this).find('date').text();
-                _feed = null;
-                _label = null;
-
+                _label = "";
                 if(feed_display == 'all')
                 {
                     _feed = $(this).find('feed').text();
+                    _label += "<div class=\"articlefeed\">" + _feed + "</div>";
                 }
-                else
-                {
-                    /* void */
-                }
-
-                feed_list_area.append("<div class=\"article article" + feed_display + "\" article=\"" + _article + "\"><table><tr><td class=\"articletitle\">" + _title + "</td><td class=\"articledate\">@ " + _date + "</td><td class=\"articlebuttons\"><a href=\"" + _link + "\" target=\"_blank\">[V]</a></td></tr></table></div>");
+                _label+= "<div class=\"articletitle\">" + _title + "</div>";
+                _info = _date;
+                _buttons = "<a href=\"" + _link + "\" target=\"_blank\">view</a>";
+                container.append("<div class=\"article article" + feed_display + "\" article=\"" + _article + "\"><div class=\"articlelabel\"><nobr>" + _label + "</nobr></div><div class=\"articleinfo\">@ " + _info + "</div><div class=\"articlebuttons\">" + _buttons + "</div><div style=\"clear:both\"></div></div>");
             });
         }
         else
         {
-            feed_list_area.html("<p><?php echo $this->translation()->no_articles ?></p>");
+            container.html("<p><?php echo $this->translation()->no_articles ?></p>");
         }
+
+        window_update();
     }
 
-    function article_list()
+    function article_threaded(feed)
     {
         $.ajax
         ({
             type: "GET",
-            url: "<?php B_Helper::url('article', 'list') ?>",
+            url: "<?php B_Helper::url('article', 'threaded') ?>",
             dataType: "xml",
-            data: { blog: current_blog },
+            data: { blog: current_blog, feed: feed },
             beforeSend: function()
             {
                 set_active_request(true);
@@ -193,7 +219,7 @@ $(document).ready(function()
             success: function (xml)
             {
                 d = $(xml).find('data');
-                article_populate(d.find('articles').children());
+                article_populate_threaded(d.find('articles').children(), feed);
             },
             error: function () { err(); }
         });
@@ -218,7 +244,7 @@ $(document).ready(function()
             success: function (xml)
             {
                 d = $(xml).find('data');
-                article_populate(d.find('articles').children());
+                article_populate(d.find('articles').children(), feed_list_area);
             },
             error: function () { err(); }
         });

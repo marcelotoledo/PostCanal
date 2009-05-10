@@ -248,11 +248,11 @@ class UserBlogFeed extends B_Model
      *
      * @return  array
      */
-    public static function partialArticles($blog_hash, 
-                                           $user_id, 
-                                           $feed_hash,
-                                           $start_time=null, 
-                                           $limit=25)
+    public static function partialArticlesThreaded($blog_hash, 
+                                                   $user_id, 
+                                                   $feed_hash,
+                                                   $start_time=null, 
+                                                   $limit=25)
     {
         if(!$start_time) $start_time = time();
 
