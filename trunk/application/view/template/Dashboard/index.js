@@ -6,7 +6,9 @@ $(document).ready(function()
     var current_blog = null;
 
     var feed_list_area = $("#feedlistarea");
-    var feed_display = 'all';
+    var feed_display = '<?php echo $this->registry()->session()->object->dashboard_feed_display ?>';
+
+    var articles_content = Array();
 
     var bottom_bar = $("#bottombar");
     var queue_list_bar = $("#queuelistbar");
@@ -104,7 +106,7 @@ $(document).ready(function()
             {
                 _feed = $(this).find('feed').text();
                 _title = $(this).find('feed_title').text();
-                feed_list_area.append("<div class=\"feeditem\" feed=\"" + _feed + "\">" + _title + "</div><div class=\"feeditemarticles\" feed=\"" + _feed + "\"></div>");
+                feed_list_area.append("<div class=\"feeditem\" feed=\"" + _feed + "\">" + _title + "</div><div class=\"feeditemarticles\" feed=\"" + _feed + "\"></div>\n");
             });
         }
         else
@@ -113,22 +115,19 @@ $(document).ready(function()
         }
 
         /* this trigger must be created after populate, otherwise
-         * will not work (because feed list are created after document
-         * loading */
+         * will not work (because populate write elements after document loading */
 
         $("div.feeditem").click(function()
         {
+            feed = $(this).attr('feed');
+
             if($(this).hasClass('feeditemthreaded'))
             {
-                c = $("div.feeditemarticles[feed='" + feed + "']"); 
-                c.html("");
-                c.hide();
-                $(this).removeClass('feeditemthreaded');
+                article_unthread(feed);
             }
             else
             {
-                feed = $(this).attr('feed');
-                article_threaded(feed);
+                article_thread(feed);
             }
         });
     }
@@ -160,13 +159,37 @@ $(document).ready(function()
 
     /* articles */
 
-    function article_populate_threaded(articles, feed)
+    function article_content_show(article)
     {
-        b = $("div.feeditem[feed='" + feed + "']"); 
-        b.addClass('feeditemthreaded');
-        c = $("div.feeditemarticles[feed='" + feed + "']"); 
-        article_populate(d.find('articles').children(), c);
-        c.show();
+        if(articles_content[article])
+        {
+            a = articles_content[article];
+            c = $("div.articlecontent[article='" + article + "']"); 
+            d = "";
+            if(a.author)
+            {
+                d += "<p><b><?php echo $this->translation()->author ?>: </b>" + a.author + "</p>";
+            }
+            if(a.content)
+            {
+                d += "<p>" + a.content + "</p>";
+            }
+            if(d == "")
+            {
+                d = "<?php echo $this->translation()->no_content ?>";
+            }
+            c.html(d);
+            c.show();
+            $("div.article[article='" + article + "']").addClass('articlecontentshow'); 
+        }
+    }
+
+    function article_content_hide(article)
+    {
+        c = $("div.articlecontent[article='" + article + "']"); 
+        c.html("");
+        c.hide();
+        $("div.article[article='" + article + "']").removeClass('articlecontentshow'); 
     }
 
     function article_populate(articles, container)
@@ -189,7 +212,11 @@ $(document).ready(function()
                 _label+= "<div class=\"articletitle\">" + _title + "</div>";
                 _info = _date;
                 _buttons = "<a href=\"" + _link + "\" target=\"_blank\">view</a>";
-                container.append("<div class=\"article article" + feed_display + "\" article=\"" + _article + "\"><div class=\"articlelabel\"><nobr>" + _label + "</nobr></div><div class=\"articleinfo\">@ " + _info + "</div><div class=\"articlebuttons\">" + _buttons + "</div><div style=\"clear:both\"></div></div>");
+                container.append("<div class=\"article article" + feed_display + "\" article=\"" + _article + "\"><div class=\"articlelabel\"><nobr>" + _label + "</nobr></div><div class=\"articleinfo\">@ " + _info + "</div><div class=\"articlebuttons\">" + _buttons + "</div><div style=\"clear:both\"></div></div><div class=\"articlecontent\" article=\"" + _article + "\"></div>\n");
+                articles_content[_article] = { 
+                    author:  $(this).find('author').text(), 
+                    content: $(this).find('content').text() 
+                };
             });
         }
         else
@@ -197,10 +224,45 @@ $(document).ready(function()
             container.html("<p><?php echo $this->translation()->no_articles ?></p>");
         }
 
+        /* this trigger must be created after populate, otherwise
+         * will not work (because populate write elements after document loading */
+
+        container.find("div.article").click(function()
+        {
+            article = $(this).attr('article');
+
+            if($(this).hasClass('articlecontentshow'))
+            {
+                article_content_hide(article);
+            }
+            else
+            {
+                article_content_show(article);
+            }
+        });
+
         window_update();
     }
 
-    function article_threaded(feed)
+    function article_thread(feed)
+    {
+        c = $("div.feeditemarticles[feed='" + feed + "']"); 
+        article_threaded(feed, c);
+        c.show();
+        c = $("div.feeditem[feed='" + feed + "']"); 
+        c.addClass('feeditemthreaded');
+    }
+
+    function article_unthread(feed)
+    {
+        c = $("div.feeditemarticles[feed='" + feed + "']"); 
+        c.html("");
+        c.hide();
+        c = $("div.feeditem[feed='" + feed + "']"); 
+        c.removeClass('feeditemthreaded');
+    }
+
+    function article_threaded(feed, container)
     {
         $.ajax
         ({
@@ -219,7 +281,7 @@ $(document).ready(function()
             success: function (xml)
             {
                 d = $(xml).find('data');
-                article_populate_threaded(d.find('articles').children(), feed);
+                article_populate(d.find('articles').children(), container);
             },
             error: function () { err(); }
         });
@@ -281,7 +343,7 @@ $(document).ready(function()
         current_blog = $("select[name='bloglst'] > option:selected").val();
         <?php endif ?>
 
-        set_feed_display('all');
+        set_feed_display(feed_display);
     }
 
     /* EVENTS */

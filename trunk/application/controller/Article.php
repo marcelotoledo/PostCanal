@@ -33,6 +33,8 @@ class C_Article extends B_Controller
         (
             $blog_hash, $user_id, $feed_hash, $start_time
         );
+
+        $this->session()->user_blog_hash = $blog_hash;
     }
 
     /**
@@ -51,5 +53,8 @@ class C_Article extends B_Controller
         (
             $blog_hash, $user_id, $start_time
         );
+
+        $this->session()->user_blog_hash = $blog_hash;
+        $this->session()->dashboard_feed_display = 'all';
     }
 }

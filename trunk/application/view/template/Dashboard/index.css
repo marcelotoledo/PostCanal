@@ -22,7 +22,7 @@ body
 div.containerhead
 {
     padding: 10px 0px 10px 15px;
-    background-color: sienna;
+    background-color: slategray;
     color: white;
 }
 div.containerhead a
@@ -53,6 +53,7 @@ div#feedareahead span.feeddisplay
 }
 div.feeditem
 {
+    font-weight: bold;
     padding: 5px;
     padding-left: 15px;
     border-bottom: 1px solid silver;
@@ -61,25 +62,30 @@ div.feeditem
 }
 div.feeditem:hover
 {
-    background-color: khaki;
+    background-color: lavender;
 }
 div.feeditemarticles
 {
     display: none;
+    border-bottom: 2px solid gray;
 }
 div.feeditemthreaded
 {
-    font-weight: bold;
-    background-color: khaki;
+    background-color: lavender;
 }
 
-/* articles */
+/* article */
 
 div.article
 {
     padding: 2px;
     padding-left: 15px;
     border-bottom: 1px solid silver;
+    vertical-align: middle;
+}
+div.article:hover
+{
+    background-color: lightyellow;
 }
 div.articleall
 {
@@ -87,7 +93,7 @@ div.articleall
 }
 div.articlethr
 {
-    line-height: 1.2em;
+    line-height: 1.5em;
 }
 div.articlelabel
 {
@@ -105,7 +111,7 @@ div.articlefeed
 }
 div.articletitle
 {
-    line-height: 1.2em;
+    line-height: 1.5em;
 }
 div.articleinfo
 {
@@ -118,4 +124,16 @@ div.articlebuttons
     float: right;
     text-align: right;
     margin-right: 15px;
+}
+div.articlecontent
+{
+    display: none;
+    padding: 15px;
+    border-bottom: 2px solid silver;
+}
+div.articlecontentshow
+{
+    background-color: lightyellow;
+    border-bottom: 0;
+    border-top: 1px solid silver;
 }
