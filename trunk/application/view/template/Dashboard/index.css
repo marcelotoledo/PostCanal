@@ -51,6 +51,10 @@ div#feedareahead span.feeddisplay
 {
     padding-left: 30px;
 }
+div#feedareahead span.articledisplay
+{
+    padding-left: 15px;
+}
 div.feeditem
 {
     font-weight: bold;
@@ -130,6 +134,10 @@ div.articlecontent
     display: none;
     padding: 15px;
     border-bottom: 2px solid silver;
+}
+div.articlecontent h1
+{
+    font-size: large;
 }
 div.articlecontentshow
 {

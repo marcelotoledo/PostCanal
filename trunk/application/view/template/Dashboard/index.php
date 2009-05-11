@@ -14,6 +14,17 @@
         <?php echo $this->translation()->feeds_display_threaded ?>
     </span>
     </span>
+    <span class="articledisplay">
+    <b><?php echo $this->translation()->articles_display ?>: </b>
+    <span class="articledsplst" style="display:none">
+        <?php echo $this->translation()->articles_display_list ?> | 
+        <a id="articledsplnkexp"><?php echo $this->translation()->articles_display_expanded ?></a>
+    </span>
+    <span class="articledspexp" style="display:none">
+        <a id="articledsplnklst"><?php echo $this->translation()->articles_display_list?></a> | 
+        <?php echo $this->translation()->articles_display_expanded ?>
+    </span>
+    </span>
 </div>
 <div id="feedlistarea"></div>
 </div>

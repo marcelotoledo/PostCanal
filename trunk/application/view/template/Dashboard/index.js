@@ -6,8 +6,9 @@ $(document).ready(function()
     var current_blog = null;
 
     var feed_list_area = $("#feedlistarea");
-    var feed_display = '<?php echo $this->registry()->session()->object->dashboard_feed_display ?>';
+    var feed_display = '<?php echo $this->feed_display ?>';
 
+    var article_display = '<?php echo $this->article_display ?>';
     var articles_content = Array();
 
     var bottom_bar = $("#bottombar");
@@ -93,10 +94,6 @@ $(document).ready(function()
 
     /* feeds */
 
-    function feed_item_populate(items)
-    {
-    }
-
     function feed_populate(feeds)
     {
         if(feeds.length > 0)
@@ -166,10 +163,12 @@ $(document).ready(function()
             a = articles_content[article];
             c = $("div.articlecontent[article='" + article + "']"); 
             d = "";
+            /*
             if(a.author)
             {
                 d += "<p><b><?php echo $this->translation()->author ?>: </b>" + a.author + "</p>";
             }
+            */
             if(a.content)
             {
                 d += "<p>" + a.content + "</p>";
@@ -178,10 +177,26 @@ $(document).ready(function()
             {
                 d = "<?php echo $this->translation()->no_content ?>";
             }
+            if(a.title)
+            {
+                d = "<h1>" + a.title + "</h1>\n" + d;
+            }
             c.html(d);
             c.show();
             $("div.article[article='" + article + "']").addClass('articlecontentshow'); 
         }
+    }
+
+    function article_content_show_all()
+    {
+        feed_list_area.find("div.article").each(function()
+        {
+            if($(this).hasClass('articlecontentshow') == false)
+            {
+                article = $(this).attr('article');
+                article_content_show(article);
+            }
+        });
     }
 
     function article_content_hide(article)
@@ -190,6 +205,14 @@ $(document).ready(function()
         c.html("");
         c.hide();
         $("div.article[article='" + article + "']").removeClass('articlecontentshow'); 
+    }
+
+    function article_content_hide_all()
+    {
+        feed_list_area.find("div.articlecontentshow").each(function(){
+            article = $(this).attr('article');
+            article_content_hide(article);
+        });
     }
 
     function article_populate(articles, container)
@@ -214,7 +237,8 @@ $(document).ready(function()
                 _buttons = "<a href=\"" + _link + "\" target=\"_blank\">view</a>";
                 container.append("<div class=\"article article" + feed_display + "\" article=\"" + _article + "\"><div class=\"articlelabel\"><nobr>" + _label + "</nobr></div><div class=\"articleinfo\">@ " + _info + "</div><div class=\"articlebuttons\">" + _buttons + "</div><div style=\"clear:both\"></div></div><div class=\"articlecontent\" article=\"" + _article + "\"></div>\n");
                 articles_content[_article] = { 
-                    author:  $(this).find('author').text(), 
+                    title:   _title,
+                    /* author:  $(this).find('author').text(), */
                     content: $(this).find('content').text() 
                 };
             });
@@ -242,6 +266,11 @@ $(document).ready(function()
         });
 
         window_update();
+
+        if(article_display == 'exp')
+        {
+            article_content_show_all();
+        }
     }
 
     function article_thread(feed)
@@ -312,6 +341,27 @@ $(document).ready(function()
         });
     }
 
+    /* set article display mode */
+
+    function set_article_display(mode)
+    {
+        $("span.articledsplst").hide();
+        $("span.articledspexp").hide();
+
+        if(mode=='lst') /* list */
+        {
+            article_display = mode;
+            $("span.articledsplst").show();
+            article_content_hide_all();
+        }
+        if(mode=='exp') /* expanded */
+        {
+            article_display = mode;
+            $("span.articledspexp").show();
+            article_content_show_all();
+        }
+    }
+
     /* set feed display mode */
 
     function set_feed_display(mode)
@@ -331,6 +381,8 @@ $(document).ready(function()
             $("span.feedsdspthr").show();
             feed_list();
         }
+
+        set_article_display(article_display);
     }
 
     /* set blog */
@@ -376,6 +428,18 @@ $(document).ready(function()
     $("a#feeddsplnkthr").click(function()
     {
         set_feed_display('thr');
+    });
+
+    /* article display */
+
+    $("a#articledsplnklst").click(function()
+    {
+        set_article_display('lst');
+    });
+
+    $("a#articledsplnkexp").click(function()
+    {
+        set_article_display('exp');
     });
 
     /* INIT */

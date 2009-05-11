@@ -84,3 +84,7 @@
 "dashboard/index","en_US","feeds_display","display"
 "dashboard/index","en_US","feeds_display_all","all"
 "dashboard/index","en_US","feeds_display_threaded","threaded"
+"dashboard/index","en_US","no_content","no content"
+"dashboard/index","en_US","articles_display","articles"
+"dashboard/index","en_US","articles_display_list","list"
+"dashboard/index","en_US","articles_display_expanded","expanded"

@@ -84,3 +84,7 @@ INSERT INTO base_translation VALUES (NULL, "dashboard/index", "en_US", "publishe
 INSERT INTO base_translation VALUES (NULL, "dashboard/index", "en_US", "feeds_display", "display");
 INSERT INTO base_translation VALUES (NULL, "dashboard/index", "en_US", "feeds_display_all", "all");
 INSERT INTO base_translation VALUES (NULL, "dashboard/index", "en_US", "feeds_display_threaded", "threaded");
+INSERT INTO base_translation VALUES (NULL, "dashboard/index", "en_US", "no_content", "no content");
+INSERT INTO base_translation VALUES (NULL, "dashboard/index", "en_US", "articles_display", "articles");
+INSERT INTO base_translation VALUES (NULL, "dashboard/index", "en_US", "articles_display_list", "list");
+INSERT INTO base_translation VALUES (NULL, "dashboard/index", "en_US", "articles_display_expanded", "expanded");

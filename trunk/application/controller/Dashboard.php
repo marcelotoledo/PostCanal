@@ -28,5 +28,11 @@ class C_Dashboard extends B_Controller
         $id = $this->session()->user_profile_id;
         $blogs = UserBlog::findByUser($id, $enabled=true);
         $this->view()->blogs = $blogs;
+
+        $this->view()->feed_display = $this->session()->dashboard_feed_display ?
+            $this->session()->dashboard_feed_display : 'all';
+
+        $this->view()->article_display = $this->session()->dashboard_article_display ?
+            $this->session()->dashboard_article_display : 'lst';
     }
 }
