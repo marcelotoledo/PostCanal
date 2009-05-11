@@ -37,43 +37,12 @@ $(document).ready(function()
         ww = $(window).width();
         wh = $(window).height();
 
-        _t_h = top_bar.outerHeight();
-        _b_t = bottom_bar.position().top;
-        _b_h = bottom_bar.outerHeight();
-
-        if(queue_display == 0)
-        {
-            bottom_bar.css('top', wh - _b_h);
-            queue_height_control.removeClass('hctl-close');
-            queue_height_control.addClass('hctl-open');
-            queue_list_bar.hide();
-        }
-        if(queue_display == 1)
-        {
-            bottom_bar.css('top', wh / 2);
-            queue_list_bar.show();
-        }
-        else if(queue_display == 2)
-        {
-            bottom_bar.css('top', _t_h);
-            queue_height_control.removeClass('hctl-open');
-            queue_height_control.addClass('hctl-close');
-        }
-
-        _b_t = bottom_bar.position().top;
+        _t_h = top_bar.outerHeight() + $("div#feedareahead").outerHeight();
 
         feed_list_area.css('top', _t_h);
         feed_list_area.css('left', 0);
         feed_list_area.width(ww);
-        feed_list_area.height(wh - _t_h - _b_h);
-
-        if(queue_list_bar.is(':visible'))
-        {
-            queue_list_bar.css('top', _b_t + _b_h);
-            queue_list_bar.css('left', 0);
-            queue_list_bar.width(ww);
-            queue_list_bar.height(wh - _b_t - _b_h);
-        }
+        feed_list_area.height(wh - _t_h);
 
         feed_list_area.find('div.articlelabel').width(ww * 0.6);
     }
@@ -184,6 +153,32 @@ $(document).ready(function()
             c.html(d);
             c.show();
             $("div.article[article='" + article + "']").addClass('articlecontentshow'); 
+
+            if(article_display == 'lst')
+            {
+                /* fix scroll */
+                _tb_h = 25;
+                _fa_h = feed_list_area.outerHeight();
+                _fa_p = feed_list_area.position().top;
+                _fa_s = feed_list_area.scrollTop();
+                _ac_h = c.height();
+                _ac_p = c.position().top;
+                _ac_s = _fa_s;
+
+                __v_t = _ac_p - _tb_h - _fa_p;
+                __v_b = _fa_h - _ac_h - _ac_p;
+
+                if(_ac_h > _fa_h || __v_t < 0)
+                {
+                    _ac_s = _fa_s + __v_t;
+                }
+                else if(__v_b < 0)
+                {
+                    _ac_s = _fa_s - __v_b;
+                }
+
+                feed_list_area.scrollTop(_ac_s);
+            }
         }
     }
 
@@ -253,15 +248,19 @@ $(document).ready(function()
 
         container.find("div.article").click(function()
         {
-            article = $(this).attr('article');
+            if(article_display == 'lst')
+            {
+                _a = $(this).attr('article');
 
-            if($(this).hasClass('articlecontentshow'))
-            {
-                article_content_hide(article);
-            }
-            else
-            {
-                article_content_show(article);
+                if($(this).hasClass('articlecontentshow'))
+                {
+                    article_content_hide(_a);
+                }
+                else
+                {
+                    article_content_hide_all();
+                    article_content_show(_a);
+                }
             }
         });
 

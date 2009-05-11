@@ -47,6 +47,7 @@
 
 </nobr></div>
 
+<!--
 <div id="bottomrightbar"><nobr>
 <span class="hctl hctl-open">&nbsp;</span>
 </nobr></div>
@@ -55,8 +56,11 @@
 <div id="queuelistbar" style="display:none">
 queue
 </div>
+-->
 
 <?php else : ?>
+
+<p class="noblogmsg"><?php echo $this->translation()->no_registered_blog ?></p>
 
 <div id="noblogmsg" class="b-dialog" style="display:none">
 <?php echo $this->translation()->no_registered_blog ?>. <?php B_Helper::a(ucfirst($this->translation()->application_click_here), "blog", "add") ?> <?php echo $this->translation()->new_blog_instruction ?>.

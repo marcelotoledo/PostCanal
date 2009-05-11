@@ -51,12 +51,14 @@ $(document).ready(function()
         {
             $("#feedaddlnkdiv").hide();
             $("#feedaddformtable").show();
+            $("#feedaddurlrow").show();
         }
         else
         {
             $("#feedaddlnkdiv").show();
             $("#feedaddformtable").hide();
             $("input[name='feedaddurl']").val("");
+            $("#feedaddoptions > td").html("");
             feed_msg("");
         }
     }
