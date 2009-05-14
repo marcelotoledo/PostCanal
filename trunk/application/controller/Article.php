@@ -29,7 +29,7 @@ class C_Article extends B_Controller
         $start_time = $this->request()->time;
         $user_id = $this->session()->user_profile_id;
 
-        $this->view()->articles = UserBlogFeed::partialArticlesThreaded
+        $this->view()->articles = UserBlogFeed::findArticlesThreaded
         (
             $blog_hash, $user_id, $feed_hash, $start_time
         );
@@ -49,7 +49,7 @@ class C_Article extends B_Controller
         $start_time = $this->request()->time;
         $user_id = $this->session()->user_profile_id;
 
-        $this->view()->articles = UserBlogFeed::partialArticlesAll
+        $this->view()->articles = UserBlogFeed::findArticlesAll
         (
             $blog_hash, $user_id, $start_time
         );

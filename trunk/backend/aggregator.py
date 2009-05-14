@@ -28,17 +28,17 @@ MINIMUM_UPDATE_TIME = 300  # 5 minutes
 # 
 # default update time for void feeds
 # minimum update time for massive updated feeds
-# update time is calculated with linear regression of its items times
+# update time is calculated with linear regression of its articles times
 # 
-def feed_update_time(entries):
+def feed_update_time(articles):
     t = DEFAULT_UPDATE_TIME
-    l = len(entries)
+    l = len(articles)
 
     if l > 2: # linear regression requires at least 3 points
         from vendor import linreg
         x = range(0, l)
         y = []
-        for i in entries: y.append(i.get('item_date', 0))
+        for i in articles: y.append(i.get('article_date', 0))
         y.sort()
 
         try:
@@ -55,25 +55,25 @@ def feed_update_time(entries):
 
     return t 
 
-def item_dump(item):
+def article_dump(article):
     r = {}
 
-    # try to parse item date, otherwise, uses the current time
-    _date = item.get('date_parsed')
+    # try to parse article date, otherwise, uses the current time
+    _date = article.get('date_parsed')
     if _date: _date = time.mktime(_date)
     if _date == None: _date = time.time()
-    r['item_date'] = int(_date)
+    r['article_date'] = int(_date)
 
     # link, title, author
-    r['item_link'] = item.get('link', "")
-    r['item_title'] = item.get('title', "")
-    r['item_author'] = item.get('author', "")
+    r['article_link'] = article.get('link', "")
+    r['article_title'] = article.get('title', "")
+    r['article_author'] = article.get('author', "")
 
     # content
-    _content = item.get('content', "")
-    if _content == "": _content = item.get('description', "")
-    if _content == "": _content = item.get('summary', "")
-    r['item_content'] = _content
+    _content = article.get('content', "")
+    if _content == "": _content = article.get('description', "")
+    if _content == "": _content = article.get('summary', "")
+    r['article_content'] = _content
 
     return r
 
@@ -102,14 +102,14 @@ def feed_dump(feed):
         if _description == "": _description = parsed.get('info', "")
         r['feed_description'] = _description
 
-        # entries
-        _entries = []
-        for i in feed['entries']:
-            _entries.append(item_dump(i))
-        r['entries'] = _entries
+        # articles
+        _articles = []
+        for i in feed['articles']:
+            _articles.append(article_dump(i))
+        r['articles'] = _articles
 
         # update time
-        r['feed_update_time'] = feed_update_time(_entries)
+        r['feed_update_time'] = feed_update_time(_articles)
 
     return r
 
@@ -121,10 +121,10 @@ def guess_feeds(url):
         from vendor import feedparser
         i = f[0]
         p = feedparser.parse(i)
-        r.append({ 'url': i, 'parsed': p.feed, 'entries': p['entries'] })
+        r.append({ 'url': i, 'parsed': p.feed, 'articles': p['entries'] })
     else:
         for i in f:
-            r.append({'url': i, 'parsed': None, 'entries': [] })
+            r.append({'url': i, 'parsed': None, 'articles': [] })
     return r
 
 def get_feed(url, modified=None):
@@ -140,7 +140,7 @@ def get_feed(url, modified=None):
     else:
         p = feedparser.parse(url)
 
-    return { 'url': url, 'parsed': p.feed, 'entries': p['entries'] }
+    return { 'url': url, 'parsed': p.feed, 'articles': p['entries'] }
 
 
 if __name__ == '__main__':

@@ -879,8 +879,21 @@ class B_Log
         catch(Exception $exception)
         {
             $message = chop($exception->getMessage()) . "; " . chop($message);
-            if(syslog(LOG_ERR, $message) == false) fwrite(STDOUT, $message);
+            self::systemLog($message);
         }
+    }
+
+    /**
+     * Write log to system log
+     *
+     * @param   string  $message    Log message
+     */
+    public static function systemLog ($message)
+    {
+        echo syslog(LOG_ERR, $message) ?
+            "fatal error: please see syslog for details" :
+            $message;
+        exit(1);
     }
 }
 
@@ -893,9 +906,8 @@ class B_Log
  *
  * Use the following convention
  * 
- * getBySomething       obtain a single record and returns as an object of class
- * findBySomething      obtain zero or more records as array of objects of class
- * partialBySomething   obtain zero or mode records as array of custom objects
+ * getBySomething       obtain a single record and returns as an model class object
+ * findBySomething      obtain zero or more records as array of objects
  * 
  * insertSomething, updateSomething, foobarSomething, etc
  */
@@ -1091,7 +1103,7 @@ abstract class B_Model
                    "(" . implode(", ", $columns) . ") VALUES " .
                    "(?" . str_repeat(", ?", count($columns) - 1) . ")";
 
-            $id = self::_insert($sql, 
+            $id = self::insert_($sql, 
                                 array_values($this->data), 
                                 $this->getSequenceName());
 
@@ -1189,7 +1201,7 @@ abstract class B_Model
 
         /* auto set updated_at */
 
-        if($this->isNew() == false && in_array('updated_at', $columns))
+        if(in_array('updated_at', $columns))
         {
             $this->updated_at = time();
         }
@@ -1221,112 +1233,6 @@ abstract class B_Model
             }
         }
     }
-
-    /**
-     * Find models with an encapsulated SELECT command
-     *
-     * @param   array   $conditions WHERE parameters
-     * @param   array   $order      ORDER parameters
-     * @param   integer $limit      LIMIT parameter
-     * @param   integer $offset     OFFSET parameter
-     * @param   string  $table      Table name
-     * @param   string  $model      Model name
-     * @return  array
-     */
-    protected static function _find ($conditions=array(), 
-                                     $order=array(), 
-                                     $limit=0, 
-                                     $offset=0,
-                                     $table,
-                                     $model)
-    {
-        $prepared = array();
-
-        $columns = array_keys($conditions);
-
-        foreach($columns as $column)
-        {
-            $prepared[] = $column . " = ?";
-        }
-
-        $sql = "SELECT * FROM " . $table;
-
-        if(count($conditions) > 0)
-        {
-            $sql.= " WHERE " . implode(" AND ", $prepared);
-        }
-
-        if(count($order) > 0)
-        {
-            $sql.= " ORDER BY " . implode(", ", $order);
-        }
-
-        if(($limit = intval($limit)) > 0)
-        {
-            $sql.= " LIMIT " . $limit;
-
-            if(($offset = intval($offset)) > 0)
-            {
-                $sql.= ", " . $offset;
-            }
-        }
-
-        return self::_selectModel($sql, array_values($conditions), $model);
-    }
-
-    abstract protected static function find($conditions=array(), 
-                                            $order=array(), 
-                                            $limit=0, 
-                                            $offset=0);
-
-    /**
-     * Get models with SQL
-     *
-     * @param   string  $sql        SQL query
-     * @param   array   $data       values array
-     * @param   string  $model      Model class name
-     * @throw   B_Exception
-     * @return  array
-     */
-    protected static function _selectModel ($sql, $data=array(), $model)
-    {
-        $statement = null;
-
-        if(count($data) > 0)
-        {
-            try
-            {
-                $statement = self::connection()->prepare($sql);
-                $statement->setFetchMode(PDO::FETCH_CLASS, $model);
-                $statement->execute($data);
-            }
-            catch(PDOException $exception)
-            {
-                $_m = "select model (" . $model . ") with sql (" . $sql . ") failed";
-                $_d = array ('method' => __METHOD__);
-                B_Exception::forward($_m, E_USER_ERROR, $exception, $_d);
-            }
-        }
-        else
-        {
-            try
-            {
-                $statement = self::connection()->query($sql, 
-                                                          PDO::FETCH_CLASS, 
-                                                          $model);
-            }
-            catch(PDOException $exception)
-            {
-                $_m = "select model (" . $model . ") with sql (" . $sql . ") failed";
-                $_d = array ('method' => __METHOD__);
-                B_Exception::forward($_m, E_USER_ERROR, $exception, $_d);
-            }
-        }
- 
-        return $statement->fetchAll();
-    }
-
-    abstract protected static function selectModel ($sql, $data=array());
 
     /**
      * Execute a SQL query and returns affected rows
@@ -1379,7 +1285,7 @@ abstract class B_Model
      * @param   array   $sequence       Sequence name
      * @return  integer
      */
-    protected static function _insert($sql, $data=array(), $sequence=null)
+    protected static function insert_ ($sql, $data=array(), $sequence=null)
     {
         $id = null;
 
@@ -1394,17 +1300,22 @@ abstract class B_Model
         return $id;
     }
 
-    abstract protected static function insert($sql, $data=array());
+    abstract protected static function insert ($sql, $data=array());
 
     /**
-     * Execute a SQL select query and returns array of objects
+     * Execute a SQL select query and returns array of (assoc, obj, class, etc.)
      *
      * @param   string  $sql    SQL query
      * @param   array   $data   values array
-     * @param   integer $mode   @see http://br.php.net/manual/en/pdo.constants.php
+     * @param   integer $method @see http://br.php.net/manual/en/pdo.constants.php
+     * @param   string  $model  Model class name
+     * 
      * @return  array
      */
-    public static function select($sql, $data=array(), $mode=PDO::FETCH_OBJ)
+    public static function select($sql, 
+                                  $data=array(), 
+                                  $method=PDO::FETCH_OBJ, 
+                                  $model=null)
     {
         $statement = null;
 
@@ -1413,7 +1324,7 @@ abstract class B_Model
             try
             {
                 $statement = self::connection()->prepare($sql);
-                $statement->setFetchMode($mode);
+                $statement->setFetchMode($method, $model);
                 $statement->execute($data);
             }
             catch(PDOException $exception)
@@ -1427,7 +1338,7 @@ abstract class B_Model
         {
             try
             {
-                $statement = self::connection()->query($sql, $mode);
+                $statement = self::connection()->query($sql, $method, $model);
             }
             catch(PDOException $exception)
             {
@@ -1438,18 +1349,6 @@ abstract class B_Model
         }
 
         return $statement->fetchAll();
-    }
-
-    /**
-     * Execute a SQL select query and returns a single row as object
-     *
-     * @param   string  $sql    SQL query
-     * @param   array   $data   values array
-     * @return  object
-     */
-    public static function selectRow($sql, $data=array())
-    {
-        return current(self::select($sql, $data));
     }
 
     abstract protected function getTableName();
@@ -1483,7 +1382,6 @@ abstract class B_Model
      */
     public static function transaction()
     {
-        // PDO::beginTransaction();
         self::execute("START TRANSACTION");
     }
 
@@ -1492,7 +1390,6 @@ abstract class B_Model
      */
     public static function commit()
     {
-        // PDO::commit();
         self::execute("COMMIT");
     }
 
@@ -1501,7 +1398,6 @@ abstract class B_Model
      */
     public static function rollback()
     {
-        // PDO::rollBack();
         self::execute("ROLLBACK");
     }
 
@@ -1521,33 +1417,8 @@ abstract class B_Model
         }
         catch(PDOException $exception)
         {
-            $_m = "database connection failed";
-            $_d = array ('method' => __METHOD__);
-            B_Exception::forward($_m, E_USER_ERROR, $exception, $_d);
-        }
-
-        /* setup timezone */
-
-        $driver = strtolower($db->driver);
-        $timezone = $db->timezone;
-
-        try
-        {
-            if($driver == "mysql")
-            {
-                // not working
-                // $db->connection->exec("SET time_zone = '" . $timezone . "'");
-            }
-            elseif($driver == "pgsql")
-            {
-                $db->connection->exec("SET TIME ZONE '" . $timezone . "'");
-            }
-        }
-        catch(Exception $exception)
-        {
-            $_m = "failed to set the timezone";
-            $_d = array ('method' => __METHOD__);
-            B_Exception::forward($_m, E_USER_ERROR, $exception, $_d);
+            $_m = "database connection failed; exception: " . $exception->getMessage();
+            B_Log::systemLog($_m);
         }
     }
 }
@@ -2339,9 +2210,9 @@ class B_Session
      */
     public static function read ($id)
     {
-        $result = B_Model::selectRow("SELECT session_data " . 
-                                      "FROM " . self::$table_name . " " .
-                                      "WHERE id = ?", array($id));
+        $result = current(B_Model::select("SELECT session_data " . 
+                                          "FROM " . self::$table_name . " " .
+                                          "WHERE id = ?", array($id)));
         return is_object($result) ? $result->session_data : '';
     }
 
@@ -2354,9 +2225,9 @@ class B_Session
      */
     public static function write($id, $data)
     {
-        $result = B_Model::selectRow("SELECT COUNT(*) AS total " . 
-                                      "FROM " . self::$table_name . " " .
-                                      "WHERE id = ?", array($id));
+        $result = current(B_Model::select("SELECT COUNT(*) AS total " . 
+                                          "FROM " . self::$table_name . " " .
+                                          "WHERE id = ?", array($id)));
 
         return B_Model::execute
         (
@@ -2454,10 +2325,10 @@ class B_Session
      */
     public function getActive()
     {
-        $result = B_Model::selectRow("SELECT COUNT(*) AS total " . 
-                                      "FROM " . self::$table_name . " " .
-                                      "WHERE id = ? AND active = 1", 
-                                      array(session_id()));
+        $result = current(B_Model::select("SELECT COUNT(*) AS total " . 
+                                          "FROM " . self::$table_name . " " .
+                                          "WHERE id = ? AND active = 1", 
+                                          array(session_id())));
 
         return ($result->total > 0);
     }

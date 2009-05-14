@@ -50,7 +50,7 @@ class Daemon:
 
             logging.info("getting feed update returned with status (%s) and (%d) entries" % (status, total_entries))
             updated = self.client.feed_update_post({'token': self.token, 'id': id, 'data': dump})
-            logging.info("posting feed with id (%d) updated successfully with (%d) updated items" % (id, updated))
+            logging.info("posting feed with id (%d) updated successfully with (%d) updated articles" % (id, updated))
         else:
             logging.info("no feed to update")
 
@@ -67,22 +67,22 @@ class Daemon:
             t.username = pub.get('manager_username')
             t.password = pub.get('manager_password')
 
-            logging.info("starting to publish queue item id (%d)" % (id))
+            logging.info("starting to publish blog entry id (%d)" % (id))
 
             try:
-                p = t.publish({'title'  : pub.get('item_title'),
-                               'content': pub.get('item_content')})
+                p = t.publish({'title'  : pub.get('entry_title'),
+                               'content': pub.get('entry_content')})
                 self.client.queue_publication_status({'token': self.token, 
                                                       'id': id, 
                                                       'published': True})
-                logging.info("post id (%d) published successfully for queue item id (%d)" % (p, id))
+                logging.info("post id (%d) published successfully for blog entry id (%d)" % (p, id))
             except:
-                logging.info("post failed to publish for queue item id (%d)" % (id))
+                logging.info("post failed to publish for blog entry id (%d)" % (id))
                 self.client.queue_publication_status({'token': self.token, 
                                                       'id': id, 
                                                       'published': False})
         else:
-            logging.info("no queue item to publish")
+            logging.info("no blog entry to publish")
 
 def start(argv):
     base_path = os.path.abspath("../")

@@ -157,7 +157,7 @@ $(document).ready(function()
             if(article_display == 'lst')
             {
                 /* fix scroll */
-                _tb_h = 25;
+                _tb_h = (feed_display == 'all') ? 50 : 25;
                 _fa_h = feed_list_area.outerHeight();
                 _fa_p = feed_list_area.position().top;
                 _fa_s = feed_list_area.scrollTop();
@@ -165,8 +165,18 @@ $(document).ready(function()
                 _ac_p = c.position().top;
                 _ac_s = _fa_s;
 
-                __v_t = _ac_p - _tb_h - _fa_p;
-                __v_b = _fa_h - _ac_h - _ac_p;
+                if(_ac_p > _fa_h / 2)
+                {
+                    _ac_s = _fa_s - _fa_h + _ac_h + _ac_p + _tb_h;
+                }
+                else
+                {
+                    _ac_s = _fa_s + _ac_p - _tb_h - _fa_p - _tb_h;
+                }
+
+                /*
+                __v_t = _ac_p - _tb_h - _fa_p - _tb_h;
+                __v_b = _fa_h - _ac_h - _ac_p - _tb_h;
 
                 if(_ac_h > _fa_h || __v_t < 0)
                 {
@@ -176,6 +186,7 @@ $(document).ready(function()
                 {
                     _ac_s = _fa_s - __v_b;
                 }
+                */
 
                 feed_list_area.scrollTop(_ac_s);
             }

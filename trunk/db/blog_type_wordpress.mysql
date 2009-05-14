@@ -2,3 +2,5 @@
 
 INSERT INTO model_blog_type (type_name, type_label, version_name, version_label, current_revision, enabled) VALUES ('wordpress', 'WordPress', 'wordpress_com', 'WordPress.com', 1, 1);
 INSERT INTO model_blog_type (type_name, type_label, version_name, version_label, current_revision, enabled) VALUES ('wordpress', 'WordPress', 'wordpress_domain', 'WordPress (domain)', 1, 1);
+
+INSERT INTO model_blog_type_config (

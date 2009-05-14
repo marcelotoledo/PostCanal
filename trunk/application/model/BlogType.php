@@ -23,7 +23,7 @@ class BlogType extends B_Model
      * @var array
      */
     protected static $table_structure = array (
-		'blog_type_id' => array ('type' => 'integer','size' => 0),
+		'blog_type_id' => array ('type' => 'integer','size' => 0,'required' => false),
 		'type_name' => array ('type' => 'string','size' => 50,'required' => true),
 		'type_label' => array ('type' => 'string','size' => 50,'required' => true),
 		'version_name' => array ('type' => 'string','size' => 50,'required' => true),
@@ -37,7 +37,7 @@ class BlogType extends B_Model
      *
      * @var string
      */
-    protected static $sequence_name = '';
+    protected static $sequence_name = null;
 
     /**
      * Primary key name
@@ -46,12 +46,6 @@ class BlogType extends B_Model
      */
     protected static $primary_key_name = 'blog_type_id';
 
-    /**
-     * Configuration
-     *
-     * @var string
-     */
-    protected $configuration = array();
 
     /**
      * Get table name
@@ -94,40 +88,6 @@ class BlogType extends B_Model
     }
 
     /**
-     * Find BlogType with an encapsulated SELECT command
-     *
-     * @param   array   $conditions WHERE parameters
-     * @param   array   $order      ORDER parameters
-     * @param   integer $limit      LIMIT parameter
-     * @param   integer $offset     OFFSET parameter
-     * @return  array
-     */
-    public static function find ($conditions=array(), 
-                                 $order=array(), 
-                                 $limit=0, 
-                                 $offset=0)
-    {
-        return parent::_find($conditions, 
-                             $order, 
-                             $limit, 
-                             $offset, 
-                             self::$table_name,
-                             get_class());
-    }
-
-    /**
-     * Get BlogType with SQL
-     *
-     * @param   string  $sql    SQL query
-     * @param   array   $data   values array
-     * @return  array
-     */
-    public static function selectModel ($sql, $data=array())
-    {
-        return parent::_selectModel($sql, $data, get_class());
-    }
-
-    /**
      * Execute a SQL insert query and returns last insert id
      *
      * @param   string  $sql        SQL query
@@ -136,7 +96,7 @@ class BlogType extends B_Model
      */
     public static function insert($sql, $data=array())
     {
-        return parent::_insert($sql, $data, self::$sequence_name);
+        return parent::insert_($sql, $data, self::$sequence_name);
     }
 
     /**
@@ -148,8 +108,13 @@ class BlogType extends B_Model
      */
     public static function getByPrimaryKey($id)
     {
-        return current(self::find(array(self::$primary_key_name => $id)));
+        return current(self::select(
+            "SELECT * FROM " . self::$table_name . 
+            " WHERE " . self::$primary_key_name . " = ?", 
+            array($id), PDO::FETCH_CLASS, get_class()));
     }
+
+    // -------------------------------------------------------------------------
 
     /**
      * Find BlogType by name
@@ -159,12 +124,13 @@ class BlogType extends B_Model
      *
      * @return  BlogType|null 
      */
-    public static function findByName($type_name, $version_name)
+    public static function getByName($type_name, $version_name)
     {
-        return current(self::find(array(
-            'type_name' => $type_name,
-            'version_name' => $version_name)));
-        return current(self::find(array(self::$primary_key_name => $id)));
+        $sql = "SELECT * FROM " . self::$table_name . 
+               " WHERE type_name = ? AND version_name = ?";
+        $args = array($type_name, $version_name);
+
+        return current(self::select($sql, $args, PDO::FETCH_CLASS, get_class()));
     }
 
     /**
@@ -183,13 +149,13 @@ class BlogType extends B_Model
 
         if(strlen($result['type']) > 0 && strlen($result['version']) > 0)
         {
-            if(is_object(($blog_type = BlogType::findByName($result['type'], 
-                                                            $result['version']))))
+            if(is_object(($blog_type = self::getByName($result['type'], 
+                                                       $result['version']))))
             {
-                $result['type_label'] = $blog_type->type_label;
+                $result['type_label']    = $blog_type->type_label;
                 $result['version_label'] = $blog_type->version_label;
                 $result['type_accepted'] = true;
-                $result['maintenance'] = $blog_type->maintenance;
+                $result['maintenance']   = $blog_type->maintenance;
             }
         }
 
@@ -197,15 +163,57 @@ class BlogType extends B_Model
     }
 
     /**
-     * Check URL admin
+     * Check manager url 
      *  
      * @param   string  $url 
      * @return  array
      */ 
-    public static function checkAdmin($url, $blog_type, $blog_version)
+    public static function checkManagerUrl($url, $blog_type, $blog_version)
     {
         $client = new A_WebService();
         $args = array('url' => $url, 'type' => $blog_type, 'version' => $blog_version);
         return $client->blog_manager_url_check($args);
+    } 
+
+    /**
+     * Check login 
+     *  
+     * @param   string  $url 
+     * @return  array
+     */ 
+    public static function checkLogin($url,
+                                      $blog_type, 
+                                      $blog_version, 
+                                      $username, 
+                                      $password)
+    {
+        $client = new A_WebService();
+        $args = array('url'      => $url, 
+                      'type'     => $blog_type, 
+                      'version'  => $blog_version,
+                      'username' => $username,
+                      'password' => $password);
+        return $client->blog_login_check($args);
+    } 
+
+    /**
+     * Check publication
+     *  
+     * @param   string  $url 
+     * @return  array
+     */ 
+    public static function checkPublication($url, 
+                                            $blog_type, 
+                                            $blog_version, 
+                                            $username, 
+                                            $password)
+    {
+        $client = new A_WebService();
+        $args = array('url'      => $url, 
+                      'type'     => $blog_type, 
+                      'version'  => $blog_version,
+                      'username' => $username,
+                      'password' => $password);
+        return $client->blog_publication_check($args);
     } 
 }

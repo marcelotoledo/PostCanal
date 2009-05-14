@@ -146,16 +146,7 @@ class A_WebService
     public function feed_update_get($args)
     {
         if($this->validate_args($args, array()) == false) return null;
-
-        $feed = AggregatorFeed::findNeedUpdate();
-        $result = array();
-
-        if(is_object($feed))
-        {
-            $result = $feed->dump(array('aggregator_feed_id', 'feed_url', 'feed_modified'));
-        }
-
-        return $result;
+        return current(AggregatorFeed::findOutdated($limit=1));
     }
 
     /**

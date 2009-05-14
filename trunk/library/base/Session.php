@@ -112,9 +112,9 @@ class B_Session
      */
     public static function read ($id)
     {
-        $result = B_Model::selectRow("SELECT session_data " . 
-                                      "FROM " . self::$table_name . " " .
-                                      "WHERE id = ?", array($id));
+        $result = current(B_Model::select("SELECT session_data " . 
+                                          "FROM " . self::$table_name . " " .
+                                          "WHERE id = ?", array($id)));
         return is_object($result) ? $result->session_data : '';
     }
 
@@ -127,9 +127,9 @@ class B_Session
      */
     public static function write($id, $data)
     {
-        $result = B_Model::selectRow("SELECT COUNT(*) AS total " . 
-                                      "FROM " . self::$table_name . " " .
-                                      "WHERE id = ?", array($id));
+        $result = current(B_Model::select("SELECT COUNT(*) AS total " . 
+                                          "FROM " . self::$table_name . " " .
+                                          "WHERE id = ?", array($id)));
 
         return B_Model::execute
         (
@@ -227,10 +227,10 @@ class B_Session
      */
     public function getActive()
     {
-        $result = B_Model::selectRow("SELECT COUNT(*) AS total " . 
-                                      "FROM " . self::$table_name . " " .
-                                      "WHERE id = ? AND active = 1", 
-                                      array(session_id()));
+        $result = current(B_Model::select("SELECT COUNT(*) AS total " . 
+                                          "FROM " . self::$table_name . " " .
+                                          "WHERE id = ? AND active = 1", 
+                                          array(session_id())));
 
         return ($result->total > 0);
     }

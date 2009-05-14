@@ -4,20 +4,63 @@ $(document).ready(function()
 
     var ar = false; /* active request */
 
-    /* blog discovery / add */
+    /* blog discover */
 
-    var blog_url = ""
-    var blog_manager_url = ""
-    var blog_type = ""
-    var blog_version = ""
-    var blog_revision = 0
+    var blog_name                 = "";
+    var blog_type                 = "";
+    var blog_type_label           = "";
+    var blog_type_accepted        = false;
+    var blog_type_maintenance     = false;
+    var blog_version              = "";
+    var blog_version_label        = "";
+    var blog_revision             = 0;
+    var blog_url                  = "";
+    var blog_url_accepted         = false;
+    var blog_manager_url          = "";
+    var blog_manager_url_accepted = false;
+    var blog_username             = "";
+    var blog_password             = "";
+    var blog_login_accepted       = false;
+    var blog_publication_accepted = false;
+
+    /* dom objects */
+
+    blog_name_input = $("input[name='blog_name']");
+
+    discover_url_input_row  = $("tr#discover_url_input_row");
+    discover_url_input      = $("input[name='discover_url_input']");
+    discover_url_lnk        = $("a#discover_url_lnk");
+    discover_url_result_row = $("tr#discover_url_result_row");
+    discover_url_display    = $("div#discover_url_display");
+    discover_url_change_lnk = $("a#discover_url_change_lnk");
+
+    blog_type_row     = $("tr#blog_type_row");
+    blog_type_display = $("div#blog_type_display");
+
+    manager_url_input_row  = $("tr#manager_url_input_row");
+    manager_url_input      = $("input[name='manager_url_input']");
+    manager_url_lnk        = $("a#manager_url_lnk");
+    manager_url_result_row = $("tr#manager_url_result_row");
+    manager_url_display    = $("div#manager_url_display");
+    manager_url_change_lnk = $("a#manager_url_change_lnk");
+    manager_url_check_lnk  = $("a#manager_url_check_lnk");
+
+    login_table          = $("table#login_table");
+    login_username_input = $("input[name='username_input']");
+    login_password_input = $("input[name='password_input']");
+    login_check_lnk      = $("a#login_check_lnk");
+
+    buttons_table = $("table#blog_buttons_table");
+    button_submit = $("input[name='add_submit_button']");
+
+    blog_add_message = $("tr#blog_add_message");
 
     /* spinner */
 
     $.b_spinner
     ({
-        image: "<?php B_Helper::img_src('spinner.gif') ?>",
-        message: "... <?php echo $this->translation()->application_loading ?>"
+        image   : "<?php B_Helper::img_src('spinner.gif') ?>",
+        message : "... <?php echo $this->translation()->application_loading ?>"
     });
 
     /* SWITCHES */
@@ -31,113 +74,134 @@ $(document).ready(function()
 
     /* url */
 
-    function commitURL(url)
+    function commitURL()
     {
-        blog_url = url;
-        $("input[name='discover_url']").val(url);
-        $("input[name='discover_url']").hide();
-        $("#discover_url_display").text(url);
-        $("#discover_url_display").show();
-        $("#discover_url").hide();
-        $("#change_url").show();
+        discover_url_input.val(blog_url);
+        discover_url_input_row.hide();
+        discover_url_display.text(blog_url);
+        discover_url_result_row.show();
     }
 
-    function changeURL()
+    function resetURL()
     {
         blog_url = "";
-        $("#discover_url_display").text("");
-        $("#discover_url_display").hide();
-        $("input[name='discover_url']").show();
-        $("#change_url").hide();
-        $("#discover_url").show();
-        changeBlogType();
-        resetManagerURL();
+        blog_url_accepted = false;
+        discover_url_display.text("");
+        discover_url_result_row.hide();
+        discover_url_input_row.show();
+        resetBlogType();
     }
 
     /* blog type */
 
-    function commitBlogType(label, type_name, version_name, revision)
+    function commitBlogType()
     {
-        blog_type = type_name;
-        blog_version = version_name;
-        blog_revision = revision;
-        $("#blog_type_row").show();
-        $("#blog_type_display").text(label);
+        blog_type_display.text(blog_type_label + " / " + blog_version_label);
+        blog_type_row.show();
     }
 
-    function changeBlogType()
+    function resetBlogType()
     {
-        blog_type = "";
-        blog_version = "";
-        revision = 0;
-        $("#blog_type_display").text("");
-        $("#blog_type_row").hide();
+        blog_type             = "";
+        blog_type_label       = "";
+        blog_type_accepted    = false;
+        blog_type_maintenance = false;
+        blog_version          = "";
+        blog_version_label    = "";
+        blog_revision         = 0;
+        blog_type_display.text("");
+        blog_type_row.hide();
+        resetManagerURL();
     }
 
     /* manager url */
 
-    function commitManagerURL(url)
+    function commitManagerURL()
     {
-        blog_manager_url = url;
-        $("input[name='manager_url']").val(url);
-        $("input[name='manager_url']").hide();
-        $("#check_manager_url").hide();
-        $("#manager_url_display").show();
-        $("#manager_url_display").text(url);
-        $("#check_manager_login").show();
-        $("#manager_login_row").show();
-    }
-
-    function changeManagerURL()
-    {
-        blog_manager_url = "";
-        $("#manager_url_row").show();
-        $("#manager_url_display").text("");
-        $("#manager_url_display").hide();
-        $("input[name='manager_url']").show();
-        $("#check_manager_url").show();
-        $("#check_manager_login").hide();
-        $("#manager_login_row").hide();
+        manager_url_display.text(blog_manager_url);
+        if(manager_url_input_row.is(':visible'))
+        {
+            manager_url_result_row.show();
+        }
+        manager_url_input.val(blog_manager_url);
+        manager_url_input_row.hide();
     }
 
     function resetManagerURL()
     {
         blog_manager_url = "";
-        $("input[name='manager_url']").val("");
-        $("#manager_url_display").text("");
-        $("#manager_url_row").hide();
-        $("#check_manager_login").hide();
-        $("#manager_login_row").hide();
+        blog_manager_url_accepted = false;
+        manager_url_display.text("");
+        manager_url_result_row.hide();
+        manager_url_input_row.hide();
+        resetLogin();
+    }
+
+    function changeManagerURL()
+    {
+        blog_manager_url_accepted = false;
+        manager_url_display.text("");
+        manager_url_result_row.hide();
+        manager_url_input_row.show();
+        resetLogin();
+    }
+
+    function commitLogin()
+    {
+        login_username_input.val(blog_username);
+        login_password_input.val(blog_password);
+        login_table.show();
+        commitButtons();
+    }
+
+    function resetLogin()
+    {
+        blog_username = "";
+        blog_password = "";
+        login_username_input.val("");
+        login_password_input.val("");
+        blog_login_accepted = false;
+        blog_publication_accepted = false;
+        login_table.hide();
+        resetButtons();
+    }
+
+    function commitButtons()
+    {
+        buttons_table.show();
+    }
+
+    function resetButtons()
+    {
+        buttons_table.hide();
     }
 
     /* ACTIONS */
 
     /* on error */
 
-    function onError()
+    function err()
     {
         alert('erro!');
     }
 
     /* check url action */
 
-    function blogaddmsg(m)
+    function msg(m)
     {
-        _id = "blogaddmessage"; $("#" + _id + " td").html(m); _tr = $("#" + _id);
-        (m=="") ? (_tr.hide()) : (_tr.show());
+        blog_add_message.find("td").html(m);
+        (m=="") ? (blog_add_message.hide()) : (blog_add_message.show());
     }
 
     function discoverURL()
     {
-        var url = $("input[name='discover_url']").val();
-
-        if(url == "")
+        if((blog_url = discover_url_input.val()) == "")
         {
-            blogaddmsg("<?php echo $this->translation()->form_incomplete ?>");
+            msg("<?php echo $this->translation()->form_incomplete ?>");
             return null;
         }
 
-        var parameters = { url: url }
+        var parameters = { url: blog_url }
 
         $.ajax
         ({
@@ -145,65 +209,67 @@ $(document).ready(function()
             url: "<?php B_Helper::url('blog', 'discover') ?>",
             dataType: "xml",
             data: parameters,
-            beforeSend: function () { sp(true); blogaddmsg(""); },
+            beforeSend: function () { sp(true); msg(""); },
             complete: function ()   { sp(false); },
             success: function (xml) 
             { 
                 data = $(xml).find('data');
                 result = data.find('result');
 
-                type_name = result.find('type').text();
-                type_label = result.find('type_label').text();
-                type_accepted = (result.find('type_accepted').text() == "true");
-                maintenance = (result.find('maintenance').text() == "true");
-                version_name = result.find('version').text();
-                version_label = result.find('version_label').text();
-                revision = result.find('revision').text();
-                url = result.find('url').text();
-                url_accepted = (result.find('url_accepted').text() == "true");
-                manager_url = result.find('manager_url').text();
-                manager_url_accepted = (result.find('manager_url_accepted').text() == "true");
-                username = result.find('username').text();
+                blog_type                 =  result.find('type').text();
+                blog_type_label           =  result.find('type_label').text();
+                blog_type_accepted        = (result.find('type_accepted').text() == "true");
+                blog_type_maintenance     = (result.find('maintenance').text() == "true");
+                blog_version              =  result.find('version').text();
+                blog_version_label        =  result.find('version_label').text();
+                blog_revision             =  result.find('revision').text();
+                blog_url                  =  result.find('url').text();
+                blog_url_accepted         = (result.find('url_accepted').text() == "true");
+                blog_manager_url          =  result.find('manager_url').text();
+                blog_manager_url_accepted = (result.find('manager_url_accepted').text() == "true");
+                blog_username             =  result.find('username').text();
+                blog_password             =  result.find('password').text();
+                blog_login_accepted       = (result.find('login_accepted').text() == "true");
+                blog_publication_accepted = (result.find('publication_accepted').text() == "true");
 
                 failed = false;
 
-                if(failed == false && type_accepted == false)
+                if(failed == false && blog_type_accepted == false)
                 {
                     failed = true;
-                    blogaddmsg("<?php echo $this->translation()->type_failed ?>");
-                    changeURL();
+                    msg("<?php echo $this->translation()->type_failed ?>");
+                    resetURL();
                 }
 
-                if(failed == false && maintenance == true)
+                if(failed == false && blog_type_maintenance == true)
                 {
                     failed = true;
-                    blogaddmsg("<?php echo $this->translation()->type_maintenance ?>");
+                    msg("<?php echo $this->translation()->type_maintenance ?>");
                 }
 
-                if(failed == false && url_accepted == false)
+                if(failed == false && blog_url_accepted == false)
                 {
                     failed = true;
-                    blogaddmsg("<?php echo $this->translation()->url_not_accepted ?>");
-                    changeURL();
+                    msg("<?php echo $this->translation()->url_not_accepted ?>");
+                    resetURL();
                 }
 
                 if(failed == false)
                 {
-                    commitURL(url);
-                    label = type_label + " / " + version_label;
-                    commitBlogType(label, type_name, version_name, revision);
-                    commitManagerURL(manager_url);
-                    $("input[name='manager_username']").val(username);
+                    commitURL();
+                    commitBlogType();
+                    commitManagerURL();
+                    commitLogin();
 
-                    if(manager_url_accepted == false)
+                    if(blog_manager_url_accepted == false)
                     {
                         failed = true;
-                        blogaddmsg("<?php echo $this->translation()->manager_url_not_accepted ?>");
+                        msg("<?php echo $this->translation()->manager_url_not_accepted ?>");
                         changeManagerURL();
                     }
                 }
             }, 
-            error: function () { onError(); }
+            error: function () { err(); }
         });
     }
 
@@ -211,15 +277,15 @@ $(document).ready(function()
 
     function checkManagerURL()
     {
-        var manager_url = $("input[name='manager_url']").val();
-
-        if(manager_url == "")
+        if((blog_manager_url = manager_url_input.val()) == "")
         {
-            blogaddmsg("<?php echo $this->translation()->form_incomplete ?>");
+            msg("<?php echo $this->translation()->form_incomplete ?>");
             return null;
         }
 
-        var parameters = { url: manager_url, type: blog_type , version: blog_version}
+        var parameters = { url:     blog_manager_url, 
+                           type:    blog_type, 
+                           version: blog_version };
 
         $.ajax
         ({
@@ -227,26 +293,27 @@ $(document).ready(function()
             url: "<?php B_Helper::url('blog', 'check') ?>",
             dataType: "xml",
             data: parameters,
-            beforeSend: function () { sp(true); blogaddmsg(""); },
+            beforeSend: function () { sp(true); msg(""); },
             complete: function ()   { sp(false); },
             success: function (xml) 
             { 
                 data = $(xml).find('data');
                 result = data.find('result');
 
-                manager_url = result.find('manager_url').text();
-                manager_url_accepted = (result.find('manager_url_accepted').text() == "true");
-                if(manager_url_accepted == true)
+                blog_manager_url          =  result.find('manager_url').text();
+                blog_manager_url_accepted = (result.find('manager_url_accepted').text() == "true");
+
+                if(blog_manager_url_accepted == true)
                 {
-                    commitManagerURL(manager_url);
+                    commitManagerURL();
                 }
                 else
                 {
-                    blogaddmsg("<?php echo $this->translation()->manager_url_not_accepted ?>");
+                    msg("<?php echo $this->translation()->manager_url_not_accepted ?>");
                     changeManagerURL();
                 }
             }, 
-            error: function () { onError(); }
+            error: function () { err(); }
         });
     }
 
@@ -257,45 +324,26 @@ $(document).ready(function()
 
     function addSubmit()
     {
-        blog_name = $("input[name='blog_name']").val();
-        username = $("input[name='manager_username']").val();
-        password = $("input[name='manager_password']").val();
+        blog_name     = blog_name_input.val();
+        blog_username = login_username_input.val();
+        blog_password = login_password_input.val();
 
-        if(blog_url == "")
+        if(blog_name     == "" || 
+           blog_username == "" || 
+           blog_password == "")
         {
-            changeURL();
-            blogaddmsg("<?php echo $this->translation()->blog_url_not_verified ?>");
+            msg("<?php echo $this->translation()->form_incomplete ?>");
             return null;
         }
 
-        if(blog_manager_url == "")
-        {
-            changeURL();
-            blogaddmsg("<?php echo $this->translation()->blog_manager_url_not_verified ?>");
-            return null;
-        }
-
-        if(blog_name == "" || username == "" || password == "")
-        {
-            blogaddmsg("<?php echo $this->translation()->form_incomplete ?>");
-            return null;
-        }
-
-        if(blog_type == "" || blog_version == "")
-        {
-            changeURL();
-            blogaddmsg("<?php echo $this->translation()->form_error ?>");
-            return null;
-        }
-
-        var parameters = { name: blog_name, 
-                           url: blog_url,
-                           manager_url: blog_manager_url,
-                           blog_type: blog_type,
-                           blog_version: blog_version,
-                           blog_revision: blog_revision,
-                           username: username, 
-                           password: password }
+        var parameters = { blog_name          : blog_name, 
+                           blog_url           : blog_url,
+                           blog_manager_url   : blog_manager_url,
+                           blog_username      : blog_username,
+                           blog_password      : blog_password,
+                           blog_type          : blog_type,
+                           blog_version       : blog_version,
+                           blog_revision      : blog_revision };
 
         $.ajax
         ({
@@ -303,37 +351,35 @@ $(document).ready(function()
             url: "<?php B_Helper::url('blog', 'add') ?>",
             dataType: "xml",
             data: parameters,
-            beforeSend: function () { sp(true); blogaddmsg(""); },
+            beforeSend: function () { sp(true); msg(""); },
             complete: function ()   { sp(false); },
             success: function (xml) 
             { 
-                var data = $(xml).find('data');
-                var added = data.find('added').text();
-                var message = data.find('message').text();
+                data = $(xml).find('data');
+                added = (data.find('added').text() == "true");
+                message = data.find('message').text();
 
-                if(added == "true")
+                if(added == true)
                 {
                     window.location = "<?php B_Helper::url('blog') ?>";
                 }
                 else
                 {
-                    blogaddmsg(message);
+                    msg(message);
                 }
             }, 
-            error: function () { onError(); }
+            error: function () { err(); }
         });
     }
 
     /* TRIGGERS */
 
-    /* 
-    $("input[name='discover_url']").blur(function()
-    {
-        check();
-    });
-    */
+    // $("input[name='discover_url']").blur(function()
+    // {
+    //     check();
+    // });
 
-    $("#discover_url").click(function()
+    discover_url_lnk.click(function()
     {
         if(ar == false)
         {
@@ -341,23 +387,23 @@ $(document).ready(function()
         }
     });
 
-    $("input[name='discover_url']").keypress(function(e) 
+    discover_url_input.keypress(function(e) 
     {
         if((e.which && e.which == 13) || (e.keyCode && e.keyCode == 13))
         {
-            $("#discover_url").click();
+            discover_url_lnk.click();
         }
     });
 
-    $("#change_url").click(function()
+    discover_url_change_lnk.click(function()
     {
         if(ar == false)
         {
-            changeURL();
+            resetURL();
         }
     });
 
-    $("#check_manager_url").click(function()
+    manager_url_check_lnk.click(function()
     {
         if(ar == false)
         {
@@ -365,7 +411,7 @@ $(document).ready(function()
         }
     });
 
-    $("#check_manager_login").click(function()
+    login_check_lnk.click(function()
     {
         if(ar == false)
         {
@@ -373,7 +419,7 @@ $(document).ready(function()
         }
     });
 
-    $("input[name='addsubmit']").click(function() 
+    button_submit.click(function() 
     {
         if(ar == false)
         {
@@ -381,8 +427,8 @@ $(document).ready(function()
         }
     });
 
-    $("input[name='addcancel']").click(function() 
-    {
-        window.location = "<?php B_Helper::url('dashboard') ?>";
-    });
+    // add_cancel_button.click(function() 
+    // {
+    //     window.location = "<?php B_Helper::url('blog') ?>";
+    // });
 });

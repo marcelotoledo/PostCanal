@@ -25,17 +25,19 @@ class UserProfile extends B_Model
     protected static $table_structure = array (
 		'user_profile_id' => array ('type' => 'integer','size' => 0,'required' => false),
 		'hash' => array ('type' => 'string','size' => 8,'required' => true),
-		'login_email' => array ('type' => 'string','size' => 100,'required' => true),
+		'login_email_local' => array ('type' => 'string','size' => 64,'required' => true),
+		'login_email_domain' => array ('type' => 'string','size' => 255,'required' => true),
 		'login_password_md5' => array ('type' => 'string','size' => 32,'required' => true),
 		'name' => array ('type' => 'string','size' => 100,'required' => true),
 		'register_confirmation' => array ('type' => 'boolean','size' => 0,'required' => false),
-		'email_update' => array ('type' => 'string','size' => 100,'required' => true),
+		'update_email_to' => array ('type' => 'string','size' => 0,'required' => true),
 		'register_message_time' => array ('type' => 'date','size' => 0,'required' => false),
 		'register_confirmation_time' => array ('type' => 'date','size' => 0,'required' => false),
 		'last_login_time' => array ('type' => 'date','size' => 0,'required' => false),
 		'recovery_message_time' => array ('type' => 'date','size' => 0,'required' => false),
 		'recovery_allowed' => array ('type' => 'boolean','size' => 0,'required' => false),
 		'email_update_message_time' => array ('type' => 'date','size' => 0,'required' => false),
+		'preference_serialized' => array ('type' => 'string','size' => 0,'required' => false),
 		'created_at' => array ('type' => 'date','size' => 0,'required' => false),
 		'updated_at' => array ('type' => 'date','size' => 0,'required' => false),
 		'enabled' => array ('type' => 'boolean','size' => 0,'required' => false));
@@ -45,7 +47,7 @@ class UserProfile extends B_Model
      *
      * @var string
      */
-    protected static $sequence_name = '';
+    protected static $sequence_name = null;
 
     /**
      * Primary key name
@@ -54,22 +56,6 @@ class UserProfile extends B_Model
      */
     protected static $primary_key_name = 'user_profile_id';
 
-
-    /**
-     * Set overloading
-     *
-     * @param   string  $name
-     * @param   mixed   $value
-     * @return  void
-     */
-    public function __set ($name, $value)
-    {
-        /* filters */
-
-        if($name == 'login_email') $value = strtolower($value);
-
-        parent::__set($name, $value);
-    }
 
     /**
      * Get table name
@@ -112,6 +98,73 @@ class UserProfile extends B_Model
     }
 
     /**
+     * Execute a SQL insert query and returns last insert id
+     *
+     * @param   string  $sql        SQL query
+     * @param   array   $data       values array
+     * @return  integer
+     */
+    public static function insert($sql, $data=array())
+    {
+        return parent::insert_($sql, $data, self::$sequence_name);
+    }
+
+    // -------------------------------------------------------------------------
+
+    /**
+     * Get UserProfile by primary key
+     *
+     * @param   integer $id    Primary key value
+     *
+     * @return  UserProfile|null 
+     */
+    public static function getByPrimaryKey($id, $enabled=true)
+    {
+        return current(self::select(
+            "SELECT * FROM " . self::$table_name . 
+            " WHERE " . self::$primary_key_name . " = ? AND enabled = ?", 
+            array($id, $enabled), PDO::FETCH_CLASS, get_class()));
+    }
+
+    /**
+     * Set overloading
+     */
+    public function __set ($name, $value)
+    {
+        if($name == 'login_email')
+        {
+            list($local, $domain) = explode('@', strtolower($value));
+            parent::__set('login_email_local', $local);
+            parent::__set('login_email_domain', $domain);
+        }
+        else
+        {
+            parent::__set($name, $value);
+        }
+    }
+
+    /**
+     * Get overloading
+     */
+    public function __get ($name)
+    {
+        $res = null;
+
+        if($name == 'login_email')
+        {
+            $res = parent::__get('login_email_local');
+            $res.= "@";
+            $res.= parent::__get('login_email_domain');
+        }
+        else
+        {
+            $res = parent::__get($name);
+        }
+
+        return $res;
+    }
+
+    /**
      * Save model
      *
      * @return  boolean
@@ -129,80 +182,23 @@ class UserProfile extends B_Model
     }
 
     /**
-     * Find UserProfile with an encapsulated SELECT command
-     *
-     * @param   array   $conditions WHERE parameters
-     * @param   array   $order      ORDER parameters
-     * @param   integer $limit      LIMIT parameter
-     * @param   integer $offset     OFFSET parameter
-     * @return  array
-     */
-    public static function find ($conditions=array(), 
-                                 $order=array(), 
-                                 $limit=0, 
-                                 $offset=0)
-    {
-        return parent::_find($conditions, 
-                             $order, 
-                             $limit, 
-                             $offset, 
-                             self::$table_name,
-                             get_class());
-    }
-
-    /**
-     * Get UserProfile with SQL
-     *
-     * @param   string  $sql    SQL query
-     * @param   array   $data   values array
-     * @return  array
-     */
-    public static function selectModel ($sql, $data=array())
-    {
-        return parent::_selectModel($sql, $data, get_class());
-    }
-
-    /**
-     * Execute a SQL insert query and returns last insert id
-     *
-     * @param   string  $sql        SQL query
-     * @param   array   $data       values array
-     * @return  integer
-     */
-    public static function insert($sql, $data=array())
-    {
-        return parent::_insert($sql, $data, self::$sequence_name);
-    }
-
-    /**
-     * Find UserProfile by primary key
-     *
-     * @param   integer $id    Primary key value
-     *
-     * @return  UserProfile|null 
-     */
-    public static function getByPrimaryKey($id, $enabled=true)
-    {
-        return current(self::find(array(
-            self::$primary_key_name => $id,
-            'enabled' => $enabled)));
-    }
-
-    /**
-     * Find UserProfile from email (user_profile_email_index)
+     * Get UserProfile from email
      *
      * @param   string  $email
      * @return  UserProfile|null
      */
     public static function getByEmail($email)
     {
-        return current(self::find(array(
-            'login_email' => strtolower($email),
-            'enabled'     => true)));
+        list($local, $domain) = explode('@', strtolower($email));
+
+        return current(self::select(
+            "SELECT * FROM " . self::$table_name . 
+            " WHERE login_email_local = ? AND login_email_domain = ? AND enabled = ?", 
+            array($local, $domain, true), PDO::FETCH_CLASS, get_class()));
     }
 
     /**
-     * Find UserProfile from login (user_profile_login_index)
+     * Get UserProfile from login
      *
      * @param   string  $email
      * @param   string  $password_md5   md5($password)
@@ -210,14 +206,17 @@ class UserProfile extends B_Model
      */
     public static function getByLogin($email, $password_md5)
     {
-        return current(self::find(array(
-            'login_email'        => strtolower($email),
-            'login_password_md5' => $password_md5,
-            'enabled'            => true)));
+        list($local, $domain) = explode('@', strtolower($email));
+
+        return current(self::select(
+            "SELECT * FROM " . self::$table_name . 
+            " WHERE login_email_local = ? AND login_email_domain = ? " .
+            " AND login_password_md5 = ? AND enabled = ?", 
+            array($local, $domain, $password_md5, true), PDO::FETCH_CLASS, get_class()));
     }
 
     /**
-     * Find UserProfile from Hash
+     * Get UserProfile from Hash
      *
      * @param   string  $email
      * @param   string  $hash
@@ -225,9 +224,12 @@ class UserProfile extends B_Model
      */
     public static function getByHash($email, $hash)
     {
-        return current(self::find(array(
-            'login_email' => strtolower($email), 
-            'hash'        => $hash,
-            'enabled'     => true)));
+        list($local, $domain) = explode('@', strtolower($email));
+
+        return current(self::select(
+            "SELECT * FROM " . self::$table_name . 
+            " WHERE login_email_local = ? AND login_email_domain = ? " .
+            " AND hash = ? AND enabled = ?", 
+            array($local, $domain, $hash, true), PDO::FETCH_CLASS, get_class()));
     }
 }

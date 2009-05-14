@@ -32,7 +32,7 @@ class C_Queue extends B_Controller
 
         $queue = array();
 
-        foreach(QueueItem::findByUserBlog($user_profile_id, $blog_hash) as $_i)
+        foreach(BlogEntry::findByUserAndBlogHash($user_profile_id, $blog_hash) as $_i)
         {
             $queue[] = array('item' => $_i->hash,
                              'item_title' => $_i->item_title,
@@ -58,7 +58,7 @@ class C_Queue extends B_Controller
         $feed_hash = $this->request()->feed;
         $user_profile_id = $this->session()->user_profile_id;
 
-        $queue_item = QueueItem::newFromFeedItem($feed_item_md5,
+        $queue_item = BlogEntry::newFromFeedItem($feed_item_md5,
                                                  $blog_hash,
                                                  $feed_hash,
                                                  $user_profile_id);
@@ -85,7 +85,7 @@ class C_Queue extends B_Controller
         $blog_hash = $this->request()->blog;
         $user_profile_id = $this->session()->user_profile_id;
 
-        QueueItem::itemToPublish($item_hash, 
+        BlogEntry::itemToPublish($item_hash, 
                                  $blog_hash, 
                                  $user_profile_id);
     }
@@ -103,7 +103,7 @@ class C_Queue extends B_Controller
         $blog_hash = $this->request()->blog;
         $user_profile_id = $this->session()->user_profile_id;
 
-        $this->view->result = QueueItem::checkStatus($waiting,
+        $this->view->result = BlogEntry::checkStatus($waiting,
                                                      $blog_hash, 
                                                      $user_profile_id);
     }

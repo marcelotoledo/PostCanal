@@ -89,7 +89,22 @@ def manager_url_check(manager_url, type_name, version_name):
     type = init_type(type_name, version_name)
     type.set_manager_url(url_fix(manager_url))
     type.check_manager_url()
+    return type
 
+def login_check(manager_url, type_name, version_name, username, password):
+    type = init_type(type_name, version_name)
+    type.set_manager_url(url_fix(manager_url))
+    type.username = username
+    type.password = password
+    type.check_login()
+    return type
+
+def publication_check(manager_url, type_name, version_name, username, password):
+    type = init_type(type_name, version_name)
+    type.set_manager_url(url_fix(manager_url))
+    type.username = username
+    type.password = password
+    type.check_publication()
     return type
 
 def type_dump(type):
@@ -104,6 +119,8 @@ def type_dump(type):
     result['manager_url_accepted'] = type.manager_url_accepted if type else False
     result['username']             = type.username             if type else ""
     result['password']             = type.password             if type else ""
+    result['login_accepted']       = type.login_accepted       if type else False
+    result['publication_accepted'] = type.publication_accepted if type else False
 
     return result
 

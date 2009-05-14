@@ -2,9 +2,9 @@ DB = "./db.php"
 BT = "./base_translation.php"
 
 default:
-	@echo
+	@echo ""
 	@echo "options are: schema|data|translation"
-	@echo
+	@echo ""
 schema:
 	./db.php schema.mysql
 translation:

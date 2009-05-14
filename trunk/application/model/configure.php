@@ -7,11 +7,7 @@
  * @author      Rafael Castilho <rafael@castilho.biz>
  */
 
-require "../../library/base/Loader.php";
-B_Loader::register();
-
-require "../../config/environment.php";
-$registry = B_Registry::singleton();
+require "../console.php";
 
 
 @$_class     = $argv[1];
@@ -187,40 +183,6 @@ class <class> extends B_Model
     }
 
     /**
-     * Find <class> with an encapsulated SELECT command
-     *
-     * @param   array   \$conditions WHERE parameters
-     * @param   array   \$order      ORDER parameters
-     * @param   integer \$limit      LIMIT parameter
-     * @param   integer \$offset     OFFSET parameter
-     * @return  array
-     */
-    public static function find (\$conditions=array(), 
-                                 \$order=array(), 
-                                 \$limit=0, 
-                                 \$offset=0)
-    {
-        return parent::_find(\$conditions, 
-                             \$order, 
-                             \$limit, 
-                             \$offset, 
-                             self::\$table_name,
-                             get_class());
-    }
-
-    /**
-     * Get <class> with SQL
-     *
-     * @param   string  \$sql    SQL query
-     * @param   array   \$data   values array
-     * @return  array
-     */
-    public static function selectModel (\$sql, \$data=array())
-    {
-        return parent::_selectModel(\$sql, \$data, get_class());
-    }
-
-    /**
      * Execute a SQL insert query and returns last insert id
      *
      * @param   string  \$sql        SQL query
@@ -229,7 +191,7 @@ class <class> extends B_Model
      */
     public static function insert(\$sql, \$data=array())
     {
-        return parent::_insert(\$sql, \$data, self::\$sequence_name);
+        return parent::insert_(\$sql, \$data, self::\$sequence_name);
     }
 
     /**
@@ -241,8 +203,13 @@ class <class> extends B_Model
      */
     public static function getByPrimaryKey(\$id)
     {
-        return current(self::find(array(self::\$primary_key_name => \$id)));
+        return self::select(
+            "SELECT * FROM " . self::\$table_name . 
+            " WHERE " . self::\$primary_key_name . " = ?", 
+            array(\$id), PDO::FETCH_CLASS, get_class());
     }
+
+    // -------------------------------------------------------------------------
 }
 EOS;
 

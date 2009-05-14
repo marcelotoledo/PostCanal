@@ -10,7 +10,7 @@
 $f = fopen("base_translation.csv", "r");
 $g = fopen("base_translation.mysql", "w");
 
-$s = "INSERT INTO base_translation VALUES (NULL, \"%s\", \"%s\", \"%s\", \"%s\");\n";
+$s = "INSERT INTO base_translation VALUES (NULL, '%s', '%s', '%s', \"%s\");\n";
 
 while(!feof($f))
 {

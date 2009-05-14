@@ -18,17 +18,17 @@
 
     * Diferenciar itens Não lidos na lista de itens de um feed
     * Diferenciar itens Publicados na lista de itens de um feed
-    * Marcar com estrela um item de feed
+    X Marcar com estrela um item de feed
     * Paginação de itens de um feed
     * Incluir botão no rodapé que permite adicionar um item de feed ao queue
 
 10/05/09 a 16/05/09
 
     @ Novo feed incluir no topo da lista
-    * Exibir itens de todos os feeds
-    * Exibir itens de feeds marcados com estrela
-    * Ordenar canais de feed
-    * Exibir info de feed (url, descrição, data/hora da próxima alteração)
+    @ Exibir itens de todos os feeds
+    X Exibir itens de feeds marcados com estrela
+    @ Ordenar canais de feed
+    ~ Exibir info de feed (url, descrição, data/hora da próxima alteração)
 
     * Adicionar separador redimensionável no Dashboard para Itens de feed / Queue
 

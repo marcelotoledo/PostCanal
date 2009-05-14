@@ -654,6 +654,18 @@ class C_Profile extends B_Controller
     }
 
     /**
+     * Set user preferences
+     *
+     * @param   string  $name
+     */
+    public function A_preference()
+    {
+        $this->response()->setXML(true);
+
+        // ...
+    }
+
+    /**
      * Send notification mail
      *
      * @param   string      $email

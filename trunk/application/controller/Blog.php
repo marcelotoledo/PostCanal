@@ -60,11 +60,10 @@ class C_Blog extends B_Controller
 
         $added = false;
 
-        $_type = $this->request()->blog_type;
-        $_version = $this->request()->blog_version;
-        $_revision = $this->request()->blog_revision;
+        $_type     = $this->request()->blog_type;
+        $_version  = $this->request()->blog_version;
 
-        if(!is_object($blog_type = BlogType::findByName($_type, $_version)))
+        if(!is_object($blog_type = BlogType::getByName($_type, $_version)))
         {
             $_m = "blog type not found using " .
                   "type (" . $_type. ") and " .
@@ -74,14 +73,14 @@ class C_Blog extends B_Controller
         }
 
         $blog = new UserBlog();
-        $blog->user_profile_id = $this->session()->user_profile_id;
-        $blog->blog_type_id = $blog_type->blog_type_id;
-        $blog->blog_type_revision = $_revision;
-        $blog->name = $this->request()->name;
-        $blog->url = $this->request()->url;
-        $blog->manager_url = $this->request()->manager_url;
-        $blog->manager_username = $this->request()->username;
-        $blog->manager_password = $this->request()->password;
+        $blog->user_profile_id    = $this->session()->user_profile_id;
+        $blog->blog_type_id       = $blog_type->blog_type_id;
+        $blog->name               = $this->request()->blog_name;
+        $blog->blog_url           = $this->request()->blog_url;
+        $blog->blog_manager_url   = $this->request()->blog_manager_url;
+        $blog->blog_username      = $this->request()->blog_username;
+        $blog->blog_password      = $this->request()->blog_password;
+        $blog->blog_type_revision = $this->request()->blog_revision;
 
         try
         {
@@ -117,6 +116,6 @@ class C_Blog extends B_Controller
         $url = $this->request()->url;
         $blog_type = $this->request()->type;
         $blog_version = $this->request()->version;
-        $this->view()->result = BlogType::checkAdmin($url, $blog_type, $blog_version);
+        $this->view()->result = BlogType::checkManagerUrl($url, $blog_type, $blog_version);
     }
 }

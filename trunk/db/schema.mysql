@@ -1,13 +1,13 @@
+START TRANSACTION;
+
 -- drop --
 
+DROP TABLE IF EXISTS model_user_blog_entry CASCADE;
 DROP TABLE IF EXISTS model_user_blog_feed CASCADE;
-DROP TABLE IF EXISTS model_user_blog_queue_config CASCADE;
-DROP TABLE IF EXISTS model_user_blog_queue_item CASCADE;
-DROP TABLE IF EXISTS model_user_blog_config CASCADE;
 DROP TABLE IF EXISTS model_user_blog CASCADE;
 DROP TABLE IF EXISTS model_user_profile CASCADE;
-DROP TABLE IF EXISTS model_aggregator_feed_item CASCADE;
-DROP TABLE IF EXISTS model_aggregator_feed_url CASCADE;
+DROP TABLE IF EXISTS model_aggregator_feed_article CASCADE;
+DROP TABLE IF EXISTS model_aggregator_feed_discover CASCADE;
 DROP TABLE IF EXISTS model_aggregator_feed CASCADE;
 DROP TABLE IF EXISTS model_blog_type CASCADE;
 DROP TABLE IF EXISTS application_mailer_relay CASCADE;
@@ -28,20 +28,19 @@ CREATE TABLE base_log
     data_user_profile_id INTEGER UNSIGNED NOT NULL DEFAULT 0,
     created_at TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
     PRIMARY KEY (id)
-) ENGINE=InnoDB DEFAULT CHARSET='utf8';
+) ENGINE=InnoDB DEFAULT CHARSET='utf8' COLLATE='utf8_unicode_ci';
 
-CREATE INDEX b_log_pty_idx ON base_log (priority);
+CREATE INDEX b_log_idx ON base_log (priority);
 
 CREATE TABLE base_session
 (
     id VARCHAR(255) CHARACTER SET 'utf8' COLLATE 'utf8_bin' NOT NULL,
-    session_expires INTEGER unsigned NOT NULL default '0',
-    session_data TEXT COLLATE 'utf8_unicode_ci',
+    session_expires INTEGER UNSIGNED NOT NULL DEFAULT 0,
+    session_data TEXT,
     active TINYINT(1) NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET='utf8' COLLATE='utf8_unicode_ci';
 
-CREATE INDEX b_ses_ida_idx ON base_session (id, active);
-CREATE INDEX b_ses_xpa_idx ON base_session (session_expires, active);
+CREATE INDEX b_ses_idx ON base_session (id, session_expires, active);
 
 CREATE TABLE base_translation
 (
@@ -51,48 +50,49 @@ CREATE TABLE base_translation
     name VARCHAR(100) NOT NULL,
     value TEXT NOT NULL,
     PRIMARY KEY (id)
-) ENGINE=InnoDB DEFAULT CHARSET='utf8';
+) ENGINE=InnoDB DEFAULT CHARSET='utf8' COLLATE='utf8_unicode_ci';
 
-CREATE INDEX b_trn_tpc_idx ON base_translation (template, culture);
+CREATE INDEX b_trn_idx ON base_translation (template(4), culture(4));
 
 -- application --
 
 CREATE TABLE application_mailer_relay
 (
     id INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
-    recipient CHAR(100) NOT NULL,
+    recipient_email_local CHAR(64) NOT NULL,
+    recipient_email_domain CHAR(255) NOT NULL,
     identifier_md5 CHAR(32) DEFAULT NULL,
     created_at TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
     PRIMARY KEY (id)
-) ENGINE=InnoDB DEFAULT CHARSET='utf8';
+) ENGINE=InnoDB DEFAULT CHARSET='utf8' COLLATE='utf8_unicode_ci';
 
-CREATE INDEX a_mry_rid_idx ON application_mailer_relay (created_at, recipient, identifier_md5);
+CREATE INDEX a_mry_idx ON application_mailer_relay (created_at, recipient_email_local(8), recipient_email_domain(4), identifier_md5(8));
 
 -- blog type --
 
 CREATE TABLE model_blog_type
 (
     blog_type_id SMALLINT UNSIGNED NOT NULL AUTO_INCREMENT,
-    type_name CHAR(50) NOT NULL,
+    type_name CHAR(50) COLLATE 'utf8_bin' NOT NULL,
     type_label CHAR(50) NOT NULL,
-    version_name CHAR(50) NOT NULL,
+    version_name CHAR(50) COLLATE 'utf8_bin' NOT NULL,
     version_label CHAR(50) NOT NULL,
     current_revision SMALLINT UNSIGNED NOT NULL DEFAULT 0,
     maintenance TINYINT(1) NOT NULL DEFAULT 0,
     enabled TINYINT(1) NOT NULL DEFAULT 0,
     PRIMARY KEY (blog_type_id),
-    CONSTRAINT m_btp_unq UNIQUE (blog_type_id)
-) ENGINE=InnoDB DEFAULT CHARSET='utf8';
+    CONSTRAINT m_btp_un UNIQUE (type_name, version_name)
+) ENGINE=InnoDB DEFAULT CHARSET='utf8' COLLATE='utf8_unicode_ci';
 
-CREATE INDEX m_btp_idx ON model_blog_type (type_name, version_name);
+CREATE INDEX m_btp_idx ON model_blog_type (type_name(4), version_name(4));
 
 -- aggregator --
 
 CREATE TABLE model_aggregator_feed
 (
     aggregator_feed_id INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
-    feed_md5 VARCHAR(32) NOT NULL,
     feed_url TEXT NOT NULL,
+    feed_url_md5 VARCHAR(32) NOT NULL,
     feed_link TEXT NOT NULL,
     feed_title VARCHAR(100) NOT NULL,
     feed_description TEXT NOT NULL,
@@ -103,71 +103,71 @@ CREATE TABLE model_aggregator_feed
     updated_at TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
     enabled TINYINT(1) NOT NULL DEFAULT 1,
     PRIMARY KEY (aggregator_feed_id)
-) ENGINE=InnoDB DEFAULT CHARSET='utf8';
+) ENGINE=InnoDB DEFAULT CHARSET='utf8' COLLATE='utf8_unicode_ci';
 
-CREATE INDEX m_agf_um5_idx ON model_aggregator_feed (feed_md5, feed_update_time, updated_at, enabled);
+CREATE INDEX m_agf_idx ON model_aggregator_feed (feed_url_md5(8), feed_update_time, updated_at, enabled);
 
-CREATE TABLE model_aggregator_feed_url
+CREATE TABLE model_aggregator_feed_discover
 (
-    aggregator_feed_url_id INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
+    aggregator_feed_discover_id INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
     aggregator_feed_id INTEGER UNSIGNED NOT NULL, 
-    url VARCHAR(200) NOT NULL,
+    url TEXT NOT NULL,
     url_md5 VARCHAR(32) NOT NULL,
-    PRIMARY KEY (aggregator_feed_url_id),
-    CONSTRAINT m_afu_m_agf_fk FOREIGN KEY (aggregator_feed_id) 
+    PRIMARY KEY (aggregator_feed_discover_id),
+    CONSTRAINT m_afd_m_agf_fk FOREIGN KEY (aggregator_feed_id) 
         REFERENCES model_aggregator_feed (aggregator_feed_id) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET='utf8';
+) ENGINE=InnoDB DEFAULT CHARSET='utf8' COLLATE='utf8_unicode_ci';
 
-CREATE INDEX m_agu_um5_idx ON model_aggregator_feed_url (aggregator_feed_id, url_md5);
+CREATE INDEX m_afd_idx ON model_aggregator_feed_discover (url_md5(8));
 
-CREATE TABLE model_aggregator_feed_item
+CREATE TABLE model_aggregator_feed_article
 (
-    aggregator_feed_item_id INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
+    aggregator_feed_article_id INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
     aggregator_feed_id INTEGER UNSIGNED NOT NULL, 
-    item_md5 VARCHAR(32) NOT NULL,
-    item_date TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00', 
-    item_link TEXT NOT NULL, 
-    item_title TEXT NOT NULL, 
-    item_author VARCHAR(200) NOT NULL DEFAULT '', 
-    item_content TEXT NOT NULL NOT NULL DEFAULT '', 
+    article_md5 VARCHAR(32) NOT NULL,
+    article_date TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00', 
+    article_link TEXT NOT NULL, 
+    article_title TEXT NOT NULL, 
+    article_author VARCHAR(200) NOT NULL DEFAULT '', 
+    article_content TEXT NOT NULL NOT NULL DEFAULT '', 
     created_at TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00', 
     updated_at TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
-    PRIMARY KEY (aggregator_feed_item_id),
-    CONSTRAINT m_afi_m_agf_fk FOREIGN KEY (aggregator_feed_id) 
+    PRIMARY KEY (aggregator_feed_article_id),
+    CONSTRAINT m_afa_m_agf_fk FOREIGN KEY (aggregator_feed_id) 
         REFERENCES model_aggregator_feed (aggregator_feed_id) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET='utf8';
+) ENGINE=InnoDB DEFAULT CHARSET='utf8' COLLATE='utf8_unicode_ci';
 
-CREATE INDEX m_agi_um5_idx ON model_aggregator_feed_item (aggregator_feed_id, item_md5, item_date, created_at);
+CREATE INDEX m_afa_idx ON model_aggregator_feed_article (article_md5(8), article_date, created_at);
 
 -- user --
 
 CREATE TABLE model_user_profile
 (
     user_profile_id INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
-    hash CHAR(8) NOT NULL,
-    login_email CHAR(100) NOT NULL,
+    hash CHAR(8) COLLATE 'utf8_bin' NOT NULL,
+    login_email_local CHAR(64) NOT NULL,
+    login_email_domain CHAR(255) NOT NULL,
     login_password_md5 CHAR(32) NOT NULL,
     -- -------------------------------------------------------------------------
     name CHAR(100) NOT NULL DEFAULT '',
     -- -------------------------------------------------------------------------
     register_confirmation TINYINT(1) NOT NULL DEFAULT 0,
-    email_update CHAR(100) NOT NULL DEFAULT '',
+    update_email_to TEXT NOT NULL DEFAULT '',
     register_message_time TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
     register_confirmation_time TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
     last_login_time TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
     recovery_message_time TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
     recovery_allowed TINYINT(1) NOT NULL DEFAULT 0,
     email_update_message_time TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
+    preference_serialized TEXT NOT NULL DEFAULT '',
     -- -------------------------------------------------------------------------
     created_at TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
     updated_at TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
     enabled TINYINT(1) NOT NULL DEFAULT 1,
     PRIMARY KEY (user_profile_id)
-) ENGINE=InnoDB DEFAULT CHARSET='utf8';
+) ENGINE=InnoDB DEFAULT CHARSET='utf8' COLLATE='utf8_unicode_ci';
 
-CREATE INDEX m_upf_ide_idx ON model_user_profile (user_profile_id, enabled);
-CREATE INDEX m_upf_lgn_idx ON model_user_profile (login_email, login_password_md5, enabled);
-CREATE INDEX m_upf_emh_idx ON model_user_profile (login_email, hash);
+CREATE INDEX m_upf_idx ON model_user_profile (hash(8), login_email_local(8), login_email_domain(4), login_password_md5(8), enabled);
 
 CREATE TABLE model_user_blog
 (
@@ -175,12 +175,13 @@ CREATE TABLE model_user_blog
     user_profile_id INTEGER UNSIGNED NOT NULL,
     blog_type_id SMALLINT UNSIGNED NOT NULL,
     blog_type_revision SMALLINT UNSIGNED NOT NULL DEFAULT 0,
-    hash CHAR(8) NOT NULL,
-    name CHAR(100) NOT NULL,
-    url CHAR(200) NOT NULL,
-    manager_url CHAR(200) NOT NULL,
-    manager_username CHAR(100) NOT NULL,
-    manager_password CHAR(100) NOT NULL,
+    hash CHAR(8) COLLATE 'utf8_bin' NOT NULL,
+    name CHAR(200) NOT NULL,
+    blog_url TEXT NOT NULL,
+    blog_manager_url TEXT NOT NULL,
+    blog_username CHAR(255),
+    blog_password CHAR(255),
+    preference_serialized TEXT NOT NULL DEFAULT '',
     created_at TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
     updated_at TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
     enabled TINYINT(1) NOT NULL DEFAULT 1,
@@ -189,29 +190,16 @@ CREATE TABLE model_user_blog
         REFERENCES model_user_profile (user_profile_id) ON DELETE CASCADE,
     CONSTRAINT m_ubl_m_btp_fk FOREIGN KEY (blog_type_id) 
         REFERENCES model_blog_type (blog_type_id) ON DELETE RESTRICT
-) ENGINE=InnoDB DEFAULT CHARSET='utf8';
+) ENGINE=InnoDB DEFAULT CHARSET='utf8' COLLATE='utf8_unicode_ci';
 
-CREATE INDEX m_ubl_phs_idx ON model_user_blog (user_profile_id, hash);
-
-CREATE TABLE model_user_blog_config
-(
-    user_blog_config_id INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
-    user_blog_id INTEGER UNSIGNED NOT NULL,
-    name VARCHAR(50) NOT NULL,
-    value TEXT NOT NULL,
-    PRIMARY KEY (user_blog_config_id),
-    CONSTRAINT m_ubc_m_ubl_fk FOREIGN KEY (user_blog_id) 
-        REFERENCES model_user_blog (user_blog_id) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET='utf8';
-
-CREATE INDEX m_ubc_nm_idx ON model_user_blog_config (name);
+CREATE INDEX m_ubg_idx ON model_user_blog (hash(8));
 
 CREATE TABLE model_user_blog_feed
 (
     user_blog_feed_id INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
     user_blog_id INTEGER UNSIGNED NOT NULL,
     aggregator_feed_id INTEGER UNSIGNED NOT NULL,
-    hash CHAR(8) NOT NULL,
+    hash CHAR(8) COLLATE 'utf8_bin' NOT NULL,
     feed_title VARCHAR(100) NOT NULL,
     feed_description TEXT NOT NULL,
     ordering SMALLINT UNSIGNED NOT NULL DEFAULT 1,
@@ -219,42 +207,33 @@ CREATE TABLE model_user_blog_feed
     updated_at TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
     enabled TINYINT(1) NOT NULL DEFAULT 1,
     PRIMARY KEY (user_blog_feed_id),
-    CONSTRAINT m_ubf_m_ubl_fk FOREIGN KEY (user_blog_id) 
+    CONSTRAINT m_ubf_m_ubg_fk FOREIGN KEY (user_blog_id) 
         REFERENCES model_user_blog (user_blog_id) ON DELETE CASCADE,
     CONSTRAINT m_ubf_m_agf_fk FOREIGN KEY (aggregator_feed_id) 
         REFERENCES model_aggregator_feed (aggregator_feed_id) ON DELETE RESTRICT
-) ENGINE=InnoDB DEFAULT CHARSET='utf8';
+) ENGINE=InnoDB DEFAULT CHARSET='utf8' COLLATE='utf8_unicode_ci';
 
-CREATE INDEX m_ubf_boe_idx ON model_user_blog_feed (user_blog_id, ordering, enabled);
-CREATE INDEX m_ubf_bhs_idx ON model_user_blog_feed (user_blog_id, hash);
+CREATE INDEX m_ubf_idx ON model_user_blog_feed (hash(8), ordering, enabled);
 
-CREATE TABLE model_user_blog_queue_config
+CREATE TABLE model_user_blog_entry
 (
-    user_blog_queue_config_id INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
+    user_blog_entry_id INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
+    aggregator_feed_article_id INTEGER UNSIGNED NOT NULL,
     user_blog_id INTEGER UNSIGNED NOT NULL,
-    -- TODO --
-    PRIMARY KEY (user_blog_queue_config_id),
-    CONSTRAINT m_bqc_m_ubl_fk FOREIGN KEY (user_blog_id) 
-        REFERENCES model_user_blog (user_blog_id) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET='utf8';
-
-CREATE TABLE model_user_blog_queue_item
-(
-    user_blog_queue_item_id INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
-    aggregator_feed_item_id INTEGER UNSIGNED NOT NULL,
-    user_blog_id INTEGER UNSIGNED NOT NULL,
-    hash CHAR(8) NOT NULL,
-    item_title TEXT NOT NULL, 
-    item_content TEXT NOT NULL,
-    publish_status ENUM('new', 'waiting', 'failed', 'published') NOT NULL DEFAULT 'new',
-    publish_date TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
+    hash CHAR(8) COLLATE 'utf8_bin' NOT NULL,
+    entry_title TEXT NOT NULL, 
+    entry_content TEXT NOT NULL,
+    status_ ENUM('new', 'publication_waiting', 'publication_failed', 'published') NOT NULL DEFAULT 'new',
+    publication_date TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
     created_at TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
     updated_at TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
-    PRIMARY KEY (user_blog_queue_item_id),
-    CONSTRAINT m_bqi_m_afi_fk FOREIGN KEY (aggregator_feed_item_id) 
-        REFERENCES model_aggregator_feed_item (aggregator_feed_item_id) ON DELETE RESTRICT,
-    CONSTRAINT m_bqi_m_ubl_fk FOREIGN KEY (user_blog_id) 
+    PRIMARY KEY (user_blog_entry_id),
+    CONSTRAINT m_bge_m_afa_fk FOREIGN KEY (aggregator_feed_article_id) 
+        REFERENCES model_aggregator_feed_article (aggregator_feed_article_id) ON DELETE RESTRICT,
+    CONSTRAINT m_bge_m_ubg_fk FOREIGN KEY (user_blog_id) 
         REFERENCES model_user_blog (user_blog_id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET='utf8';
 
-CREATE INDEX m_bqi_bhs_idx ON model_user_blog_queue_item (user_blog_id, hash, publish_status, publish_date, updated_at);
+CREATE INDEX m_bge_idx ON model_user_blog_entry (hash(8), status_, publication_date, updated_at);
+
+COMMIT;

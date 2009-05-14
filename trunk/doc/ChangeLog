@@ -58,3 +58,13 @@ HORAS TRABALHADAS: 10h
 - Bugfixes na exibicao de feeds no dashboard, bugfixes no cadastro de feeds
 
 HORAS TRABALHADAS: 2h
+
+==========
+13/05/2009
+==========
+
+- Bugfixes e ajustes no model
+- Implementacao de metodo para teste de login / publicacao no cadastro de blogs
+- Ajustes no cadastro de blogs
+
+HORAS TRABALHADAS: 8h

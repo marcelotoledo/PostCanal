@@ -51,7 +51,20 @@ class B_Log
         catch(Exception $exception)
         {
             $message = chop($exception->getMessage()) . "; " . chop($message);
-            if(syslog(LOG_ERR, $message) == false) fwrite(STDOUT, $message);
+            self::systemLog($message);
         }
+    }
+
+    /**
+     * Write log to system log
+     *
+     * @param   string  $message    Log message
+     */
+    public static function systemLog ($message)
+    {
+        echo syslog(LOG_ERR, $message) ?
+            "fatal error: please see syslog for details" :
+            $message;
+        exit(1);
     }
 }

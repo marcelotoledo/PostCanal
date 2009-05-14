@@ -24,8 +24,8 @@ CLIENT_TIMEOUT = 15
 
 
 class WordPress:
-    ### common attributes ###
 
+    ### common attributes ###
     client               = None 
     type                 = None
     version              = None
@@ -36,6 +36,8 @@ class WordPress:
     manager_url_accepted = False
     username             = None
     password             = None
+    login_accepted       = False
+    publication_accepted = False
 
 
     url_spl = None # url split
@@ -88,7 +90,15 @@ class WordPress:
             self.manager_url_accepted = True if response.status == 200 else False
         except:
             self.manager_url_accepted = False
-    
+
+    def check_login(self):
+        # TODO
+        self.login_accepted = True
+
+    def check_publication(self):
+        # TODO
+        self.publication_accepted = True
+
     def publish(self, args):
         sys.path.append(os.getcwd().replace("blogtype", "") + "/vendor")
         import wordpresslib

@@ -24,13 +24,13 @@ class AggregatorFeed extends B_Model
      */
     protected static $table_structure = array (
 		'aggregator_feed_id' => array ('type' => 'integer','size' => 0,'required' => false),
-		'feed_md5' => array ('type' => 'string','size' => 32,'required' => true),
 		'feed_url' => array ('type' => 'string','size' => 0,'required' => true),
-		'feed_link' => array ('type' => 'string','size' => 0,'required' => false),
+		'feed_url_md5' => array ('type' => 'string','size' => 32,'required' => true),
+		'feed_link' => array ('type' => 'string','size' => 0,'required' => true),
 		'feed_title' => array ('type' => 'string','size' => 100,'required' => true),
 		'feed_description' => array ('type' => 'string','size' => 0,'required' => true),
-		'feed_modified' => array ('type' => 'string','size' => 100,'required' => false),
-        'feed_update_time' => array ('type' => 'integer', 'size' => 0, 'required' => false),
+		'feed_modified' => array ('type' => 'string','size' => 100,'required' => true),
+		'feed_update_time' => array ('type' => 'integer','size' => 0,'required' => false),
 		'feed_status' => array ('type' => 'string','size' => 3,'required' => false),
 		'created_at' => array ('type' => 'date','size' => 0,'required' => false),
 		'updated_at' => array ('type' => 'date','size' => 0,'required' => false),
@@ -92,67 +92,6 @@ class AggregatorFeed extends B_Model
     }
 
     /**
-     * Populate model data
-     *
-     * @param   array   $data
-     */
-    public function populate($data)
-    {
-        if(array_key_exists('feed_url', $data))
-        {
-            $this->feed_md5 = md5($data['feed_url']);
-        }
-
-        parent::populate($data);
-    }
-
-    /**
-     * Save model
-     *
-     * @return  boolean
-     */
-    public function save()
-    {
-        $this->updated_at = time(); // required together with update_time
-
-        return parent::save();
-    }
-
-    /**
-     * Find AggregatorFeed with an encapsulated SELECT command
-     *
-     * @param   array   $conditions WHERE parameters
-     * @param   array   $order      ORDER parameters
-     * @param   integer $limit      LIMIT parameter
-     * @param   integer $offset     OFFSET parameter
-     * @return  array
-     */
-    public static function find ($conditions=array(), 
-                                 $order=array(), 
-                                 $limit=0, 
-                                 $offset=0)
-    {
-        return parent::_find($conditions, 
-                             $order, 
-                             $limit, 
-                             $offset, 
-                             self::$table_name,
-                             get_class());
-    }
-
-    /**
-     * Get AggregatorFeed with SQL
-     *
-     * @param   string  $sql    SQL query
-     * @param   array   $data   values array
-     * @return  array
-     */
-    public static function selectModel ($sql, $data=array())
-    {
-        return parent::_selectModel($sql, $data, get_class());
-    }
-
-    /**
      * Execute a SQL insert query and returns last insert id
      *
      * @param   string  $sql        SQL query
@@ -161,7 +100,7 @@ class AggregatorFeed extends B_Model
      */
     public static function insert($sql, $data=array())
     {
-        return parent::_insert($sql, $data, self::$sequence_name);
+        return parent::insert_($sql, $data, self::$sequence_name);
     }
 
     /**
@@ -173,7 +112,114 @@ class AggregatorFeed extends B_Model
      */
     public static function getByPrimaryKey($id)
     {
-        return current(self::find(array(self::$primary_key_name => $id)));
+        return current(self::select(
+            "SELECT * FROM " . self::$table_name . 
+            " WHERE " . self::$primary_key_name . " = ?", 
+            array($id), PDO::FETCH_CLASS, get_class()));
+    }
+
+    // -------------------------------------------------------------------------
+
+    /**
+     * Save model
+     *
+     * @return  boolean
+     */
+    public function save()
+    {
+        /* generate article md5 */
+
+        if($this->isNew()) 
+        {
+            $this->feed_md5 = md5($this->feed_url);
+        }
+
+        return parent::save();
+    }
+
+    /**
+     * Find by URL
+     *
+     * @param   string  $url
+     * @return  array
+     */
+    public static function findAssocByURL($url)
+    {
+        $sql = "SELECT feed_url, feed_title, feed_description
+                FROM " . self::$table_name . " WHERE aggregator_feed_id = (
+                    SELECT aggregator_feed_id FROM model_aggregator_feed_discover
+                    WHERE url_md5 = ?)";
+
+        return self::select($sql, array(md5($url)), PDO::FETCH_ASSOC);
+    }
+
+    /**
+     * Get by Feed URL
+     *
+     * @param   string                  $url        Feed URL
+     * @return  AggregatorFeed|null 
+     */
+    public static function getByURL($url)
+    {
+        return current(self::select(
+            "SELECT * FROM " . self::$table_name . " WHERE feed_url_md5 = ?", 
+            array(md5($url)), PDO::FETCH_CLASS, get_class()));
+    }
+
+    /**
+     * Find outdated feeds (need update)
+     *
+     * @param   integer         $limit
+     * @return  AggregatorFeed
+     */
+    public static function findOutdated($limit=10)
+    {
+        $sql = "SELECT aggregator_feed_id, feed_url, feed_modified
+                FROM " . self::$table_name . "
+                WHERE (feed_update_time + UNIX_TIMESTAMP(updated_at)) < 
+                       UNIX_TIMESTAMP(UTC_TIMESTAMP())
+                ORDER BY (feed_update_time + UNIX_TIMESTAMP(updated_at)) ASC
+                LIMIT " . intval($limit);
+
+        return self::select($sql, array(), PDO::FETCH_ASSOC);
+    }
+
+    /**
+     * Save feed url and url md5
+     */
+    protected static function saveFeedUrl($feed_id, $url)
+    {
+        $url_md5 = md5($url);
+
+        self::transaction();
+
+        $sql = "SELECT COUNT(*) AS total " .
+               "FROM model_aggregator_feed_discover " .
+               "WHERE aggregator_feed_id = ? AND url_md5 = ?";
+
+        $_d = array($feed_id, $url_md5);
+        $_r = current(self::select($sql, $_d));
+
+        if($_r->total == 0)
+        {
+            $sql = "INSERT INTO model_aggregator_feed_discover " .
+                   "(aggregator_feed_id, url, url_md5) VALUES (?, ?, ?)";
+            $_d = array($feed->aggregator_feed_id, $url, $url_md5);
+
+            try
+            {
+                self::execute($sql, $_d);
+            }
+            catch(B_Exception $_e)
+            {
+                self::rollback();
+                $_m = "new aggregator feed url failed";
+                $_d = array ('method' => __METHOD__);
+                B_Exception::forward($_m, E_USER_ERROR, $_e, $_d);
+            }
+        }
+
+        self::commit();
     }
 
     /**
@@ -186,7 +232,6 @@ class AggregatorFeed extends B_Model
     public static function rawInsert($data, &$inserted=null)
     {
         $url = $data['feed_url'];
-        $url_md5 = md5($url);
 
         self::transaction();
 
@@ -210,42 +255,14 @@ class AggregatorFeed extends B_Model
 
         self::commit();
 
-        if(array_key_exists('entries', $data) && is_object($feed))
+        if(array_key_exists('articles', $data) && is_object($feed))
         {
-            $inserted = AggregatorFeedItem::rawInsert($feed, $data['entries']);
+            $inserted = AggregatorFeedArticle::rawInsert($feed, $data['articles']);
         }
 
         /* save feed url */
 
-        self::transaction();
-
-        $sql = "SELECT COUNT(*) AS total " .
-               "FROM model_aggregator_feed_url " .
-               "WHERE aggregator_feed_id = ? AND url_md5 = ?";
-
-        $_d = array($feed->aggregator_feed_id, $url_md5);
-        $_r = current(self::select($sql, $_d));
-
-        if($_r->total == 0)
-        {
-            $sql = "INSERT INTO model_aggregator_feed_url " .
-                   "(aggregator_feed_id, url, url_md5) VALUES (?, ?, ?)";
-            $_d = array($feed->aggregator_feed_id, $url, $url_md5);
-
-            try
-            {
-                self::execute($sql, $_d);
-            }
-            catch(B_Exception $_e)
-            {
-                self::rollback();
-                $_m = "new aggregator feed url failed";
-                $_d = array ('method' => __METHOD__);
-                B_Exception::forward($_m, E_USER_ERROR, $_e, $_d);
-            }
-        }
-
-        self::commit();
+        self::saveFeedUrl($feed->aggregator_feed_id, $url);
 
         return $feed;
     }
@@ -256,6 +273,7 @@ class AggregatorFeed extends B_Model
      * @param   integer         $id         AggregatorFeed ID
      * @param   array           $data
      * @param   integer         $updated
+     * 
      * @return  AggregatorFeed
      */
     public static function rawUpdate($id, $data, &$updated=null)
@@ -265,8 +283,6 @@ class AggregatorFeed extends B_Model
         if(is_object(($feed = self::getByPrimaryKey($id))))
         {
             $feed->populate($data);
-
-            $entries = array();
 
             try
             {
@@ -283,53 +299,12 @@ class AggregatorFeed extends B_Model
 
         self::commit();
 
-        if(array_key_exists('entries', $data) && is_object($feed))
+        if(array_key_exists('articles', $data) && is_object($feed))
         {
-            $updated = AggregatorFeedItem::rawInsert($feed, $data['entries']);
+            $updated = AggregatorFeedArticle::rawInsert($feed, $data['articles']);
         }
 
         return $feed;
-    }
-
-    /**
-     * Find by URL
-     *
-     * @param   string  $url
-     * @return  AggregatorFeed|null 
-     */
-    public static function findByURL($url)
-    {
-        $sql = "SELECT * FROM " . self::$table_name . "
-                WHERE aggregator_feed_id = (
-                    SELECT aggregator_feed_id FROM model_aggregator_feed_url
-                    WHERE url_md5 = MD5(?))";
-
-        return self::selectModel($sql, array($url));
-    }
-
-    /**
-     * Get by Feed URL
-     *
-     * @param   string  $url
-     * @return  AggregatorFeed|null 
-     */
-    public static function getByURL($feed_url)
-    {
-        return current(self::find(array('feed_md5' => md5($feed_url))));
-    }
-
-    /**
-     * Get feed that need update
-     *
-     * @return  AggregatorFeed
-     */
-    public static function findNeedUpdate()
-    {
-        $sql = "SELECT * FROM model_aggregator_feed " .
-               "WHERE (feed_update_time + UNIX_TIMESTAMP(updated_at)) < UNIX_TIMESTAMP(UTC_TIMESTAMP()) " .
-               "ORDER BY (feed_update_time + UNIX_TIMESTAMP(updated_at)) ASC LIMIT 1";
-
-        return current(self::selectModel($sql));
     }
 
     /**
@@ -340,17 +315,7 @@ class AggregatorFeed extends B_Model
      */
     public static function discover($url)
     {
-        if(($_i = count(($feeds = self::findByURL($url)))) > 0)
-        {
-            for($i=0;$i<$_i;$i++)
-            {
-                if(is_object($feeds[$i]))
-                {
-                    $feeds[$i] = $feeds[$i]->dump(array('feed_url', 'feed_title', 'feed_description'));
-                }
-            }
-        }
-        else
+        if(count(($feeds = self::findAssocByURL($url))) == 0)
         {
             /* request feeds to webservice */
 
@@ -366,7 +331,7 @@ class AggregatorFeed extends B_Model
             {
                 if(is_object(($feed = self::rawInsert(current($discover)))))
                 {
-                    $feeds[] = $feed->dump(array('feed_url', 'feed_title', 'feed_description'));
+                    $feeds[] = $feed->dump(array('feed_url', 'feed_article', 'feed_description'));
                 }
             }
             else

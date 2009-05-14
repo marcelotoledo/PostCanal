@@ -10,7 +10,7 @@
     <?php foreach($this->blogs_ as $b): ?>
     <div class="blogitem" blog="<?php echo $b->hash ?>">
         <?php echo $b->name ?><br/>
-        <small><?php echo $b->url ?></small>
+        <small><?php echo $b->blog_url ?></small>
     </div>
     <?php endforeach ?>
 </div>

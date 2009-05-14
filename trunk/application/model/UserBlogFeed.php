@@ -34,8 +34,6 @@ class UserBlogFeed extends B_Model
 		'updated_at' => array ('type' => 'date','size' => 0,'required' => false),
 		'enabled' => array ('type' => 'boolean','size' => 0,'required' => false));
 
-
-
     /**
      * Sequence name
      *
@@ -92,6 +90,35 @@ class UserBlogFeed extends B_Model
     }
 
     /**
+     * Execute a SQL insert query and returns last insert id
+     *
+     * @param   string  $sql        SQL query
+     * @param   array   $data       values array
+     * @return  integer
+     */
+    public static function insert($sql, $data=array())
+    {
+        return parent::insert_($sql, $data, self::$sequence_name);
+    }
+
+    /**
+     * Get UserBlogFeed by primary key
+     *
+     * @param   integer $id    Primary key value
+     *
+     * @return  UserBlogFeed|null 
+     */
+    public static function getByPrimaryKey($id)
+    {
+        return current(self::select(
+            "SELECT * FROM " . self::$table_name . 
+            " WHERE " . self::$primary_key_name . " = ?", 
+            array($id), PDO::FETCH_CLASS, get_class()));
+    }
+
+    // -------------------------------------------------------------------------
+
+    /**
      * Save model
      *
      * @return  boolean
@@ -117,68 +144,10 @@ class UserBlogFeed extends B_Model
         if($this->user_blog_id)
         {
             $sql = "UPDATE " . self::$table_name . " " . 
-                   "SET ordering=(ordering+1) " .
+                   "SET ordering=(ordering + 1) " .
                    "WHERE user_blog_id = ?";
             self::execute($sql, array($this->user_blog_id));
         }
-    }
-
-    /**
-     * Find UserBlogFeed with an encapsulated SELECT command
-     *
-     * @param   array   $conditions WHERE parameters
-     * @param   array   $order      ORDER parameters
-     * @param   integer $limit      LIMIT parameter
-     * @param   integer $offset     OFFSET parameter
-     * @return  array
-     */
-    public static function find ($conditions=array(), 
-                                 $order=array(), 
-                                 $limit=0, 
-                                 $offset=0)
-    {
-        return parent::_find($conditions, 
-                             $order, 
-                             $limit, 
-                             $offset, 
-                             self::$table_name,
-                             get_class());
-    }
-
-    /**
-     * Get UserBlogFeed with SQL
-     *
-     * @param   string  $sql    SQL query
-     * @param   array   $data   values array
-     * @return  array
-     */
-    public static function selectModel ($sql, $data=array())
-    {
-        return parent::_selectModel($sql, $data, get_class());
-    }
-
-    /**
-     * Execute a SQL insert query and returns last insert id
-     *
-     * @param   string  $sql        SQL query
-     * @param   array   $data       values array
-     * @return  integer
-     */
-    public static function insert($sql, $data=array())
-    {
-        return parent::_insert($sql, $data, self::$sequence_name);
-    }
-
-    /**
-     * Get UserBlogFeed by primary key
-     *
-     * @param   integer $id    Primary key value
-     *
-     * @return  UserBlogFeed|null 
-     */
-    public static function getByPrimaryKey($id)
-    {
-        return current(self::find(array(self::$primary_key_name => $id)));
     }
 
     /**
@@ -191,10 +160,10 @@ class UserBlogFeed extends B_Model
      */
     public static function getByBlogAndFeed($blog_id, $feed_id)
     {
-        return current(self::find(array(
-            'user_blog_id' => $blog_id,
-            'aggregator_feed_id' => $feed_id
-        )));
+        return current(self::select(
+            "SELECT * FROM " . self::$table_name . 
+            " WHERE user_blog_id = ? AND aggregator_feed_id = ?", 
+            array($blog_id, $feed_id), PDO::FETCH_CLASS, get_class()));
     }
 
     /**
@@ -206,20 +175,21 @@ class UserBlogFeed extends B_Model
      */
     public static function getByBlogAndHash($blog_id, $hash)
     {
-        return current(self::find(array(
-            'user_blog_id' => $blog_id,
-            'hash' => $hash)));
+        return current(self::select(
+            "SELECT * FROM " . self::$table_name . 
+            " WHERE user_blog_id = ? AND hash = ?", 
+            array($blog_id, $hash), PDO::FETCH_CLASS, get_class()));
     }
 
     /**
-     * Partial by User Blog
+     * Find by User Blog
      *
      * @param   string      $blog_hash
      * @param   integer     $user_id
      *
      * @return  array
      */
-    public static function partialByBlogAndUser($blog_hash, $user_id)
+    public static function findAssocByBlogAndUser($blog_hash, $user_id)
     {
         $sql = "SELECT a.hash as feed, b.feed_url, a.feed_title,
                        a.feed_description, b.feed_update_time,
@@ -234,11 +204,11 @@ class UserBlogFeed extends B_Model
                 AND b.enabled = 1
                 ORDER BY a.ordering ASC, a.created_at DESC";
         
-        return self::select($sql, array($blog_hash, $user_id));
+        return self::select($sql, array($blog_hash, $user_id), PDO::FETCH_ASSOC);
     }
 
     /**
-     * Get feed articles for a user blog feed
+     * Find feed articles for a user blog feed
      *
      * @param   string      $blog_hash
      * @param   integer     $user_id
@@ -248,34 +218,34 @@ class UserBlogFeed extends B_Model
      *
      * @return  array
      */
-    public static function partialArticlesThreaded($blog_hash, 
-                                                   $user_id, 
-                                                   $feed_hash,
-                                                   $start_time=null, 
-                                                   $limit=25)
+    public static function findArticlesThreaded($blog_hash, 
+                                                $user_id, 
+                                                $feed_hash,
+                                                $start_time=null, 
+                                                $limit=25)
     {
         if(!$start_time) $start_time = time();
 
-        $sql = "SELECT item_md5 AS article, item_title AS title, item_link AS link, 
-                       item_date AS date, item_author AS author, item_content AS content
+        $sql = "SELECT article_md5 AS article, article_title AS title, article_link AS link, 
+                       article_date AS date, article_author AS author, article_content AS content
                 FROM model_user_blog_feed AS a
                 LEFT JOIN model_aggregator_feed_item AS b
                 ON (a.aggregator_feed_id = b.aggregator_feed_id)
-                WHERE a.enabled = true AND b.item_date < ? 
+                WHERE a.enabled = true AND b.article_date < ? 
                 AND a.hash = ? AND a.user_blog_id = (
                     SELECT user_blog_id
                     FROM model_user_blog
                     WHERE hash = ? AND user_profile_id = ?) 
-                ORDER BY b.item_date DESC, b.created_at DESC LIMIT " . intval($limit);
+                ORDER BY b.article_date DESC, b.created_at DESC LIMIT " . intval($limit);
 
         return self::select($sql, array(date("Y-m-d H:i:s", $start_time), 
                                         $feed_hash,
                                         $blog_hash, 
-                                        $user_id));
+                                        $user_id), PDO::FETCH_ASSOC);
     }
 
     /**
-     * Get feed articles associated with user blog feeds
+     * Find feed articles associated with user blog feeds
      *
      * @param   string      $blog_hash
      * @param   integer     $user_id
@@ -284,29 +254,29 @@ class UserBlogFeed extends B_Model
      *
      * @return  array
      */
-    public static function partialArticlesAll($blog_hash, 
-                                              $user_id, 
-                                              $start_time=null, 
-                                              $limit=50)
+    public static function findArticlesAll($blog_hash, 
+                                           $user_id, 
+                                           $start_time=null, 
+                                           $limit=50)
     {
         if(!$start_time) $start_time = time();
 
-        $sql = "SELECT a.feed_title AS feed, b.item_md5 AS article, 
-                       b.item_title AS title, b.item_link AS link, 
-                       b.item_date AS date, b.item_author AS author, 
-                       b.item_content AS content
+        $sql = "SELECT a.feed_title AS feed, b.article_md5 AS article, 
+                       b.article_title AS title, b.article_link AS link, 
+                       b.article_date AS date, b.article_author AS author, 
+                       b.article_content AS content
                 FROM model_user_blog_feed AS a 
                 LEFT JOIN model_aggregator_feed_item AS b 
                 ON (a.aggregator_feed_id = b.aggregator_feed_id) 
-                WHERE a.enabled = true AND b.item_date < ? AND a.user_blog_id = (
+                WHERE a.enabled = true AND b.article_date < ? AND a.user_blog_id = (
                     SELECT user_blog_id
                     FROM model_user_blog
                     WHERE hash = ? AND user_profile_id = ?) 
-                ORDER BY b.item_date DESC, b.created_at DESC LIMIT " . intval($limit);
+                ORDER BY b.article_date DESC, b.created_at DESC LIMIT " . intval($limit);
 
         return self::select($sql, array(date("Y-m-d H:i:s", $start_time), 
                                         $blog_hash, 
-                                        $user_id));
+                                        $user_id), PDO::FETCH_ASSOC);
     }
 
     /**
@@ -320,7 +290,7 @@ class UserBlogFeed extends B_Model
     public static function updateOrdering($blog_hash, $user_id, $feed_hash, $ordering)
     {
         $sql = "SELECT * FROM model_user_blog_feed WHERE user_blog_id = (SELECT user_blog_id FROM model_user_blog WHERE hash = ? AND user_profile_id = ?) AND hash = ?";
-        $cur = current(self::selectModel($sql, array($blog_hash, $user_id, $feed_hash)));
+        $cur = current(self::select($sql, array($blog_hash, $user_id, $feed_hash)), PDO::FETCH_CLASS, get_class());
 
         $i = $cur->ordering;
         $j = $ordering;
@@ -332,11 +302,11 @@ class UserBlogFeed extends B_Model
         
         if($k)
         {
-            $sql.= "ordering=(ordering+1) ";
+            $sql.= "ordering = (ordering + 1) ";
         }
         else
         {
-            $sql.= "ordering=(ordering-1) ";
+            $sql.= "ordering = (ordering - 1) ";
         }
         
         $sql.= "WHERE user_blog_id = (SELECT user_blog_id FROM model_user_blog WHERE hash = ? AND user_profile_id = ?) ";

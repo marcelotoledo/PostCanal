@@ -32,12 +32,26 @@ class WebService:
         import blog
         return blog.type_dump(blog.guess_type(args['url']))
 
-    # blog url manager test
+    # blog url manager check
 
     def blog_manager_url_check(self, args):
         if not self.validate_args(args, ['url', 'type', 'version']): return None
         import blog
         return blog.type_dump(blog.manager_url_check(args['url'], args['type'], args['version']))
+
+    # blog publication check
+
+    def blog_login_check(self, args):
+        if not self.validate_args(args, ['url', 'type', 'version', 'username', 'password']): return None
+        import blog
+        return blog.type_dump(blog.login_check(args['url'], args['type'], args['version'], args['username'], args['password']))
+
+    # blog publication check
+
+    def blog_publication_check(self, args):
+        if not self.validate_args(args, ['url', 'type', 'version', 'username', 'password']): return None
+        import blog
+        return blog.type_dump(blog.publication_check(args['url'], args['type'], args['version'], args['username'], args['password']))
 
     # feed discover
 

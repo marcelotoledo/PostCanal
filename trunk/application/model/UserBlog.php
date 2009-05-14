@@ -23,16 +23,17 @@ class UserBlog extends B_Model
      * @var array
      */
     protected static $table_structure = array (
-		'user_blog_id' => array ('type' => 'integer','size' => 0, 'required' => false),
+		'user_blog_id' => array ('type' => 'integer','size' => 0,'required' => false),
 		'user_profile_id' => array ('type' => 'integer','size' => 0,'required' => true),
 		'blog_type_id' => array ('type' => 'integer','size' => 0,'required' => true),
 		'blog_type_revision' => array ('type' => 'integer','size' => 0,'required' => false),
 		'hash' => array ('type' => 'string','size' => 8,'required' => true),
-		'name' => array ('type' => 'string','size' => 100,'required' => true),
-		'url' => array ('type' => 'string','size' => 200,'required' => true),
-		'manager_url' => array ('type' => 'string','size' => 200,'required' => true),
-		'manager_username' => array ('type' => 'string','size' => 100,'required' => true),
-		'manager_password' => array ('type' => 'string','size' => 100,'required' => true),
+		'name' => array ('type' => 'string','size' => 200,'required' => true),
+		'blog_url' => array ('type' => 'string','size' => 0,'required' => true),
+		'blog_manager_url' => array ('type' => 'string','size' => 0,'required' => true),
+		'blog_username' => array ('type' => 'string','size' => 255,'required' => false),
+		'blog_password' => array ('type' => 'string','size' => 255,'required' => false),
+		'preference_serialized' => array ('type' => 'string','size' => 0,'required' => false),
 		'created_at' => array ('type' => 'date','size' => 0,'required' => false),
 		'updated_at' => array ('type' => 'date','size' => 0,'required' => false),
 		'enabled' => array ('type' => 'boolean','size' => 0,'required' => false));
@@ -42,7 +43,7 @@ class UserBlog extends B_Model
      *
      * @var string
      */
-    protected static $sequence_name = '';
+    protected static $sequence_name = null;
 
     /**
      * Primary key name
@@ -93,6 +94,35 @@ class UserBlog extends B_Model
     }
 
     /**
+     * Execute a SQL insert query and returns last insert id
+     *
+     * @param   string  $sql        SQL query
+     * @param   array   $data       values array
+     * @return  integer
+     */
+    public static function insert($sql, $data=array())
+    {
+        return parent::insert_($sql, $data, self::$sequence_name);
+    }
+
+    /**
+     * Get UserBlog by primary key
+     *
+     * @param   integer $id    Primary key value
+     *
+     * @return  UserBlog|null 
+     */
+    public static function getByPrimaryKey($id)
+    {
+        return self::select(
+            "SELECT * FROM " . self::$table_name . 
+            " WHERE " . self::$primary_key_name . " = ?", 
+            array($id), PDO::FETCH_CLASS, get_class());
+    }
+
+    // -------------------------------------------------------------------------
+
+    /**
      * Save model
      *
      * @return  boolean
@@ -110,64 +140,6 @@ class UserBlog extends B_Model
     }
 
     /**
-     * Find UserBlog with an encapsulated SELECT command
-     *
-     * @param   array   $conditions WHERE parameters
-     * @param   array   $order      ORDER parameters
-     * @param   integer $limit      LIMIT parameter
-     * @param   integer $offset     OFFSET parameter
-     * @return  array
-     */
-    public static function find ($conditions=array(), 
-                                 $order=array(), 
-                                 $limit=0, 
-                                 $offset=0)
-    {
-        return parent::_find($conditions, 
-                             $order, 
-                             $limit, 
-                             $offset, 
-                             self::$table_name,
-                             get_class());
-    }
-
-    /**
-     * Get UserBlog with SQL
-     *
-     * @param   string  $sql    SQL query
-     * @param   array   $data   values array
-     * @return  array
-     */
-    public static function selectModel ($sql, $data=array())
-    {
-        return parent::_selectModel($sql, $data, get_class());
-    }
-
-    /**
-     * Execute a SQL insert query and returns last insert id
-     *
-     * @param   string  $sql        SQL query
-     * @param   array   $data       values array
-     * @return  integer
-     */
-    public static function insert($sql, $data=array())
-    {
-        return parent::_insert($sql, $data, self::$sequence_name);
-    }
-
-    /**
-     * Get UserBlog by primary key
-     *
-     * @param   integer $id    Primary key value
-     *
-     * @return  UserBlog|null 
-     */
-    public static function getByPrimaryKey($id)
-    {
-        return current(self::find(array(self::$primary_key_name => $id)));
-    }
-
-    /**
      * Find Blog by user profile
      *
      * @param   integer         $user_id    User Profile ID
@@ -176,10 +148,18 @@ class UserBlog extends B_Model
      */
     public static function findByUser($user_id, $enabled=null)
     {
-        $args = array();
-        $args['user_profile_id'] = $user_id;
-        if(is_bool($enabled)) $args['enabled'] = $enabled;
-        return self::find($args, array('name ASC, created_at DESC'));
+        $sql = "SELECT * FROM " . self::$table_name . " WHERE user_profile_id = ?";
+        $args = array($user_id);
+
+        if(is_bool($enabled))
+        {
+            $sql.= " AND enabled = ?";
+            $args[] = $enabled;
+        }
+
+        $sql.= " ORDER BY name ASC";
+
+        return self::select($sql, $args);
     }
 
     /**
@@ -191,8 +171,9 @@ class UserBlog extends B_Model
      */
     public static function getByUserAndHash($user_id, $hash)
     {
-        return current(self::find(array(
-            'user_profile_id' => $user_id,
-            'hash' => $hash)));
+        return current(self::select(
+            "SELECT * FROM " . self::$table_name . 
+            " WHERE user_profile_id = ? AND hash = ?", 
+            array($user_id, $hash), PDO::FETCH_CLASS, get_class()));
     }
 }
