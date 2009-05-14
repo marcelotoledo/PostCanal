@@ -25,7 +25,7 @@ class C_Blog extends B_Controller
     {
         $this->view()->setLayout('dashboard');
         $user_id = $this->session()->user_profile_id;
-        $this->view()->blogs_ = UserBlog::findByUser($user_id);
+        $this->view()->blogs_ = UserBlog::findByUser($user_id, true);
     }
 
     /**
@@ -117,5 +117,25 @@ class C_Blog extends B_Controller
         $blog_type = $this->request()->type;
         $blog_version = $this->request()->version;
         $this->view()->result = BlogType::checkManagerUrl($url, $blog_type, $blog_version);
+    }
+
+    /**
+     * delete (disable) blog
+     */
+    public function A_delete()
+    {
+        $this->response()->setXML(true);
+        $hash = $this->request()->blog;
+        $user = $this->session()->user_profile_id;
+        $result = "";
+
+        if(is_object(($blog = UserBlog::getByUserAndHash($user, $hash))))
+        {
+            $blog->enabled = false;
+            $blog->save();
+            $result = $hash;
+        }
+
+        $this->view()->result = $result;
     }
 }

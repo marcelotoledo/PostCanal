@@ -15,9 +15,17 @@ div.blogitem
     width: 600px;
     border-bottom: 1px solid silver;
 }
-
-div.blogitem small
+div.blogitemleft
+{
+    float: left;
+}
+div.blogitemleft small
 {
     color: gray;
     font-size: x-small;
+}
+div.blogitemright
+{
+    float: right;
+    line-height: 2.4em;
 }
