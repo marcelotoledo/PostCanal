@@ -19,6 +19,10 @@ div.blogitemleft
 {
     float: left;
 }
+div.blogitemleftbold
+{
+    font-weight: bold;
+}
 div.blogitemleft small
 {
     color: gray;
@@ -28,4 +32,15 @@ div.blogitemright
 {
     float: right;
     line-height: 2.4em;
+}
+div.blogitemright a
+{
+    padding-left: 10px;
+}
+div.blogitemeditform
+{
+    width: 570px;
+    padding: 15px;
+    background-color: lightyellow;
+    border-bottom: 2px solid silver;
 }

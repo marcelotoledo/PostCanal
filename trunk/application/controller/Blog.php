@@ -120,6 +120,29 @@ class C_Blog extends B_Controller
     }
 
     /**
+     * update blog
+     */
+    public function A_update()
+    {
+        $this->response()->setXML(true);
+        $hash = $this->request()->blog;
+        $user = $this->session()->user_profile_id;
+
+        if(is_object(($blog = UserBlog::getByUserAndHash($user, $hash))))
+        {
+            $blog->name = $this->request()->blog_name;
+            $blog->blog_username = $this->request()->blog_username;
+            if(strlen(($p = $this->request()->blog_password)) > 0)
+            {
+                $blog->blog_password = $p;
+            }
+            $blog->save();
+            $this->view()->result = array('blog' => $blog->hash, 
+                                          'name' => $blog->name);
+        }
+    }
+
+    /**
      * delete (disable) blog
      */
     public function A_delete()
