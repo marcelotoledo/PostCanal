@@ -142,4 +142,9 @@ $(document).ready(function()
     {
         blog_update($(this).attr('blog'));
     });
+
+    $("input[name='blogcancelbtn']").click(function()
+    {
+        blog_edit_hide($(this).attr('blog'));
+    });
 });

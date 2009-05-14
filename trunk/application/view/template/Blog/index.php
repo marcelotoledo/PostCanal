@@ -35,6 +35,7 @@
             <td>
                 <input type="password" name="blog_password" value="">
                 <input type="button" name="blogupdatebtn" value="<?php echo $this->translation()->update ?>" blog="<?php echo $b->hash ?>">
+                <input type="button" name="blogcancelbtn" value="<?php echo $this->translation()->cancel ?>" blog="<?php echo $b->hash ?>">
             </td>
             </tr>
         </table>
