@@ -155,7 +155,7 @@ class BlogEntry extends B_Model
                 WHERE user_blog_id = (
                     SELECT user_blog_id FROM model_user_blog
                     WHERE hash = ? AND user_profile_id = ?)
-                AND status_ IN (" . $_in . ")
+                AND status_ IN (" . $_in . ") AND deleted = 0
                 ORDER BY publication_date ASC, updated_at ASC";
                
         return self::select($sql, array($blog_hash, $profile_id));
@@ -178,14 +178,15 @@ class BlogEntry extends B_Model
                     c.type_name as blog_type,
                     c.version_name as blog_version 
                 FROM 
-                    model_user_blog_blog_entry AS a 
+                    model_user_blog_entry AS a 
                 LEFT JOIN 
                     model_user_blog AS b ON (a.user_blog_id = b.user_blog_id) 
                 LEFT JOIN 
                     model_blog_type AS c ON (b.blog_type_id = c.blog_type_id) 
                 WHERE
                     a.status_ = ? AND
-                    a.publication_date < UTC_TIMESTAMP()
+                    a.publication_date < UTC_TIMESTAMP() AND
+                    a.deleted = 0
                 ORDER BY
                     a.updated_at ASC
                 LIMIT 1";
@@ -233,12 +234,13 @@ class BlogEntry extends B_Model
                 FROM model_aggregator_feed_article AS a
                 LEFT JOIN model_user_blog_feed AS b ON (a.aggregator_feed_id = b.aggregator_feed_id)
                 LEFT JOIN model_user_blog AS c ON (b.user_blog_id = c.user_blog_id)
-                WHERE a.article_md5 = ? AND b.hash = ? AND c.user_profile_id = ? AND c.hash = ?";
+                WHERE a.article_md5 = ? AND b.hash = ? 
+                AND c.user_profile_id = ? AND c.hash = ?";
         $args = array($feed_article_md5, $feed_hash, $profile_id, $blog_hash);
 
         $result = current(self::select($sql, $args, PDO::FETCH_ASSOC));
 
-        /* new queue item */
+        /* new entry */
 
         $blog_entry = new self();
         $blog_entry->populate($result);
@@ -248,7 +250,7 @@ class BlogEntry extends B_Model
     }
 
     /**
-     * Set queue item to publish
+     * update entry to publish
      *
      * @param   string  $entry_hash
      * @param   string  $blog_hash
@@ -269,24 +271,24 @@ class BlogEntry extends B_Model
     }
 
     /**
-     * Check queue items publish status
+     * Check blog entries publish status
      *
-     * @param   array   $array_item_hash
+     * @param   array   $array_entry_hash
      * @param   string  $blog_hash
      * @param   integer $user_profile_id
      */ 
-    public static function checkStatus($array_item_hash,
+    public static function checkStatus($array_entry_hash,
                                        $blog_hash,
                                        $profile_id)
     {
         /* sanitize hash list */
 
-        for($i=0;$i<count($array_item_hash);$i++)
+        for($i=0;$i<count($array_entry_hash);$i++)
         {
-            $array_item_hash[$i] = preg_replace("/[^\w]+/", "", $array_item_hash[$i]);
+            $array_entry_hash[$i] = preg_replace("/[^\w]+/", "", $array_entry_hash[$i]);
         }
 
-        $_in = "'" . implode("','", $array_item_hash) . "'";
+        $_in = "'" . implode("','", $array_entry_hash) . "'";
 
         $_q = "SELECT hash AS entry, status_ AS status 
                FROM " . self::$table_name . "

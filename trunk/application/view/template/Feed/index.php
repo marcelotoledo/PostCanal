@@ -11,7 +11,16 @@
         <th><?php echo $this->translation()->feed_add_url ?>:</th>
         <td><input type="text" name="feedaddurl" value=""></td>
         </tr>
-        <tr id="feedaddoptions"><td colspan="2"></td></tr>
+        <tr id="feedaddoptions"><td colspan="2">
+            <div class="feedoption" id="feedoptionblank">
+                <div class="feedoptionbutton">
+                    <input name="feedaddoption" type="radio" url="">
+                </div>
+                <div class="feedoptiontitle">
+                </div>
+                <div style="clear:left"></div>
+            </div>
+        </td></tr>
         <tr id="feedaddmessage" style="display:none">
         <th>&nbsp;</th>
         <td class="message"></td>
@@ -26,6 +35,16 @@
     </table>
 </form>
 
-<div id="feedlistarea"></div>
+<div id="feedlistarea">
+    <div class="feeditem" feed="blank" ord="0" style="display:none">
+        <div class="feeditemleft">
+        </div>
+        <div class="feeditemright">
+            <a class="feedrenamelnk" feed="blank"><?php echo $this->translation()->rename ?></a>
+            <a class="feeddeletelnk" feed="blank"><?php echo $this->translation()->delete ?></a>
+        </div>
+        <div style="clear:both"></div>
+    </div>
+</div>
 
 </div>

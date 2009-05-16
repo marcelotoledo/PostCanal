@@ -148,7 +148,9 @@ class UserBlog extends B_Model
      */
     public static function findByUser($user_id, $enabled=null)
     {
-        $sql = "SELECT * FROM " . self::$table_name . " WHERE user_profile_id = ?";
+        $sql = "SELECT * FROM " . self::$table_name . 
+               " WHERE user_profile_id = ?" .
+               " AND deleted = 0";
         $args = array($user_id);
 
         if(is_bool($enabled))

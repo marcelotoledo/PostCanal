@@ -4,7 +4,10 @@ $(document).ready(function()
 
     var active_request = false;
     var current_blog = null;
-    var feed_list_area = $("#feedlistarea");
+    var feed_add_options = $("tr#feedaddoptions > td");
+    var feed_option_blank = feed_add_options.find("div#feedoptionblank");
+    var feed_list_area = $("div#feedlistarea");
+    var feed_item_blank = feed_list_area.find("div.feeditem[feed='blank']");
 
     /* spinner */
 
@@ -73,9 +76,13 @@ $(document).ready(function()
             _title = $(this).find('feed_title').text();
             _description = $(this).find('feed_description').text();
 
-            if(_title.length == 0) _title = _url;
+            _div = feed_option_blank.clone(true);
+            _div.find("input[name='feedaddoption']").attr('url', _url);
+            _div.find("div.feedoptiontitle").html((_title.length > 0) ? 
+                _title + "<br/><small>" + _url + "</small>" :
+                _url);
 
-            $("#feedaddoptions > td").append("<input name=\"feedaddoption\" type=\"radio\" url=\"" + _url + "\">" + _title + "<br/>");
+            feed_add_options.append(_div);
         });
 
         $("input[name='feedaddoption']:first").attr('checked', 'checked');
@@ -192,12 +199,14 @@ $(document).ready(function()
                 _url = $(this).find('feed_url').text();
                 _title = $(this).find('feed_title').text();
 
-                _div = "<div class=\"feeditem\" " +
-                       "feed=\"" + _feed + "\" ord=\"" + _ord + "\">" +
-                       _title + "<br/><small>" + 
-                       _url + "</small></div>";
+                _div = feed_item_blank.clone();
+                _div.attr('feed', _feed);
+                _div.attr('ord', _ord);
+                _div.find("div.feeditemleft").html(_title + "<br/><small>" + _url + "</small>");
+                _div.find("div.feeditemright").html("");
 
                 feed_list_area.append(_div);
+                _div.show();
             });
         }
         else

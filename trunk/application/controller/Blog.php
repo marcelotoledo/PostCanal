@@ -143,7 +143,7 @@ class C_Blog extends B_Controller
     }
 
     /**
-     * delete (disable) blog
+     * delete blog
      */
     public function A_delete()
     {
@@ -154,7 +154,7 @@ class C_Blog extends B_Controller
 
         if(is_object(($blog = UserBlog::getByUserAndHash($user, $hash))))
         {
-            $blog->enabled = false;
+            $blog->deleted = true;
             $blog->save();
             $result = $hash;
         }

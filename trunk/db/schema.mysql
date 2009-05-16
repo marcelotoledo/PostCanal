@@ -186,6 +186,7 @@ CREATE TABLE model_user_blog
     created_at TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
     updated_at TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
     enabled TINYINT(1) NOT NULL DEFAULT 1,
+    deleted TINYINT(1) NOT NULL DEFAULT 0,
     PRIMARY KEY (user_blog_id),
     CONSTRAINT m_ubl_m_upf_fk FOREIGN KEY (user_profile_id) 
         REFERENCES model_user_profile (user_profile_id) ON DELETE CASCADE,
@@ -193,7 +194,7 @@ CREATE TABLE model_user_blog
         REFERENCES model_blog_type (blog_type_id) ON DELETE RESTRICT
 ) ENGINE=InnoDB DEFAULT CHARSET='utf8' COLLATE='utf8_unicode_ci';
 
-CREATE INDEX m_ubg_idx ON model_user_blog (hash(8));
+CREATE INDEX m_ubg_idx ON model_user_blog (hash(8), enabled, deleted);
 
 CREATE TABLE model_user_blog_feed
 (
@@ -207,6 +208,7 @@ CREATE TABLE model_user_blog_feed
     created_at TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
     updated_at TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
     enabled TINYINT(1) NOT NULL DEFAULT 1,
+    deleted TINYINT(1) NOT NULL DEFAULT 0,
     PRIMARY KEY (user_blog_feed_id),
     CONSTRAINT m_ubf_m_ubg_fk FOREIGN KEY (user_blog_id) 
         REFERENCES model_user_blog (user_blog_id) ON DELETE CASCADE,
@@ -214,7 +216,7 @@ CREATE TABLE model_user_blog_feed
         REFERENCES model_aggregator_feed (aggregator_feed_id) ON DELETE RESTRICT
 ) ENGINE=InnoDB DEFAULT CHARSET='utf8' COLLATE='utf8_unicode_ci';
 
-CREATE INDEX m_ubf_idx ON model_user_blog_feed (hash(8), ordering, enabled);
+CREATE INDEX m_ubf_idx ON model_user_blog_feed (hash(8), ordering, enabled, deleted);
 
 CREATE TABLE model_user_blog_entry
 (
@@ -228,6 +230,7 @@ CREATE TABLE model_user_blog_entry
     publication_date TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
     created_at TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
     updated_at TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
+    deleted TINYINT(1) NOT NULL DEFAULT 0,
     PRIMARY KEY (user_blog_entry_id),
     CONSTRAINT m_bge_m_afa_fk FOREIGN KEY (aggregator_feed_article_id) 
         REFERENCES model_aggregator_feed_article (aggregator_feed_article_id) ON DELETE RESTRICT,
@@ -235,6 +238,6 @@ CREATE TABLE model_user_blog_entry
         REFERENCES model_user_blog (user_blog_id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET='utf8';
 
-CREATE INDEX m_bge_idx ON model_user_blog_entry (hash(8), status_, publication_date, updated_at);
+CREATE INDEX m_bge_idx ON model_user_blog_entry (hash(8), status_, publication_date, updated_at, deleted);
 
 COMMIT;

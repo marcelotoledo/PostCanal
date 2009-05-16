@@ -201,7 +201,7 @@ class UserBlogFeed extends B_Model
                     SELECT user_blog_id
                     FROM model_user_blog
                     WHERE hash = ? AND user_profile_id = ?)
-                AND b.enabled = 1
+                AND b.enabled = 1 AND deleted = 0
                 ORDER BY a.ordering ASC, a.created_at DESC";
         
         return self::select($sql, array($blog_hash, $user_id), PDO::FETCH_ASSOC);
@@ -231,7 +231,7 @@ class UserBlogFeed extends B_Model
                 FROM model_user_blog_feed AS a
                 LEFT JOIN model_aggregator_feed_item AS b
                 ON (a.aggregator_feed_id = b.aggregator_feed_id)
-                WHERE a.enabled = true AND b.article_date < ? 
+                WHERE a.enabled = 1 AND a.deleted = 0 AND b.article_date < ? 
                 AND a.hash = ? AND a.user_blog_id = (
                     SELECT user_blog_id
                     FROM model_user_blog
@@ -268,7 +268,8 @@ class UserBlogFeed extends B_Model
                 FROM model_user_blog_feed AS a 
                 LEFT JOIN model_aggregator_feed_item AS b 
                 ON (a.aggregator_feed_id = b.aggregator_feed_id) 
-                WHERE a.enabled = true AND b.article_date < ? AND a.user_blog_id = (
+                WHERE a.enabled = 1 AND a.deleted = 0 
+                AND b.article_date < ? AND a.user_blog_id = (
                     SELECT user_blog_id
                     FROM model_user_blog
                     WHERE hash = ? AND user_profile_id = ?) 

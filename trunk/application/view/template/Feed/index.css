@@ -2,12 +2,30 @@ table th
 {
     width: 100px;
 }
-
+div.feedoption
+{
+    padding-bottom: 2px;
+    padding-top: 2px;
+}
+div.feedoptionbutton
+{
+    float: left;
+    padding-right: 10px;
+}
+div.feedoptiontitle
+{
+    float: left;
+    height: 2.4em;
+}
+div.feedoptiontitle small
+{
+    color: gray;
+    font-size: x-small;
+}
 #feedlistarea
 {
     padding-top: 25px;
 }
-
 div.feeditem
 {
     padding-top: 5px;
@@ -17,14 +35,25 @@ div.feeditem
     cursor: pointer;
     cursor: hand;
 }
-
-div.feeditem small
+div.feeditem:hover
+{
+    background-color: khaki;
+}
+div.feeditemleft
+{
+    float: left;
+}
+div.feeditemleft small
 {
     color: gray;
     font-size: x-small;
 }
-
-div.feeditem:hover
+div.feeditemright
 {
-    background-color: khaki;
+    float: right;
+    line-height: 2.4em;
+}
+div.feeditemright a
+{
+    padding-left: 10px;
 }
