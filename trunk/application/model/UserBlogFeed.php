@@ -289,43 +289,44 @@ class UserBlogFeed extends B_Model
      */
     public static function updateOrdering($blog_hash, $user_id, $feed_hash, $ordering)
     {
-        $sql = "SELECT * FROM model_user_blog_feed WHERE user_blog_id = (SELECT user_blog_id FROM model_user_blog WHERE hash = ? AND user_profile_id = ?) AND hash = ?";
-        $cur = current(self::select($sql, array($blog_hash, $user_id, $feed_hash)), PDO::FETCH_CLASS, get_class());
+        $_s = "SELECT * FROM model_user_blog_feed WHERE user_blog_id = (SELECT user_blog_id FROM model_user_blog WHERE hash = ? AND user_profile_id = ?) AND hash = ?";
+        $_d = array($blog_hash, $user_id, $feed_hash);
+        $_o = current(self::select($_s, $_d, PDO::FETCH_CLASS, get_class()));
 
-        $i = $cur->ordering;
+        $i = $_o->ordering;
         $j = $ordering;
         $k = ($j < $i);
 
         if($j == $i) return null;
 
-        $sql = "UPDATE model_user_blog_feed SET ";
+        $_s = "UPDATE model_user_blog_feed SET ";
         
         if($k)
         {
-            $sql.= "ordering = (ordering + 1) ";
+            $_s .= "ordering = (ordering + 1) ";
         }
         else
         {
-            $sql.= "ordering = (ordering - 1) ";
+            $_s .= "ordering = (ordering - 1) ";
         }
         
-        $sql.= "WHERE user_blog_id = (SELECT user_blog_id FROM model_user_blog WHERE hash = ? AND user_profile_id = ?) ";
-        $data = array($blog_hash, $user_id);
+        $_s .= "WHERE user_blog_id = (SELECT user_blog_id FROM model_user_blog WHERE hash = ? AND user_profile_id = ?) ";
+        $_d = array($blog_hash, $user_id);
 
         if($k)
         {
-            $sql.= "AND ordering >= ? AND ordering < ?";
-            $data = array_merge($data, array($j, $i));
+            $_s .= "AND ordering >= ? AND ordering < ?";
+            $_d = array_merge($_d, array($j, $i));
         }
         else
         {
-            $sql.= "AND ordering > ? AND ordering <= ?";
-            $data = array_merge($data, array($i, $j));
+            $_s .= "AND ordering > ? AND ordering <= ?";
+            $_d = array_merge($_d , array($i, $j));
         }
 
-        self::execute($sql, $data);
+        self::execute($_s, $_d);
 
-        $cur->ordering = $j;
-        $cur->save();
+        $_o->ordering = $j;
+        $_o->save();
     }
 }
