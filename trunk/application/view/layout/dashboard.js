@@ -7,7 +7,7 @@ $(document).ready(function()
 
     function window_update()
     {
-        ww = $(window).outerWidth();
+        ww = $(window).width();
         wh = $(window).height();
 
         _t_h = top_bar.outerHeight();

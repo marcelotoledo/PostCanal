@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <environment>
     <base>
-        <url>http://127.0.0.1:8080</url>
+        <url>http://192.168.56.101</url>
     </base>
     <database>
         <default>
