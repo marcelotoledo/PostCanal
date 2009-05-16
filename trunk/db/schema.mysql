@@ -110,15 +110,16 @@ CREATE INDEX m_agf_idx ON model_aggregator_feed (feed_url_md5(8), feed_update_ti
 CREATE TABLE model_aggregator_feed_discover
 (
     aggregator_feed_discover_id INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
-    aggregator_feed_id INTEGER UNSIGNED NOT NULL, 
     url TEXT NOT NULL,
     url_md5 VARCHAR(32) NOT NULL,
+    feed_url TEXT NOT NULL,
+    feed_url_md5 VARCHAR(32) NOT NULL,
+    updated_at TIMESTAMP NOT NULL,
     PRIMARY KEY (aggregator_feed_discover_id),
-    CONSTRAINT m_afd_m_agf_fk FOREIGN KEY (aggregator_feed_id) 
-        REFERENCES model_aggregator_feed (aggregator_feed_id) ON DELETE CASCADE
+    CONSTRAINT m_afd_un UNIQUE (url_md5, feed_url_md5)
 ) ENGINE=InnoDB DEFAULT CHARSET='utf8' COLLATE='utf8_unicode_ci';
 
-CREATE INDEX m_afd_idx ON model_aggregator_feed_discover (url_md5(8));
+CREATE INDEX m_afd_idx ON model_aggregator_feed_discover (url_md5(8), feed_url_md5(8), updated_at);
 
 CREATE TABLE model_aggregator_feed_article
 (

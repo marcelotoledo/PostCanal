@@ -1194,16 +1194,18 @@ abstract class B_Model
 
         /* auto set created_at */
 
+        $current_time = time();
+
         if($this->isNew() == true && in_array('created_at', $columns))
         {
-            $this->created_at = time();
+            $this->created_at = $current_time;
         }
 
         /* auto set updated_at */
 
         if(in_array('updated_at', $columns))
         {
-            $this->updated_at = time();
+            $this->updated_at = $current_time;
         }
 
         /* check data for errors */

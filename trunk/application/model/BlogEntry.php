@@ -185,7 +185,7 @@ class BlogEntry extends B_Model
                     model_blog_type AS c ON (b.blog_type_id = c.blog_type_id) 
                 WHERE
                     a.status_ = ? AND
-                    a.publication_date < NOW()
+                    a.publication_date < UTC_TIMESTAMP()
                 ORDER BY
                     a.updated_at ASC
                 LIMIT 1";

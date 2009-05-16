@@ -178,7 +178,7 @@ class AggregatorFeedArticle extends B_Model
             $args[] = date('Y-m-d H:i:s', $time_offset);
         }
 
-        $sql.= "ORDER BY article_date DESC LIMIT " . intval($limit);
+        $sql.= "ORDER BY article_date DESC, created_at DESC LIMIT " . intval($limit);
 
         return self::select($sql, $args);
     }
@@ -211,28 +211,28 @@ class AggregatorFeedArticle extends B_Model
             $args[] = date('Y-m-d H:i:s', $time_offset);
         }
 
-        $sql.= "ORDER BY article_date DESC LIMIT " . intval($limit);
+        $sql.= "ORDER BY article_date DESC, created_at DESC LIMIT " . intval($limit);
 
         return self::select($sql, $args, PDO::FETCH_ASSOC);
     }
 
     /**
-     * Get last item time
+     * Get last article time
      *
      * @param   integer $feed_id    AggregatorFeed ID
      *
      * @return  integer
      */
-    public static function getLastItemTime($feed_id)
+    public static function getLastArticleTime($feed_id)
     {
-        $sql = "SELECT UNIX_TIMESTAMP(item_date) AS last_item_time " .
+        $sql = "SELECT UNIX_TIMESTAMP(article_date) AS last_article_time " .
                "FROM " . self::$table_name . " " .
                "WHERE aggregator_feed_id = ? " .
-               "ORDER BY item_date DESC, created_at DESC LIMIT 1";
+               "ORDER BY article_date DESC, created_at DESC LIMIT 1";
 
         $result = current(self::select($sql, array($feed_id)));
 
-        return is_object($result) ? $result->last_item_time : 0;
+        return is_object($result) ? $result->last_article_time : 0;
     }
 
     /**
@@ -247,14 +247,14 @@ class AggregatorFeedArticle extends B_Model
         self::transaction();
 
         $feed_id = $feed->aggregator_feed_id;
-        $last_item_time = self::getLastItemTime($feed->aggregator_feed_id);
+        $last_article_time = self::getLastArticleTime($feed->aggregator_feed_id);
         $total = count($data);
         $inserted = 0;
         $rewritten = 0;
 
         foreach($data as $entry)
         {
-            if($entry['article_date'] > $last_item_time) // only new items based on item date
+            if($entry['article_date'] > $last_article_time) // only new items based on item date
             {
                 $article = new self();
                 $article->aggregator_feed_id = $feed->aggregator_feed_id;

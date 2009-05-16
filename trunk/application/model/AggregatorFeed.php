@@ -131,7 +131,7 @@ class AggregatorFeed extends B_Model
 
         if($this->isNew()) 
         {
-            $this->feed_md5 = md5($this->feed_url);
+            $this->feed_url_md5 = md5($this->feed_url);
         }
 
         return parent::save();
@@ -141,16 +141,19 @@ class AggregatorFeed extends B_Model
      * Find by URL
      *
      * @param   string  $url
+     * @param   integer $lifetime   feed url lifetime
      * @return  array
      */
-    public static function findAssocByURL($url)
+    public static function findAssocByURL($url, $lifetime=86400)
     {
-        $sql = "SELECT feed_url, feed_title, feed_description
-                FROM " . self::$table_name . " WHERE aggregator_feed_id = (
-                    SELECT aggregator_feed_id FROM model_aggregator_feed_discover
-                    WHERE url_md5 = ?)";
-
-        return self::select($sql, array(md5($url)), PDO::FETCH_ASSOC);
+        $_s = "SELECT a.feed_url, b.feed_title, b.feed_description 
+               FROM model_aggregator_feed_discover AS a
+               LEFT JOIN model_aggregator_feed AS b 
+               ON (a.feed_url_md5 = b.feed_url_md5)
+               WHERE a.url_md5 = ? AND (UNIX_TIMESTAMP(a.updated_at) + ?) > 
+               UNIX_TIMESTAMP(UTC_TIMESTAMP())";
+        $_d = array(md5($url), $lifetime);
+        return self::select($_s, $_d, PDO::FETCH_ASSOC);
     }
 
     /**
@@ -182,44 +185,6 @@ class AggregatorFeed extends B_Model
                 LIMIT " . intval($limit);
 
         return self::select($sql, array(), PDO::FETCH_ASSOC);
-    }
-
-    /**
-     * Save feed url and url md5
-     */
-    protected static function saveFeedUrl($feed_id, $url)
-    {
-        $url_md5 = md5($url);
-
-        self::transaction();
-
-        $sql = "SELECT COUNT(*) AS total " .
-               "FROM model_aggregator_feed_discover " .
-               "WHERE aggregator_feed_id = ? AND url_md5 = ?";
-
-        $_d = array($feed_id, $url_md5);
-        $_r = current(self::select($sql, $_d));
-
-        if($_r->total == 0)
-        {
-            $sql = "INSERT INTO model_aggregator_feed_discover " .
-                   "(aggregator_feed_id, url, url_md5) VALUES (?, ?, ?)";
-            $_d = array($feed->aggregator_feed_id, $url, $url_md5);
-
-            try
-            {
-                self::execute($sql, $_d);
-            }
-            catch(B_Exception $_e)
-            {
-                self::rollback();
-                $_m = "new aggregator feed url failed";
-                $_d = array ('method' => __METHOD__);
-                B_Exception::forward($_m, E_USER_ERROR, $_e, $_d);
-            }
-        }
-
-        self::commit();
     }
 
     /**
@@ -259,10 +224,6 @@ class AggregatorFeed extends B_Model
         {
             $inserted = AggregatorFeedArticle::rawInsert($feed, $data['articles']);
         }
-
-        /* save feed url */
-
-        self::saveFeedUrl($feed->aggregator_feed_id, $url);
 
         return $feed;
     }
@@ -321,22 +282,30 @@ class AggregatorFeed extends B_Model
 
             $feeds = array();
             $client = new A_WebService();
-
-            /* if discover return more than one feed
-             * do not insert on database, but give it back to user */
-
             $discover = $client->feed_discover(array('url' => $url));
 
             if(count($discover) == 1)
             {
                 if(is_object(($feed = self::rawInsert(current($discover)))))
                 {
-                    $feeds[] = $feed->dump(array('feed_url', 'feed_article', 'feed_description'));
+                    $feeds[] = $feed->dump(array('feed_url', 'feed_title', 'feed_description'));
                 }
             }
+            /* if discover return more than one feed
+             * do not insert on database, but give it back to user */
             else
             {
                 $feeds = $discover;
+            }
+
+            foreach($feeds AS $f)
+            {
+                $_s = "INSERT INTO model_aggregator_feed_discover 
+                       (url, url_md5, feed_url, feed_url_md5, updated_at) 
+                       VALUES (?, ?, ?, ?, UTC_TIMESTAMP()) 
+                       ON DUPLICATE KEY UPDATE updated_at=UTC_TIMESTAMP()";
+                $_d = array($url, md5($url), $f['feed_url'], md5($f['feed_url']));
+                self::execute($_s, $_d);
             }
         }
 
