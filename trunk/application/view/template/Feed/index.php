@@ -38,9 +38,12 @@
 <div id="feedlistarea">
     <div class="feeditem" feed="blank" ord="0" style="display:none">
         <div class="feeditemleft">
+            <div class="feeditemtitle"></div>
+            <div class="feeditemurl"></div>
         </div>
         <div class="feeditemright">
             <a class="feedrenamelnk" feed="blank"><?php echo $this->translation()->rename ?></a>
+            <a class="feedtogglelnk" feed="blank"><?php echo $this->translation()->disable ?></a>
             <a class="feeddeletelnk" feed="blank"><?php echo $this->translation()->delete ?></a>
         </div>
         <div style="clear:both"></div>

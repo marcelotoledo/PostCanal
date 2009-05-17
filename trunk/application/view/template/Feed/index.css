@@ -32,21 +32,34 @@ div.feeditem
     padding-bottom: 5px;
     width: 600px;
     border-bottom: 1px solid silver;
-    cursor: pointer;
-    cursor: hand;
+    background-color: ghostwhite;
 }
-div.feeditem:hover
+div.feeditemdisabled
 {
-    background-color: khaki;
+    background-color: lightgray;
+    color: slategray;
 }
 div.feeditemleft
 {
     float: left;
+    cursor: move;
 }
-div.feeditemleft small
+div.feeditemleft:hover
+{
+    font-weight: bold;
+}
+div.feeditemtitle
+{
+    /* void */
+}
+div.feeditemurl
 {
     color: gray;
     font-size: x-small;
+}
+div.feeditemleftbold
+{
+    font-weight: bold;
 }
 div.feeditemright
 {

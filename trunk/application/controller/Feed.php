@@ -97,7 +97,13 @@ class C_Feed extends B_Controller
                 throw new B_Exception($_m, E_USER_WARNING, $_d);
             }
 
-            if(is_object($blog_feed) == false)
+            if(is_object($blog_feed) == true)
+            {
+                $blog_feed->enabled = true;
+                $blog_feed->deleted = false;
+                $blog_feed->save();
+            }
+            else
             {
                 $blog_feed = new UserBlogFeed();
                 $blog_feed->user_blog_id = $blog->user_blog_id;
@@ -128,5 +134,72 @@ class C_Feed extends B_Controller
         UserBlogFeed::updateOrdering($blog, $user_id, $feed, $position);
 
         $this->view()->updated = true;
+    }
+
+    /**
+     * update column
+     */
+    protected static function updateColumn($user, $blog, $feed, $name, $value)
+    {
+        $result = "";
+
+        if(is_object(($_o = UserBlogFeed::getByBlogAndFeedHash($user, $blog, $feed))))
+        {
+            $_o->{$name} = $value;
+            $_o->save();
+            $result = $feed;
+        }
+
+        return $result;
+    }
+
+    /**
+     * disable feed
+     */
+    public function A_toggle()
+    {
+        $this->response()->setXML(true);
+        $blog = $this->request()->blog;
+        $feed = $this->request()->feed;
+        $enable = $this->request()->enable;
+        $user = $this->session()->user_profile_id;
+        $this->view()->result = self::updateColumn($user, $blog, $feed, 'enabled', $enable);
+    }
+
+    /**
+     * delete feed
+     */
+    public function A_delete()
+    {
+        $this->response()->setXML(true);
+        $blog = $this->request()->blog;
+        $feed = $this->request()->feed;
+        $user = $this->session()->user_profile_id;
+        $this->view()->result = self::updateColumn($user, $blog, $feed, 'deleted', true);
+    }
+
+    /**
+     * feed update
+     */
+    public function A_update()
+    {
+        $this->response()->setXML(true);
+        $blog = $this->request()->blog;
+        $feed = $this->request()->feed;
+        $user = $this->session()->user_profile_id;
+        $name = $this->request()->k;
+        $value = $this->request()->v;
+
+        $result = array('feed' => $feed);
+
+        if(in_array($name, array('feed_title'))) /* allowed columns */
+        {
+            if(self::updateColumn($user, $blog, $feed, $name, $value) != "")
+            {
+                $result = array_merge($result, array($name => $value));
+            }
+        }
+
+        $this->view()->result = $result;
     }
 }

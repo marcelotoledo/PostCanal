@@ -167,6 +167,24 @@ class UserBlogFeed extends B_Model
     }
 
     /**
+     * Get by Blog and Feed hash
+     *
+     * @param   integer $user_id
+     * @param   string  $blog_hash
+     * @param   string  $feed_hash
+     * @return  UserBlog|null
+     */
+    public static function getByBlogAndFeedHash($user_id, $blog_hash, $feed_hash)
+    {
+        $_s = "SELECT * FROM " . self::$table_name . "
+               WHERE hash = ? AND user_blog_id = (
+                    SELECT user_blog_id FROM model_user_blog
+                    WHERE user_profile_id = ? AND hash = ?)";
+        $_d = array($feed_hash, $user_id, $blog_hash);
+        return current(self::select($_s, $_d, PDO::FETCH_CLASS, get_class()));
+    }
+
+    /**
      * Get by Blog and hash
      *
      * @param   integer $blog_id
@@ -193,7 +211,7 @@ class UserBlogFeed extends B_Model
     {
         $sql = "SELECT a.hash as feed, b.feed_url, a.feed_title,
                        a.feed_description, b.feed_update_time,
-                       b.feed_status, a.ordering
+                       b.feed_status, a.ordering, a.enabled
                 FROM " . self::$table_name . " AS a
                 LEFT JOIN model_aggregator_feed AS b
                 ON (a.aggregator_feed_id = b.aggregator_feed_id)
