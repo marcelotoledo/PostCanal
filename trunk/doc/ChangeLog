@@ -93,5 +93,6 @@ HORAS TRABALHADAS: 1h
 - Correcoes no cadastro de feeds
 - Inclusao de opcao excluir feeds, blogs e entradas no queue (deleted)
 - Inclusao de editar nome e desativar feeds
+- Correcao do modulo aggregator do backend, google reader shared pode ser adicionado com sucesso
 
-HORAS TRABALHADAS: 8h
+HORAS TRABALHADAS: 10h

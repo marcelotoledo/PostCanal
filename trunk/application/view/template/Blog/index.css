@@ -18,6 +18,7 @@ div.blogitem
 div.blogitemleft
 {
     float: left;
+    width: 400px;
 }
 div.blogitemleftbold
 {

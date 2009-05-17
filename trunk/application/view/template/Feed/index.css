@@ -43,6 +43,7 @@ div.feeditemleft
 {
     float: left;
     cursor: move;
+    width: 400px;
 }
 div.feeditemleft:hover
 {

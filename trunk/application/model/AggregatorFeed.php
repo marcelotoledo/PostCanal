@@ -282,7 +282,7 @@ class AggregatorFeed extends B_Model
 
             $feeds = array();
             $client = new A_WebService();
-            $discover = $client->feed_discover(array('url' => $url));
+            $discover = ((array) $client->feed_discover(array('url' => $url)));
 
             if(count($discover) == 1)
             {

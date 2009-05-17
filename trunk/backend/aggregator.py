@@ -71,8 +71,15 @@ def article_dump(article):
 
     # content
     _content = article.get('content', "")
+
     if _content == "": _content = article.get('description', "")
     if _content == "": _content = article.get('summary', "")
+
+    if type(_content) == type(list()):
+        _content = _content[0]
+        if type(_content).__name__ == 'FeedParserDict':
+            _content = _content.value
+
     r['article_content'] = _content
 
     return r
