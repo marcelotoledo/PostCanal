@@ -224,4 +224,6 @@ $(document).ready(function()
             $("input[name='frmsubmit']").click();
         }
     });
+
+    $("input[name='email']").focus();
 });
