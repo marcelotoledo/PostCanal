@@ -174,35 +174,35 @@ class A_WebService
     }
 
     /**
-     * Get a queue item that needs publication
+     * Get a blog entry awaiting publication
      */
-    public function queue_publication_get($args)
+    public function blog_entry_pub_get($args)
     {
         if($this->validate_args($args, array()) == false) return null;
 
-        return QueueItem::findNeedPublish();
+        return BlogEntry::awaitingPublication();
     }
 
     /**
-     * Set queue item as published
+     * Set a blog entry to published
      */
-    public function queue_publication_status($args)
+    public function blog_entry_pub_set($args)
     {
         if($this->validate_args($args, array('id','published')) == false) return false;
 
-        $item = QueueItem::findByPrimaryKey($args['id']);
+        $entry = BlogEntry::findByPrimaryKey($args['id']);
         $published = ((boolean) $args['published']);
 
         try
         {
-            $item->publish_status = $published ? 
-                QueueItem::PS_PUBLISHED : 
-                QueueItem::PS_FAILED;
+            $entry->status_ = $published ? 
+                BlogEntry::STATUS_PUBLISHED : 
+                BlogEntry::STATUS_FAILED;
             $item->save();
         }
         catch(B_Exception $_e)
         {
-            $_m = "queue item set published webservice failed";
+            $_m = "trying to set blog entry as published failed";
             $_d = array ('method' => __METHOD__);
             B_Log::write($_m, E_USER_ERROR, $_d);
         }

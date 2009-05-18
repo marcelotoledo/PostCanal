@@ -166,17 +166,17 @@ class BlogEntry extends B_Model
      * 
      * @return  array
      */
-    public static function entryWaitingPublication()
+    public static function awaitingPublication()
     {
         $sql = "SELECT 
-                    a.user_blog_blog_entry_id as id, 
-                    a.entry_title AS entry_title,
-                    a.entry_content AS entry_content,
-                    b.manager_url as manager_url,
-                    b.manager_username as manager_username,
-                    b.manager_password as manager_password,
-                    c.type_name as blog_type,
-                    c.version_name as blog_version 
+                    a.user_blog_entry_id AS id, 
+                    a.entry_title        AS entry_title,
+                    a.entry_content      AS entry_content,
+                    b.blog_manager_url   AS blog_manager_url,
+                    b.blog_username      AS blog_username,
+                    b.blog_password      AS blog_password,
+                    c.type_name          AS blog_type,
+                    c.version_name       AS blog_version 
                 FROM 
                     model_user_blog_entry AS a 
                 LEFT JOIN 

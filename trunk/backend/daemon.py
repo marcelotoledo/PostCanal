@@ -32,7 +32,7 @@ class Daemon:
 
     def feed_update(self):
         update = self.client.feed_update_get({'token': self.token})
-
+        if type(update) != type(list()): update = {}
         if len(update) == 0: update = {}
 
         id = update.get('aggregator_feed_id')
@@ -46,16 +46,16 @@ class Daemon:
 
             dump = feed_dump(get_feed(url, modified))
             status = dump.get('feed_status')
-            total_entries = len(dump.get('entries'))
+            total_articles = len(dump.get('articles'))
 
-            logging.info("getting feed update returned with status (%s) and (%d) entries" % (status, total_entries))
+            logging.info("getting feed update returned with status (%s) and (%d) articles" % (status, total_articles))
             updated = self.client.feed_update_post({'token': self.token, 'id': id, 'data': dump})
-            logging.info("posting feed with id (%d) updated successfully with (%d) updated articles" % (id, updated))
+            logging.info("posting feed with id (%d) updated successfully with (%d) updated articles" % (int(id), int(updated)))
         else:
             logging.info("no feed to update")
 
     def blog_publish(self):
-        pub = self.client.queue_publication_get({'token': self.token})
+        pub = self.client.blog_entry_pub_get({'token': self.token})
 
         if type(pub)==type(dict()):
             from blog import init_type
@@ -63,24 +63,24 @@ class Daemon:
             id = int(pub.get('id'))
 
             t = init_type(pub.get('blog_type'),pub.get('blog_version'))
-            t.set_manager_url(pub.get('manager_url'))
-            t.username = pub.get('manager_username')
-            t.password = pub.get('manager_password')
+            t.set_manager_url(pub.get('blog_manager_url'))
+            t.username = pub.get('blog_username')
+            t.password = pub.get('blog_password')
 
             logging.info("starting to publish blog entry id (%d)" % (id))
 
             try:
                 p = t.publish({'title'  : pub.get('entry_title'),
                                'content': pub.get('entry_content')})
-                self.client.queue_publication_status({'token': self.token, 
-                                                      'id': id, 
-                                                      'published': True})
+                self.client.blog_entry_pub_set({'token': self.token, 
+                                                'id': id, 
+                                                'published': True})
                 logging.info("post id (%d) published successfully for blog entry id (%d)" % (p, id))
             except:
                 logging.info("post failed to publish for blog entry id (%d)" % (id))
-                self.client.queue_publication_status({'token': self.token, 
-                                                      'id': id, 
-                                                      'published': False})
+                self.client.blog_entry_pub_set({'token': self.token, 
+                                                'id': id, 
+                                                'published': False})
         else:
             logging.info("no blog entry to publish")
 

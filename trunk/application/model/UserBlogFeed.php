@@ -247,7 +247,7 @@ class UserBlogFeed extends B_Model
         $sql = "SELECT article_md5 AS article, article_title AS title, article_link AS link, 
                        article_date AS date, article_author AS author, article_content AS content
                 FROM model_user_blog_feed AS a
-                LEFT JOIN model_aggregator_feed_item AS b
+                LEFT JOIN model_aggregator_feed_article AS b
                 ON (a.aggregator_feed_id = b.aggregator_feed_id)
                 WHERE a.enabled = 1 AND a.deleted = 0 AND b.article_date < ? 
                 AND a.hash = ? AND a.user_blog_id = (
@@ -284,7 +284,7 @@ class UserBlogFeed extends B_Model
                        b.article_date AS date, b.article_author AS author, 
                        b.article_content AS content
                 FROM model_user_blog_feed AS a 
-                LEFT JOIN model_aggregator_feed_item AS b 
+                LEFT JOIN model_aggregator_feed_article AS b 
                 ON (a.aggregator_feed_id = b.aggregator_feed_id) 
                 WHERE a.enabled = 1 AND a.deleted = 0 
                 AND b.article_date < ? AND a.user_blog_id = (
