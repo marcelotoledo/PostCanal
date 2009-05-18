@@ -1,12 +1,13 @@
 <div class="subcontainer">
 
 <h1><?php echo $this->translation()->feeds ?></h1>
-<div id="feedaddlnkdiv">
+<div id="feedlnkdiv">
     <a id="feedaddlnk"><?php echo $this->translation()->feed_add ?>
+    <a id="feedimportlnk"><?php echo $this->translation()->feed_import ?>
 </div>
 
-<form>
-    <table id="feedaddformtable" style="display:none">
+<form id="feedaddform" style="display:none">
+    <table>
         <tr id="feedaddurlrow">
         <th><?php echo $this->translation()->feed_add_url ?>:</th>
         <td><input type="text" name="feedaddurl" value=""></td>
@@ -30,6 +31,21 @@
         <td class="buttons">
             <input name="feedaddcancel" type="button" value="<?php echo $this->translation()->application_cancel ?>">
             <input name="feedaddsubmit" type="button" value="<?php echo $this->translation()->application_submit ?>">
+        </td>
+        </tr>
+    </table>
+</form>
+
+<form id="feedimportform" enctype="multipart/form-data" action="<?php B_Helper::url('feed','index') ?>" method="POST" style="display:none">
+    <table>
+        <tr>
+        <th><?php echo $this->translation()->feed_import_file ?>:</th>
+        <td><input type="file" name="feedimportfile" value=""></td>
+        <tr>
+        <th>&nbsp;</th>
+        <td class="buttons">
+            <input name="feedimportcancel" type="button" value="<?php echo $this->translation()->application_cancel ?>">
+            <input name="feedimportsubmit" type="submit" value="<?php echo $this->translation()->application_submit ?>">
         </td>
         </tr>
     </table>

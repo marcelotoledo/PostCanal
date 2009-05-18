@@ -19,13 +19,57 @@ class C_Feed extends B_Controller
     }
 
     /**
-     * Default action
-     *
-     * @return void
+     * Feed import
+     */
+    protected static function importFromFile($filename, $filetype, $filesize)
+    {
+        $results = array();
+
+        if(file_exists($filename) && 
+           is_readable($filename) &&
+           $filesize < 2e05 && 
+           strtolower($filetype) == 'text/xml')
+        {
+            $opml = new A_OPML();
+            $f = fopen($filename, "r");
+            $opml->Parse(fread($f, $filesize));
+            fclose($f);
+            unlink($filename);
+
+            foreach($opml->data as $i)
+            {
+                $_u = addslashes($i['feeds']);
+                $_t = addslashes($i['names']);
+
+                if($_u && $_t)
+                {
+                    $results[] = array('url' => $_u, 'title' => $_t);
+                }
+            }
+        }
+
+        return $results;
+    }
+
+    /**
+     * List feeds
      */
     public function A_index()
     {
         $this->view()->setLayout('dashboard');
+
+        /* feed import from file upload */
+
+        $this->view()->import = array();
+
+        if($this->request()->getMethod() == B_Request::METHOD_POST &&
+           array_key_exists('feedimportfile', $_FILES))
+        {
+            $f = $_FILES['feedimportfile'];
+            $this->view()->import = self::importFromFile($f['tmp_name'], 
+                                                         $f['type'], 
+                                                         $f['size']);
+        }
 
         $id = $this->session()->user_profile_id;
         $blogs = UserBlog::findByUser($id, $enabled=true);
@@ -34,26 +78,21 @@ class C_Feed extends B_Controller
 
     /**
      * List feeds
-     *
-     * @return void
      */
     public function A_list()
     {
         $this->response()->setXML(true);
-
         $blog_hash = $this->request()->blog;
         $user_id = $this->session()->user_profile_id;
-
         $this->view()->feeds = UserBlogFeed::findAssocByBlogAndUser($blog_hash, $user_id);
 
-        $this->session()->user_blog_hash = $blog_hash;
-        $this->session()->dashboard_feed_display = 'thr';
+        // wrong place!
+        ////$this->session()->user_blog_hash = $blog_hash;
+        ////$this->session()->dashboard_feed_display = 'thr';
     }
 
     /**
      * Discover feeds from URL
-     *
-     * @return void
      */
     public function A_discover()
     {
@@ -67,15 +106,9 @@ class C_Feed extends B_Controller
 
     /**
      * Add feed
-     *
-     * @return void
      */
-    public function A_add()
+    protected function feedAdd($url, $title, $blog_hash)
     {
-        $this->response()->setXML(true);
-
-        $url = $this->request()->url;
-        $blog_hash = $this->request()->blog;
         $user_id = $this->session()->user_profile_id;
 
         $blog_feed = null;
@@ -108,19 +141,27 @@ class C_Feed extends B_Controller
                 $blog_feed = new UserBlogFeed();
                 $blog_feed->user_blog_id = $blog->user_blog_id;
                 $blog_feed->aggregator_feed_id = $feed->aggregator_feed_id;
-                $blog_feed->feed_title = $feed->feed_title;
+                $blog_feed->feed_title = $title ? $title : $feed->feed_title;
                 $blog_feed->feed_description = $feed->feed_description;
                 $blog_feed->save();
             }
         }
 
+        return $blog_feed;
+    }
+
+    public function A_add()
+    {
+        $this->response()->setXML(true);
+        $url = $this->request()->url;
+        $title = $this->request()->title;
+        $blog_hash = $this->request()->blog;
+        $blog_feed = $this->feedAdd($url, $title, $blog_hash);
         $this->view()->feed = is_object($blog_feed) ? $blog_feed->hash : '';
     }
 
     /**
-     * Update feed position
-     *
-     * @return void
+     * Feed update ordering position
      */
     public function A_position()
     {
@@ -137,7 +178,7 @@ class C_Feed extends B_Controller
     }
 
     /**
-     * update column
+     * Feed update column
      */
     protected static function updateColumn($user, $blog, $feed, $name, $value)
     {
@@ -154,7 +195,7 @@ class C_Feed extends B_Controller
     }
 
     /**
-     * disable feed
+     * Feed toggle (enable/disable)
      */
     public function A_toggle()
     {
@@ -167,7 +208,7 @@ class C_Feed extends B_Controller
     }
 
     /**
-     * delete feed
+     * Feed delete
      */
     public function A_delete()
     {
@@ -179,7 +220,7 @@ class C_Feed extends B_Controller
     }
 
     /**
-     * feed update
+     * Feed Update
      */
     public function A_update()
     {
@@ -201,5 +242,28 @@ class C_Feed extends B_Controller
         }
 
         $this->view()->result = $result;
+    }
+
+    /**
+     * Import feed from URL (discover + add)
+     */
+    public function A_import()
+    {
+        $this->response()->setXML(true);
+
+        $url = $this->request()->url;
+        $title = $this->request()->title;
+        $blog_hash = $this->request()->blog;
+
+        $result = current(AggregatorFeed::discover($url));
+
+        if(array_key_exists('feed_url', $result))
+        {
+            $url = $result['feed_url'];
+        }
+
+        $blog_feed = $this->feedAdd($url, $title, $blog_hash);
+
+        $this->view()->added = is_object($blog_feed);
     }
 }

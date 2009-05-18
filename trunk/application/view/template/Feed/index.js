@@ -8,6 +8,7 @@ $(document).ready(function()
     var feed_option_blank = feed_add_options.find("div#feedoptionblank");
     var feed_list_area = $("div#feedlistarea");
     var feed_item_blank = feed_list_area.find("div.feeditem[feed='blank']");
+    var feed_import_stack = Array();
 
     /* spinner */
 
@@ -50,18 +51,20 @@ $(document).ready(function()
         }
     }
 
+    /* feed add */
+
     function toggle_feed_add_form(s)
     {
         if(s == true)
         {
-            $("#feedaddlnkdiv").hide();
-            $("#feedaddformtable").show();
+            $("#feedlnkdiv").hide();
+            $("form#feedaddform").show();
             $("#feedaddurlrow").show();
         }
         else
         {
-            $("#feedaddlnkdiv").show();
-            $("#feedaddformtable").hide();
+            $("#feedlnkdiv").show();
+            $("form#feedaddform").hide();
             $("input[name='feedaddurl']").val("");
             $("#feedaddoptions > td").html("");
             feed_msg("");
@@ -94,7 +97,7 @@ $(document).ready(function()
     {
         $.ajax
         ({
-            type: "POST",
+            type: "GET",
             url: "<?php B_Helper::url('feed', 'discover') ?>",
             dataType: "xml",
             data: { url: url },
@@ -186,6 +189,61 @@ $(document).ready(function()
             {
                 feed_msg("<?php echo $this->translation()->blank_url ?>");
             }
+        }
+    }
+
+    /* feed import */
+
+    function toggle_feed_import_form(s)
+    {
+        if(s == true)
+        {
+            $("#feedlnkdiv").hide();
+            $("form#feedimportform").show();
+        }
+        else
+        {
+            $("form#feedimportform").hide();
+            $("#feedlnkdiv").show();
+        }
+    }
+
+    function feed_import_preview(title, added)
+    {
+        _st = added ? "<?php echo $this->translation()->added ?>" : 
+                      "<?php echo $this->translation()->failed ?>";
+        feed_list_area.prepend("- <i>" + title + " " + _st + "</i><br/>");
+    }
+
+    function feed_import()
+    {
+        if((stack_item = feed_import_stack.shift()))
+        {
+            set_active_request(true);
+            $.ajax
+            ({
+                type: "POST",
+                url: "<?php B_Helper::url('feed', 'import') ?>",
+                dataType: "xml",
+                data: { url   : stack_item.url, 
+                        title : stack_item.title, 
+                        blog  : current_blog },
+                complete: function()
+                {
+                    feed_import();
+                },
+                success: function (xml)
+                {
+                    d = $(xml).find('data');
+                    a = (d.find('added').text() == "true");
+                    feed_import_preview(stack_item.title, a);
+                }
+            });
+        }
+        else
+        {
+            set_active_request(false);
+            feed_list();
         }
     }
 
@@ -472,7 +530,7 @@ $(document).ready(function()
 
     /* EVENTS */
 
-    $("#feedaddlnkdiv").click(function()
+    $("a#feedaddlnk").click(function()
     {
         toggle_feed_add_form(true);
     });
@@ -493,6 +551,21 @@ $(document).ready(function()
     $("input[name='feedaddsubmit']").click(function()
     {
         feedaddform_submit();
+    });
+
+    $("a#feedimportlnk").click(function()
+    {
+        toggle_feed_import_form(true);
+    });
+
+    $("input[name='feedimportcancel']").click(function()
+    {
+        toggle_feed_import_form(false);
+    });
+
+    $("input[name='feedimportfile']").change(function(e)
+    {
+        $("input[name='feedimportsubmit']").click();
     });
 
     $("select[name='bloglst']").change(function()
@@ -534,4 +607,12 @@ $(document).ready(function()
     }
 
     feed_list_area_sortable();
+
+    /* feed import */
+
+    <?php foreach($this->import as $i): ?>
+    feed_import_stack.push({ 'url'  : "<?php echo $i['url'] ?>", 
+                             'title': "<?php echo $i['title'] ?>" });
+    <?php endforeach ?>
+    if(feed_import_stack.length > 0) { feed_import(); }
 });

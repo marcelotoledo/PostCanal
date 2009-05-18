@@ -10,7 +10,6 @@
 
 error_reporting (E_ALL);
 
-
 /* configure path */
 
 define('BASE_PATH', realpath(dirname(__FILE__) . '/../'));

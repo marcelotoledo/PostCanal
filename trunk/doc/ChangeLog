@@ -96,3 +96,12 @@ HORAS TRABALHADAS: 1h
 - Correcao do modulo aggregator do backend, google reader shared pode ser adicionado com sucesso
 
 HORAS TRABALHADAS: 10h
+
+==========
+17/05/2009
+==========
+
+- Correcao de bug com magic_quotes
+- Inclusao de recurso para importar feeds de arquivo OPML
+
+HORAS TRABALHADAS: 6h
