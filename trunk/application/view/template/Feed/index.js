@@ -4,6 +4,7 @@ $(document).ready(function()
 
     var active_request = false;
     var current_blog = null;
+    var body__ = $("body");
     var feed_add_options = $("tr#feedaddoptions > td");
     var feed_option_blank = feed_add_options.find("div#feedoptionblank");
     var feed_list_area = $("div#feedlistarea");
@@ -30,9 +31,27 @@ $(document).ready(function()
         alert("<?php echo $this->translation()->server_error ?>");
     }
 
-    /* feed actions */
+    /* set blog */
 
-    
+    function set_blog()
+    {
+        <?php if(count($this->blogs) == 1) : ?>
+        current_blog = $("#blogcur").val();
+        <?php elseif(count($this->blogs) > 1) : ?>
+        current_blog = $("select[name='bloglst'] > option:selected").val();
+        <?php endif ?>
+
+        toggle_feed_add_form(false);
+        toggle_feed_import_form(false);
+    }
+
+    function blog_init()
+    {
+        set_blog();
+        body__.trigger('after_blog');
+    }
+
+    /* feed actions */
 
     function feed_msg(m)
     {
@@ -243,7 +262,20 @@ $(document).ready(function()
         else
         {
             set_active_request(false);
-            feed_list();
+            body__.trigger('after_import');
+        }
+    }
+
+    function feed_import_init()
+    {
+        <?php foreach($this->import as $i): ?>
+        feed_import_stack.push({ 'url'  : "<?php echo $i['url'] ?>", 
+                                 'title': "<?php echo $i['title'] ?>" });
+        <?php endforeach ?>
+
+        if(feed_import_stack.length > 0)
+        {
+            feed_import();
         }
     }
 
@@ -332,6 +364,7 @@ $(document).ready(function()
             complete: function()
             {
                 set_active_request(false);
+                body__.trigger('after_list');
             },
             success: function (xml)
             {
@@ -341,6 +374,8 @@ $(document).ready(function()
             error: function () { err(); }
         });
     }
+
+    /* ordering */
 
     function feed_position(feed, position)
     {
@@ -385,6 +420,19 @@ $(document).ready(function()
 
             __p++;
         });
+    }
+
+    function feed_sortable_init()
+    {
+        feed_list_area.sortable(
+        { 
+            stop: function(e, ui)
+            {
+                sortable_callback(ui.item.attr('feed'));
+            },
+            handle: "div.feeditemleft"
+        });
+        feed_list_area.disableSelection();
     }
 
     function feed_set(feed)
@@ -575,44 +623,21 @@ $(document).ready(function()
 
     /* INIT */
 
-    /* set blog */
+    <?php if(count($this->import) > 0) : ?>
 
-    function set_blog()
-    {
-        <?php if(count($this->blogs) == 1) : ?>
-        current_blog = $("#blogcur").val();
-        <?php elseif(count($this->blogs) > 1) : ?>
-        current_blog = $("select[name='bloglst'] > option:selected").val();
-        <?php endif ?>
+    body__.bind('main'          , function(e) { blog_init(); });
+    body__.bind('after_blog'    , function(e) { feed_import_init(); });
+    body__.bind('after_import'  , function(e) { feed_list(); });
+    body__.bind('after_list'    , function(e) { feed_sortable_init(); });
 
-        feed_list();
-        toggle_feed_add_form(false);
-    }
+    <?php else : ?>
 
-    set_blog();
+    body__.bind('main'          , function(e) { blog_init(); });
+    body__.bind('after_blog'    , function(e) { feed_list(); });
+    body__.bind('after_list'    , function(e) { feed_sortable_init(); });
+    body__.bind('after_import'  , function(e) { });
 
-    /* feed list is sortable */
+    <?php endif ?>
 
-    function feed_list_area_sortable()
-    {
-        feed_list_area.sortable(
-        { 
-            stop: function(e, ui)
-            {
-                sortable_callback(ui.item.attr('feed'));
-            },
-            handle: "div.feeditemleft"
-        });
-        feed_list_area.disableSelection();
-    }
-
-    feed_list_area_sortable();
-
-    /* feed import */
-
-    <?php foreach($this->import as $i): ?>
-    feed_import_stack.push({ 'url'  : "<?php echo $i['url'] ?>", 
-                             'title': "<?php echo $i['title'] ?>" });
-    <?php endforeach ?>
-    if(feed_import_stack.length > 0) { feed_import(); }
+    body__.trigger('main');
 });
