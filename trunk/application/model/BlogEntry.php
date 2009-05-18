@@ -166,7 +166,7 @@ class BlogEntry extends B_Model
      * 
      * @return  array
      */
-    public static function awaitingPublication()
+    public static function findAwaitingPublication()
     {
         $sql = "SELECT 
                     a.user_blog_entry_id AS id, 

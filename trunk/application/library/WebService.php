@@ -113,6 +113,8 @@ class A_WebService
         $this->xmlrpc = new Zend_XmlRpc_Client($url);
     }
 
+    // =========================================================================
+
     /* SERVER METHODS 
      *
      * VERY IMPORTANT: Do not use docblocks here
@@ -146,7 +148,8 @@ class A_WebService
     public function feed_update_get($args)
     {
         if($this->validate_args($args, array()) == false) return null;
-        return current(AggregatorFeed::findOutdated($limit=1));
+        $limit = array_key_exists('limit', $args) ? intval($args['limit']) : 1;
+        return AggregatorFeed::findOutdated($limit);
     }
 
     /**
@@ -176,17 +179,17 @@ class A_WebService
     /**
      * Get a blog entry awaiting publication
      */
-    public function blog_entry_pub_get($args)
+    public function blog_publish_get($args)
     {
         if($this->validate_args($args, array()) == false) return null;
 
-        return BlogEntry::awaitingPublication();
+        return BlogEntry::findAwaitingPublication();
     }
 
     /**
      * Set a blog entry to published
      */
-    public function blog_entry_pub_set($args)
+    public function blog_publish_set($args)
     {
         if($this->validate_args($args, array('id','published')) == false) return false;
 

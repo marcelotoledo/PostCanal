@@ -103,7 +103,15 @@ HORAS TRABALHADAS: 10h
 
 - Correcao de bug com magic_quotes
 - Inclusao de recurso para importar feeds de arquivo OPML
-- Correcao de bugfixes e melhorias na listagem de feeds
-- Correcao de bugfixes no backend e dashboard
+- Bugfixes e melhorias na listagem de feeds
+- Bugfixes no backend e dashboard
 
 HORAS TRABALHADAS: 10h
+
+==========
+18/05/2009
+==========
+
+- Bugfixes no backend e dashboard
+
+HORAS TRABALHADAS: 2h

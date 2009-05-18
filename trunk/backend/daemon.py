@@ -30,32 +30,66 @@ class Daemon:
         frontend_url = frontend_url + config.get('webservice/frontendUrl')
         self.client = xmlrpclib.ServerProxy(frontend_url)
 
+        self.feed_update_get_limit = int(config.get('backend/feedUpdateGet/limit'))
+
     def feed_update(self):
-        update = self.client.feed_update_get({'token': self.token})
-        if type(update) != type(list()): update = {}
-        if len(update) == 0: update = {}
+        update = self.client.feed_update_get({ 'token': self.token,
+                                               'limit': self.feed_update_get_limit })
 
-        id = update.get('aggregator_feed_id')
-        url = update.get('feed_url')
-        modified = update.get('feed_modified')
+        if type(update) != type(list()):
+            logging.error("feed update get: wrong type, expected <list>")
+            pass
 
-        if url:
-            from aggregator import get_feed, feed_dump
+        if len(update) == 0:
+            logging.info("feed update get: no feeds")
+            pass
 
-            logging.info("starting feed update for url (%s) modified in (%s)" % (url, modified))
+        from aggregator import get_feed, feed_dump
+
+        for feed in update:
+
+            if type(feed) != type(dict()):
+                logging.error("feed update get: wrong type, expected <dict>")
+                pass
+
+            try:
+                id       = int(feed['aggregator_feed_id'])
+                url      = str(feed['feed_url'])
+                modified = str(feed['feed_modified'])
+            except:
+                logging.error("feed update get: invalid feed dictionary")
+                pass
+
+            _m = "feed update post: started for url (%s) modified in (%s)"
+            logging.info(_m % (url, modified))
 
             dump = feed_dump(get_feed(url, modified))
-            status = dump.get('feed_status')
-            total_articles = len(dump.get('articles'))
 
-            logging.info("getting feed update returned with status (%s) and (%d) articles" % (status, total_articles))
-            updated = self.client.feed_update_post({'token': self.token, 'id': id, 'data': dump})
-            logging.info("posting feed with id (%d) updated successfully with (%d) updated articles" % (int(id), int(updated)))
-        else:
-            logging.info("no feed to update")
+            if type(dump) != type(dict()):
+                logging.error("feed update post: wrong type for feed dump")
+                pass
+
+            try:
+                status         = dump['feed_status']
+                total_articles = len(dump['articles'])
+            except:
+                logging.error("feed update post: invalid feed dump dictionary")
+                pass
+
+            _m = "feed update post: feed dump returned status (%s) and (%d) articles"
+            logging.info(_m % (status, total_articles))
+
+            updated = self.client.feed_update_post({ 'token' : self.token, 
+                                                     'id'    : id, 
+                                                     'data'  : dump })
+
+            if type(updated) != type(int()): updated = 0
+
+            _m = "feed update post: feed id (%d) updated (%d) articles"
+            logging.info(_m % (id, updated))
 
     def blog_publish(self):
-        pub = self.client.blog_entry_pub_get({'token': self.token})
+        pub = self.client.blog_publish_get({'token': self.token})
 
         if type(pub)==type(dict()):
             from blog import init_type
@@ -72,15 +106,15 @@ class Daemon:
             try:
                 p = t.publish({'title'  : pub.get('entry_title'),
                                'content': pub.get('entry_content')})
-                self.client.blog_entry_pub_set({'token': self.token, 
-                                                'id': id, 
-                                                'published': True})
+                self.client.blog_publish_set({'token': self.token, 
+                                              'id': id, 
+                                              'published': True})
                 logging.info("post id (%d) published successfully for blog entry id (%d)" % (p, id))
             except:
                 logging.info("post failed to publish for blog entry id (%d)" % (id))
-                self.client.blog_entry_pub_set({'token': self.token, 
-                                                'id': id, 
-                                                'published': False})
+                self.client.blog_publish_set({'token': self.token, 
+                                              'id': id, 
+                                              'published': False})
         else:
             logging.info("no blog entry to publish")
 

@@ -67,4 +67,9 @@
         <backendUrl>/backend.py</backendUrl>
         <frontendUrl>/webservice</frontendUrl>
     </webservice>
+    <backend>
+        <feedUpdateGet>
+            <limit>3</limit>
+        </feedUpdateGet>
+    </backend>
 </environment>
