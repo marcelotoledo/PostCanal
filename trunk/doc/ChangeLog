@@ -113,5 +113,6 @@ HORAS TRABALHADAS: 10h
 ==========
 
 - Bugfixes no backend e dashboard
+- Inclusao de metodo (profile/preference) para armazenar/recuperar preferencias do perfil
 
-HORAS TRABALHADAS: 4h
+HORAS TRABALHADAS: 6h

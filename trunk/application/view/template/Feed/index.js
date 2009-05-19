@@ -3,6 +3,7 @@ $(document).ready(function()
     /* defaults */
 
     var active_request = false;
+    var blog_select_list = $("select[name='bloglst']");
     var current_blog = null;
     var body__ = $("body");
     var feed_add_options = $("tr#feedaddoptions > td");
@@ -21,7 +22,16 @@ $(document).ready(function()
 
     function set_active_request(b)
     {
-        ((active_request = b) == true) ? $.b_spinner_start() : $.b_spinner_stop();
+        if(((active_request = b) == true))
+        {
+            blog_select_list.attr('disabled', true);
+            $.b_spinner_start();
+        }
+        else
+        {
+            blog_select_list.removeAttr('disabled');
+            $.b_spinner_stop();
+        }
     }
 
     /* error */
@@ -29,6 +39,46 @@ $(document).ready(function()
     function err()
     {
         alert("<?php echo $this->translation()->server_error ?>");
+    }
+
+    /* preference */
+
+    function get_preference(k)
+    {
+        return do_preference(k, null);
+    }
+
+    function set_preference(k, v)
+    {
+        do_preference(k, v);
+    }
+
+    function do_preference(k, v)
+    {
+        $.ajax
+        ({
+            type: (v ? "POST" : "GET"),
+            url: "<?php B_Helper::url('profile', 'preference') ?>",
+            dataType: "xml",
+            data: { k: k, v: v },
+            beforeSend: function()
+            {
+                set_active_request(true);
+            },
+            complete: function()
+            {
+                set_active_request(false);
+            },
+            success: function (xml)
+            {
+                d = $(xml).find('data');
+                k = d.find('k')
+                v = d.find('v')
+            },
+            error: function () { err(); }
+        });
+
+        return v;
     }
 
     /* set blog */
@@ -43,11 +93,9 @@ $(document).ready(function()
 
         toggle_feed_add_form(false);
         toggle_feed_import_form(false);
-    }
 
-    function blog_init()
-    {
-        set_blog();
+        set_preference('dashboard_current_blog', current_blog);
+
         body__.trigger('after_blog');
     }
 
@@ -576,16 +624,22 @@ $(document).ready(function()
         });
     }
 
-    /* EVENTS */
+    /* TRIGGERS */
 
     $("a#feedaddlnk").click(function()
     {
-        toggle_feed_add_form(true);
+        if(active_request == false)
+        {
+            toggle_feed_add_form(true);
+        }
     });
 
     $("input[name='feedaddcancel']").click(function()
     {
-        toggle_feed_add_form(false);
+        if(active_request == false)
+        {
+            toggle_feed_add_form(false);
+        }
     });
 
     $("input[name='feedaddurl']").keypress(function(e)
@@ -598,17 +652,26 @@ $(document).ready(function()
 
     $("input[name='feedaddsubmit']").click(function()
     {
-        feedaddform_submit();
+        if(active_request == false)
+        {
+            feedaddform_submit();
+        }
     });
 
     $("a#feedimportlnk").click(function()
     {
-        toggle_feed_import_form(true);
+        if(active_request == false)
+        {
+            toggle_feed_import_form(true);
+        }
     });
 
     $("input[name='feedimportcancel']").click(function()
     {
-        toggle_feed_import_form(false);
+        if(active_request == false)
+        {
+            toggle_feed_import_form(false);
+        }
     });
 
     $("input[name='feedimportfile']").change(function(e)
@@ -616,23 +679,24 @@ $(document).ready(function()
         $("input[name='feedimportsubmit']").click();
     });
 
-    $("select[name='bloglst']").change(function()
+    blog_select_list.change(function()
     {
-        set_blog();
+        if(active_request == false)
+        {
+            set_blog();
+        }
     });
-
-    /* INIT */
 
     <?php if(count($this->import) > 0) : ?>
 
-    body__.bind('main'          , function(e) { blog_init(); });
+    body__.bind('main'          , function(e) { set_blog(); });
     body__.bind('after_blog'    , function(e) { feed_import_init(); });
-    body__.bind('after_import'  , function(e) { feed_list(); });
-    body__.bind('after_list'    , function(e) { feed_sortable_init(); });
+    body__.bind('after_import'  , function(e) { window.location="<?php B_Helper::url('feed') ?>" });
+    body__.bind('after_list'    , function(e) { });
 
     <?php else : ?>
 
-    body__.bind('main'          , function(e) { blog_init(); });
+    body__.bind('main'          , function(e) { set_blog(); });
     body__.bind('after_blog'    , function(e) { feed_list(); });
     body__.bind('after_list'    , function(e) { feed_sortable_init(); });
     body__.bind('after_import'  , function(e) { });

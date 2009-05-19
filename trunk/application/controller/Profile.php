@@ -342,8 +342,7 @@ class C_Profile extends B_Controller
      * @param   string  $message
      * @return  boolean
      */
-    private function passwordAuthenticated
-        ($id, $current, $password, $confirm, &$message)
+    private function passwordAuthenticated($id, $current, $password, $confirm, &$message)
     {
         $updated = false;
 
@@ -388,8 +387,7 @@ class C_Profile extends B_Controller
      * @param   string  $message
      * @return  boolean
      */
-    private function passwordNotAuthenticated
-        ($email, $hash, $password, $confirm, &$message)
+    private function passwordNotAuthenticated($email, $hash, $password, $confirm, &$message)
     {
         $updated = false;
 
@@ -660,9 +658,26 @@ class C_Profile extends B_Controller
      */
     public function A_preference()
     {
+        $this->authorize();
+
         $this->response()->setXML(true);
 
-        // ...
+        $pk = $this->request()->k;
+        $pv = $this->request()->v;
+        $id = $this->session()->user_profile_id;
+
+        if($pk && $pv)
+        {
+            UserProfile::setPreference($id, array($pk => $pv));
+        }
+        elseif($pk)
+        {
+            $ar = UserProfile::getPreference($id);
+            $pv = $ar[$pk];
+        }
+
+        $this->view()->k = $pk;
+        $this->view()->v = $pv;
     }
 
     /**
@@ -673,7 +688,7 @@ class C_Profile extends B_Controller
      * @param   UserProfile $profile
      * @return  boolean
      */
-    private function notify ($email, $template, $profile=null)
+    private function notify($email, $template, $profile=null)
     {
         $mailer = new A_Mailer();
 

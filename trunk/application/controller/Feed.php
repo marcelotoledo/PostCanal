@@ -16,6 +16,8 @@ class C_Feed extends B_Controller
     public function before()
     {
         $this->authorize();
+        $id = $this->session()->user_profile_id;
+        $this->view()->profile_preference = UserProfile::getPreference($id);
     }
 
     /**
@@ -132,7 +134,6 @@ class C_Feed extends B_Controller
 
             if(is_object($blog_feed) == true)
             {
-                $blog_feed->enabled = true;
                 $blog_feed->deleted = false;
                 $blog_feed->save();
             }

@@ -111,6 +111,13 @@ class UserProfile extends B_Model
 
     // -------------------------------------------------------------------------
 
+    protected static $preference_default = array
+    (
+        'dashboard_current_blog'    => ""    ,
+        'dashboard_feed_display'    => "all" ,
+        'dashboard_article_display' => "lst"
+    );
+
     /**
      * Get UserProfile by primary key
      *
@@ -185,6 +192,7 @@ class UserProfile extends B_Model
      * Get UserProfile from email
      *
      * @param   string  $email
+     * 
      * @return  UserProfile|null
      */
     public static function getByEmail($email)
@@ -202,6 +210,7 @@ class UserProfile extends B_Model
      *
      * @param   string  $email
      * @param   string  $password_md5   md5($password)
+     * 
      * @return  UserProfile|null
      */
     public static function getByLogin($email, $password_md5)
@@ -220,6 +229,7 @@ class UserProfile extends B_Model
      *
      * @param   string  $email
      * @param   string  $hash
+     * 
      * @return  UserProfile|null
      */
     public static function getByHash($email, $hash)
@@ -231,5 +241,55 @@ class UserProfile extends B_Model
             " WHERE login_email_local = ? AND login_email_domain = ? " .
             " AND hash = ? AND enabled = ?", 
             array($local, $domain, $hash, true), PDO::FETCH_CLASS, get_class()));
+    }
+
+    /**
+     * Get preference array
+     *
+     * @param   integer     $id     User Profile ID
+     *
+     * @return  array
+     */
+    public static function getPreference($id)
+    {
+        $preference = array();
+
+        if(is_object(($profile = self::getByPrimaryKey($id))))
+        {
+            $varr = ((array) unserialize($profile->preference_serialized));
+
+            foreach(self::$preference_default as $k => $v)
+            {
+                $preference[$k] = array_key_exists($k, $varr) ? $varr[$k] : $v;
+            }
+        }
+
+        return $preference;
+    }
+
+    /**
+     * Set preference array
+     *
+     * @param   integer     $id     User Profile ID
+     * @param   array       $narr   Preference array
+     */
+    public static function setPreference($id, $narr)
+    {
+        $preference = array();
+
+        if(is_object(($profile = self::getByPrimaryKey($id))))
+        {
+            $varr = ((array) unserialize($profile->preference_serialized));
+
+            foreach(self::$preference_default as $k => $v)
+            {
+                $preference[$k] = array_key_exists($k, $narr) ? 
+                    $narr[$k] : 
+                    (array_key_exists($k, $varr) ? $varr[$k] : $v);
+            }
+
+            $profile->preference_serialized = serialize($preference);
+            $profile->save();
+        }
     }
 }

@@ -29,7 +29,7 @@
     <b><?php echo $this->translation()->application_blog ?>: </b>
     <select name="bloglst">
     <?php foreach($this->blogs as $c) : ?>
-    <option value="<?php echo $c->hash ?>" <?php if($this->session()->user_blog_hash == $c->hash) echo "selected"; ?>><?php echo $c->name ?></option>
+    <option value="<?php echo $c->hash ?>" <?php if($this->profile_preference['dashboard_current_blog'] == $c->hash) echo "selected"; ?>><?php echo $c->name ?></option>
     <?php endforeach ?>
     </select>
 <?php endif ?>

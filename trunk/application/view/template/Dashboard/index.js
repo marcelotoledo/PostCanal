@@ -6,9 +6,9 @@ $(document).ready(function()
     var current_blog = null;
 
     var feed_list_area = $("#feedlistarea");
-    var feed_display = '<?php echo $this->feed_display ?>';
+    var feed_display = "<?php echo $this->profile_preference['dashboard_feed_display'] ?>";
 
-    var article_display = '<?php echo $this->article_display ?>';
+    var article_display = "<?php echo $this->profile_preference['dashboard_article_display'] ?>";
     var articles_content = Array();
 
     var bottom_bar = $("#bottombar");
@@ -371,6 +371,8 @@ $(document).ready(function()
             $("span.articledspexp").show();
             article_content_show_all();
         }
+
+        set_preference('dashboard_article_display', article_display);
     }
 
     /* set feed display mode */
@@ -393,7 +395,49 @@ $(document).ready(function()
             feed_list();
         }
 
+        set_preference('dashboard_feed_display', feed_display);
         set_article_display(article_display);
+        feed_list_area.scrollTop(0);
+    }
+
+    /* preference */
+
+    function get_preference(k)
+    {
+        return do_preference(k, null);
+    }
+
+    function set_preference(k, v)
+    {
+        do_preference(k, v);
+    }
+
+    function do_preference(k, v)
+    {
+        $.ajax
+        ({
+            type: (v ? "POST" : "GET"),
+            url: "<?php B_Helper::url('profile', 'preference') ?>",
+            dataType: "xml",
+            data: { k: k, v: v },
+            beforeSend: function()
+            {
+                set_active_request(true);
+            },
+            complete: function()
+            {
+                set_active_request(false);
+            },
+            success: function (xml)
+            {
+                d = $(xml).find('data');
+                k = d.find('k')
+                v = d.find('v')
+            },
+            error: function () { err(); }
+        });
+
+        return v;
     }
 
     /* set blog */
@@ -406,10 +450,12 @@ $(document).ready(function()
         current_blog = $("select[name='bloglst'] > option:selected").val();
         <?php endif ?>
 
+        set_preference('dashboard_current_blog', current_blog);
+
         set_feed_display(feed_display);
     }
 
-    /* EVENTS */
+    /* TRIGGERS */
 
     $(window).resize(function()
     {
