@@ -14,7 +14,7 @@ body
 
 a
 {
-    color: navy;
+    color: midnightblue;
     text-decoration: underline;
     cursor: pointer; 
     cursor: hand;
@@ -22,7 +22,7 @@ a
 
 a:hover
 {
-    color: blue;
+    color: blue
 }
 
 h1

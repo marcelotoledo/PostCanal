@@ -148,8 +148,7 @@ class A_WebService
     public function feed_update_get($args)
     {
         if($this->validate_args($args, array()) == false) return null;
-        $limit = array_key_exists('limit', $args) ? intval($args['limit']) : 1;
-        return AggregatorFeed::findOutdated($limit);
+        return AggregatorFeed::findOutdated($limit=1);
     }
 
     /**
@@ -182,7 +181,6 @@ class A_WebService
     public function blog_publish_get($args)
     {
         if($this->validate_args($args, array()) == false) return null;
-
         return BlogEntry::findAwaitingPublication();
     }
 

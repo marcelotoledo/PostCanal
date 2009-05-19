@@ -30,11 +30,8 @@ class Daemon:
         frontend_url = frontend_url + config.get('webservice/frontendUrl')
         self.client = xmlrpclib.ServerProxy(frontend_url)
 
-        self.feed_update_get_limit = int(config.get('backend/feedUpdateGet/limit'))
-
     def feed_update(self):
-        update = self.client.feed_update_get({ 'token': self.token,
-                                               'limit': self.feed_update_get_limit })
+        update = self.client.feed_update_get({ 'token': self.token })
 
         if type(update) != type(list()):
             logging.error("feed update get: wrong type, expected <list>")
@@ -89,34 +86,66 @@ class Daemon:
             logging.info(_m % (id, updated))
 
     def blog_publish(self):
-        pub = self.client.blog_publish_get({'token': self.token})
+        publish = self.client.blog_publish_get({ 'token': self.token })
 
-        if type(pub)==type(dict()):
-            from blog import init_type
+        if type(publish) != type(list()):
+            logging.error("blog publish get: wrong type, expected <list>")
+            pass
 
-            id = int(pub.get('id'))
+        if len(publish) == 0:
+            logging.info("blog publish get: no entries")
+            pass
 
-            t = init_type(pub.get('blog_type'),pub.get('blog_version'))
-            t.set_manager_url(pub.get('blog_manager_url'))
-            t.username = pub.get('blog_username')
-            t.password = pub.get('blog_password')
+        from blog import init_type
 
-            logging.info("starting to publish blog entry id (%d)" % (id))
+        for entry in publish:
+
+            if type(entry) != type(dict()):
+                logging.error("blog publish get: wrong type, expected <dict>")
+                pass
 
             try:
-                p = t.publish({'title'  : pub.get('entry_title'),
-                               'content': pub.get('entry_content')})
-                self.client.blog_publish_set({'token': self.token, 
-                                              'id': id, 
-                                              'published': True})
-                logging.info("post id (%d) published successfully for blog entry id (%d)" % (p, id))
+                id            = int(entry['id'])
+                blog_type     = str(entry['blog_type'])
+                blog_version  = str(entry['blog_version'])
+                manager_url   = str(entry['blog_manager_url'])
+                blog_username = str(entry['blog_username'])
+                blog_password = str(entry['blog_password'])
+                entry_title   = str(entry['entry_title'])
+                entry_content = str(entry['entry_content'])
             except:
-                logging.info("post failed to publish for blog entry id (%d)" % (id))
-                self.client.blog_publish_set({'token': self.token, 
-                                              'id': id, 
-                                              'published': False})
-        else:
-            logging.info("no blog entry to publish")
+                logging.error("blog publish get: invalid entry dictionary")
+                pass
+
+            t = init_type(blog_type, blog_version)
+
+            if type(t) != type(object()):
+                logging.error("blog publish get: unknown blog type")
+                pass
+
+            t.set_manager_url(manager_url)
+            t.username = blog_username
+            t.password = blog_password
+
+
+            _m = "blog publish post: started for blog entry id (%d)"
+            logging.info(_m % (id))
+
+            try:
+                post_id = t.publish({ 'title'  : entry_title,
+                                      'content': entry_content })
+                self.client.blog_publish_set({ 'token'     : self.token, 
+                                               'id'        : id, 
+                                               'published' : True })
+                _m = "blog publish post: post id (%d) "
+                _m = _m + "published successfully for blog entry id (%d)"
+                logging.info(_m % (int(post_id), id))
+            except:
+                _m = "blog publish post: failed to publish for blog entry id (%d)"
+                logging.info(_m % (id))
+                self.client.blog_publish_set({ 'token'     : self.token, 
+                                               'id'        : id, 
+                                               'published' : False })
 
 def start(argv):
     base_path = os.path.abspath("../")

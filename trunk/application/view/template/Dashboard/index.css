@@ -93,7 +93,7 @@ div.article
 }
 div.article:hover
 {
-    background-color: lightyellow;
+    background-color: khaki;
 }
 div.articleall
 {
@@ -137,15 +137,22 @@ div.articlecontent
 {
     display: none;
     padding: 15px;
-    border-bottom: 2px solid silver;
+    border: 2px solid dimgray;
+    border-top: 0;
 }
 div.articlecontent h1
 {
     font-size: large;
 }
+div.articlecontent h2
+{
+    font-size: small;
+    color: gray;
+}
 div.articlecontentshow
 {
-    background-color: lightyellow;
+    background-color: khaki;
     border-bottom: 0;
-    border-top: 1px solid silver;
+    border: 2px solid dimgray;
+    border-bottom: 1px solid gainsboro;
 }

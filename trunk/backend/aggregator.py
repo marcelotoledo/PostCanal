@@ -125,10 +125,7 @@ def guess_feeds(url):
     r = []
     f = feedfinder.feeds(url)
     if len(f) == 1:
-        from vendor import feedparser
-        i = f[0]
-        p = feedparser.parse(i)
-        r.append({ 'url': i, 'parsed': p.feed, 'articles': p['entries'] })
+        r.append(get_feed(f[0]))
     else:
         for i in f:
             r.append({'url': i, 'parsed': None, 'articles': [] })
@@ -136,6 +133,12 @@ def guess_feeds(url):
 
 def get_feed(url, modified=None):
     from vendor import feedparser
+
+    # sanitizer whitelist
+    _wl = ['object','param','embed']
+    feedparser._HTMLSanitizer.acceptable_elements.extend(_wl)
+    _wl = ['flashvars']
+    feedparser._HTMLSanitizer.acceptable_attributes.extend(_wl)
 
     p = None
     if modified == '': modified = None

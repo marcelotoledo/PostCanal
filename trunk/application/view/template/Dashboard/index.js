@@ -132,31 +132,32 @@ $(document).ready(function()
             a = articles_content[article];
             c = $("div.articlecontent[article='" + article + "']"); 
             d = "";
-            /*
-            if(a.author)
-            {
-                d += "<p><b><?php echo $this->translation()->author ?>: </b>" + a.author + "</p>";
-            }
-            */
             if(a.content)
             {
-                d += "<p>" + a.content + "</p>";
+                if(a.title)
+                {
+                    d += "<h1>" + a.title + "</h1>";
+                }
+                if(a.author)
+                {
+                    d += "<h2>" + a.author + "</h2>";
+                }
+
+                d += "<p>" + a.content + "</p>\n";
             }
-            if(d == "")
+            else
             {
-                d = "<?php echo $this->translation()->no_content ?>";
-            }
-            if(a.title)
-            {
-                d = "<h1>" + a.title + "</h1>\n" + d;
+                d += "<?php echo $this->translation()->no_content ?>\n";
             }
             c.html(d);
-            c.show();
+
             $("div.article[article='" + article + "']").addClass('articlecontentshow'); 
+            c.show();
+
+            /* scroll */
 
             if(article_display == 'lst')
             {
-                /* fix scroll */
                 _tb_h = (feed_display == 'all') ? 50 : 25;
                 _fa_h = feed_list_area.outerHeight();
                 _fa_p = feed_list_area.position().top;
@@ -244,7 +245,7 @@ $(document).ready(function()
                 container.append("<div class=\"article article" + feed_display + "\" article=\"" + _article + "\"><div class=\"articlelabel\"><nobr>" + _label + "</nobr></div><div class=\"articleinfo\">@ " + _info + "</div><div class=\"articlebuttons\">" + _buttons + "</div><div style=\"clear:both\"></div></div><div class=\"articlecontent\" article=\"" + _article + "\"></div>\n");
                 articles_content[_article] = { 
                     title:   _title,
-                    /* author:  $(this).find('author').text(), */
+                    author:  $(this).find('author').text(),
                     content: $(this).find('content').text() 
                 };
             });

@@ -191,7 +191,7 @@ class BlogEntry extends B_Model
                     a.updated_at ASC
                 LIMIT 1";
 
-        return current(self::select($sql, array(self::STATUS_WAITING), PDO::FETCH_ASSOC));
+        return self::select($sql, array(self::STATUS_WAITING), PDO::FETCH_ASSOC);
     }
 
     /**
