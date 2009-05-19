@@ -44,21 +44,34 @@ div#feedlistarea
 {
     overflow: auto;
 }
-
-div#feedareahead span.title
+div#feedareahead div.title
 {
+    float: left;
     font-size: medium;
     font-weight: bold;
     text-transform: uppercase;
 }
-div#feedareahead span.feeddisplay
+div#feedareahead div.feeddisplay
 {
+    float: left;
     padding-left: 30px;
 }
-div#feedareahead span.articledisplay
+div#feedareahead div.articledisplay
 {
+    float: left;
     padding-left: 15px;
 }
+div#feedareahead div.feedrefresh
+{
+    float: right;
+    padding-right: 15px;
+}
+div#feedareahead div.feednavigation
+{
+    float: right;
+    padding-right: 15px;
+}
+
 div.feeditem
 {
     font-weight: bold;

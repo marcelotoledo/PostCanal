@@ -2,8 +2,9 @@
 
 <div id="feedarea">
 <div id="feedareahead" class="containerhead">
-    <span class="title"><?php echo $this->translation()->feeds ?></span>
-    <span class="feeddisplay">
+    <div class="title"><?php echo $this->translation()->feeds ?></div>
+
+    <div class="feeddisplay">
     <b><?php echo $this->translation()->feeds_display ?>: </b>
     <span class="feedsdspall" style="display:none">
         <?php echo $this->translation()->feeds_display_all ?> | 
@@ -13,8 +14,9 @@
         <a id="feeddsplnkall"><?php echo $this->translation()->feeds_display_all ?></a> | 
         <?php echo $this->translation()->feeds_display_threaded ?>
     </span>
-    </span>
-    <span class="articledisplay">
+    </div>
+
+    <div class="articledisplay">
     <b><?php echo $this->translation()->articles_display ?>: </b>
     <span class="articledsplst" style="display:none">
         <?php echo $this->translation()->articles_display_list ?> | 
@@ -24,39 +26,22 @@
         <a id="articledsplnklst"><?php echo $this->translation()->articles_display_list?></a> | 
         <?php echo $this->translation()->articles_display_expanded ?>
     </span>
-    </span>
+    </div>
+
+    <div class="feednavigation" style="display:none">
+        <a id="articlepreviouslnk">&lt; <?php echo $this->translation()->previous ?></a> | 
+        <a id="articlenextlnk"><?php echo $this->translation()->next ?> &gt;</a>
+    </div>
+
+    <div class="feedrefresh">
+        <a id="feedrefreshlnk"><?php echo $this->translation()->refresh ?></a>
+    </div>
+
+    <div style="clear:both"></div>
 </div>
+
 <div id="feedlistarea"></div>
 </div>
-
-<div id="bottombar">
-<div id="bottomleftbar"><nobr>
-
-<table><tr>
-<td><span><b><?php echo $this->translation()->mode ?>: </b>
-<select name="queuemode">
-    <option value="M"><?php echo $this->translation()->queue_mode_manual ?></option>
-    <option value="A"><?php echo $this->translation()->queue_mode_automatic ?></option>
-</select>
-</span></td>
-<td><span class="qctl">&nbsp;</span></td>
-<th>&nbsp;</th>
-<td><span class="queued"><?php echo $this->translation()->queued ?>: <i>0</i></span></td>
-<td><span class="nextpub"><?php echo $this->translation()->next_publication ?>: <i>never</i></span></td>
-</tr></table>
-
-</nobr></div>
-
-<!--
-<div id="bottomrightbar"><nobr>
-<span class="hctl hctl-open">&nbsp;</span>
-</nobr></div>
-</div>
-
-<div id="queuelistbar" style="display:none">
-queue
-</div>
--->
 
 <?php else : ?>
 

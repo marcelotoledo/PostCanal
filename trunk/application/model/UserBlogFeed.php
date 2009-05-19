@@ -219,7 +219,7 @@ class UserBlogFeed extends B_Model
                     SELECT user_blog_id
                     FROM model_user_blog
                     WHERE hash = ? AND user_profile_id = ?)
-                AND b.enabled = 1 AND deleted = 0
+                AND a.enabled = 1 AND b.enabled = 1 AND deleted = 0
                 ORDER BY a.ordering ASC, a.created_at DESC";
         
         return self::select($sql, array($blog_hash, $user_id), PDO::FETCH_ASSOC);

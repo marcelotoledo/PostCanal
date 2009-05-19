@@ -87,10 +87,6 @@ class C_Feed extends B_Controller
         $blog_hash = $this->request()->blog;
         $user_id = $this->session()->user_profile_id;
         $this->view()->feeds = UserBlogFeed::findAssocByBlogAndUser($blog_hash, $user_id);
-
-        // wrong place!
-        ////$this->session()->user_blog_hash = $blog_hash;
-        ////$this->session()->dashboard_feed_display = 'thr';
     }
 
     /**

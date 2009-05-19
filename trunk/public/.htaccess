@@ -9,7 +9,7 @@ AddHandler cgi-script .py
 #     Allow from 127.0.0.1
 # </Files>
 
-# http://br2.php.net/manual/en/security.magicquotes.disabling.php
+# http://www.php.net/manual/en/security.magicquotes.disabling.php
 php_flag magic_quotes_gpc Off
 
 RewriteEngine On

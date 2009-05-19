@@ -3,9 +3,12 @@ $(document).ready(function()
     /* defaults */
 
     var active_request = false;
+
+    var body__ = $("body");
+
     var blog_select_list = $("select[name='bloglst']");
     var current_blog = null;
-    var body__ = $("body");
+
     var feed_add_options = $("tr#feedaddoptions > td");
     var feed_option_blank = feed_add_options.find("div#feedoptionblank");
     var feed_list_area = $("div#feedlistarea");
@@ -88,7 +91,7 @@ $(document).ready(function()
         <?php if(count($this->blogs) == 1) : ?>
         current_blog = $("#blogcur").val();
         <?php elseif(count($this->blogs) > 1) : ?>
-        current_blog = $("select[name='bloglst'] > option:selected").val();
+        current_blog = blog_select_list.find("option:selected").val();
         <?php endif ?>
 
         toggle_feed_add_form(false);

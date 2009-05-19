@@ -2,19 +2,19 @@ $(document).ready(function()
 {
     var active_request = false;
 
+    var body__ = $("body");
+
     var top_bar = $("#topbar");
+    var blog_select_list = $("select[name='bloglst']");
     var current_blog = null;
 
     var feed_list_area = $("#feedlistarea");
     var feed_display = "<?php echo $this->profile_preference['dashboard_feed_display'] ?>";
+    var feed_navigation = $("div.feednavigation");
 
     var article_display = "<?php echo $this->profile_preference['dashboard_article_display'] ?>";
     var articles_content = Array();
-
-    var bottom_bar = $("#bottombar");
-    var queue_list_bar = $("#queuelistbar");
-    var queue_display = 0; // 0 none | 1 half | 2 max
-    var queue_height_control = $("#bottomrightbar span.hctl");
+    var current_article = null;
 
 
     /* spinner */
@@ -125,13 +125,26 @@ $(document).ready(function()
 
     /* articles */
 
+    function article_scroll(article)
+    {
+        b = $("div.article[article='" + article + "']");
+        _fa_p = feed_list_area.position().top;
+        _fa_s = feed_list_area.scrollTop();
+        _ah_p = b.position().top;
+        _ah_s = _fa_s + _ah_p - _fa_p;
+        feed_list_area.scrollTop(_ah_s);
+    }
+
     function article_content_show(article)
     {
         if(articles_content[article])
         {
+            current_article = article;
             a = articles_content[article];
+            b = $("div.article[article='" + article + "']");
             c = $("div.articlecontent[article='" + article + "']"); 
             d = "";
+
             if(a.content)
             {
                 if(a.title)
@@ -149,47 +162,16 @@ $(document).ready(function()
             {
                 d += "<?php echo $this->translation()->no_content ?>\n";
             }
-            c.html(d);
 
-            $("div.article[article='" + article + "']").addClass('articlecontentshow'); 
+            c.html(d);
+            b.addClass('articlecontentshow'); 
             c.show();
 
             /* scroll */
 
             if(article_display == 'lst')
             {
-                _tb_h = (feed_display == 'all') ? 50 : 25;
-                _fa_h = feed_list_area.outerHeight();
-                _fa_p = feed_list_area.position().top;
-                _fa_s = feed_list_area.scrollTop();
-                _ac_h = c.height();
-                _ac_p = c.position().top;
-                _ac_s = _fa_s;
-
-                if(_ac_p > _fa_h / 2)
-                {
-                    _ac_s = _fa_s - _fa_h + _ac_h + _ac_p + _tb_h;
-                }
-                else
-                {
-                    _ac_s = _fa_s + _ac_p - _tb_h - _fa_p - _tb_h;
-                }
-
-                /*
-                __v_t = _ac_p - _tb_h - _fa_p - _tb_h;
-                __v_b = _fa_h - _ac_h - _ac_p - _tb_h;
-
-                if(_ac_h > _fa_h || __v_t < 0)
-                {
-                    _ac_s = _fa_s + __v_t;
-                }
-                else if(__v_b < 0)
-                {
-                    _ac_s = _fa_s - __v_b;
-                }
-                */
-
-                feed_list_area.scrollTop(_ac_s);
+                article_scroll(article);
             }
         }
     }
@@ -203,20 +185,24 @@ $(document).ready(function()
                 article = $(this).attr('article');
                 article_content_show(article);
             }
+            $(this).hide(); // hide title
         });
     }
 
     function article_content_hide(article)
     {
+        b = $("div.article[article='" + article + "']"); 
         c = $("div.articlecontent[article='" + article + "']"); 
         c.html("");
         c.hide();
-        $("div.article[article='" + article + "']").removeClass('articlecontentshow'); 
+        b.removeClass('articlecontentshow'); 
+        b.show(); // when hide
     }
 
     function article_content_hide_all()
     {
-        feed_list_area.find("div.articlecontentshow").each(function(){
+        feed_list_area.find("div.articlecontentshow").each(function()
+        {
             article = $(this).attr('article');
             article_content_hide(article);
         });
@@ -227,8 +213,10 @@ $(document).ready(function()
         if(articles.length > 0)
         {
             container.html("");
+            _counter = 0;
             articles.each(function()
             {
+                _counter++;
                 _article = $(this).find('article').text();
                 _title = $(this).find('title').text();
                 _link = $(this).find('link').text();
@@ -242,7 +230,7 @@ $(document).ready(function()
                 _label+= "<div class=\"articletitle\">" + _title + "</div>";
                 _info = _date;
                 _buttons = "<a href=\"" + _link + "\" target=\"_blank\">view</a>";
-                container.append("<div class=\"article article" + feed_display + "\" article=\"" + _article + "\"><div class=\"articlelabel\"><nobr>" + _label + "</nobr></div><div class=\"articleinfo\">@ " + _info + "</div><div class=\"articlebuttons\">" + _buttons + "</div><div style=\"clear:both\"></div></div><div class=\"articlecontent\" article=\"" + _article + "\"></div>\n");
+                container.append("<div class=\"article article" + feed_display + "\" article=\"" + _article + "\" counter=\"" + _counter + "\" lastitem=\"" + ((_counter == articles.length) ? 'true' : 'false') + "\"><div class=\"articlelabel\"><nobr>" + _label + "</nobr></div><div class=\"articleinfo\">@ " + _info + "</div><div class=\"articlebuttons\">" + _buttons + "</div><div style=\"clear:both\"></div></div><div class=\"articlecontent\" article=\"" + _article + "\"></div>\n");
                 articles_content[_article] = { 
                     title:   _title,
                     author:  $(this).find('author').text(),
@@ -352,6 +340,61 @@ $(document).ready(function()
         });
     }
 
+    function article_refresh()
+    {
+        if(feed_display=='all')
+        {
+            article_all();
+        }
+        if(feed_display=='thr') /* threaded */
+        {
+            feed_list();
+        }
+
+        feed_list_area.scrollTop(0);
+    }
+
+    function article_next()
+    {
+        if(current_article==null)
+        {
+            _c_a = feed_list_area.find("div.article");
+
+            if(k = _c_a.attr('article'))
+            {
+                article_content_show(k);
+            }
+        }
+        else
+        {
+            _c_a = $("div.article[article='" + current_article + "']");
+            _n_a = _c_a.nextAll("div.article");
+
+               j = _c_a.attr('article');
+            if(k = _n_a.attr('article'))
+            {
+                article_content_hide(j)
+                article_content_show(k);
+            }
+        }
+    }
+
+    function article_previous()
+    {
+        if(current_article)
+        {
+            _c_a = $("div.article[article='" + current_article + "']");
+            _p_a = _c_a.prevAll("div.article");
+
+               j = _c_a.attr('article');
+            if(k = _p_a.attr('article'))
+            {
+                article_content_hide(j)
+                article_content_show(k);
+            }
+        }
+    }
+
     /* set article display mode */
 
     function set_article_display(mode)
@@ -363,12 +406,14 @@ $(document).ready(function()
         {
             article_display = mode;
             $("span.articledsplst").show();
+            feed_navigation.show();
             article_content_hide_all();
         }
         if(mode=='exp') /* expanded */
         {
             article_display = mode;
             $("span.articledspexp").show();
+            feed_navigation.hide();
             article_content_show_all();
         }
 
@@ -447,7 +492,7 @@ $(document).ready(function()
         <?php if(count($this->blogs) == 1) : ?>
         current_blog = $("#blogcur").val();
         <?php elseif(count($this->blogs) > 1) : ?>
-        current_blog = $("select[name='bloglst'] > option:selected").val();
+        current_blog = blog_select_list.find("option:selected").val();
         <?php endif ?>
 
         set_preference('dashboard_current_blog', current_blog);
@@ -462,15 +507,9 @@ $(document).ready(function()
         window_update();
     });
 
-    queue_height_control.click(function()
-    {
-        queue_display = (queue_display < 2) ? queue_display + 1 : 0;
-        window_update();
-    });
-    
     /* blog selector */
 
-    $("select[name='bloglst']").change(function()
+    blog_select_list.change(function()
     {
         set_blog();
     });
@@ -498,6 +537,22 @@ $(document).ready(function()
     {
         set_article_display('exp');
     });
+
+    $("a#feedrefreshlnk").click(function()
+    {
+        article_refresh();
+    });
+
+    $("a#articlepreviouslnk").click(function()
+    {
+        article_previous();
+    });
+
+    $("a#articlenextlnk").click(function()
+    {
+        article_next();
+    });
+
 
     /* INIT */
 
