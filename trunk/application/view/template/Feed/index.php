@@ -1,9 +1,10 @@
+<br/>
 <div class="subcontainer">
 
 <h1><?php echo $this->translation()->feeds ?></h1>
 <div id="feedlnkdiv">
-    <a id="feedaddlnk"><?php echo $this->translation()->feed_add ?>
-    <a id="feedimportlnk"><?php echo $this->translation()->feed_import ?>
+    <a id="feedaddlnk"><?php echo $this->translation()->feed_add ?></a>
+    <a id="feedimportlnk"><?php echo $this->translation()->feed_import ?></a>
 </div>
 
 <form id="feedaddform" style="display:none">

@@ -1,3 +1,4 @@
+<br/>
 <div class="subcontainer">
 
 <h1><?php echo $this->translation()->blogs ?></h1>

@@ -66,19 +66,17 @@ div, form
 {
     position: absolute;
     top: 41px;
-    left: 0;
-    width: 100%;
     overflow: auto;
 }
 #maincontainer div.subcontainer
 {
+    margin-top: -15px;
     padding-left: 15px;
     padding-bottom: 25px;
 }
-#maincontainer div.subcontainer h1
+#maincontainer div.subcontainer
 {
     text-decoration: underline;
     font-size: x-large;
-    margin-bottom: 25px;
     text-transform: capitalize;
 }

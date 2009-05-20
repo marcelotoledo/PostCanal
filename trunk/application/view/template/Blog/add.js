@@ -27,33 +27,33 @@ $(document).ready(function()
 
     blog_name_input = $("input[name='blog_name']");
 
-    discover_url_input_row  = $("tr#discover_url_input_row");
+    discover_url_input_row_ = $("tr#discover_url_input_row");
     discover_url_input      = $("input[name='discover_url_input']");
-    discover_url_lnk        = $("a#discover_url_lnk");
-    discover_url_result_row = $("tr#discover_url_result_row");
-    discover_url_display    = $("div#discover_url_display");
-    discover_url_change_lnk = $("a#discover_url_change_lnk");
+    discover_url_lnk_       = $("a#discover_url_lnk");
+    discover_url_result_ro_ = $("tr#discover_url_result_row");
+    discover_url_display_   = $("div#discover_url_display");
+    discover_url_change_ln_ = $("a#discover_url_change_lnk");
 
-    blog_type_row     = $("tr#blog_type_row");
-    blog_type_display = $("div#blog_type_display");
+    blog_type_row_    = $("tr#blog_type_row");
+    blog_type_displa_ = $("div#blog_type_display");
 
-    manager_url_input_row  = $("tr#manager_url_input_row");
+    manager_url_input_row_ = $("tr#manager_url_input_row");
     manager_url_input      = $("input[name='manager_url_input']");
     manager_url_lnk        = $("a#manager_url_lnk");
-    manager_url_result_row = $("tr#manager_url_result_row");
-    manager_url_display    = $("div#manager_url_display");
-    manager_url_change_lnk = $("a#manager_url_change_lnk");
-    manager_url_check_lnk  = $("a#manager_url_check_lnk");
+    manager_url_result_ro_ = $("tr#manager_url_result_row");
+    manager_url_display_   = $("div#manager_url_display");
+    manager_url_change_ln_ = $("a#manager_url_change_lnk");
+    manager_url_check_lnk_ = $("a#manager_url_check_lnk");
 
-    login_table          = $("table#login_table");
-    login_username_input = $("input[name='username_input']");
-    login_password_input = $("input[name='password_input']");
+    login_table_         = $("table#login_table");
+    login_username_inpu_ = $("input[name='username_input']");
+    login_password_inpu_ = $("input[name='password_input']");
     login_check_lnk      = $("a#login_check_lnk");
 
     buttons_table = $("table#blog_buttons_table");
     button_submit = $("input[name='add_submit_button']");
 
-    blog_add_message = $("tr#blog_add_message");
+    blog_add_message_ = $("tr#blog_add_message");
 
     /* spinner */
 
@@ -77,18 +77,18 @@ $(document).ready(function()
     function commitURL()
     {
         discover_url_input.val(blog_url);
-        discover_url_input_row.hide();
-        discover_url_display.text(blog_url);
-        discover_url_result_row.show();
+        discover_url_input_row_.hide();
+        discover_url_display_.text(blog_url);
+        discover_url_result_ro_.show();
     }
 
     function resetURL()
     {
         blog_url = "";
         blog_url_accepted = false;
-        discover_url_display.text("");
-        discover_url_result_row.hide();
-        discover_url_input_row.show();
+        discover_url_display_.text("");
+        discover_url_result_ro_.hide();
+        discover_url_input_row_.show();
         resetBlogType();
     }
 
@@ -96,8 +96,8 @@ $(document).ready(function()
 
     function commitBlogType()
     {
-        blog_type_display.text(blog_type_label + " / " + blog_version_label);
-        blog_type_row.show();
+        blog_type_displa_.text(blog_type_label + " / " + blog_version_label);
+        blog_type_row_.show();
     }
 
     function resetBlogType()
@@ -109,8 +109,8 @@ $(document).ready(function()
         blog_version          = "";
         blog_version_label    = "";
         blog_revision         = 0;
-        blog_type_display.text("");
-        blog_type_row.hide();
+        blog_type_displa_.text("");
+        blog_type_row_.hide();
         resetManagerURL();
     }
 
@@ -118,39 +118,39 @@ $(document).ready(function()
 
     function commitManagerURL()
     {
-        manager_url_display.text(blog_manager_url);
-        if(manager_url_input_row.is(':visible'))
+        manager_url_display_.text(blog_manager_url);
+        if(manager_url_input_row_.is(':visible'))
         {
-            manager_url_result_row.show();
+            manager_url_result_ro_.show();
         }
         manager_url_input.val(blog_manager_url);
-        manager_url_input_row.hide();
+        manager_url_input_row_.hide();
     }
 
     function resetManagerURL()
     {
         blog_manager_url = "";
         blog_manager_url_accepted = false;
-        manager_url_display.text("");
-        manager_url_result_row.hide();
-        manager_url_input_row.hide();
+        manager_url_display_.text("");
+        manager_url_result_ro_.hide();
+        manager_url_input_row_.hide();
         resetLogin();
     }
 
     function changeManagerURL()
     {
         blog_manager_url_accepted = false;
-        manager_url_display.text("");
-        manager_url_result_row.hide();
-        manager_url_input_row.show();
+        manager_url_display_.text("");
+        manager_url_result_ro_.hide();
+        manager_url_input_row_.show();
         resetLogin();
     }
 
     function commitLogin()
     {
-        login_username_input.val(blog_username);
-        login_password_input.val(blog_password);
-        login_table.show();
+        login_username_inpu_.val(blog_username);
+        login_password_inpu_.val(blog_password);
+        login_table_.show();
         commitButtons();
     }
 
@@ -158,11 +158,11 @@ $(document).ready(function()
     {
         blog_username = "";
         blog_password = "";
-        login_username_input.val("");
-        login_password_input.val("");
+        login_username_inpu_.val("");
+        login_password_inpu_.val("");
         blog_login_accepted = false;
         blog_publication_accepted = false;
-        login_table.hide();
+        login_table_.hide();
         resetButtons();
     }
 
@@ -189,8 +189,8 @@ $(document).ready(function()
 
     function msg(m)
     {
-        blog_add_message.find("td").html(m);
-        (m=="") ? (blog_add_message.hide()) : (blog_add_message.show());
+        blog_add_message_.find("td").html(m);
+        (m=="") ? (blog_add_message_.hide()) : (blog_add_message_.show());
     }
 
     function discoverURL()
@@ -325,8 +325,8 @@ $(document).ready(function()
     function addSubmit()
     {
         blog_name     = blog_name_input.val();
-        blog_username = login_username_input.val();
-        blog_password = login_password_input.val();
+        blog_username = login_username_inpu_.val();
+        blog_password = login_password_inpu_.val();
 
         if(blog_name     == "" || 
            blog_username == "" || 
@@ -379,7 +379,7 @@ $(document).ready(function()
     //     check();
     // });
 
-    discover_url_lnk.click(function()
+    discover_url_lnk_.click(function()
     {
         if(ar == false)
         {
@@ -391,11 +391,11 @@ $(document).ready(function()
     {
         if((e.which && e.which == 13) || (e.keyCode && e.keyCode == 13))
         {
-            discover_url_lnk.click();
+            discover_url_lnk_.click();
         }
     });
 
-    discover_url_change_lnk.click(function()
+    discover_url_change_ln_.click(function()
     {
         if(ar == false)
         {
@@ -403,7 +403,7 @@ $(document).ready(function()
         }
     });
 
-    manager_url_check_lnk.click(function()
+    manager_url_check_lnk_.click(function()
     {
         if(ar == false)
         {

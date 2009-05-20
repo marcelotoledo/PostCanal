@@ -1,3 +1,4 @@
+<br/>
 <div class="subcontainer">
 <form>
 <h1><?php echo $this->translation()->blog_add ?></h1>

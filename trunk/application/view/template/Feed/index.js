@@ -44,6 +44,7 @@ $(document).ready(function()
         alert("<?php echo $this->translation()->server_error ?>");
     }
 
+
     /* preference */
 
     function get_preference(k)
@@ -228,8 +229,6 @@ $(document).ready(function()
 
                 if(f.length > 0)
                 {
-                    $.b_dialog({ selector: "#feedaddform" });
-                    $.b_dialog_hide();
                     feed_list();
                     current_feed = f;
                 }
@@ -500,8 +499,14 @@ $(document).ready(function()
         feed_set(feed);
         _i = $("div.feeditem[feed='" + feed + "']");
         _f = _i.find("div.feeditemtitle").text();
-        newtitle = prompt("<?php echo $this->translation()->feed_rename ?>", _f);
-        feed_update(feed, 'feed_title', newtitle);
+        if(newtitle = prompt("<?php echo $this->translation()->feed_rename ?>", _f))
+        {
+            feed_update(feed, 'feed_title', newtitle);
+        }
+        else
+        {
+            feed_unset(feed);
+        }
     }
 
     function feed_update_callback(result)
