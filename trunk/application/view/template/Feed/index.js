@@ -92,12 +92,11 @@ $(document).ready(function()
         current_blog = $("#blogcur").val();
         <?php elseif(count($this->blogs) > 1) : ?>
         current_blog = blog_select_list.find("option:selected").val();
+        blog_select_list.blur();
         <?php endif ?>
 
         toggle_feed_add_form(false);
         toggle_feed_import_form(false);
-
-        set_preference('dashboard_current_blog', current_blog);
 
         body__.trigger('after_blog');
     }
@@ -684,10 +683,8 @@ $(document).ready(function()
 
     blog_select_list.change(function()
     {
-        if(active_request == false)
-        {
-            set_blog();
-        }
+        set_blog();
+        set_preference('dashboard_current_blog', current_blog);
     });
 
     <?php if(count($this->import) > 0) : ?>

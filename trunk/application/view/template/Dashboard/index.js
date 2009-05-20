@@ -416,8 +416,6 @@ $(document).ready(function()
             feed_navigation.hide();
             article_content_show_all();
         }
-
-        set_preference('dashboard_article_display', article_display);
     }
 
     /* set feed display mode */
@@ -439,8 +437,6 @@ $(document).ready(function()
             $("span.feedsdspthr").show();
             feed_list();
         }
-
-        set_preference('dashboard_feed_display', feed_display);
         set_article_display(article_display);
         feed_list_area.scrollTop(0);
     }
@@ -494,9 +490,6 @@ $(document).ready(function()
         <?php elseif(count($this->blogs) > 1) : ?>
         current_blog = blog_select_list.find("option:selected").val();
         <?php endif ?>
-
-        set_preference('dashboard_current_blog', current_blog);
-
         set_feed_display(feed_display);
     }
 
@@ -512,6 +505,7 @@ $(document).ready(function()
     blog_select_list.change(function()
     {
         set_blog();
+        set_preference('dashboard_current_blog', current_blog);
     });
 
     /* feed display */
@@ -519,11 +513,13 @@ $(document).ready(function()
     $("a#feeddsplnkall").click(function()
     {
         set_feed_display('all');
+        set_preference('dashboard_feed_display', feed_display);
     });
 
     $("a#feeddsplnkthr").click(function()
     {
         set_feed_display('thr');
+        set_preference('dashboard_feed_display', feed_display);
     });
 
     /* article display */
@@ -531,11 +527,13 @@ $(document).ready(function()
     $("a#articledsplnklst").click(function()
     {
         set_article_display('lst');
+        set_preference('dashboard_article_display', article_display);
     });
 
     $("a#articledsplnkexp").click(function()
     {
         set_article_display('exp');
+        set_preference('dashboard_article_display', article_display);
     });
 
     $("a#feedrefreshlnk").click(function()
