@@ -128,6 +128,19 @@ div.articlethr
 {
     line-height: 1.5em;
 }
+div.articlemore
+{
+    line-height: 2.4em;
+    background-color: lightgray;
+    color: black;
+    cursor: pointer;
+    cursor: hand;
+}
+div.articlemore:hover
+{
+    background-color: khaki;
+    font-weight: bold;
+}
 div.articlelabel
 {
     float: left;

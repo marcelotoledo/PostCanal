@@ -199,18 +199,6 @@ $(document).ready(function()
         });
     }
 
-    /*
-    function feed_scroll(feed) // TODO
-    {
-        b = feed_list_area.find("div.feeditem[feed='" + article + "']");
-        _fa_p = feed_list_area.position().top;
-        _fa_s = feed_list_area.scrollTop();
-        _ah_p = b.position().top;
-        _ah_s = _fa_s + _ah_p - _fa_p;
-        feed_list_area.scrollTop(_ah_s);
-    }
-    */
-
     /* articles */
 
     function article_scroll(article)
@@ -296,15 +284,20 @@ $(document).ready(function()
         });
     }
 
-    function article_populate(articles, container)
+    function article_populate(articles, container, append)
     {
         if(articles.length > 0)
         {
-            container.html("");
-            _counter = 0;
+            if(append==false)
+            {
+                container.html("");
+            }
+            else
+            {
+                if((m = container.find("div.articlemore"))) { m.remove(); }
+            }
             articles.each(function()
             {
-                _counter++;
                 _article = $(this).find('article').text();
                 _title = $(this).find('title').text();
                 _link = $(this).find('link').text();
@@ -318,38 +311,55 @@ $(document).ready(function()
                 _label+= "<div class=\"articletitle\">" + _title + "</div>";
                 _info = _date;
                 _buttons = "<a href=\"" + _link + "\" target=\"_blank\">view</a>";
-                container.append("<div class=\"article article" + feed_display + "\" article=\"" + _article + "\" counter=\"" + _counter + "\" lastitem=\"" + ((_counter == articles.length) ? 'true' : 'false') + "\"><div class=\"articlelabel\"><nobr>" + _label + "</nobr></div><div class=\"articleinfo\">@ " + _info + "</div><div class=\"articlebuttons\">" + _buttons + "</div><div style=\"clear:both\"></div></div><div class=\"articlecontent\" article=\"" + _article + "\"></div>\n");
+                container.append("<div class=\"article article" + feed_display + "\" article=\"" + _article + "\" bound=\"no\"><div class=\"articlelabel\"><nobr>" + _label + "</nobr></div><div class=\"articleinfo\">@ " + _info + "</div><div class=\"articlebuttons\">" + _buttons + "</div><div style=\"clear:both\"></div></div><div class=\"articlecontent\" article=\"" + _article + "\"></div>\n");
                 articles_content[_article] = { 
                     title:   _title,
                     author:  $(this).find('author').text(),
                     content: $(this).find('content').text() 
                 };
             });
+            container.append("<div class=\"articlemore\" older=\"" + _date + "\"><center><?php echo $this->translation()->older ?></center></div>");
         }
         else
         {
-            container.html("<br/><span><?php echo $this->translation()->no_articles ?></span>");
+            if(append==true)
+            {
+                if((m = container.find("div.articlemore"))) { m.remove(); }
+            }
+            else
+            {
+                container.html("<br/><span><?php echo $this->translation()->no_articles ?></span>");
+            }
         }
 
-        /* this trigger must be created after populate, otherwise
+        /* article triggers must be created after populate, otherwise
          * will not work (because populate write elements after document loading */
 
-        container.find("div.article").click(function()
+        container.find("div.article[bound='no']").each(function()
         {
-            if(article_display == 'lst')
+            $(this).attr('bound', 'yes');
+            $(this).click(function()
             {
-                _a = $(this).attr('article');
+                if(article_display == 'lst')
+                {
+                    _a = $(this).attr('article');
+    
+                    if($(this).hasClass('articlecontentshow'))
+                    {
+                        article_content_hide(_a);
+                    }
+                    else
+                    {
+                        article_content_hide_all();
+                        article_content_show(_a);
+                    }
+                }
+            });
+        });
 
-                if($(this).hasClass('articlecontentshow'))
-                {
-                    article_content_hide(_a);
-                }
-                else
-                {
-                    article_content_hide_all();
-                    article_content_show(_a);
-                }
-            }
+        container.find("div.articlemore").click(function()
+        {
+            article_more(container, $(this).attr('older'));
         });
 
         window_update();
@@ -358,34 +368,40 @@ $(document).ready(function()
         {
             article_content_show_all();
         }
+
+        body__.trigger('article_next_evt');
+        body__.unbind('article_next_evt');
     }
 
     function article_thread(feed)
     {
-        c = $("div.feeditemarticles[feed='" + feed + "']"); 
-        article_threaded(feed, c);
+        c = feed_list_area.find("div.feeditemarticles[feed='" + feed + "']"); 
+        article_list(c);
         c.show();
-        c = $("div.feeditem[feed='" + feed + "']"); 
+        c = feed_list_area.find("div.feeditem[feed='" + feed + "']"); 
         c.addClass('feeditemthreaded');
     }
 
     function article_unthread(feed)
     {
-        c = $("div.feeditemarticles[feed='" + feed + "']"); 
+        c = feed_list_area.find("div.feeditemarticles[feed='" + feed + "']"); 
         c.html("");
         c.hide();
-        c = $("div.feeditem[feed='" + feed + "']"); 
+        c = feed_list_area.find("div.feeditem[feed='" + feed + "']"); 
         c.removeClass('feeditemthreaded');
     }
 
-    function article_threaded(feed, container)
+    function __article_load(container, append, older)
     {
+        url = (feed_display == 'thr') ? 
+                    "<?php B_Helper::url('article', 'threaded') ?>" : 
+                    "<?php B_Helper::url('article', 'all') ?>";
         $.ajax
         ({
             type: "GET",
-            url: "<?php B_Helper::url('article', 'threaded') ?>",
+            url: url,
             dataType: "xml",
-            data: { blog: current_blog, feed: feed },
+            data: { blog: current_blog, feed: container.attr('feed'), older: older },
             beforeSend: function()
             {
                 set_active_request(true);
@@ -397,42 +413,27 @@ $(document).ready(function()
             success: function (xml)
             {
                 d = $(xml).find('data');
-                article_populate(d.find('articles').children(), container);
+                article_populate(d.find('articles').children(), container, append);
             },
             error: function () { err(); }
         });
     }
 
-    function article_all()
+    function article_list(container)
     {
-        $.ajax
-        ({
-            type: "GET",
-            url: "<?php B_Helper::url('article', 'all') ?>",
-            dataType: "xml",
-            data: { blog: current_blog },
-            beforeSend: function()
-            {
-                set_active_request(true);
-            },
-            complete: function()
-            {
-                set_active_request(false);
-            },
-            success: function (xml)
-            {
-                d = $(xml).find('data');
-                article_populate(d.find('articles').children(), feed_list_area);
-            },
-            error: function () { err(); }
-        });
+        __article_load(container, false, null);
+    }
+
+    function article_more(container, older)
+    {
+        __article_load(container, true, older);
     }
 
     function article_refresh()
     {
         if(feed_display=='all')
         {
-            article_all();
+            article_list(feed_list_area);
         }
         if(feed_display=='thr') /* threaded */
         {
@@ -464,25 +465,15 @@ $(document).ready(function()
                 article_content_hide(j)
                 article_content_show(k);
             }
-            /*
-            else // try next item in next feed (only in threaded) TODO
+            else // try to load older articles
             {
-                if(feed_display=='thr')
+                _c = (feed_display=='thr') ? _c_a.parents() : feed_list_area;
+                if((_m = _c.find("div.articlemore")))
                 {
-                    if((_c_f = _c_a.parents()))
-                    {
-                        if((_n_f = _c_f.nextAll("div.feeditem")))
-                        {
-                            article_unthread(_c_f.attr('feed'));
-                            article_thread(_n_f.attr('feed'));
-                            current_article = null;
-                            article_next();
-                            feed_scroll(_n_f.attr('feed'));
-                        }
-                    }
+                    _m.click();
+                    body__.bind('article_next_evt', function(e) { article_next(); });
                 }
             }
-            */
         }
     }
 
@@ -536,7 +527,7 @@ $(document).ready(function()
         {
             feed_display = mode;
             $("span.feedsdspall").show();
-            article_all();
+            article_list(feed_list_area);
         }
         if(mode=='thr') /* threaded */
         {

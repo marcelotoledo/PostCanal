@@ -236,7 +236,7 @@ class UserBlogFeed extends B_Model
      * @param   string      $blog_hash
      * @param   integer     $user_id
      * @param   integer     $feed_hash
-     * @param   integer     $start_time
+     * @param   integer     $older
      * @param   integer     $limit
      *
      * @return  array
@@ -244,10 +244,10 @@ class UserBlogFeed extends B_Model
     public static function findArticlesThreaded($blog_hash, 
                                                 $user_id, 
                                                 $feed_hash,
-                                                $start_time=null, 
+                                                $older=null, 
                                                 $limit=25)
     {
-        if(!$start_time) $start_time = time();
+        if(!$older) $older = time();
 
         $sql = "SELECT article_md5 AS article, article_title AS title, article_link AS link, 
                        article_date AS date, article_author AS author, article_content AS content
@@ -261,7 +261,7 @@ class UserBlogFeed extends B_Model
                     WHERE hash = ? AND user_profile_id = ?) 
                 ORDER BY b.article_date DESC, b.created_at DESC LIMIT " . intval($limit);
 
-        return self::select($sql, array(date("Y-m-d H:i:s", $start_time), 
+        return self::select($sql, array(date("Y-m-d H:i:s", $older), 
                                         $feed_hash,
                                         $blog_hash, 
                                         $user_id), PDO::FETCH_ASSOC);
@@ -272,17 +272,17 @@ class UserBlogFeed extends B_Model
      *
      * @param   string      $blog_hash
      * @param   integer     $user_id
-     * @param   integer     $start_time
+     * @param   integer     $older
      * @param   integer     $limit
      *
      * @return  array
      */
     public static function findArticlesAll($blog_hash, 
                                            $user_id, 
-                                           $start_time=null, 
+                                           $older=null, 
                                            $limit=50)
     {
-        if(!$start_time) $start_time = time();
+        if(!$older) $older= time();
 
         $sql = "SELECT a.feed_title AS feed, b.article_md5 AS article, 
                        b.article_title AS title, b.article_link AS link, 
@@ -298,7 +298,7 @@ class UserBlogFeed extends B_Model
                     WHERE hash = ? AND user_profile_id = ?) 
                 ORDER BY b.article_date DESC, b.created_at DESC LIMIT " . intval($limit);
 
-        return self::select($sql, array(date("Y-m-d H:i:s", $start_time), 
+        return self::select($sql, array(date("Y-m-d H:i:s", $older), 
                                         $blog_hash, 
                                         $user_id), PDO::FETCH_ASSOC);
     }

@@ -26,12 +26,12 @@ class C_Article extends B_Controller
     {
         $blog_hash = $this->request()->blog;
         $feed_hash = $this->request()->feed;
-        $start_time = $this->request()->time;
+        $older = strtotime($this->request()->older);
         $user_id = $this->session()->user_profile_id;
 
         $this->view()->articles = UserBlogFeed::findArticlesThreaded
         (
-            $blog_hash, $user_id, $feed_hash, $start_time
+            $blog_hash, $user_id, $feed_hash, $older
         );
 
         $this->session()->user_blog_hash = $blog_hash;
@@ -46,12 +46,12 @@ class C_Article extends B_Controller
         $this->response()->setXML(true);
 
         $blog_hash = $this->request()->blog;
-        $start_time = $this->request()->time;
+        $older = strtotime($this->request()->older);
         $user_id = $this->session()->user_profile_id;
 
         $this->view()->articles = UserBlogFeed::findArticlesAll
         (
-            $blog_hash, $user_id, $start_time
+            $blog_hash, $user_id, $older
         );
 
         $this->session()->user_blog_hash = $blog_hash;
