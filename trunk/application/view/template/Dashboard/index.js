@@ -2,19 +2,30 @@ $(document).ready(function()
 {
     var active_request = false;
 
+    var ww = 0;
+    var wh = 0;
+
+    var magic_q_min = 5;
+    var magic_q_exp = 16;
+    var magic_q_max = 140;
+
     var body__ = $("body");
 
-    var top_bar = $("#topbar");
+    var top_bar = $("div#topbar");
     var blog_select_list = $("select[name='bloglst']");
     var current_blog = null;
 
-    var feed_list_area = $("#feedlistarea");
+    var feed_area = $("div#feedarea");
+    var feed_list_area = feed_area.find("div#feedlistarea");
     var feed_display = "<?php echo $this->profile_preference['dashboard_feed_display'] ?>";
-    var feed_navigation = $("div.feednavigation");
 
     var article_display = "<?php echo $this->profile_preference['dashboard_article_display'] ?>";
     var articles_content = Array();
     var current_article = null;
+
+    var queue_area = $("div#queuearea");
+    var queue_list_area = queue_area.find("div#queuelistarea");
+    var queue_hctrl_display = 0 // 0 min | 1 exp | 2 max
 
 
     /* spinner */
@@ -30,19 +41,84 @@ $(document).ready(function()
         ((active_request = b) == true) ? $.b_spinner_start() : $.b_spinner_stop();
     }
 
-    /* window update / maximize containers */
+    /* visual updates */
+
+    function feed_area_enable()
+    {
+        feed_area.find("div#feedareahead").removeClass('areadisabled');
+        feed_area.find("div.feeddisplay").show();
+        feed_area.find("div.articledisplay").show();
+        if(article_display=='lst') // @see set_article_display()
+        {
+            feed_area.find("div.feednavigation").show();
+        }
+        feed_area.find("div.feedrefresh").show();
+    }
+
+    function feed_area_disable()
+    {
+        feed_area.find("div#feedareahead").addClass('areadisabled');
+        feed_area.find("div.feeddisplay").hide();
+        feed_area.find("div.articledisplay").hide();
+        feed_area.find("div.feednavigation").hide();
+        feed_area.find("div.feedrefresh").hide();
+    }
+
+    function queue_minimize()
+    {
+        queue_area.css('bottom', 0);
+        queue_list_area.hide();
+        feed_area_enable();
+        feed_list_area.show();
+        queue_area.find("a.queuehctrllnk").hide();
+        queue_area.find("a#queuehctrlexp").show();
+    }
+
+    function queue_expand(h)
+    {
+        queue_area.css('bottom', h - queue_area.outerHeight() - magic_q_exp);
+        queue_list_area.show();
+        queue_area.find("a.queuehctrllnk").hide();
+        queue_area.find("a#queuehctrlmax").show();
+    }
+
+    function queue_maximize()
+    {
+        queue_area.css('bottom', wh - magic_q_max);
+        feed_list_area.hide();
+        feed_area_disable();
+        queue_area.find("a.queuehctrllnk").hide();
+        queue_area.find("a#queuehctrlmin").show();
+    }
 
     function window_update()
     {
         ww = $(window).width();
         wh = $(window).height();
 
-        _t_h = top_bar.outerHeight() + $("div#feedareahead").outerHeight();
+        _t_h = top_bar.outerHeight() + feed_area.find("div#feedareahead").outerHeight();
+        _b_h = 0;
+
+        if(queue_hctrl_display == 0)
+        {
+            _b_h = queue_area.find("div#queueareahead").outerHeight() + magic_q_min;
+            queue_minimize();
+        }
+        if(queue_hctrl_display == 1)
+        {
+            _b_h = wh / 2;
+            queue_expand(_b_h);
+        }
+        if(queue_hctrl_display == 2)
+        {
+            _b_h = wh;
+            queue_maximize();
+        }
 
         feed_list_area.css('top', _t_h);
         feed_list_area.css('left', 0);
         feed_list_area.width(ww);
-        feed_list_area.height(wh - _t_h);
+        feed_list_area.height(wh - _t_h - _b_h);
 
         feed_list_area.find('div.articlelabel').width(ww * 0.6);
     }
@@ -77,7 +153,7 @@ $(document).ready(function()
         }
         else
         {
-            feed_list_area.html("<p><?php echo $this->translation()->no_registered_feeds ?></p>");
+            feed_list_area.html("<br/><span><?php echo $this->translation()->no_registered_feeds ?></span>");
         }
 
         /* this trigger must be created after populate, otherwise
@@ -122,6 +198,18 @@ $(document).ready(function()
             error: function () { err(); }
         });
     }
+
+    /*
+    function feed_scroll(feed) // TODO
+    {
+        b = feed_list_area.find("div.feeditem[feed='" + article + "']");
+        _fa_p = feed_list_area.position().top;
+        _fa_s = feed_list_area.scrollTop();
+        _ah_p = b.position().top;
+        _ah_s = _fa_s + _ah_p - _fa_p;
+        feed_list_area.scrollTop(_ah_s);
+    }
+    */
 
     /* articles */
 
@@ -240,7 +328,7 @@ $(document).ready(function()
         }
         else
         {
-            container.html("<p><?php echo $this->translation()->no_articles ?></p>");
+            container.html("<br/><span><?php echo $this->translation()->no_articles ?></span>");
         }
 
         /* this trigger must be created after populate, otherwise
@@ -376,6 +464,25 @@ $(document).ready(function()
                 article_content_hide(j)
                 article_content_show(k);
             }
+            /*
+            else // try next item in next feed (only in threaded) TODO
+            {
+                if(feed_display=='thr')
+                {
+                    if((_c_f = _c_a.parents()))
+                    {
+                        if((_n_f = _c_f.nextAll("div.feeditem")))
+                        {
+                            article_unthread(_c_f.attr('feed'));
+                            article_thread(_n_f.attr('feed'));
+                            current_article = null;
+                            article_next();
+                            feed_scroll(_n_f.attr('feed'));
+                        }
+                    }
+                }
+            }
+            */
         }
     }
 
@@ -406,14 +513,14 @@ $(document).ready(function()
         {
             article_display = mode;
             $("span.articledsplst").show();
-            feed_navigation.show();
+            feed_area.find("div.feednavigation").show();
             article_content_hide_all();
         }
         if(mode=='exp') /* expanded */
         {
             article_display = mode;
             $("span.articledspexp").show();
-            feed_navigation.hide();
+            feed_area.find("div.feednavigation").hide();
             article_content_show_all();
         }
     }
@@ -551,10 +658,13 @@ $(document).ready(function()
         article_next();
     });
 
+    $("a.queuehctrllnk").click(function()
+    {
+        queue_hctrl_display = (queue_hctrl_display < 2) ? queue_hctrl_display + 1 : 0;
+        window_update();
+    });
 
     /* INIT */
-
-    window_update();
 
     <?php if(count($this->blogs) > 0) : ?>
 

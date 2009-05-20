@@ -40,9 +40,9 @@ div.containerhead a:hover
 
 /* feeds */
 
-div#feedlistarea
+div#feedareahead.areadisabled
 {
-    overflow: auto;
+    background-color: gray;
 }
 div#feedareahead div.title
 {
@@ -72,6 +72,17 @@ div#feedareahead div.feednavigation
     padding-right: 15px;
 }
 
+div#feedlistarea
+{
+    overflow: auto;
+    overflow-x: hidden; /* IE scrollbars fixes */
+    overflow-y: auto;
+}
+div#feedlistarea span
+{
+    padding-left: 15px;
+}
+
 div.feeditem
 {
     font-weight: bold;
@@ -80,6 +91,7 @@ div.feeditem
     border-bottom: 1px solid silver;
     cursor: pointer;
     cursor: hand;
+    background-color: white; /* fix div hover IE bug */
 }
 div.feeditem:hover
 {
@@ -122,6 +134,7 @@ div.articlelabel
     text-align: left;
     overflow: hidden;
     margin-right: 15px;
+    /* TODO: background-color: (transparent pixel); > fix div hover IE bug */
 }
 div.articlefeed
 {
@@ -168,4 +181,49 @@ div.articlecontentshow
     border-bottom: 0;
     border: 2px solid dimgray;
     border-bottom: 1px solid gainsboro;
+}
+
+/* queue */
+
+div#queuearea
+{
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+}
+div#queueareahctrlbar
+{
+    background-color: lightgray;
+    line-height: 5px;
+    vertical-align: top;
+}
+/*
+div#queueareahctrlbar:hover
+{
+    background-color: cyan;
+}
+*/
+div#queueareahead div.title
+{
+    float: left;
+    font-size: medium;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+div.queuehctrllnks
+{
+    float: right;
+    padding-right: 15px;
+}
+
+div#queuelistarea
+{
+    overflow: auto;
+    overflow-x: hidden; /* IE scrollbars fixes */
+    overflow-y: auto;
+}
+div#queuelistarea span
+{
+    padding-left: 15px;
 }

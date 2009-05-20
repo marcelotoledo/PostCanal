@@ -1,5 +1,10 @@
 /* general */
 
+html
+{
+    overflow: hidden; /* IE scrollbars fixes */
+}
+
 *
 {
     font-size: small;

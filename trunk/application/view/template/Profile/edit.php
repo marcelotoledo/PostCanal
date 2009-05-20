@@ -10,7 +10,6 @@
         <tr>
         <th>&nbsp;</th>
         <td class="buttons">
-            <input name="editcancel" type="reset" value="<?php echo $this->translation()->application_cancel ?>">
             <input name="editsubmit" type="button" value="<?php echo $this->translation()->application_update ?>">
         </td>
         </tr>

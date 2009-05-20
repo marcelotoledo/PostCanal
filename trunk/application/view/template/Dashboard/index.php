@@ -39,8 +39,26 @@
 
     <div style="clear:both"></div>
 </div>
+<div id="feedlistarea">
+</div>
+</div>
 
-<div id="feedlistarea"></div>
+<div id="queuearea">
+<div id="queueareahctrlbar">&nbsp;</div>
+<div id="queueareahead" class="containerhead">
+    <div class="title"><?php echo $this->translation()->queue ?></div>
+
+    <div class="queuehctrllnks">
+        <a id="queuehctrlmin" class="queuehctrllnk" style="display:none"><?php echo $this->translation()->minimize ?></a>
+        <a id="queuehctrlexp" class="queuehctrllnk"><?php echo $this->translation()->expand ?></a>
+        <a id="queuehctrlmax" class="queuehctrllnk" style="display:none"><?php echo $this->translation()->maximize ?></a>
+    </div>
+
+    <div style="clear:both"></div>
+</div>
+<div id="queuelistarea" style="display:none">
+queue list area
+</div>
 </div>
 
 <?php else : ?>
