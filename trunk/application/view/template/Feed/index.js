@@ -89,17 +89,21 @@ $(document).ready(function()
 
     function set_blog()
     {
-        <?php if(count($this->blogs) == 1) : ?>
+        <?php if(count($this->blogs) == 0) : ?>
+        $.b_dialog({ selector: "#noblogmsg", modal: false });
+        $.b_dialog_show();
+        <?php elseif(count($this->blogs) == 1) : ?>
         current_blog = $("#blogcur").val();
         <?php elseif(count($this->blogs) > 1) : ?>
         current_blog = blog_select_list.find("option:selected").val();
-        blog_select_list.blur();
         <?php endif ?>
 
-        toggle_feed_add_form(false);
-        toggle_feed_import_form(false);
-
-        body__.trigger('after_blog');
+        if(current_blog)
+        {
+            toggle_feed_add_form(false);
+            toggle_feed_import_form(false);
+            body__.trigger('after_blog');
+        }
     }
 
     /* feed actions */

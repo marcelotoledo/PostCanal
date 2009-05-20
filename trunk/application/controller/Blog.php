@@ -25,7 +25,16 @@ class C_Blog extends B_Controller
     {
         $this->view()->setLayout('dashboard');
         $user_id = $this->session()->user_profile_id;
-        $this->view()->blogs_ = UserBlog::findByUser($user_id, true);
+        $blogs_ = UserBlog::findByUser($user_id, true);
+
+        if(count($blogs_) > 0)
+        {
+            $this->view()->blogs_ = $blogs_;
+        }
+        else
+        {
+            $this->response()->setRedirect(B_Request::url('blog','add'));
+        }
     }
 
     /**

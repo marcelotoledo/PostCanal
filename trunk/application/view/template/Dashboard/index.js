@@ -286,41 +286,7 @@ $(document).ready(function()
 
     function article_populate(articles, container, append)
     {
-        if(articles.length > 0)
-        {
-            if(append==false)
-            {
-                container.html("");
-            }
-            else
-            {
-                if((m = container.find("div.articlemore"))) { m.remove(); }
-            }
-            articles.each(function()
-            {
-                _article = $(this).find('article').text();
-                _title = $(this).find('title').text();
-                _link = $(this).find('link').text();
-                _date = $(this).find('date').text();
-                _label = "";
-                if(feed_display == 'all')
-                {
-                    _feed = $(this).find('feed').text();
-                    _label += "<div class=\"articlefeed\">" + _feed + "</div>";
-                }
-                _label+= "<div class=\"articletitle\">" + _title + "</div>";
-                _info = _date;
-                _buttons = "<a href=\"" + _link + "\" target=\"_blank\">view</a>";
-                container.append("<div class=\"article article" + feed_display + "\" article=\"" + _article + "\" bound=\"no\"><div class=\"articlelabel\"><nobr>" + _label + "</nobr></div><div class=\"articleinfo\">@ " + _info + "</div><div class=\"articlebuttons\">" + _buttons + "</div><div style=\"clear:both\"></div></div><div class=\"articlecontent\" article=\"" + _article + "\"></div>\n");
-                articles_content[_article] = { 
-                    title:   _title,
-                    author:  $(this).find('author').text(),
-                    content: $(this).find('content').text() 
-                };
-            });
-            container.append("<div class=\"articlemore\" older=\"" + _date + "\"><center><?php echo $this->translation()->older ?></center></div>");
-        }
-        else
+        if(articles.length==0)
         {
             if(append==true)
             {
@@ -330,7 +296,41 @@ $(document).ready(function()
             {
                 container.html("<br/><span><?php echo $this->translation()->no_articles ?></span>");
             }
+
+            return null;
         }
+
+        if(append==false)
+        {
+            container.html("");
+        }
+        else
+        {
+            if((m = container.find("div.articlemore"))) { m.remove(); }
+        }
+        articles.each(function()
+        {
+            _article = $(this).find('article').text();
+            _title = $(this).find('title').text();
+            _link = $(this).find('link').text();
+            _date = $(this).find('date').text();
+            _label = "";
+            if(feed_display == 'all')
+            {
+                _feed = $(this).find('feed').text();
+                _label += "<div class=\"articlefeed\">" + _feed + "</div>";
+            }
+            _label+= "<div class=\"articletitle\">" + _title + "</div>";
+            _info = _date;
+            _buttons = "<a href=\"" + _link + "\" target=\"_blank\">view</a>";
+            container.append("<div class=\"article article" + feed_display + "\" article=\"" + _article + "\" bound=\"no\"><div class=\"articlelabel\"><nobr>" + _label + "</nobr></div><div class=\"articleinfo\">@ " + _info + "</div><div class=\"articlebuttons\">" + _buttons + "</div><div style=\"clear:both\"></div></div><div class=\"articlecontent\" article=\"" + _article + "\"></div>\n");
+            articles_content[_article] = { 
+                title:   _title,
+                author:  $(this).find('author').text(),
+                content: $(this).find('content').text() 
+            };
+        });
+        container.append("<div class=\"articlemore\" older=\"" + _date + "\"><center><?php echo $this->translation()->older ?></center></div>");
 
         /* article triggers must be created after populate, otherwise
          * will not work (because populate write elements after document loading */
@@ -583,12 +583,16 @@ $(document).ready(function()
 
     function set_blog()
     {
-        <?php if(count($this->blogs) == 1) : ?>
+        <?php if(count($this->blogs) == 0) : ?>
+        $.b_dialog({ selector: "#noblogmsg", modal: false });
+        $.b_dialog_show();
+        <?php elseif(count($this->blogs) == 1) : ?>
         current_blog = $("#blogcur").val();
         <?php elseif(count($this->blogs) > 1) : ?>
         current_blog = blog_select_list.find("option:selected").val();
         <?php endif ?>
-        set_feed_display(feed_display);
+
+        if(current_blog) { set_feed_display(feed_display); }
     }
 
     /* TRIGGERS */
@@ -657,14 +661,5 @@ $(document).ready(function()
 
     /* INIT */
 
-    <?php if(count($this->blogs) > 0) : ?>
-
     set_blog();
-
-    <?php else : ?>
-
-    $.b_dialog({ selector: "#noblogmsg", modal: true });
-    $.b_dialog_show();
-
-    <?php endif ?>
 });

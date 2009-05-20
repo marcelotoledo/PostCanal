@@ -63,8 +63,6 @@ queue list area
 
 <?php else : ?>
 
-<p class="noblogmsg"><?php echo $this->translation()->no_registered_blog ?></p>
-
 <div id="noblogmsg" class="b-dialog" style="display:none">
 <?php echo $this->translation()->no_registered_blog ?>. <?php B_Helper::a(ucfirst($this->translation()->application_click_here), "blog", "add") ?> <?php echo $this->translation()->new_blog_instruction ?>.
 <hr>

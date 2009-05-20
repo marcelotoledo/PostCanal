@@ -79,8 +79,9 @@ h2
     z-index: 2502;
     position: absolute;
     background-color: whitesmoke;
-    border: 1px solid lightslategray;
+    border: 5px solid lightslategray;
     padding: 25px;
+    width: 25%;
 }
 .b-dialog-alert
 {

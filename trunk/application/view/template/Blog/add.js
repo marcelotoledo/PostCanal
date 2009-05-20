@@ -119,10 +119,12 @@ $(document).ready(function()
     function commitManagerURL()
     {
         manager_url_display_.text(blog_manager_url);
+        /* this not works on IE
         if(manager_url_input_row_.is(':visible'))
         {
             manager_url_result_ro_.show();
         }
+        */
         manager_url_input.val(blog_manager_url);
         manager_url_input_row_.hide();
     }

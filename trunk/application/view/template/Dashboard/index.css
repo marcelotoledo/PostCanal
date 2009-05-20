@@ -10,17 +10,6 @@ body
     overflow: hidden;
 }
 
-/* dialogs & forms */
-
-#noblogmsg
-{
-    width: 240px;
-}
-p.noblogmsg
-{
-    padding-left: 15px;
-}
-
 /* containers */
 
 div.containerhead

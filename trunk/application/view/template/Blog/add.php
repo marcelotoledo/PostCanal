@@ -37,7 +37,7 @@
 </td>
 </tr>
 <tr id="manager_url_result_row" style="display:none">
-<th><?php echo $this->translation()->blog_url ?>:</th>
+<th><?php echo $this->translation()->blog_manager_url ?>:</th>
 <td>
     <div id="manager_url_display"></div>&nbsp;
     <a id="manager_url_change_lnk"><?php echo $this->translation()->blog_manager_url_change ?></a>
