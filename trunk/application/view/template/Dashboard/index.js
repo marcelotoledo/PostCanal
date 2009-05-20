@@ -105,7 +105,7 @@ $(document).ready(function()
             type: "GET",
             url: "<?php B_Helper::url('feed', 'list') ?>",
             dataType: "xml",
-            data: { blog: current_blog },
+            data: { blog: current_blog, enabled: true },
             beforeSend: function()
             {
                 set_active_request(true);

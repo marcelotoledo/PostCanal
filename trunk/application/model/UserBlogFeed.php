@@ -204,10 +204,11 @@ class UserBlogFeed extends B_Model
      *
      * @param   string      $blog_hash
      * @param   integer     $user_id
+     * @param   boolean     $enabled        Show enabled only
      *
      * @return  array
      */
-    public static function findAssocByBlogAndUser($blog_hash, $user_id)
+    public static function findAssocByBlogAndUser($blog_hash, $user_id, $enabled=true)
     {
         $sql = "SELECT a.hash as feed, b.feed_url, a.feed_title,
                        a.feed_description, b.feed_update_time,
@@ -218,10 +219,14 @@ class UserBlogFeed extends B_Model
                 WHERE a.user_blog_id = (
                     SELECT user_blog_id
                     FROM model_user_blog
-                    WHERE hash = ? AND user_profile_id = ?)
-                AND a.enabled = 1 AND b.enabled = 1 AND deleted = 0
+                    WHERE hash = ? AND user_profile_id = ?) ";
+        if($enabled==true)
+        {
+            $sql.= "AND a.enabled = 1 ";
+        }
+        $sql.= "AND b.enabled = 1 AND deleted = 0
                 ORDER BY a.ordering ASC, a.created_at DESC";
-        
+
         return self::select($sql, array($blog_hash, $user_id), PDO::FETCH_ASSOC);
     }
 

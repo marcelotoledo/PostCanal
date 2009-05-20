@@ -85,8 +85,11 @@ class C_Feed extends B_Controller
     {
         $this->response()->setXML(true);
         $blog_hash = $this->request()->blog;
+        $enabled = $this->request()->enabled ? true : false;
         $user_id = $this->session()->user_profile_id;
-        $this->view()->feeds = UserBlogFeed::findAssocByBlogAndUser($blog_hash, $user_id);
+        $this->view()->feeds = UserBlogFeed::findAssocByBlogAndUser($blog_hash, 
+                                                                    $user_id,
+                                                                    $enabled);
     }
 
     /**
