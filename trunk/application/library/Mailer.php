@@ -169,10 +169,12 @@ class A_Mailer
      */
     private static function setRelay($recipient, $identifier)
     {
+        list($local, $domain) = explode('@', strtolower($recipient));
         return B_Model::execute("INSERT INTO " . self::$relay_table . " " .
-                                 "(recipient, identifier_md5, created_at) " .
-                                 "VALUES (?, ?, ?)",
-                                 array($recipient, md5($identifier), date("Y-m-d H:i:s")));
+                                 "(recipient_email_local, recipient_email_domain, " .
+                                 " identifier_md5, created_at) " .
+                                 "VALUES (?, ?, ?, ?)",
+                                 array($local, $domain, md5($identifier), date("Y-m-d H:i:s")));
     }
 
     /**
@@ -196,12 +198,14 @@ class A_Mailer
         $sql = "SELECT COUNT(*) AS total ";
         $sql.= "FROM application_mailer_relay ";
 
-        $sql.= "WHERE recipient = ? ";
+        $sql.= "WHERE recipient_email_local = ? AND recipient_email_domain = ? ";
         $data[] = $recipient;
 
         $sql.= "AND identifier_md5 = ? ";
         $identifier = md5($identifier);
-        $data[] = $identifier;
+        list($local, $domain) = explode('@', strtolower($recipient));
+        $data[] = $local;
+        $data[] = $domain;
 
         $sql.= "AND created_at > ? ";
         $time = mktime(date('H'), date('i'), ($time * -1));
@@ -209,7 +213,7 @@ class A_Mailer
 
         $deny = false;
 
-        if(is_object($result = B_Model::selectRow($sql, $data)))
+        if(is_object($result = current(B_Model::select($sql, $data))))
         {
             $deny = $result->total >= $count;
         }
