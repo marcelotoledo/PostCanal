@@ -111,13 +111,6 @@ class UserProfile extends B_Model
 
     // -------------------------------------------------------------------------
 
-    protected static $preference_default = array
-    (
-        'dashboard_current_blog'    => ""    ,
-        'dashboard_feed_display'    => "all" ,
-        'dashboard_article_display' => "lst"
-    );
-
     /**
      * Get UserProfile by primary key
      *
@@ -242,6 +235,13 @@ class UserProfile extends B_Model
             " AND hash = ? AND enabled = ?", 
             array($local, $domain, $hash, true), PDO::FETCH_CLASS, get_class()));
     }
+
+    protected static $preference_default = array
+    (
+        'current_blog'    => ""    ,
+        'feed_display'    => "all" ,
+        'article_display' => "lst"
+    );
 
     /**
      * Get preference array

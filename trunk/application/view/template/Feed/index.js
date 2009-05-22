@@ -47,21 +47,38 @@ $(document).ready(function()
 
     /* preference */
 
-    function get_preference(k)
-    {
-        return do_preference(k, null);
-    }
-
-    function set_preference(k, v)
-    {
-        do_preference(k, v);
-    }
-
-    function do_preference(k, v)
+    function load_preference()
     {
         $.ajax
         ({
-            type: (v ? "POST" : "GET"),
+            type: "GET",
+            url: "<?php B_Helper::url('profile', 'preference') ?>",
+            dataType: "xml",
+            data: { },
+            beforeSend: function()
+            {
+                set_active_request(true);
+            },
+            complete: function()
+            {
+                set_active_request(false);
+            },
+            success: function (xml)
+            {
+                d = $(xml).find('data');
+                p = d.find('preference');
+
+                set_blog(p.find('current_blog').text());
+            },
+            error: function () { err(); }
+        });
+    }
+
+    function save_preference(k, v)
+    {
+        $.ajax
+        ({
+            type: "POST",
             url: "<?php B_Helper::url('profile', 'preference') ?>",
             dataType: "xml",
             data: { k: k, v: v },
@@ -76,29 +93,21 @@ $(document).ready(function()
             success: function (xml)
             {
                 d = $(xml).find('data');
-                k = d.find('k')
-                v = d.find('v')
+                k = d.find('k').text();
+                v = d.find('v').text();
+
+                if(k=='current_blog') { set_blog(v); }
             },
             error: function () { err(); }
         });
-
-        return v;
     }
+
 
     /* set blog */
 
-    function set_blog()
+    function set_blog(b)
     {
-        <?php if(count($this->blogs) == 0) : ?>
-        $.b_dialog({ selector: "#noblogmsg", modal: false });
-        $.b_dialog_show();
-        <?php elseif(count($this->blogs) == 1) : ?>
-        current_blog = $("#blogcur").val();
-        <?php elseif(count($this->blogs) > 1) : ?>
-        current_blog = blog_select_list.find("option:selected").val();
-        <?php endif ?>
-
-        if(current_blog)
+        if((current_blog = b))
         {
             toggle_feed_add_form(false);
             toggle_feed_import_form(false);
@@ -635,6 +644,16 @@ $(document).ready(function()
         });
     }
 
+    function main()
+    {
+        <?php if(count($this->blogs) > 0) : ?>
+        load_preference();
+        <?php else : ?>
+        $.b_dialog({ selector: "#noblogmsg", modal: false });
+        $.b_dialog_show();
+        <?php endif ?>
+    }
+
     /* TRIGGERS */
 
     $("a#feedaddlnk").click(function()
@@ -692,20 +711,19 @@ $(document).ready(function()
 
     blog_select_list.change(function()
     {
-        set_blog();
-        set_preference('dashboard_current_blog', current_blog);
+        save_preference('current_blog', $(this).find("option:selected").val());
     });
 
     <?php if(count($this->import) > 0) : ?>
 
-    body__.bind('main'          , function(e) { set_blog(); });
+    body__.bind('main'          , function(e) { main(); });
     body__.bind('after_blog'    , function(e) { feed_import_init(); });
     body__.bind('after_import'  , function(e) { window.location="<?php B_Helper::url('feed') ?>" });
     body__.bind('after_list'    , function(e) { });
 
     <?php else : ?>
 
-    body__.bind('main'          , function(e) { set_blog(); });
+    body__.bind('main'          , function(e) { main(); });
     body__.bind('after_blog'    , function(e) { feed_list(); });
     body__.bind('after_list'    , function(e) { feed_sortable_init(); });
     body__.bind('after_import'  , function(e) { });

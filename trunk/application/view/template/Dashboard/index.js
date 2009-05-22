@@ -17,15 +17,19 @@ $(document).ready(function()
 
     var feed_area = $("div#feedarea");
     var feed_list_area = feed_area.find("div#feedlistarea");
-    var feed_display = "<?php echo $this->profile_preference['dashboard_feed_display'] ?>";
+    var feed_display = 'all';
 
-    var article_display = "<?php echo $this->profile_preference['dashboard_article_display'] ?>";
+    var article_display = 'lst';
     var articles_content = Array();
     var current_article = null;
 
     var queue_area = $("div#queuearea");
     var queue_list_area = queue_area.find("div#queuelistarea");
     var queue_hctrl_display = 0 // 0 min | 1 exp | 2 max
+
+    var queue_mode = 'manual';
+    var queue_running = 'no';
+    var queue_spawning = 3600;
 
 
     /* spinner */
@@ -541,22 +545,54 @@ $(document).ready(function()
 
     /* preference */
 
-    function get_preference(k)
+    function load_preference(t)
     {
-        return do_preference(k, null);
-    }
+        url = null
+        if(t=='profile') { url = "<?php B_Helper::url('profile', 'preference') ?>"; }
+        if(t=='blog')    { url = "<?php B_Helper::url('blog',    'preference') ?>"; }
 
-    function set_preference(k, v)
-    {
-        do_preference(k, v);
-    }
-
-    function do_preference(k, v)
-    {
         $.ajax
         ({
-            type: (v ? "POST" : "GET"),
-            url: "<?php B_Helper::url('profile', 'preference') ?>",
+            type: "GET",
+            url: url,
+            dataType: "xml",
+            data: { },
+            beforeSend: function()
+            {
+                set_active_request(true);
+            },
+            complete: function()
+            {
+                set_active_request(false);
+            },
+            success: function (xml)
+            {
+                d = $(xml).find('data');
+                p = d.find('preference');
+
+                if(t=='profile')
+                {
+                    set_blog(p.find('current_blog').text());
+                }
+                if(t=='blog')
+                {
+                    queue_set_mode(p.find('queue_mode').text());
+                }
+            },
+            error: function () { err(); }
+        });
+    }
+
+    function save_preference(t, k, v)
+    {
+        url = null
+        if(t=='profile') { url = "<?php B_Helper::url('profile', 'preference') ?>"; }
+        if(t=='blog')    { url = "<?php B_Helper::url('blog'   , 'preference') ?>"; }
+
+        $.ajax
+        ({
+            type: "POST",
+            url: url,
             dataType: "xml",
             data: { k: k, v: v },
             beforeSend: function()
@@ -570,29 +606,60 @@ $(document).ready(function()
             success: function (xml)
             {
                 d = $(xml).find('data');
-                k = d.find('k')
-                v = d.find('v')
+                k = d.find('k').text();
+                v = d.find('v').text();
+
+                if(t=='profile')
+                {
+                    if(k=='current_blog')    { set_blog(v); }
+                    if(k=='feed_display')    { set_feed_display(v);    }
+                    if(k=='article_display') { set_article_display(v); }
+                }
+                if(t=='blog')
+                {
+                    if(k=='queue_mode') { queue_set_mode(v); }
+                }
             },
             error: function () { err(); }
         });
+    }
 
-        return v;
+    /* init queue */
+
+    function toggle_queue_mode()
+    {
+        save_preference('blog', 'queue_mode', (queue_mode == 'manual' ? 'auto' : 'manual'));
+    }
+
+    function queue_set_mode(m)
+    {
+        queue_mode = m ? m : 'manual';
+
+        if(queue_mode=='auto')
+        {
+            $("#queuemodeautolnk").hide();
+            $("#queuemodeautolabel").show();
+            $("#queuemodemanuallnk").show();
+            $("#queuemodemanuallabel").hide();
+        }
+        if(queue_mode=='manual')
+        {
+            $("#queuemodeautolnk").show();
+            $("#queuemodeautolabel").hide();
+            $("#queuemodemanuallnk").hide();
+            $("#queuemodemanuallabel").show();
+        }
     }
 
     /* set blog */
 
-    function set_blog()
+    function set_blog(b)
     {
-        <?php if(count($this->blogs) == 0) : ?>
-        $.b_dialog({ selector: "#noblogmsg", modal: false });
-        $.b_dialog_show();
-        <?php elseif(count($this->blogs) == 1) : ?>
-        current_blog = $("#blogcur").val();
-        <?php elseif(count($this->blogs) > 1) : ?>
-        current_blog = blog_select_list.find("option:selected").val();
-        <?php endif ?>
-
-        if(current_blog) { set_feed_display(feed_display); }
+        if((current_blog = b))
+        {
+            load_preference('blog');
+            set_feed_display(feed_display);
+        }
     }
 
     /* TRIGGERS */
@@ -606,36 +673,31 @@ $(document).ready(function()
 
     blog_select_list.change(function()
     {
-        set_blog();
-        set_preference('dashboard_current_blog', current_blog);
+        save_preference('profile', 'current_blog', $(this).find("option:selected").val());
     });
 
     /* feed display */
 
     $("a#feeddsplnkall").click(function()
     {
-        set_feed_display('all');
-        set_preference('dashboard_feed_display', feed_display);
+        save_preference('profile', 'feed_display', 'all');
     });
 
     $("a#feeddsplnkthr").click(function()
     {
-        set_feed_display('thr');
-        set_preference('dashboard_feed_display', feed_display);
+        save_preference('profile', 'feed_display', 'thr');
     });
 
     /* article display */
 
     $("a#articledsplnklst").click(function()
     {
-        set_article_display('lst');
-        set_preference('dashboard_article_display', article_display);
+        save_preference('profile', 'article_display', 'lst');
     });
 
     $("a#articledsplnkexp").click(function()
     {
-        set_article_display('exp');
-        set_preference('dashboard_article_display', article_display);
+        save_preference('profile', 'article_display', 'exp');
     });
 
     $("a#feedrefreshlnk").click(function()
@@ -659,7 +721,17 @@ $(document).ready(function()
         window_update();
     });
 
+    $("#queuemode a").click(function()
+    {
+        toggle_queue_mode();
+    });
+
     /* INIT */
 
-    set_blog();
+    <?php if(count($this->blogs) > 0) : ?>
+    load_preference('profile');
+    <?php else : ?>
+    $.b_dialog({ selector: "#noblogmsg", modal: false });
+    $.b_dialog_show();
+    <?php endif ?>
 });

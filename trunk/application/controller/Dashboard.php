@@ -16,8 +16,6 @@ class C_Dashboard extends B_Controller
     public function before()
     {
         $this->authorize();
-        $id = $this->session()->user_profile_id;
-        $this->view()->profile_preference = UserProfile::getPreference($id);
     }
 
     /**

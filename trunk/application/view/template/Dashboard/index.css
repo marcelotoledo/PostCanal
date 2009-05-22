@@ -29,45 +29,45 @@ div.containerhead a:hover
 
 /* feeds */
 
-div#feedareahead.areadisabled
+#feedareahead.areadisabled
 {
     background-color: gray;
 }
-div#feedareahead div.title
+#feedareahead div.title
 {
     float: left;
     font-size: medium;
     font-weight: bold;
     text-transform: uppercase;
 }
-div#feedareahead div.feeddisplay
+#feedareahead div.feeddisplay
 {
     float: left;
     padding-left: 30px;
 }
-div#feedareahead div.articledisplay
+#feedareahead div.articledisplay
 {
     float: left;
     padding-left: 15px;
 }
-div#feedareahead div.feedrefresh
+#feedareahead div.feedrefresh
 {
     float: right;
     padding-right: 15px;
 }
-div#feedareahead div.feednavigation
+#feedareahead div.feednavigation
 {
     float: right;
     padding-right: 15px;
 }
 
-div#feedlistarea
+#feedlistarea
 {
     overflow: auto;
     overflow-x: hidden; /* IE scrollbars fixes */
     overflow-y: auto;
 }
-div#feedlistarea span
+#feedlistarea span
 {
     padding-left: 15px;
 }
@@ -187,26 +187,26 @@ div.articlecontentshow
 
 /* queue */
 
-div#queuearea
+#queuearea
 {
     position: absolute;
     bottom: 0;
     left: 0;
     width: 100%;
 }
-div#queueareahctrlbar
+#queueareahctrlbar
 {
     background-color: lightgray;
     line-height: 5px;
     vertical-align: top;
 }
 /*
-div#queueareahctrlbar:hover
+#queueareahctrlbar:hover
 {
     background-color: cyan;
 }
 */
-div#queueareahead div.title
+#queueareahead div.title
 {
     float: left;
     font-size: medium;
@@ -219,13 +219,18 @@ div.queuehctrllnks
     padding-right: 15px;
 }
 
-div#queuelistarea
+#queuelistarea
 {
     overflow: auto;
     overflow-x: hidden; /* IE scrollbars fixes */
     overflow-y: auto;
 }
-div#queuelistarea span
+#queuelistarea span
 {
     padding-left: 15px;
+}
+#queuemode
+{
+    float: left;
+    padding-left: 30px;
 }

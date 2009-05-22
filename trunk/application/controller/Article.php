@@ -55,6 +55,5 @@ class C_Article extends B_Controller
         );
 
         $this->session()->user_blog_hash = $blog_hash;
-        $this->session()->dashboard_feed_display = 'all';
     }
 }

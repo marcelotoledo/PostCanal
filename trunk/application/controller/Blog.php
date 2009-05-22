@@ -170,4 +170,43 @@ class C_Blog extends B_Controller
 
         $this->view()->result = $result;
     }
+
+    /**
+     * Get/Set blog preferences
+     *
+     * @param   string  $name
+     */
+    public function A_preference()
+    {
+        $this->response()->setXML(true);
+
+        $pk   = $this->request()->k;
+        $pv   = $this->request()->v;
+        $user = $this->session()->user_profile_id;
+        $hash = $this->request()->blog;
+
+        if($pk && $pv)
+        {
+            UserBlog::setPreference($user, $hash, array($pk => $pv));
+            $this->view()->k = $pk;
+            $this->view()->v = $pv;
+            $cs = ((array) $this->session()->blog_preference);
+            $this->session()->blog_preference = array_merge($cs, array($pk => $pv));
+        }
+        elseif($pk)
+        {
+            $pr = UserBlog::getPreference($user, $hash);
+            $this->view()->k = $pk;
+            $pv = $pr[$pk];
+            $this->view()->v = $pv;
+            $cs = ((array) $this->session()->blog_preference);
+            $this->session()->blog_preference = array_merge($cs, array($pk => $pv));
+        }
+        else
+        {
+            $pr = UserBlog::getPreference($user, $hash);
+            $this->view()->preference = $pr;
+            $this->session()->blog_preference = $pr;
+        }
+    }
 }

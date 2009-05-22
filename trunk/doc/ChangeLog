@@ -131,7 +131,7 @@ HORAS TRABALHADAS: 4h
 
 - Ajustes na barra de queue
 - Inclusao de paginacao na listagem de feeds
-- Correcao de bugs
+- bugfixes
 
 HORAS TRABALHADAS: 8h
 
@@ -139,6 +139,7 @@ HORAS TRABALHADAS: 8h
 21/05/2009
 ==========
 
-- Correcao de pequenos bugs
+- bugfixes
+- inclusao de opcao modo (manual/automatico) no queue
 
-HORAS TRABALHADAS: 1h
+HORAS TRABALHADAS: 4h

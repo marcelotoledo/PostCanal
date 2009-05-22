@@ -652,7 +652,7 @@ class C_Profile extends B_Controller
     }
 
     /**
-     * Set user preferences
+     * Get/Set user preferences
      *
      * @param   string  $name
      */
@@ -669,15 +669,26 @@ class C_Profile extends B_Controller
         if($pk && $pv)
         {
             UserProfile::setPreference($id, array($pk => $pv));
+            $this->view()->k = $pk;
+            $this->view()->v = $pv;
+            $cs = ((array) $this->session()->profile_preference);
+            $this->session()->profile_preference = array_merge($cs, array($pk => $pv));
         }
         elseif($pk)
         {
-            $ar = UserProfile::getPreference($id);
-            $pv = $ar[$pk];
+            $pr = UserProfile::getPreference($id);
+            $this->view()->k = $pk;
+            $pv = $pr[$pk];
+            $this->view()->v = $pv;
+            $cs = ((array) $this->session()->profile_preference);
+            $this->session()->profile_preference = array_merge($cs, array($pk => $pv));
         }
-
-        $this->view()->k = $pk;
-        $this->view()->v = $pv;
+        else
+        {
+            $pr = UserProfile::getPreference($id);
+            $this->view()->preference = $pr;
+            $this->session()->profile_preference = $pr;
+        }
     }
 
     /**

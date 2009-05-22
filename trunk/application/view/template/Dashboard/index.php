@@ -48,6 +48,14 @@
 <div id="queueareahead" class="containerhead">
     <div class="title"><?php echo $this->translation()->queue ?></div>
 
+    <div id="queuemode">
+        <b><?php echo $this->translation()->mode ?>: </b>
+        <a id="queuemodeautolnk" style="display:none"><?php echo $this->translation()->automatic ?></a>
+        <span id="queuemodeautolabel" style="display:none"><b><?php echo $this->translation()->automatic ?></b></span> | 
+        <a id="queuemodemanuallnk" style="display:none"><?php echo $this->translation()->manual ?></a>
+        <span id="queuemodemanuallabel" style="display:none"><b><?php echo $this->translation()->manual ?></b></span>
+    </div>
+
     <div class="queuehctrllnks">
         <a id="queuehctrlmin" class="queuehctrllnk" style="display:none"><?php echo $this->translation()->minimize ?></a>
         <a id="queuehctrlexp" class="queuehctrllnk"><?php echo $this->translation()->expand ?></a>
