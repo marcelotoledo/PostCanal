@@ -50,10 +50,18 @@
 
     <div id="queuemode">
         <b><?php echo $this->translation()->mode ?>: </b>
-        <a id="queuemodeautolnk" style="display:none"><?php echo $this->translation()->automatic ?></a>
-        <span id="queuemodeautolabel" style="display:none"><b><?php echo $this->translation()->automatic ?></b></span> | 
         <a id="queuemodemanuallnk" style="display:none"><?php echo $this->translation()->manual ?></a>
-        <span id="queuemodemanuallabel" style="display:none"><b><?php echo $this->translation()->manual ?></b></span>
+        <span id="queuemodemanuallabel" style="display:none"><?php echo $this->translation()->manual ?></span> | 
+        <a id="queuemodeautolnk" style="display:none"><?php echo $this->translation()->automatic ?></a>
+        <span id="queuemodeautolabel" style="display:none"><?php echo $this->translation()->automatic ?></span>
+    </div>
+
+    <div id="queuerunning" style="display:none">
+        <b><?php echo $this->translation()->running ?>: </b>
+        <a id="queuerunningplaylnk" style="display:none"><?php echo $this->translation()->play ?></a>
+        <span id="queuerunningplaylabel" style="display:none"><?php echo $this->translation()->play ?></span> | 
+        <a id="queuerunningpauselnk" style="display:none"><?php echo $this->translation()->pause ?></a>
+        <span id="queuerunningpauselabel" style="display:none"><?php echo $this->translation()->pause ?></span>
     </div>
 
     <div class="queuehctrllnks">

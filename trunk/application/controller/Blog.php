@@ -185,28 +185,42 @@ class C_Blog extends B_Controller
         $user = $this->session()->user_profile_id;
         $hash = $this->request()->blog;
 
-        if($pk && $pv)
+        $allw = array('queue_mode','queue_running','queue_spawning');
+        $pref = array();
+
+        if(is_object(($blog = UserBlog::getByUserAndHash($user, $hash))))
         {
-            UserBlog::setPreference($user, $hash, array($pk => $pv));
-            $this->view()->k = $pk;
-            $this->view()->v = $pv;
-            $cs = ((array) $this->session()->blog_preference);
-            $this->session()->blog_preference = array_merge($cs, array($pk => $pv));
+            if($pk && $pv)
+            {
+                if(in_array($pk, $allw))
+                {
+                    $blog->{$pk} = $pv;
+
+                    if($pk=='queue_mode' && $pv=='manual')
+                    {
+                        $blog->queue_running='pause';
+                    }
+                }
+                $blog->save();
+            }
+            elseif($pk)
+            {
+                if(in_array($pk, $allw))
+                {
+                    $pv = $blog->{$pk};
+                }
+            }
+            else
+            {
+                foreach($allw as $k)
+                {
+                    $pref[$k] = $blog->{$k};
+                }
+            }
         }
-        elseif($pk)
-        {
-            $pr = UserBlog::getPreference($user, $hash);
-            $this->view()->k = $pk;
-            $pv = $pr[$pk];
-            $this->view()->v = $pv;
-            $cs = ((array) $this->session()->blog_preference);
-            $this->session()->blog_preference = array_merge($cs, array($pk => $pv));
-        }
-        else
-        {
-            $pr = UserBlog::getPreference($user, $hash);
-            $this->view()->preference = $pr;
-            $this->session()->blog_preference = $pr;
-        }
+
+        $this->view()->k = $pk;
+        $this->view()->v = $pv;
+        $this->view()->preference = $pref;
     }
 }

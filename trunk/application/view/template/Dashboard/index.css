@@ -234,3 +234,8 @@ div.queuehctrllnks
     float: left;
     padding-left: 30px;
 }
+#queuerunning
+{
+    float: left;
+    padding-left: 15px;
+}

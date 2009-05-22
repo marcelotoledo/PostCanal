@@ -67,8 +67,9 @@ $(document).ready(function()
             {
                 d = $(xml).find('data');
                 p = d.find('preference');
-
-                set_blog(p.find('current_blog').text());
+                b = p.find('current_blog').text()
+                b = b ? b : current_selected_blog();
+                set_blog(b);
             },
             error: function () { err(); }
         });
@@ -104,6 +105,13 @@ $(document).ready(function()
 
 
     /* set blog */
+
+    function current_selected_blog()
+    {
+        s = $("#blogcur").val();
+        s = s ? s : blog_select_list.find("option:selected").val();
+        return s;
+    }
 
     function set_blog(b)
     {

@@ -33,7 +33,9 @@ class UserBlog extends B_Model
 		'blog_manager_url' => array ('type' => 'string','size' => 0,'required' => true),
 		'blog_username' => array ('type' => 'string','size' => 255,'required' => false),
 		'blog_password' => array ('type' => 'string','size' => 255,'required' => false),
-		'preference_serialized' => array ('type' => 'string','size' => 0,'required' => false),
+		'queue_mode' => array ('type' => 'string','size' => 0,'required' => false),
+		'queue_running' => array ('type' => 'string','size' => 0,'required' => false),
+		'queue_spawning' => array ('type' => 'integer','size' => 0,'required' => false),
 		'created_at' => array ('type' => 'date','size' => 0,'required' => false),
 		'updated_at' => array ('type' => 'date','size' => 0,'required' => false),
 		'enabled' => array ('type' => 'boolean','size' => 0,'required' => false));
@@ -177,64 +179,5 @@ class UserBlog extends B_Model
             "SELECT * FROM " . self::$table_name . 
             " WHERE user_profile_id = ? AND hash = ?", 
             array($user_id, $hash), PDO::FETCH_CLASS, get_class()));
-    }
-
-    protected static $preference_default = array
-    (
-        'queue_mode'     => 'manual' ,
-        'queue_running'  => 'no'     ,
-        'queue_spawning' => '3600'
-    );
-
-    /**
-     * Get preference array
-     *
-     * @param   integer     $user_id    User Profile ID
-     * @param   string      $hash
-     *
-     * @return  array
-     */
-    public static function getPreference($user_id, $hash)
-    {
-        $preference = array();
-
-        if(is_object(($blog = self::getByUserAndHash($user_id, $hash))))
-        {
-            $varr = ((array) unserialize($blog->preference_serialized));
-
-            foreach(self::$preference_default as $k => $v)
-            {
-                $preference[$k] = array_key_exists($k, $varr) ? $varr[$k] : $v;
-            }
-        }
-
-        return $preference;
-    }
-
-    /**
-     * Set preference array
-     *
-     * @param   integer     $user_id    User Profile ID
-     * @param   string      $hash
-     * @param   array       $narr       Preference array
-     */
-    public static function setPreference($user_id, $hash, $narr)
-    {
-        $preference = array();
-
-        if(is_object(($blog = self::getByUserAndHash($user_id, $hash))))
-        {
-            $varr = ((array) unserialize($blog->preference_serialized));
-
-            foreach(self::$preference_default as $k => $v)
-            {
-                $preference[$k] = array_key_exists($k, $narr) ? 
-                    $narr[$k] : 
-                    (array_key_exists($k, $varr) ? $varr[$k] : $v);
-            }
-
-            $blog->preference_serialized = serialize($preference);
-            $blog->save();
-        }
     }
 }
