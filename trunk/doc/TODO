@@ -30,7 +30,7 @@
     @ Ordenar canais de feed
     ~ Exibir info de feed (url, descrição, data/hora da próxima alteração)
 
-    * Adicionar separador redimensionável no Dashboard para Itens de feed / Queue
+    X Adicionar separador redimensionável no Dashboard para Itens de feed / Queue
 
-    * Método de alimentação (manual, automático ...)
-    * Método de publicação (manual, automático ...)
+    ~ Método de alimentação (manual, automático ...)
+    ~ Método de publicação (manual, automático ...)

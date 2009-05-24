@@ -27,7 +27,6 @@ $(document).ready(function()
     var queue_list_area = queue_area.find("div#queuelistarea");
     var queue_hctrl_display = 0 // 0 min | 1 exp | 2 max
 
-    var queue_mode = 'manual';
     var queue_running = 'pause';
     var queue_spawning = 3600;
 
@@ -342,6 +341,7 @@ $(document).ready(function()
         container.find("div.article[bound='no']").each(function()
         {
             $(this).attr('bound', 'yes');
+
             $(this).click(function()
             {
                 if(article_display == 'lst')
@@ -619,6 +619,7 @@ $(document).ready(function()
             $("#queuerunningplaylabel").show();
             $("#queuerunningpauselnk").show();
             $("#queuerunningpauselabel").hide();
+            $("#queuespawning").show();
         }
         if(queue_running=='pause')
         {
@@ -626,34 +627,15 @@ $(document).ready(function()
             $("#queuerunningplaylabel").hide();
             $("#queuerunningpauselnk").hide();
             $("#queuerunningpauselabel").show();
+            $("#queuespawning").hide();
         }
     }
 
-    function toggle_queue_mode()
+    function queue_set_spawning(v)
     {
-        save_blog('queue_mode', (queue_mode == 'manual' ? 'auto' : 'manual'));
-    }
-
-    function queue_set_mode(m)
-    {
-        queue_mode = m ? m : 'manual';
-
-        if(queue_mode=='auto')
-        {
-            $("#queuemodeautolnk").hide();
-            $("#queuemodeautolabel").show();
-            $("#queuemodemanuallnk").show();
-            $("#queuemodemanuallabel").hide();
-            $("#queuerunning").show();
-        }
-        if(queue_mode=='manual')
-        {
-            $("#queuemodeautolnk").show();
-            $("#queuemodeautolabel").hide();
-            $("#queuemodemanuallnk").hide();
-            $("#queuemodemanuallabel").show();
-            $("#queuerunning").hide();
-        }
+        s = $("#queuespawningsel");
+        s.find("option").removeAttr('selected');
+        s.find("option[value='" + v + "']").attr('selected', true);
     }
 
     /* set blog */
@@ -678,8 +660,8 @@ $(document).ready(function()
             {
                 d = $(xml).find('data');
                 p = d.find('preference');
-                queue_set_mode(p.find('queue_mode').text());
                 queue_set_running(p.find('queue_running').text());
+                queue_set_spawning(p.find('queue_spawning').text());
             },
             error: function () { err(); }
         });
@@ -706,11 +688,16 @@ $(document).ready(function()
                 d = $(xml).find('data');
                 k = d.find('k').text();
                 v = d.find('v').text();
-                if(k=='queue_mode') { queue_set_mode(v); }
                 if(k=='queue_running') { queue_set_running(v); }
+                if(k=='queue_spawning') { queue_set_spawning(v); }
             },
             error: function () { err(); }
         });
+    }
+
+    function current_selected_spawning()
+    {
+        return $("#queuespawningsel").find("option:selected").val();
     }
 
     function current_selected_blog()
@@ -788,14 +775,14 @@ $(document).ready(function()
         window_update();
     });
 
-    $("#queuemode a").click(function()
-    {
-        toggle_queue_mode();
-    });
-
     $("#queuerunning a").click(function()
     {
         toggle_queue_running();
+    });
+
+    $("#queuespawningsel").change(function()
+    {
+        save_blog('queue_spawning', current_selected_spawning());
     });
 
     /* INIT */

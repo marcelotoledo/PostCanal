@@ -48,20 +48,30 @@
 <div id="queueareahead" class="containerhead">
     <div class="title"><?php echo $this->translation()->queue ?></div>
 
-    <div id="queuemode">
-        <b><?php echo $this->translation()->mode ?>: </b>
-        <a id="queuemodemanuallnk" style="display:none"><?php echo $this->translation()->manual ?></a>
-        <span id="queuemodemanuallabel" style="display:none"><?php echo $this->translation()->manual ?></span> | 
-        <a id="queuemodeautolnk" style="display:none"><?php echo $this->translation()->automatic ?></a>
-        <span id="queuemodeautolabel" style="display:none"><?php echo $this->translation()->automatic ?></span>
+    <div id="queuerunning">
+        <b><?php echo $this->translation()->running ?>: </b>
+
+        <a id="queuerunningpauselnk" style="display:none"><?php echo $this->translation()->pause ?></a>
+        <span id="queuerunningpauselabel" style="display:none"><?php echo $this->translation()->pause ?></span> | 
+        <a id="queuerunningplaylnk" style="display:none"><?php echo $this->translation()->play ?></a>
+        <span id="queuerunningplaylabel" style="display:none"><?php echo $this->translation()->play ?></span>
     </div>
 
-    <div id="queuerunning" style="display:none">
-        <b><?php echo $this->translation()->running ?>: </b>
-        <a id="queuerunningplaylnk" style="display:none"><?php echo $this->translation()->play ?></a>
-        <span id="queuerunningplaylabel" style="display:none"><?php echo $this->translation()->play ?></span> | 
-        <a id="queuerunningpauselnk" style="display:none"><?php echo $this->translation()->pause ?></a>
-        <span id="queuerunningpauselabel" style="display:none"><?php echo $this->translation()->pause ?></span>
+    <div id="queuespawning" style="display:none">
+        <table><tr><td>
+        <b><?php echo $this->translation()->spawning ?>: </b>
+        </td><td>
+        <form>
+        <select id="queuespawningsel">
+            <option value="0"><?php echo $this->translation()->asap ?></option>
+            <option value="300">5'</option>
+            <option value="900">15'</option>
+            <option value="1800">30'</option>
+            <option value="3600">1h</option>
+            <option value="10800">3h</option>
+            <option value="43200">12h</option>
+        </select>
+        </form></td></tr></table>
     </div>
 
     <div class="queuehctrllnks">

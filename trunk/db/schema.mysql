@@ -182,7 +182,6 @@ CREATE TABLE model_user_blog
     blog_manager_url TEXT NOT NULL,
     blog_username CHAR(255),
     blog_password CHAR(255),
-    queue_mode ENUM('manual', 'auto') NOT NULL DEFAULT 'manual',
     queue_running ENUM('play', 'pause') NOT NULL DEFAULT 'pause',
     queue_spawning INTEGER UNSIGNED NOT NULL DEFAULT 0,
     created_at TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',

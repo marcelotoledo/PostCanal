@@ -24,10 +24,10 @@
 <span id="bloglstbar">
 <?php if(($i = count($this->blogs)) && $i == 1) : ?>
     <b><?php echo $this->translation()->application_blog ?>: </b><i><?php echo $this->blogs[0]->name ?></i>
-    <input type="hidden" id="blogcur" value="<?php echo $this->blogs[0]->hash ?>">
+    <input type="hidden" id="currentblog" value="<?php echo $this->blogs[0]->hash ?>">
 <?php elseif($i > 1) : ?>
     <b><?php echo $this->translation()->application_blog ?>: </b>
-    <select name="bloglst">
+    <select id="bloglstsel">
     <?php foreach($this->blogs as $c) : ?>
     <option value="<?php echo $c->hash ?>" <?php if($this->session()->profile_preference['current_blog'] == $c->hash) echo "selected"; ?>><?php echo $c->name ?></option>
     <?php endforeach ?>

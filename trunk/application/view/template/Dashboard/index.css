@@ -161,6 +161,10 @@ div.articlebuttons
     text-align: right;
     margin-right: 15px;
 }
+div.articlebuttons a
+{
+    padding-left: 10px;
+}
 div.articlecontent
 {
     display: none;
@@ -229,13 +233,14 @@ div.queuehctrllnks
 {
     padding-left: 15px;
 }
-#queuemode
+#queuerunning
 {
     float: left;
     padding-left: 30px;
 }
-#queuerunning
+#queuespawning
 {
     float: left;
     padding-left: 15px;
+    margin-top: -5px;
 }

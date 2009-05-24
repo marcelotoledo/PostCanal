@@ -185,7 +185,7 @@ class C_Blog extends B_Controller
         $user = $this->session()->user_profile_id;
         $hash = $this->request()->blog;
 
-        $allw = array('queue_mode','queue_running','queue_spawning');
+        $allw = array('queue_running','queue_spawning');
         $pref = array();
 
         if(is_object(($blog = UserBlog::getByUserAndHash($user, $hash))))
@@ -195,11 +195,6 @@ class C_Blog extends B_Controller
                 if(in_array($pk, $allw))
                 {
                     $blog->{$pk} = $pv;
-
-                    if($pk=='queue_mode' && $pv=='manual')
-                    {
-                        $blog->queue_running='pause';
-                    }
                 }
                 $blog->save();
             }
