@@ -17,4 +17,4 @@ import xmlrpclib
 #remote = "http://postcanal.com/backend.py"
 remote = "http://192.168.56.101/backend.py"
 server = xmlrpclib.ServerProxy(remote)
-print server.feed_discover({ 'token' : token, 'url' : 'http://test.wordpress.com' })
+print server.feed_discover({ 'token' : token, 'url' : 'http://www.slashdot.org' })
