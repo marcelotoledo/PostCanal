@@ -60,7 +60,7 @@ class B_Controller
      */
     public function check($name)
     {
-        return is_callable(array($this, ("A_" . $name)));
+        return method_exists($this, ('A_' . $name));
     }
 
     /**

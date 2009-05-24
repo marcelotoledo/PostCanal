@@ -62,9 +62,10 @@ class B_Log
      */
     public static function systemLog ($message)
     {
-        echo syslog(LOG_ERR, $message) ?
-            "fatal error: please see syslog for details" :
-            $message;
+        // echo syslog(LOG_ERR, $message) ?
+        //     "fatal error: please see syslog for details" :
+        //     $message;
+        echo $message;
         exit(1);
     }
 }

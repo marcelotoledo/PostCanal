@@ -311,7 +311,7 @@ class B_Controller
      */
     public function check($name)
     {
-        return is_callable(array($this, ("A_" . $name)));
+        return method_exists($this, ('A_' . $name));
     }
 
     /**
@@ -890,9 +890,10 @@ class B_Log
      */
     public static function systemLog ($message)
     {
-        echo syslog(LOG_ERR, $message) ?
-            "fatal error: please see syslog for details" :
-            $message;
+        // echo syslog(LOG_ERR, $message) ?
+        //     "fatal error: please see syslog for details" :
+        //     $message;
+        echo $message;
         exit(1);
     }
 }
