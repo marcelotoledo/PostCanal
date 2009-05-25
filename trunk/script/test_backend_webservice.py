@@ -8,20 +8,21 @@ sys.path.append(sys_path)
 
 # ==============================================================================
 
-from blotomate import BlotomateConfig
+from postcanal import PostCanalConfig
 
-token = BlotomateConfig(config_path).get('webservice/token')
+token = PostCanalConfig(config_path).get('webservice/token')
 
 import xmlrpclib
 
-#remote = "http://postcanal.com/backend.py"
+remote = "http://postcanal.com/backend.py"
 #remote = "http://192.168.56.101/backend.py"
-#server = xmlrpclib.ServerProxy(remote)
-#print server.feed_discover({ 'token' : token, 'url' : 'http://www.slashdot.org' })
+server = xmlrpclib.ServerProxy(remote)
+print server.feed_discover({ 'token' : token, 'url' : 'http://www.slashdot.org' })
 
 
 # webservice debug
 
-remote = "http://192.168.56.101/backend-debug.py"
-server = xmlrpclib.ServerProxy(remote)
-print server.test();
+#remote = "http://192.168.56.101/backend-debug.py"
+#remote = "http://postcanal.com/backend-debug.py"
+#server = xmlrpclib.ServerProxy(remote)
+#print server.test();

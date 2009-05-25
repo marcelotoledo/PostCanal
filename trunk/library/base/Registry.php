@@ -5,7 +5,7 @@
  *
  * Generic storage class to manage global data
  *
- * @category    Blotomate
+ * @category    PostCanal
  * @package     Base Library
  * @author      Rafael Castilho <rafael@castilho.biz>
  */

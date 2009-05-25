@@ -7,13 +7,13 @@
         <default>
             <driver>mysql</driver>
             <host>localhost</host>
-            <username>blotomate</username>
-            <password>blotomate</password>
-            <db>blotomate</db>
+            <username>postcanal</username>
+            <password>postcanal</password>
+            <db>postcanal</db>
         </default>
     </database>
     <session>
-        <name>blotomate</name>
+        <name>postcanal</name>
         <expiration>43200</expiration>
     </session>
     <translation>
@@ -46,7 +46,7 @@
             <transport>sendmail</transport>
             <sender>
                 <default>
-                    <email>blotomate@localhost</email>
+                    <email>postcanal@localhost</email>
                 </default>
             </sender>
             <relay>

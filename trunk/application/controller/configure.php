@@ -33,7 +33,7 @@ $output = <<<EOS
 /**
  * <controller> controller class
  * 
- * @category    Blotomate
+ * @category    PostCanal
  * @package     Application Controller
  */
 

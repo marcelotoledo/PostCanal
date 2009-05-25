@@ -3,7 +3,7 @@
 /**
  * Base Bootstrap
  *
- * @category    Blotomate
+ * @category    PostCanal
  * @package     Base Library
  * @author      Rafael Castilho <rafael@castilho.biz>
  */
@@ -254,7 +254,7 @@ class B_Bootstrap
 /**
  * Base Controller
  * 
- * @category    Blotomate
+ * @category    PostCanal
  * @package     Base Library
  * @author      Rafael Castilho <rafael@castilho.biz>
  */
@@ -374,7 +374,7 @@ class B_Controller
 /**
  * Base Exception
  *
- * @category    Blotomate
+ * @category    PostCanal
  * @package     Base Library
  * @author      Rafael Castilho <rafael@castilho.biz>
  */
@@ -534,7 +534,7 @@ class B_Exception extends Exception
 /**
  * Base Helper
  * 
- * @category    Blotomate
+ * @category    PostCanal
  * @package     Base Library
  * @author      Rafael Castilho <rafael@castilho.biz>
  */
@@ -695,7 +695,7 @@ class B_Helper
 /**
  * Base Loader
  *
- * @category    Blotomate
+ * @category    PostCanal
  * @package     Base Library
  * @author      Rafael Castilho <rafael@castilho.biz>
  */
@@ -831,7 +831,7 @@ class B_Loader
 /**
  * Base Log
  * 
- * @category    Blotomate
+ * @category    PostCanal
  * @package     Base Library
  * @author      Rafael Castilho <rafael@castilho.biz>
  */
@@ -901,7 +901,7 @@ class B_Log
 /**
  * Base Model
  * 
- * @category    Blotomate
+ * @category    PostCanal
  * @package     Base Library
  * @author      Rafael Castilho <rafael@castilho.biz>
  *
@@ -1431,7 +1431,7 @@ abstract class B_Model
  *
  * Generic storage class to manage global data
  *
- * @category    Blotomate
+ * @category    PostCanal
  * @package     Base Library
  * @author      Rafael Castilho <rafael@castilho.biz>
  */
@@ -1565,7 +1565,7 @@ class B_Registry
 /**
  * Base Request
  * 
- * @category    Blotomate
+ * @category    PostCanal
  * @package     Base Library
  * @author      Rafael Castilho <rafael@castilho.biz>
  */
@@ -1824,7 +1824,7 @@ class B_Request
 /**
  * Base Response
  * 
- * @category    Blotomate
+ * @category    PostCanal
  * @package     Base Library
  * @author      Rafael Castilho <rafael@castilho.biz>
  */
@@ -2104,7 +2104,7 @@ class B_Response
 /**
  * Base Session
  * 
- * @category    Blotomate
+ * @category    PostCanal
  * @package     Base Library
  * @author      Rafael Castilho <rafael@castilho.biz>
  */
@@ -2340,7 +2340,7 @@ class B_Session
 /**
  * Base Translation
  * 
- * @category    Blotomate
+ * @category    PostCanal
  * @package     Base Library
  * @author      Rafael Castilho <rafael@castilho.biz>
  */
@@ -2450,7 +2450,7 @@ class B_Translation
 /**
  * Base View
  * 
- * @category    Blotomate
+ * @category    PostCanal
  * @package     Base Library
  * @author      Rafael Castilho <rafael@castilho.biz>
  */

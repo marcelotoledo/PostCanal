@@ -3,7 +3,7 @@
 /**
  * Base Log
  * 
- * @category    Blotomate
+ * @category    PostCanal
  * @package     Base Library
  * @author      Rafael Castilho <rafael@castilho.biz>
  */

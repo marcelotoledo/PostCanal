@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# daemon.py --- daemon of the backend system of blotomate
+# daemon.py --- daemon of the backend system of postcanal
 
 # Copyright  (C)  2009  Rafael Castilho <rafael@castilho.biz>
 
@@ -22,8 +22,8 @@ TIME_SLEEP = 1
 
 class Daemon:
     def __init__(self, config_path=None):
-        from blotomate import BlotomateConfig
-        config = BlotomateConfig(config_path)
+        from postcanal import PostCanalConfig
+        config = PostCanalConfig(config_path)
 
         self.token = config.get('webservice/token')
         frontend_url = config.get('base/url')
@@ -164,8 +164,8 @@ def start(argv):
         daemon.blog_publish()
 
 def usage(argv):
-    print 'Blotomate Daemon %s - Daemon system for blotomate.com' % VERSION
-    print 'Copyright  (C)  2009 Blotomate Inc. <https://www.blotomate.com>\n'
+    print 'PostCanal Daemon %s - Daemon system for postcanal.com' % VERSION
+    print 'Copyright  (C)  2009 PostCanal Inc. <https://www.postcanal.com>\n'
     
     print 'Usage: %s start|test' % argv[0]
 

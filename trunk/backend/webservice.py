@@ -1,4 +1,4 @@
-# webservice.py --- web service client/server for backend system of blotomate
+# webservice.py --- web service client/server for backend system of postcanal
 
 # Copyright  (C)  2009  Rafael Castilho <rafel@castilho.biz>
 
@@ -17,8 +17,8 @@ VERSION = "1.0.0"
 
 class WebService:
     def __init__(self, config_path=None):
-        from blotomate import BlotomateConfig
-        self.token = BlotomateConfig(config_path).get('webservice/token')
+        from postcanal import PostCanalConfig
+        self.token = PostCanalConfig(config_path).get('webservice/token')
 
     # validate args
 
@@ -64,14 +64,14 @@ class WebService:
         return feeds
 
 def usage(argv):
-    print 'Blotomate Backend %s - WebService system for blotomate.com' % VERSION
-    print 'Copyright  (C)  2009 Blotomate Inc. <https://www.blotomate.com>\n'
+    print 'PostCanal Backend %s - WebService system for postcanal.com' % VERSION
+    print 'Copyright  (C)  2009 PostCanal Inc. <https://www.postcanal.com>\n'
     
     print 'Usage: %s test' % argv[0]
 
 def test(argv):
-    from blotomate import BlotomateConfig
-    token = BlotomateConfig().get('webservice/token')
+    from postcanal import PostCanalConfig
+    token = PostCanalConfig().get('webservice/token')
 
     # blog discover
 

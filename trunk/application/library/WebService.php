@@ -3,7 +3,7 @@
 /**
  * Application Web Service Client/Server
  * 
- * @category    Blotomate
+ * @category    PostCanal
  * @package     Application Library
  * @author      Rafael Castilho <rafael@castilho.biz>
  */

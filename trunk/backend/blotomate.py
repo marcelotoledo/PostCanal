@@ -1,4 +1,4 @@
-# blotomate.py --- blotomate utility
+# postcanal.py --- postcanal utility
 
 # Copyright  (C)  2009  Rafael Castilho <rafel@castilho.biz>
 
@@ -11,11 +11,11 @@
 # Commentary: 
 
 # Code:
-# blotomate utility
+# postcanal utility
 
 VERSION = "1.0.0"
 
-class BlotomateConfig:
+class PostCanalConfig:
     def __init__(self, config_path=None):
         if config_path == None:
             import os

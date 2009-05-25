@@ -485,18 +485,18 @@ A configuração do apache deve ser feita de forma semelhante ao exemplo à segu
 Listen 127.0.0.1:80
 ServerName 127.0.0.1
 <VirtualHost 127.0.0.1:80>
-    DocumentRoot /var/www/blotomate/public
-    <Directory /var/www/blotomate/public>
+    DocumentRoot /var/www/postcanal/public
+    <Directory /var/www/postcanal/public>
         AllowOverride All
         allow from all
     </Directory>
-    ErrorLog /var/log/apache2/blotomate.error.log
+    ErrorLog /var/log/apache2/postcanal.error.log
     LogLevel warn
 </VirtualHost>
 \end{verbatim}
 
 \paragraph{}
-Neste caso, a raiz da aplicação encontra-se no diretório \texttt{/var/www/blotomate} e somente a pasta (\emph{DocumentRoot}) \texttt{./public} estará visível para a \emph{WEB}.
+Neste caso, a raiz da aplicação encontra-se no diretório \texttt{/var/www/postcanal} e somente a pasta (\emph{DocumentRoot}) \texttt{./public} estará visível para a \emph{WEB}.
 
 \subsection{Zend Framework}
 
@@ -508,9 +508,9 @@ ou verificar a mais recente disponível para \emph{download}:
 
 \begin{verbatim}
 $ tar zxvf ZendFramework-1.7.3PL1.tar.gz
-$ cd /var/www/blotomate/library
+$ cd /var/www/postcanal/library
 $ ln -s $(pwd)/ZendFramework-1.7.3PL1/library/Zend \
-  /var/www/blotomate/library/Zend
+  /var/www/postcanal/library/Zend
 \end{verbatim}
 
 \subsection{Configuração}
@@ -522,9 +522,9 @@ ajustados:
 
 \begin{itemize}
 \item \textbf{BASE\_PATH}: Localização raiz da aplicação no servidor. \\
-Ex: \texttt{/var/www/blotomate};
+Ex: \texttt{/var/www/postcanal};
 \item \textbf{BASE\_URL}: Localização raiz da aplicação na rede. \\ 
-Ex: \texttt{http://www.blotomate.com/app}, \texttt{http://localhost:80}, etc.;
+Ex: \texttt{http://www.postcanal.com/app}, \texttt{http://localhost:80}, etc.;
 \item \textbf{database-$>$driver}: \emph{Driver PDO} da base de dados. Padrão:
 \texttt{pgsql} (\emph{PostgreSQL}). Para outros drivers, verifique em
 \emph{http://br2.php.net/pdo};
@@ -533,7 +533,7 @@ servidor de base de dados. Ex: \texttt{localhost};
 \item \textbf{database-$>$username}: Nome de usuário. Ex: \texttt{postgres};
 \item \textbf{database-$>$password}: Senha. (Quando não houver senha, deve
 conter o valor do tipo \emph{string} e vazio);
-\item \textbf{database-$>$db}: Nome da base de dados. Ex: \texttt{blotomate};
+\item \textbf{database-$>$db}: Nome da base de dados. Ex: \texttt{postcanal};
 \end{itemize}
 
 \paragraph{}

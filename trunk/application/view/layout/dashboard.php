@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
-<title>Blotomate</title>
+<title>PostCanal</title>
 <script type="text/javascript" src="/jquery/jquery-1.3.2.min.js"></script>
 <script type="text/javascript" src="/jquery/jquery-ui-1.7.1.custom.min.js"></script>
 <script type="text/javascript" src="/fckeditor/fckeditor.js"></script>

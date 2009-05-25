@@ -3,7 +3,7 @@
 /**
  * Webservice controller class
  * 
- * @category    Blotomate
+ * @category    PostCanal
  * @package     Application Controller
  * @author      Rafael Castilho <rafael@castilho.biz>
  */

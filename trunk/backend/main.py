@@ -1,4 +1,4 @@
-# main.py --- main file of the backend system of blotomate
+# main.py --- main file of the backend system of postcanal
 
 # Copyright  (C)  2009  Marcelo Toledo <marcelo@marcelotoledo.org>
 
@@ -19,8 +19,8 @@ import sys
 from vendor import feedfinder
 
 def usage():
-    print 'Blotomate Backend %s - Backend system for blotomate.com' % VERSION
-    print 'Copyright  (C)  2009 Blotomate Inc. <https://www.blotomate.com>\n'
+    print 'PostCanal Backend %s - Backend system for postcanal.com' % VERSION
+    print 'Copyright  (C)  2009 PostCanal Inc. <https://www.postcanal.com>\n'
     
     print 'Usage: %s [url]' % sys.argv[0]
 

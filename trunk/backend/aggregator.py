@@ -1,4 +1,4 @@
-# blogfinder.py --- feed aggregator for backend system of blotomate
+# blogfinder.py --- feed aggregator for backend system of postcanal
 
 # Copyright  (C)  2009  Rafael Castilho <rafel@castilho.biz>
 
@@ -12,14 +12,14 @@
 # IMPORTANT NOTE! feedfinder does not work properly after feedparser import (???)
 
 # Code:
-# feed aggregator for backend system of blotomate
+# feed aggregator for backend system of postcanal
 
 VERSION = "1.0.0"
 
 import re
 import time
 
-##feedparser.USER_AGENT = "BLOTOMATE/1.0 +http://blotomate.com"
+##feedparser.USER_AGENT = "POSTCANAL/1.0 +http://postcanal.com"
 
 DEFAULT_UPDATE_TIME = 3600 # 1 hour
 MINIMUM_UPDATE_TIME = 300  # 5 minutes

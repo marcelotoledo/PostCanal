@@ -3,7 +3,7 @@
 /**
  * UserBlogFeed model class
  * 
- * @category    Blotomate
+ * @category    PostCanal
  * @package     Application Model
  * @author      Rafael Castilho <rafael@castilho.biz>
  */

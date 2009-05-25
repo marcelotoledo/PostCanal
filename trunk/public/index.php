@@ -3,7 +3,7 @@
 /**
  * Index
  * 
- * @category    Blotomate
+ * @category    PostCanal
  * @package     Public
  * @author      Rafael Castilho <rafael@castilho.biz>
  */

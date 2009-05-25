@@ -1,4 +1,4 @@
-# blogfinder.py --- blog client for backend system of blotomate
+# blogfinder.py --- blog client for backend system of postcanal
 
 # Copyright  (C)  2009  Rafael Castilho <rafel@castilho.biz>
 
@@ -11,7 +11,7 @@
 # Commentary: 
 
 # Code:
-# blog client for backend system of blotomate
+# blog client for backend system of postcanal
 
 VERSION = "1.0.0"
 

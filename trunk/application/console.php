@@ -3,7 +3,7 @@
 /**
  * Console
  *
- * @category    Blotomate
+ * @category    PostCanal
  * @package     Application
  * @author      Rafael Castilho <rafael@castilho.biz>
  */
