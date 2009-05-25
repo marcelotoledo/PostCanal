@@ -15,6 +15,14 @@
  * insertSomething, updateSomething, foobarSomething, etc
  */
 
+if(class_exists('PDO')==false)
+{
+    echo "<pre>";
+    echo "class PDO not found\n";
+    echo "</pre>";
+    exit(1);
+}
+
 abstract class B_Model
 {
     /** 
@@ -522,8 +530,10 @@ abstract class B_Model
         }
         catch(PDOException $exception)
         {
-            $_m = "database connection failed; exception: " . $exception->getMessage();
-            B_Log::systemLog($_m);
+            echo "<pre>";
+            echo "database connection failed;\n" . $exception->getMessage();
+            echo "</pre>";
+            exit(1);
         }
     }
 }

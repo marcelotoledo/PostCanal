@@ -1,5 +1,5 @@
 <div id="logo">
-    <h1>BLOTŎMATE</h1>
+    <h1>POSTCANAL</h1>
 </div>
 <div id="form">
     <form>

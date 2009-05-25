@@ -27,7 +27,7 @@ class B_Log
      * @return  void
      */
     public static function write ($message,
-                                  $priority=E_USER_NOTICE,
+                                  $priority=E_NOTICE,
                                   $data=array())
     {
         $columns = array('message', 'priority', 'created_at');
@@ -50,22 +50,11 @@ class B_Log
         }
         catch(Exception $exception)
         {
-            $message = chop($exception->getMessage()) . "; " . chop($message);
-            self::systemLog($message);
+            $message = chop($exception->getMessage()) . ";\n" . chop($message);
+            echo "<pre>";
+            echo $message;
+            echo "</pre>";
+            exit(1);
         }
-    }
-
-    /**
-     * Write log to system log
-     *
-     * @param   string  $message    Log message
-     */
-    public static function systemLog ($message)
-    {
-        // echo syslog(LOG_ERR, $message) ?
-        //     "fatal error: please see syslog for details" :
-        //     $message;
-        echo $message;
-        exit(1);
     }
 }

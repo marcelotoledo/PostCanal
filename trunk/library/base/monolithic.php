@@ -397,13 +397,13 @@ class B_Exception extends Exception
      * @param   array   $data
      * @return void
      */
-    public function __construct($message, $code=E_USER_NOTICE, $data=array())
+    public function __construct($message, $code=E_NOTICE, $data=array())
     {
         /* force use of predefined codes */
 
-        if(!in_array($code, array(E_USER_NOTICE, E_USER_WARNING, E_USER_ERROR)))
+        if(!in_array($code, array(E_NOTICE, E_WARNING, E_ERROR)))
         {
-            $code = E_USER_ERROR;
+            $code = E_ERROR;
         }
 
         $this->data = $data;
@@ -423,9 +423,9 @@ class B_Exception extends Exception
 
         switch($this->getCode())
         {
-            case E_USER_ERROR:   $priority = "ERROR";   break;
-            case E_USER_WARNING: $priority = "WARNING"; break;
-            case E_USER_NOTICE:  $priority = "NOTICE";  break;
+            case E_ERROR:   $priority = "ERROR";   break;
+            case E_WARNING: $priority = "WARNING"; break;
+            case E_NOTICE:  $priority = "NOTICE";  break;
             default:             $priority = "ERROR";
         }
 
@@ -512,7 +512,7 @@ class B_Exception extends Exception
             {
                 $message.= ";\n" . $exception->getMessage();
 
-                /* E_USER_ERROR < E_USER_WARNING < E_USER_NOTICE */
+                /* E_ERROR < E_WARNING < E_NOTICE */
 
                 if($exception->getCode() < $code)
                 {
@@ -855,7 +855,7 @@ class B_Log
      * @return  void
      */
     public static function write ($message,
-                                  $priority=E_USER_NOTICE,
+                                  $priority=E_NOTICE,
                                   $data=array())
     {
         $columns = array('message', 'priority', 'created_at');
@@ -878,23 +878,12 @@ class B_Log
         }
         catch(Exception $exception)
         {
-            $message = chop($exception->getMessage()) . "; " . chop($message);
-            self::systemLog($message);
+            $message = chop($exception->getMessage()) . ";\n" . chop($message);
+            echo "<pre>";
+            echo $message;
+            echo "</pre>";
+            exit(1);
         }
-    }
-
-    /**
-     * Write log to system log
-     *
-     * @param   string  $message    Log message
-     */
-    public static function systemLog ($message)
-    {
-        // echo syslog(LOG_ERR, $message) ?
-        //     "fatal error: please see syslog for details" :
-        //     $message;
-        echo $message;
-        exit(1);
     }
 }
 
@@ -912,6 +901,14 @@ class B_Log
  * 
  * insertSomething, updateSomething, foobarSomething, etc
  */
+
+if(class_exists('PDO')==false)
+{
+    echo "<pre>";
+    echo "class PDO not found\n";
+    echo "</pre>";
+    exit(1);
+}
 
 abstract class B_Model
 {
@@ -1420,8 +1417,10 @@ abstract class B_Model
         }
         catch(PDOException $exception)
         {
-            $_m = "database connection failed; exception: " . $exception->getMessage();
-            B_Log::systemLog($_m);
+            echo "<pre>";
+            echo "database connection failed;\n" . $exception->getMessage();
+            echo "</pre>";
+            exit(1);
         }
     }
 }
@@ -2213,9 +2212,22 @@ class B_Session
      */
     public static function read ($id)
     {
-        $result = current(B_Model::select("SELECT session_data " . 
-                                          "FROM " . self::$table_name . " " .
-                                          "WHERE id = ?", array($id)));
+        try
+        {
+            $result = current(B_Model::select("SELECT session_data " . 
+                                              "FROM " . self::$table_name . " " .
+                                              "WHERE id = ?", array($id)));
+        }
+        catch(B_Exception $e)
+        {
+            if(error_reporting() > 0)
+            {
+                echo "<pre>";
+                echo "reading session failed;\n" . $e->getMessage();
+                echo "</pre>";
+                exit(1);
+            }
+        }
         return is_object($result) ? $result->session_data : '';
     }
 
