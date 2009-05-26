@@ -1,0 +1,17 @@
+#logo
+{
+    float: left;
+    padding: 50px;
+    line-height: 150px;
+    border-right: 1px solid silver;
+}
+#logo h1
+{
+    font-size: 44px;
+    color: silver;
+}
+#form
+{
+    float: left;
+    padding: 50px;
+}

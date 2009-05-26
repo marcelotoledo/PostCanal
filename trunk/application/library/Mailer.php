@@ -193,6 +193,8 @@ class A_Mailer
                                        $time=3600,
                                        $count=2)
     {
+        if(strpos($recipient, '@')==0) return false;
+
         $data = array();
 
         $sql = "SELECT COUNT(*) AS total ";

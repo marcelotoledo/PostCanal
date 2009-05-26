@@ -2,26 +2,26 @@
 
 <div id="pwdform">
 <form>
-    <h1>Mudança de Senha de Acesso</h1>
-    <input type="hidden" name="email" value="<?php echo $this->profile->login_email ?>">
-    <input type="hidden" name="user" value="<?php echo $this->profile->hash ?>">
+    <h1><?php echo $this->translation()->password_change ?></h1>
+    <input type="hidden" id="email" value="<?php echo $this->profile->login_email ?>">
+    <input type="hidden" id="user" value="<?php echo $this->profile->hash ?>">
     <table>
         <tr>
-        <th>E-mail:</th>
+        <th><?php echo $this->translation()->email ?>: </th>
         <td><i><?php echo $this->profile->login_email ?></i></td>
         </tr>
         <tr>
-        <th>Senha:</th>
+        <th><?php echo $this->translation()->password ?>: </th>
         <td><input type="password" name="password"></td>
         </tr>
         <tr>
-        <th>Confirmar Senha:</th>
-        <td><input type="password" name="confirm"></td>
+        <th><?php echo $this->translation()->confirm_password ?>: </th>
+        <td><input type="password" name="passwordc"></td>
         </tr>
         <tr>
         <th>&nbsp;</th>
         <td class="buttons">
-            <input name="pwdchangesubmit" type="button" value="Alterar">
+            <input id="pwdchangesubmit" type="button" value="<?php echo $this->translation()->change ?>">
         </td>
         </tr>
         <tr id="message" style="display:none">
@@ -32,10 +32,10 @@
 </form>
 </div>
 
-<p id="changenotice" style="display:none">Senha alterada com sucesso. <?php B_Helper::a("clique aqui") ?> para acessar a página de autenticação</p>
+<p id="changenotice" style="display:none"><?php echo $this->translation()->password_change_msg_1 ?>. <?php B_Helper::a($this->translation()->click_here) ?> <?php echo $this->translation()->password_change_msg_2 ?></p>
 
 <?php else : ?>
 
-<p>Este link expirou. Utilize a <?php B_Helper::a("página principal") ?> para solicitar um pedido de recuperação de senha.</p>
+<p><?php echo $this->translation()->link_expired_1 ?> <?php B_Helper::a($this->translation()->main_page) ?> <?php echo $this->translation()->link_expired_2 ?>.</p>
 
 <?php endif ?>

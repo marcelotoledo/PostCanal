@@ -22,7 +22,7 @@ class C_Profile extends B_Controller
         $email = $this->request()->email;
         $password = $this->request()->password;
         $this->view()->login = false;
-        $this->view()->message = $this->translation()->login_invalid;
+        $this->view()->message = $this->translation()->invalid_authentication;
 
         /* check for existing profile */
 
@@ -39,7 +39,7 @@ class C_Profile extends B_Controller
 
             if($profile->register_confirmation == false)
             {
-                $this->view()->message = $this->translation()->register_unconfirmed;
+                $this->view()->message = $this->translation()->registration_not_confirmed;
             }
 
             /* valid login, create session */
@@ -75,9 +75,9 @@ class C_Profile extends B_Controller
 
         $email = $this->request()->email;
         $password = $this->request()->password;
-        $confirm = $this->request()->confirm;
+        $confirm = $this->request()->passwordc;
         $this->view()->register = false;
-        $this->view()->message = $this->translation()->register_invalid;
+        $this->view()->message = $this->translation()->registration_invalid;
 
         /* check for existing profile */
 
@@ -126,11 +126,11 @@ class C_Profile extends B_Controller
                 }
 
                 $this->view()->register = true;
-                $this->view()->message = $this->translation()->register_accepted;
+                $this->view()->message = $this->translation()->registration_accepted;
             }
             catch(B_Exception $exception)
             {
-                $this->view()->message = $this->translation()->register_invalid_email;
+                $this->view()->message = $this->translation()->registration_failed;
 
                 /* disable unconfirmed profile */
 
@@ -229,7 +229,7 @@ class C_Profile extends B_Controller
         $email = $this->request()->email;
         $hash = $this->request()->user;
         $this->view()->accepted = false;
-        $this->view()->message = $this->translation()->confirm_failed;
+        $this->view()->message = $this->translation()->confirmation_failed;
 
         $profile = null;
 
@@ -242,7 +242,7 @@ class C_Profile extends B_Controller
         {
             if($profile->register_confirmation == true)
             {
-                $this->view()->message = $this->translation()->confirm_done_before;
+                $this->view()->message = $this->translation()->confirmation_already_done;
             }
             else
             {
@@ -251,7 +251,7 @@ class C_Profile extends B_Controller
                 $profile->register_confirmation_time = time();
                 $profile->save();
 
-                $this->view()->message = $this->translation()->confirm_accepted;
+                $this->view()->message = $this->translation()->confirmation_accepted;
             }
 
             $this->view()->accepted = true;
@@ -307,8 +307,8 @@ class C_Profile extends B_Controller
         $hash = $this->request()->user;
         $current = $this->request()->current;
         $password = $this->request()->password;
-        $confirm = $this->request()->confirm;
-        $message = $this->translation()->password_failed;
+        $confirm = $this->request()->passwordc;
+        $message = $this->translation()->password_change_failed;
 
         /* password change (authenticated) */
 
@@ -354,7 +354,7 @@ class C_Profile extends B_Controller
             }
             elseif($profile->login_password_md5 != md5($current))
             {
-                $message = $this->translation()->password_invalid;
+                $message = $this->translation()->invalid_password;
             }
 
             /* all ok ! */
@@ -366,7 +366,7 @@ class C_Profile extends B_Controller
                 $profile->save();
 
                 $updated = true;
-                $message = $this->translation()->password_updated;
+                $message = $this->translation()->password_changed;
 
                 $id = intval($profile->user_profile_id);
                 $_d = array ('method' => __METHOD__, 'user_profile_id' => $id);
@@ -405,7 +405,7 @@ class C_Profile extends B_Controller
                 $profile->save();
 
                 $updated = true;
-                $message = $this->translation()->password_updated;
+                $message = $this->translation()->password_changed;
 
                 $id = intval($profile->user_profile_id);
                 $_d = array ('method' => __METHOD__, 'user_profile_id' => $id);
@@ -468,7 +468,7 @@ class C_Profile extends B_Controller
         $hash = $this->request()->user;
         $password = $this->request()->password;
         $accepted = false;
-        $message = $this->translation()->email_failed;
+        $message = $this->translation()->email_change_failed;
         $profile = null;
 
         /* change request (authenticated) */
@@ -523,7 +523,7 @@ class C_Profile extends B_Controller
                     $profile->email_update_message_time = time();
                     $profile->save();
                     $this->notify($new_email, "email_change", $profile);
-                    $message = $this->translation()->change_request_accepted;
+                    $message = $this->translation()->email_changed;
                     $accepted = true;
                 }
                 catch(B_Exception $exception)
@@ -557,7 +557,7 @@ class C_Profile extends B_Controller
         {
             if($profile->login_password_md5 != md5($password))
             {
-                $message = $this->translation()->email_unmatched_password;
+                $message = $this->translation()->password_not_match;
             }
             else
             {
@@ -569,7 +569,7 @@ class C_Profile extends B_Controller
                     $profile->save();
 
                     $accepted = true;
-                    $message = $this->translation()->email_change_accepted;
+                    $message = $this->translation()->email_changed;
 
                     $id = $profile->user_profile_id;
                     $_d = array ('method' => __METHOD__, 'user_profile_id' => $id);

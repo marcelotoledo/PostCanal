@@ -133,6 +133,7 @@ class UserProfile extends B_Model
     {
         if($name == 'login_email')
         {
+            if(strpos($value, '@')==0) return null;
             list($local, $domain) = explode('@', strtolower($value));
             parent::__set('login_email_local', $local);
             parent::__set('login_email_domain', $domain);
@@ -190,6 +191,7 @@ class UserProfile extends B_Model
      */
     public static function getByEmail($email)
     {
+        if(strpos($email, '@')==0) return null;
         list($local, $domain) = explode('@', strtolower($email));
 
         return current(self::select(
@@ -208,6 +210,7 @@ class UserProfile extends B_Model
      */
     public static function getByLogin($email, $password_md5)
     {
+        if(strpos($email, '@')==0) return null;
         list($local, $domain) = explode('@', strtolower($email));
 
         return current(self::select(
@@ -227,6 +230,7 @@ class UserProfile extends B_Model
      */
     public static function getByHash($email, $hash)
     {
+        if(strpos($email, '@')==0) return null;
         list($local, $domain) = explode('@', strtolower($email));
 
         return current(self::select(

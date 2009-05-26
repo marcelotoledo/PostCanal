@@ -25,13 +25,6 @@ class B_Bootstrap
     public $default_action = "index";
 
     /**
-     * Translation loading for (controller) / action ?
-     *
-     * @var boolean
-     */
-    public $translation_action = false;
-
-    /**
      * Translation loading list
      *
      * @var array
@@ -114,23 +107,18 @@ class B_Bootstrap
 
                 $session_name = $registry->session()->name;
                 $session = new B_Session($session_name);
-                $controller->session = $session;
                 $registry->session()->object = $session;
 
                 /* initialize translation */
 
                 $culture = $registry->translation()->culture;
                 $translation = new B_Translation($culture);
-                $controller->translation = $translation;
                 $registry->translation()->object = $translation;
 
                 /* translation load */
 
-                if($this->translation_action == true)
-                {
-                    $this->translation_load[] = $controller_name . "/" . $action_name;
-                }
-
+                $this->translation_load[] = $controller_name;
+                $this->translation_load[] = $controller_name . "/" . $action_name;
                 $translation->load($this->translation_load);
 
                 /* run action */

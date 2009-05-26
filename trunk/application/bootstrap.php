@@ -51,10 +51,4 @@ $registry->session()->unauthorized()->redirect = BASE_URL;
 /* configure and run bootstrap */
 
 $bootstrap = new B_Bootstrap();
-
-$bootstrap->default_action = "index";
-$bootstrap->default_controller = "index";
-$bootstrap->translation_action = true;
-$bootstrap->translation_load = array('application');
-
 $bootstrap->run();
