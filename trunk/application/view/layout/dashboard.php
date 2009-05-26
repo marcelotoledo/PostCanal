@@ -16,12 +16,13 @@
 <body>
 
 <div id="topbar">
-<div id="topleftbar"><nobr>
-<span><?php B_Helper::a($this->translation()->dashboard, "dashboard") ?></span>
-<span><?php B_Helper::a($this->translation()->profile, "profile", "edit") ?></span>
-<span><?php B_Helper::a($this->translation()->blogs, "blog") ?></span>
-<span><?php B_Helper::a($this->translation()->feeds, "feed") ?></span>
-<span id="bloglstbar">
+<div id="topleftbar"><nobr><ul>
+
+<li><?php B_Helper::a($this->translation()->dashboard, "dashboard") ?></li>
+<li><?php B_Helper::a($this->translation()->profile, "profile", "edit") ?></li>
+<li><?php B_Helper::a($this->translation()->blogs, "blog") ?></li>
+<li><?php B_Helper::a($this->translation()->feeds, "feed") ?></li>
+<li id="bloglstbar">
 <?php if(($i = count($this->blogs)) && $i == 1) : ?>
     <b><?php echo $this->translation()->application_blog ?>: </b><i><?php echo $this->blogs[0]->name ?></i>
     <input type="hidden" id="currentblog" value="<?php echo $this->blogs[0]->hash ?>">
@@ -33,12 +34,15 @@
     <?php endforeach ?>
     </select>
 <?php endif ?>
-</span>
-</nobr></div>
-<div id="toprightbar"><nobr>
-<span id="profilebar"><b><?php echo $this->translation()->profile ?>: </b><?php echo $this->session()->user_profile_login_email ?></span>
-<span><?php B_Helper::a($this->translation()->logout, "profile", "logout") ?></span>
-</nobr></div>
+</li>
+
+</ul></nobr></div>
+<div id="toprightbar"><nobr><ul>
+
+<li id="profilebar"><b><?php echo $this->translation()->profile ?>: </b><?php echo $this->session()->user_profile_login_email ?></li>
+<li><?php B_Helper::a($this->translation()->logout, "profile", "logout") ?></li>
+
+</ul></nobr></div>
 </div>
 
 <div id="maincontainer">
@@ -46,7 +50,15 @@
 </div>
 
 <div id="noblogmsg" class="b-dialog" style="display:none">
-<?php echo $this->translation()->no_blog ?>. <?php B_Helper::a(ucfirst($this->translation()->click_here), "blog", "add") ?> <?php echo $this->translation()->new_blog_instruction ?>.
+<?php echo $this->translation()->no_blog ?>. <?php B_Helper::a(ucfirst($this->translation()->click_here), 'blog', 'add') ?> <?php echo $this->translation()->new_blog_instruction ?>.
+<hr>
+<div class="b-dialog-buttons">
+<a class="b-dialog-close"><?php echo $this->translation()->close ?></a>
+</div>
+</div>
+
+<div id="nofeedmsg" class="b-dialog" style="display:none">
+<?php echo $this->translation()->no_feed ?>. <?php B_Helper::a(ucfirst($this->translation()->click_here), 'feed', 'index') ?> <?php echo $this->translation()->new_feed_instruction ?>.
 <hr>
 <div class="b-dialog-buttons">
 <a class="b-dialog-close"><?php echo $this->translation()->close ?></a>

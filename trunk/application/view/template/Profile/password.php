@@ -12,11 +12,11 @@
         </tr>
         <tr>
         <th><?php echo $this->translation()->password ?>: </th>
-        <td><input type="password" name="password"></td>
+        <td><input type="password" id="password"></td>
         </tr>
         <tr>
         <th><?php echo $this->translation()->confirm_password ?>: </th>
-        <td><input type="password" name="passwordc"></td>
+        <td><input type="password" id="passwordc"></td>
         </tr>
         <tr>
         <th>&nbsp;</th>

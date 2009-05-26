@@ -9,7 +9,7 @@ function set_active_request(b)
         $.b_spinner_stop();
 }
 
-function error_message()
+function server_error()
 {
     alert("<?php echo $this->translation()->server_error ?>");
 }

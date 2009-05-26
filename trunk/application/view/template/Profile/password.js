@@ -8,18 +8,8 @@ function form_message(m)
         mytpl.msgcontainer.show().find("td").html(m) ;
 }
 
-function error_message()
-{
-    alert("<?php echo $this->translation()->server_error ?>");
-}
-
 function password_recovery()
 {
-    email = $("input[name='email']").val();
-    password = $("input[name='password']").val();
-    confirm_ = $("input[name='confirm']").val();
-    user = $("input[name='user']").val();
-
     if(mytpl.password.val() == "" || 
        mytpl.passwordc.val() == "")
     {
@@ -33,8 +23,6 @@ function password_recovery()
         return null;
     }
 
-    //parameters = { email: email, password: password, confirm: confirm_, user: user }
-
     $.ajax
     ({
         type: "POST",
@@ -44,11 +32,12 @@ function password_recovery()
                 user      : mytpl.user.val(),
                 password  : mytpl.password.val(), 
                 passwordc : mytpl.passwordc.val() },
-        beforesend: function () { set_active_request(true); },
+        beforeSend: function () { set_active_request(true); },
         complete: function() { set_active_request(false); },
         success: function (xml) 
         { 
             var _data = $(xml).find('data');
+            if(_data.length==0) { server_error(); return null; }
 
             if(_data.find('updated').text()=="true") 
             {
@@ -60,7 +49,7 @@ function password_recovery()
                 form_message(_data.find('message').text());
             }
         }, 
-        error: function (data) { error_message(); }
+        error: function (data) { server_error(); }
     });
 };
 
@@ -86,7 +75,6 @@ $(document).ready(function()
     mytpl.pwdcsubmit.click(function()
     {
         if(active_request==false) { password_recovery(); }
-        return false;
     });
 
     mytpl.passwordc.keypress(function(e) 
@@ -97,5 +85,5 @@ $(document).ready(function()
         }
     });
 
-    mytpl.email.focus();
+    mytpl.password.focus();
 });

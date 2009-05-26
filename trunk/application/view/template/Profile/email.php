@@ -1,6 +1,6 @@
 <?php if(is_object($this->profile) && strlen($this->new_email) > 0) : ?>
 
-<form>
+<form id="emlform">
     <h1><?php echo $this->translation()->change_email ?></h1>
     <input type="hidden" id="email" value="<?php echo $this->profile->login_email ?>">
     <input type="hidden" id="user" value="<?php echo $this->profile->hash ?>">

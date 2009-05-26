@@ -1,20 +1,3 @@
-/* layout */
-
-html, body
-{
-    margin: 0;
-    border: 0;
-}
-body
-{
-    color: black;
-    background: ghostwhite;
-}
-div, form
-{
-    margin: 0;
-}
-
 /* topbar */
 
 #topbar
@@ -27,35 +10,47 @@ div, form
     background-color: tomato;
     border-bottom: 1px solid maroon;
 }
+
 #topleftbar
 {
     float: left;
-    height: 40px;
-    line-height: 40px;
-    vertical-align: middle;
-    margin-left: 15px;
 }
-#topleftbar span
+#topleftbar ul
 {
+    margin: 0;
+    padding: 0;
+    padding-left: 15px;
+    line-height: 40px;
+}
+#topleftbar li
+{
+    display: inline;
+    list-style-type: none;
     padding-right: 10px;
 }
-#topleftbar span#bloglstbar
+#bloglstbar
 {
     padding-left: 30px;
 }
+
 #toprightbar
 {
     float: right;
-    height: 40px;
-    line-height: 40px;
-    vertical-align: middle;
-    margin-right: 15px;
 }
-#toprightbar span
+#toprightbar ul
 {
+    margin: 0;
+    padding: 0;
+    padding-right: 15px;
+    line-height: 40px;
+}
+#toprightbar li
+{
+    display: inline;
+    list-style-type: none;
     padding-left: 10px;
 }
-#toprightbar span#profilebar
+#profilebar
 {
     padding-right: 30px;
 }

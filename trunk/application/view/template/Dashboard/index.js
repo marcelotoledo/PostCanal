@@ -1,7 +1,5 @@
 $(document).ready(function()
 {
-    var active_request = false;
-
     var ww = 0;
     var wh = 0;
 
@@ -30,19 +28,6 @@ $(document).ready(function()
     var queue_running = 'pause';
     var queue_spawning = 3600;
 
-
-    /* spinner */
-
-    $.b_spinner
-    ({
-        image: "<?php B_Helper::img_src('spinner.gif') ?>",
-        message: "... <?php echo $this->translation()->application_loading ?>"
-    });
-
-    function set_active_request(b)
-    {
-        ((active_request = b) == true) ? $.b_spinner_start() : $.b_spinner_stop();
-    }
 
     /* visual updates */
 

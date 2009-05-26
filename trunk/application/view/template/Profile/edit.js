@@ -62,9 +62,10 @@ function edit_submit()
         success: function (xml) 
         { 
             var _data = $(xml).find('data');
+            if(_data.length==0) { server_error(); return null; }
             edit_message(_data.find('message').text());
         }, 
-        error: function () { error_message(); }
+        error: function () { server_error(); }
     });
 }
 
@@ -104,11 +105,11 @@ function pwdchange_submit()
         success: function (xml) 
         { 
             var _data = $(xml).find('data');
-            var _updated = (_data.find('updated').text()=="true");
+            if(_data.length==0) { server_error(); return null; }
             pwdchange_message(_data.find('message').text());
-            if(_updated) { toggle_password_change(false); }
+            if(_data.find('updated').text()=="true") { toggle_password_change(false); }
         }, 
-        error: function () { error_message(); }
+        error: function () { server_error(); }
     });
 }
 
@@ -138,9 +139,10 @@ function emlchange_submit()
         success: function (xml) 
         { 
             var _data = $(xml).find('data');
+            if(_data.length==0) { server_error(); return null; }
             emlchange_message(_data.find('message').text());
         }, 
-        error: function () { error_message(); }
+        error: function () { server_error(); }
     });
 }
 
@@ -193,6 +195,14 @@ $(document).ready(function()
     {
         if(active_request==false) { toggle_email_change(true); }
         return false;
+    });
+
+    mytpl.neweml.keypress(function(e) 
+    {
+        if((e.which && e.which == 13) || (e.keyCode && e.keyCode == 13))
+        {
+            mytpl.emlchangesubmit.click();
+        }
     });
 
     mytpl.emlchangesubmit.click(function()

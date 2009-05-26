@@ -19,11 +19,6 @@ function form_message(m)
         mytpl.msgcontainer.show().find("td").html(m) ;
 }
 
-function error_message()
-{
-    alert("<?php echo $this->translation()->server_error ?>");
-}
-
 function password_recovery()
 {
     if(mytpl.email.val()=="")
@@ -43,9 +38,10 @@ function password_recovery()
         success: function (xml) 
         { 
             var _data = $(xml).find('data');
+            if(_data.length==0) { server_error(); return null; }
             form_message(_data.find('message').text());
         }, 
-        error: function () { error_message(); } 
+        error: function () { server_error(); } 
     });
 }
 
@@ -78,15 +74,16 @@ function register_submit()
         data: { email     : mytpl.email.val(), 
                 password  : mytpl.password.val(), 
                 passwordc : mytpl.passwordc.val() },
-        beforesend: function () { set_active_request(true); },
+        beforeSend: function () { set_active_request(true); },
         complete: function() { set_active_request(false); },
         success: function (xml) 
         { 
             var _data = $(xml).find('data');
+            if(_data.length==0) { server_error(); return null; }
             if(_data.find('register').text()=="true") { toggle_register(); }
             form_message(_data.find('message').text());
         }, 
-        error: function () { error_message(); } 
+        error: function () { server_error(); } 
     });
 }
 
@@ -106,15 +103,19 @@ function login_submit()
         datatype: "xml",
         data: { email    : mytpl.email.val(), 
                 password : mytpl.password.val() },
-        beforesend: function () { set_active_request(true); },
+        beforeSend: function () { set_active_request(true); },
         complete: function() { set_active_request(false); },
         success: function (xml) 
         { 
             var _data = $(xml).find('data');
-            if(_data.find('login').text()=="true") { window.location="<?php B_Helper::url('dashboard') ?>"; }
+            if(_data.length==0) { server_error(); return null; }
+            if(_data.find('login').text()=="true") 
+            {
+                window.location="<?php B_Helper::url('dashboard') ?>";
+            }
             form_message(_data.find('message').text());
         }, 
-        error: function () { error_message(); } 
+        error: function () { server_error(); return null } 
     });
 }
 
