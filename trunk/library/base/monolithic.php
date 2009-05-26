@@ -117,6 +117,7 @@ class B_Bootstrap
 
                 /* translation load */
 
+                $this->translation_load[] = 'application';
                 $this->translation_load[] = $controller_name;
                 $this->translation_load[] = $controller_name . "/" . $action_name;
                 $translation->load($this->translation_load);

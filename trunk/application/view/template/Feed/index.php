@@ -1,7 +1,7 @@
 <?php if(count($this->blogs) > 0) : ?>
 
 <br/>
-<div class="subcontainer">
+<div id="subcontainer">
 
 <h1><?php echo $this->translation()->feeds ?></h1>
 <div id="feedlnkdiv">
@@ -16,7 +16,7 @@
         <td><input type="text" name="feedaddurl" value=""></td>
         </tr>
         <tr id="feedaddoptions"><td colspan="2">
-            <div class="feedoption" id="feedoptionblank">
+            <div class="feedoption" id="feedoptionblank" style="display:none">
                 <div class="feedoptionbutton">
                     <input name="feedaddoption" type="radio" url="">
                 </div>
@@ -32,8 +32,8 @@
         <tr>
         <th>&nbsp;</th>
         <td class="buttons">
-            <input name="feedaddcancel" type="button" value="<?php echo $this->translation()->application_cancel ?>">
-            <input name="feedaddsubmit" type="button" value="<?php echo $this->translation()->application_submit ?>">
+            <input name="feedaddcancel" type="button" value="<?php echo $this->translation()->cancel ?>">
+            <input name="feedaddsubmit" type="button" value="<?php echo $this->translation()->submit ?>">
         </td>
         </tr>
     </table>
@@ -47,8 +47,8 @@
         <tr>
         <th>&nbsp;</th>
         <td class="buttons">
-            <input name="feedimportcancel" type="button" value="<?php echo $this->translation()->application_cancel ?>">
-            <input name="feedimportsubmit" type="submit" value="<?php echo $this->translation()->application_submit ?>">
+            <input name="feedimportcancel" type="button" value="<?php echo $this->translation()->cancel ?>">
+            <input name="feedimportsubmit" type="submit" value="<?php echo $this->translation()->submit ?>">
         </td>
         </tr>
     </table>
@@ -69,16 +69,6 @@
     </div>
 </div>
 
-</div>
-
-<?php else : ?>
-
-<div id="noblogmsg" class="b-dialog" style="display:none">
-<?php echo $this->translation()->no_registered_blog ?>. <?php B_Helper::a(ucfirst($this->translation()->application_click_here), "blog", "add") ?> <?php echo $this->translation()->new_blog_instruction ?>.
-<hr>
-<div class="b-dialog-buttons">
-<a class="b-dialog-close"><?php echo $this->translation()->application_close ?></a>
-</div>
 </div>
 
 <?php endif ?>

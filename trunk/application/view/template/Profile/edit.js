@@ -1,261 +1,207 @@
+var mytpl = null;
+
+
+function toggle_email_change(b)
+{
+    if(b)
+    {
+        mytpl.neweml.attr('disabled', false);
+        mytpl.emlchangecancel.attr('disabled', false);
+        mytpl.emlchangesubmit.attr('disabled', false);
+        mytpl.neweml.focus();
+    }
+    else
+    {
+        mytpl.neweml.attr('disabled', true);
+        mytpl.emlchangecancel.attr('disabled', true);
+        mytpl.emlchangesubmit.attr('disabled', true);
+    }
+}
+
+function toggle_password_change(b)
+{
+    if(b)
+    {
+        mytpl.currentpwd.attr('disabled', false);
+        mytpl.newpwd.attr('disabled', false);
+        mytpl.confirmpwd.attr('disabled', false);
+        mytpl.pwdchangecancel.attr('disabled', false);
+        mytpl.pwdchangesubmit.attr('disabled', false);
+        mytpl.currentpwd.focus();
+    }
+    else
+    {
+        mytpl.currentpwd.val("");
+        mytpl.currentpwd.attr('disabled', true);
+        mytpl.newpwd.val("");
+        mytpl.newpwd.attr('disabled', true);
+        mytpl.confirmpwd.val("");
+        mytpl.confirmpwd.attr('disabled', true);
+        mytpl.pwdchangecancel.attr('disabled', true);
+        mytpl.pwdchangesubmit.attr('disabled', true);
+    }
+}
+
+function edit_message(m)
+{
+    (m=="") ?
+        mytpl.editmessage.hide().find("td").html("") :
+        mytpl.editmessage.show().find("td").html(m) ;
+}
+
+function edit_submit()
+{
+    $.ajax
+    ({
+        type: "POST",
+        url: "<?php B_Helper::url('profile', 'edit') ?>",
+        dataType: "xml",
+        data: { name: mytpl.name.val()  },
+        beforeSend: function () { set_active_request(true); edit_message("");  },
+        complete: function ()   { set_active_request(false); },
+        success: function (xml) 
+        { 
+            var _data = $(xml).find('data');
+            edit_message(_data.find('message').text());
+        }, 
+        error: function () { error_message(); }
+    });
+}
+
+function pwdchange_message(m)
+{
+    (m=="") ?
+        mytpl.pwdchangemessage.hide().find("td").html("") :
+        mytpl.pwdchangemessage.show().find("td").html(m) ;
+}
+
+function pwdchange_submit()
+{
+    if((mytpl.currentpwd.val() == "" || 
+        mytpl.newpwd.val()     == "" || 
+        mytpl.confirmpwd.val() == ""))
+    {
+        pwdchange_message("<?php echo $this->translation()->form_incomplete ?>");
+        return null;
+    }
+
+    if(mytpl.newpwd.val() != mytpl.confirmpwd.val())
+    {
+        pwdchange_message("<?php echo $this->translation()->password_not_match ?>");
+        return null;
+    }
+
+    $.ajax
+    ({
+        type: "POST",
+        url: "<?php B_Helper::url('profile', 'password') ?>",
+        dataType: "xml",
+        data: { current   : mytpl.currentpwd.val(),
+                password  : mytpl.newpwd.val(), 
+                passwordc : mytpl.confirmpwd.val() },
+        beforeSend: function () { set_active_request(true); pwdchange_message(""); },
+        complete: function ()   { set_active_request(false); },
+        success: function (xml) 
+        { 
+            var _data = $(xml).find('data');
+            var _updated = (_data.find('updated').text()=="true");
+            pwdchange_message(_data.find('message').text());
+            if(_updated) { toggle_password_change(false); }
+        }, 
+        error: function () { error_message(); }
+    });
+}
+
+function emlchange_message(m)
+{
+    (m=="") ?
+        mytpl.emlchangemessage.hide().find("td").html("") :
+        mytpl.emlchangemessage.show().find("td").html(m) ;
+}
+
+function emlchange_submit()
+{
+    if(mytpl.neweml.val()=="")
+    {
+        emlchange_message("<?php echo $this->translation()->form_incomplete ?>");
+        return null;
+    }
+
+    $.ajax
+    ({
+        type: "POST",
+        url: "<?php B_Helper::url('profile', 'email') ?>",
+        dataType: "xml",
+        data: { new_email: mytpl.neweml.val() },
+        beforeSend: function () { set_active_request(true); emlchange_message(""); },
+        complete: function ()   { set_active_request(false); toggle_email_change(false); },
+        success: function (xml) 
+        { 
+            var _data = $(xml).find('data');
+            emlchange_message(_data.find('message').text());
+        }, 
+        error: function () { error_message(); }
+    });
+}
+
+
 $(document).ready(function()
 {
-    /* DEFAULTS */
+    mytpl =
+    {
+        neweml           : $("#neweml"),
+        emlchangelnk     : $("#emlchangelnk"),
+        emlchangesubmit  : $("#emlchangesubmit"),
+        emlchangecancel  : $("#emlchangecancel"),
+        emlchangemessage : $("#emlchangemessage"),
+        pwdchangelnk     : $("#pwdchangelnk"),
+        currentpwd       : $("#currentpwd"),
+        newpwd           : $("#newpwd"),
+        confirmpwd       : $("#confirmpwd"),
+        pwdchangesubmit  : $("#pwdchangesubmit"),
+        pwdchangecancel  : $("#pwdchangecancel"),
+        pwdchangemessage : $("#pwdchangemessage"),
+        name             : $("#name"),
+        editmessage      : $("#editmessage"),
+        editsubmit       : $("#editsubmit")
+    };
 
-    var ar = false; /* active request */
+    /* triggers */
 
-    /* spinner */
-
-    $.b_spinner
-    ({
-        image: "<?php B_Helper::img_src('spinner.gif') ?>",
-        message: "... <?php echo $this->translation()->application_loading ?>"
+    mytpl.editsubmit.click(function()
+    {
+        if(active_request==false) { edit_submit(); }
     });
 
-    /* SWITCHES */
-
-    /* spinner */
-
-    function sp(b)
+    mytpl.pwdchangelnk.click(function()
     {
-        ((ar = b) == true) ? $.b_spinner_start() : $.b_spinner_stop();
-    }
-
-    /* email change */
-
-    function setEmailChange(emlchange)
-    {
-        if(emlchange)
-        {
-            $("input[name='login_email']").attr("disabled", false);
-            $("input[name='emlchangecancel']").attr("disabled", false);
-            $("input[name='emlchangesubmit']").attr("disabled", false);
-            $("input[name='login_email']").focus();
-        }
-        else
-        {
-            $("input[name='login_email']").attr("disabled", true);
-            $("input[name='emlchangecancel']").attr("disabled", true);
-            $("input[name='emlchangesubmit']").attr("disabled", true);
-        }
-    }
-
-    /* password change */
-
-    function setPasswordChange(pwdchange)
-    {
-        if(pwdchange)
-        {
-            $("input[name='current_password']").attr("disabled", false);
-            $("input[name='new_password']").attr("disabled", false);
-            $("input[name='confirm_password']").attr("disabled", false);
-            $("input[name='pwdchangecancel']").attr("disabled", false);
-            $("input[name='pwdchangesubmit']").attr("disabled", false);
-            $("input[name='current_password']").focus();
-        }
-        else
-        {
-            $("input[name='current_password']").val("");
-            $("input[name='current_password']").attr("disabled", true);
-            $("input[name='new_password']").val("");
-            $("input[name='new_password']").attr("disabled", true);
-            $("input[name='confirm_password']").val("");
-            $("input[name='confirm_password']").attr("disabled", true);
-            $("input[name='pwdchangecancel']").attr("disabled", true);
-            $("input[name='pwdchangesubmit']").attr("disabled", true);
-        }
-    }
-
-
-    /* ACTIONS */
-
-    function err()
-    {
-        // window.location = "<?php B_Helper::url('profile','edit') ?>";
-        alert('error');
-    }
-
-    /* edit submit */
-
-    function editmsg(m)
-    {
-        _id = "editmessage"; $("#" + _id + " td").html(m); _tr = $("#" + _id);
-        (m=="") ? (_tr.hide()) : (_tr.show());
-    }
-
-    function editSubmit()
-    {
-        if(ar == true)
-        {
-            return null;
-        }
-
-        name = $("input[name='name']").val();
-
-        parameters = { name: name }
-
-        $.ajax
-        ({
-            type: "POST",
-            url: "<?php B_Helper::url('profile', 'edit') ?>",
-            dataType: "xml",
-            data: parameters,
-            beforeSend: function () { sp(true); editmsg("");  },
-            complete: function ()   { sp(false); },
-            success: function (xml) 
-            { 
-                data = $(xml).find('data');
-                saved = data.find('saved').text();
-                message = data.find('message').text();
-                editmsg(message);
-            }, 
-            error: function () { err(); }
-        });
-    }
-
-    /* password change submit */
-
-    function pwdchangemsg(m)
-    {
-        _id = "pwdchangemessage"; $("#" + _id + " td").html(m); _tr = $("#" + _id);
-        (m=="") ? (_tr.hide()) : (_tr.show());
-    }
-
-    function passwordChangeSubmit()
-    {
-        if(ar == true)
-        {
-            return null;
-        }
-
-        current = $("input[name='current_password']").val();
-        password = $("input[name='new_password']").val();
-        _confirm = $("input[name='confirm_password']").val();
-
-        if((current == "" || password == "" || _confirm == ""))
-        {
-            pwdchangemsg("<?php echo $this->translation()->form_unfilled ?>");
-            return null;
-        }
-
-        if(password != _confirm)
-        {
-            pwdchangemsg("<?php echo $this->translation()->form_unconfirmed ?>");
-            return null;
-        }
-
-        parameters = { current:  current, 
-                       password: password, 
-                       confirm:  _confirm }
-
-        $.ajax
-        ({
-            type: "POST",
-            url: "<?php B_Helper::url('profile', 'password') ?>",
-            dataType: "xml",
-            data: parameters,
-            beforeSend: function () { sp(true); pwdchangemsg(""); },
-            complete: function ()   { sp(false); },
-            success: function (xml) 
-            { 
-                data = $(xml).find('data');
-                updated = data.find('updated').text();
-                message = data.find('message').text();
-                pwdchangemsg(message);
-
-                if(updated == "true")
-                {
-                    setPasswordChange(false);
-                }
-            }, 
-            error: function () { err(); }
-        });
-    }
-
-    /* email change submit */
-
-    function emlchangemsg(m)
-    {
-        _id = "emlchangemessage"; $("#" + _id + " td").html(m); _tr = $("#" + _id);
-        (m=="") ? (_tr.hide()) : (_tr.show());
-    }
-
-    function emailChangeSubmit()
-    {
-        if(ar == true)
-        {
-            return null;
-        }
-
-        new_email = $("input[name='login_email']").val();
-
-        if(new_email == "")
-        {
-            emlchangemsg("<?php echo $this->translation()->form_unfilled ?>");
-            return null;
-        }
-
-        parameters = { new_email: new_email }
-
-        $.ajax
-        ({
-            type: "POST",
-            url: "<?php B_Helper::url('profile', 'email') ?>",
-            dataType: "xml",
-            data: parameters,
-            beforeSend: function () { sp(true); emlchangemsg(""); },
-            complete: function ()   { sp(false); setEmailChange(false); },
-            success: function (xml) 
-            { 
-                data = $(xml).find('data');
-                accepted = data.find('accepted').text();
-                message = data.find('message').text();
-                emlchangemsg(message);
-            }, 
-            error: function () { err(); }
-        });
-    }
-
-    /* TRIGGERS */
-
-    /* edit */
-
-    $("input[name='editsubmit']").click(function() 
-    {
-        editSubmit();
+        if(active_request==false) { toggle_password_change(true); }
+        return false;
     });
 
-    /* password change */
-
-    $("#pwdchangelnk").click(function() 
+    mytpl.pwdchangesubmit.click(function()
     {
-        setPasswordChange(true);
+        if(active_request==false) { pwdchange_submit(); }
     });
 
-    $("input[name='pwdchangesubmit']").click(function() 
+    mytpl.pwdchangecancel.click(function() 
     {
-        passwordChangeSubmit();
+        if(active_request==false) { toggle_password_change(false); }
     });
 
-    $("input[name='pwdchangecancel']").click(function() 
+    mytpl.emlchangelnk.click(function()
     {
-        setPasswordChange(false);
+        if(active_request==false) { toggle_email_change(true); }
+        return false;
     });
 
-    /* email change */
-
-    $("#emlchangelnk").click(function() 
+    mytpl.emlchangesubmit.click(function()
     {
-        setEmailChange(true);
+        if(active_request==false) { emlchange_submit(); }
     });
 
-    $("input[name='emlchangesubmit']").click(function() 
+    mytpl.emlchangecancel.click(function() 
     {
-        emailChangeSubmit();
-    });
-
-    $("input[name='emlchangecancel']").click(function() 
-    {
-        setEmailChange(false);
+        if(active_request==false) { toggle_email_change(false); }
     });
 });

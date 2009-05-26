@@ -1,5 +1,5 @@
 <br/>
-<div class="subcontainer">
+<div id="subcontainer">
 <form>
 <h1><?php echo $this->translation()->blog_add ?></h1>
 <table>
@@ -66,7 +66,7 @@
 <tr>
 <th>&nbsp;</th>
 <td class="buttons">
-    <input name="add_submit_button" type="button" value="<?php echo $this->translation()->application_add ?>">
+    <input name="add_submit_button" type="button" value="<?php echo $this->translation()->submit ?>">
 </td>
 </tr>
 </table>

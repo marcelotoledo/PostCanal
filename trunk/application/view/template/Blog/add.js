@@ -1,9 +1,5 @@
 $(document).ready(function()
 {
-    /* DEFAULTS */
-
-    var ar = false; /* active request */
-
     /* blog discover */
 
     var blog_name                 = "";
@@ -54,23 +50,6 @@ $(document).ready(function()
     button_submit = $("input[name='add_submit_button']");
 
     blog_add_message_ = $("tr#blog_add_message");
-
-    /* spinner */
-
-    $.b_spinner
-    ({
-        image   : "<?php B_Helper::img_src('spinner.gif') ?>",
-        message : "... <?php echo $this->translation()->application_loading ?>"
-    });
-
-    /* SWITCHES */
-
-    /* spinner */
-
-    function sp(b)
-    {
-        ((ar = b) == true) ? $.b_spinner_start() : $.b_spinner_stop();
-    }
 
     /* url */
 
@@ -211,8 +190,8 @@ $(document).ready(function()
             url: "<?php B_Helper::url('blog', 'discover') ?>",
             dataType: "xml",
             data: parameters,
-            beforeSend: function () { sp(true); msg(""); },
-            complete: function ()   { sp(false); },
+            beforeSend: function () { set_active_request(true); msg(""); },
+            complete: function ()   { set_active_request(false); },
             success: function (xml) 
             { 
                 data = $(xml).find('data');
@@ -236,34 +215,34 @@ $(document).ready(function()
 
                 failed = false;
 
-                if(failed == false && blog_type_accepted == false)
+                if(failed ==false && blog_type_accepted ==false)
                 {
                     failed = true;
                     msg("<?php echo $this->translation()->type_failed ?>");
                     resetURL();
                 }
 
-                if(failed == false && blog_type_maintenance == true)
+                if(failed ==false && blog_type_maintenance == true)
                 {
                     failed = true;
                     msg("<?php echo $this->translation()->type_maintenance ?>");
                 }
 
-                if(failed == false && blog_url_accepted == false)
+                if(failed ==false && blog_url_accepted ==false)
                 {
                     failed = true;
                     msg("<?php echo $this->translation()->url_not_accepted ?>");
                     resetURL();
                 }
 
-                if(failed == false)
+                if(failed ==false)
                 {
                     commitURL();
                     commitBlogType();
                     commitManagerURL();
                     commitLogin();
 
-                    if(blog_manager_url_accepted == false)
+                    if(blog_manager_url_accepted ==false)
                     {
                         failed = true;
                         msg("<?php echo $this->translation()->manager_url_not_accepted ?>");
@@ -295,8 +274,8 @@ $(document).ready(function()
             url: "<?php B_Helper::url('blog', 'check') ?>",
             dataType: "xml",
             data: parameters,
-            beforeSend: function () { sp(true); msg(""); },
-            complete: function ()   { sp(false); },
+            beforeSend: function () { set_active_request(true); msg(""); },
+            complete: function ()   { set_active_request(false); },
             success: function (xml) 
             { 
                 data = $(xml).find('data');
@@ -353,8 +332,8 @@ $(document).ready(function()
             url: "<?php B_Helper::url('blog', 'add') ?>",
             dataType: "xml",
             data: parameters,
-            beforeSend: function () { sp(true); msg(""); },
-            complete: function ()   { sp(false); },
+            beforeSend: function () { set_active_request(true); msg(""); },
+            complete: function ()   { set_active_request(false); },
             success: function (xml) 
             { 
                 data = $(xml).find('data');
@@ -383,7 +362,7 @@ $(document).ready(function()
 
     discover_url_lnk_.click(function()
     {
-        if(ar == false)
+        if(active_request==false)
         {
             discoverURL();
         }
@@ -399,7 +378,7 @@ $(document).ready(function()
 
     discover_url_change_ln_.click(function()
     {
-        if(ar == false)
+        if(active_request==false)
         {
             resetURL();
         }
@@ -407,7 +386,7 @@ $(document).ready(function()
 
     manager_url_check_lnk_.click(function()
     {
-        if(ar == false)
+        if(active_request==false)
         {
             checkManagerURL();
         }
@@ -415,7 +394,7 @@ $(document).ready(function()
 
     login_check_lnk.click(function()
     {
-        if(ar == false)
+        if(active_request==false)
         {
             checkManagerLogin();
         }
@@ -423,7 +402,7 @@ $(document).ready(function()
 
     button_submit.click(function() 
     {
-        if(ar == false)
+        if(active_request==false)
         {
             addSubmit();
         }

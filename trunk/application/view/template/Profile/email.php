@@ -1,37 +1,40 @@
 <?php if(is_object($this->profile) && strlen($this->new_email) > 0) : ?>
 
 <form>
-    <h1>Mudança de E-mail de Acesso</h1>
-    <input type="hidden" name="email" value="<?php echo $this->profile->login_email ?>">
-    <input type="hidden" name="user" value="<?php echo $this->profile->hash ?>">
+    <h1><?php echo $this->translation()->change_email ?></h1>
+    <input type="hidden" id="email" value="<?php echo $this->profile->login_email ?>">
+    <input type="hidden" id="user" value="<?php echo $this->profile->hash ?>">
     <table>
     <tr>
-        <th>E-mail atual:</th>
+        <th><?php echo $this->translation()->current_email ?>: </th>
         <td><i><?php echo $this->profile->login_email ?></i></td>
     </tr>
     <tr>
-        <th>Novo E-mail:</th>
+        <th><?php echo $this->translation()->new_email ?>: </th>
         <td><i><?php echo $this->new_email ?></i></td>
     </tr>
     <tr>
-        <th>Senha:</th>
-        <td><input type="password" name="password"></td>
+        <th><?php echo $this->translation()->password ?>:</th>
+        <td><input type="password" id="password"></td>
     </tr>
     <tr>
         <th>&nbsp;</th>
         <td class="buttons">
-            <input name="emlchangesubmit" type="button" value="Alterar">
+            <input id="emlchangesubmit" type="button" value="<?php echo $this->translation()->submit ?>">
         </td>
+    </tr>
+    <tr id="message" style="display:none">
+    <th>&nbsp;</th>
+    <td class="message"></td>
     </tr>
 </table>
 </form>
 
 <p id="changenotice" style="display:none">
-E-mail alterado com sucesso. <?php B_Helper::a("clique aqui") ?> 
-para acessar a página de autenticação</p>
+<?php echo $this->translation()->email_change_msg_1 ?>. <?php B_Helper::a($this->translation()->click_here) ?> <?php echo $this->translation()->email_change_msg_2 ?></p>
 
 <?php else : ?>
 
-<p>Este link expirou. É necessário solicitar um novo pedido de alteração de e-mail.</p>
+<p><?php echo $this->translation()->link_expired_1 ?> <?php B_Helper::a($this->translation()->main_page) ?> <?php echo $this->translation()->link_expired_2 ?>.</p>
 
 <?php endif ?>

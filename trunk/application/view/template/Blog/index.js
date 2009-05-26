@@ -1,20 +1,5 @@
 $(document).ready(function()
 {
-    var active_request = false;
-
-    /* spinner */
-
-    $.b_spinner
-    ({
-        image: "<?php B_Helper::img_src('spinner.gif') ?>",
-        message: "... <?php echo $this->translation()->application_loading ?>"
-    });
-
-    function set_active_request(b)
-    {
-        ((active_request = b) == true) ? $.b_spinner_start() : $.b_spinner_stop();
-    }
-
     /* actions */
 
     function blog_set(blog)

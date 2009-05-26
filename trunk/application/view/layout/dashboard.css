@@ -68,15 +68,15 @@ div, form
     top: 41px;
     overflow: auto;
 }
-#maincontainer div.subcontainer
+#subcontainer
 {
     margin-top: -15px;
     padding-left: 15px;
     padding-bottom: 25px;
 }
-div.subcontainer h1
+#subcontainer h1
 {
-    text-decoration: underline;
     font-size: x-large;
     text-transform: capitalize;
+    text-decoration: underline;
 }

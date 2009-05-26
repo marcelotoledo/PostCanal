@@ -1,5 +1,5 @@
 <br/>
-<div class="subcontainer">
+<div id="subcontainer">
 
 <h1><?php echo $this->translation()->blogs ?></h1>
 

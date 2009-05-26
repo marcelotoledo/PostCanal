@@ -21,7 +21,7 @@
         <tr>
         <th>&nbsp;</th>
         <td class="buttons">
-            <input id="pwdchangesubmit" type="button" value="<?php echo $this->translation()->change ?>">
+            <input id="pwdchangesubmit" type="button" value="<?php echo $this->translation()->submit ?>">
         </td>
         </tr>
         <tr id="message" style="display:none">

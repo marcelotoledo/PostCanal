@@ -9,6 +9,11 @@ function set_active_request(b)
         $.b_spinner_stop();
 }
 
+function error_message()
+{
+    alert("<?php echo $this->translation()->server_error ?>");
+}
+
 function spinner_init()
 {
     $.b_spinner

@@ -159,7 +159,7 @@ CREATE TABLE model_user_profile
     last_login_time TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
     recovery_message_time TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
     recovery_allowed TINYINT(1) NOT NULL DEFAULT 0,
-    email_update_message_time TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
+    update_email_message_time TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
     preference_serialized TEXT NOT NULL DEFAULT '',
     -- -------------------------------------------------------------------------
     created_at TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',

@@ -447,7 +447,7 @@ class C_Profile extends B_Controller
         if(strlen($email) > 0 && strlen($hash) > 0)
         {
             $profile = UserProfile::getByHash($email, $hash);
-            $new_email = is_object($profile) ? $profile->email_update : "";
+            $new_email = is_object($profile) ? $profile->update_email_to : "";
         }
 
         $this->view()->profile = $profile;
@@ -519,11 +519,11 @@ class C_Profile extends B_Controller
             {
                 try
                 {
-                    $profile->email_update = $new_email;
-                    $profile->email_update_message_time = time();
+                    $profile->update_email_to = $new_email;
+                    $profile->update_email_message_time = time();
                     $profile->save();
                     $this->notify($new_email, "email_change", $profile);
-                    $message = $this->translation()->email_changed;
+                    $message = $this->translation()->email_change_accepted;
                     $accepted = true;
                 }
                 catch(B_Exception $exception)
@@ -561,10 +561,10 @@ class C_Profile extends B_Controller
             }
             else
             {
-                if(strlen(($new_email = $profile->email_update)) > 0)
+                if(strlen(($new_email = $profile->update_email_to)) > 0)
                 {
                     $profile->login_email = $new_email;
-                    $profile->email_update = "";
+                    $profile->update_email_to = "";
                     $profile->hash = A_Utility::randomString(8);
                     $profile->save();
 

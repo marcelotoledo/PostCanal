@@ -2,8 +2,6 @@ $(document).ready(function()
 {
     /* defaults */
 
-    var active_request = false;
-
     var body__ = $("body");
 
     var blog_select_list = $("select[name='bloglst']");
@@ -15,35 +13,13 @@ $(document).ready(function()
     var feed_item_blank = feed_list_area.find("div.feeditem[feed='blank']");
     var feed_import_stack = Array();
 
-    /* spinner */
 
-    $.b_spinner
-    ({
-        image: "<?php B_Helper::img_src('spinner.gif') ?>",
-        message: "... <?php echo $this->translation()->application_loading ?>"
-    });
-
-    function set_active_request(b)
+    function set_custom_active_request(b)
     {
-        if(((active_request = b) == true))
-        {
-            blog_select_list.attr('disabled', true);
-            $.b_spinner_start();
-        }
-        else
-        {
-            blog_select_list.removeAttr('disabled');
-            $.b_spinner_stop();
-        }
+        set_active_request(b);
+        if(active_request==true) { blog_select_list.attr('disabled', true); }
+        else                     { blog_select_list.removeAttr('disabled'); }
     }
-
-    /* error */
-
-    function err()
-    {
-        alert("<?php echo $this->translation()->server_error ?>");
-    }
-
 
     /* preference */
 
@@ -57,11 +33,11 @@ $(document).ready(function()
             data: { },
             beforeSend: function()
             {
-                set_active_request(true);
+                set_custom_active_request(true);
             },
             complete: function()
             {
-                set_active_request(false);
+                set_custom_active_request(false);
             },
             success: function (xml)
             {
@@ -71,7 +47,7 @@ $(document).ready(function()
                 b = b ? b : current_selected_blog();
                 set_blog(b);
             },
-            error: function () { err(); }
+            error: function () { error_message(); }
         });
     }
 
@@ -85,11 +61,11 @@ $(document).ready(function()
             data: { k: k, v: v },
             beforeSend: function()
             {
-                set_active_request(true);
+                set_custom_active_request(true);
             },
             complete: function()
             {
-                set_active_request(false);
+                set_custom_active_request(false);
             },
             success: function (xml)
             {
@@ -99,7 +75,7 @@ $(document).ready(function()
 
                 if(k=='current_blog') { set_blog(v); }
             },
-            error: function () { err(); }
+            error: function () { error_message(); }
         });
     }
 
@@ -108,7 +84,7 @@ $(document).ready(function()
 
     function current_selected_blog()
     {
-        s = $("#blogcur").val();
+        s = $("#currentblog").val();
         s = s ? s : blog_select_list.find("option:selected").val();
         return s;
     }
@@ -172,13 +148,14 @@ $(document).ready(function()
             _title = $(this).find('feed_title').text();
             _description = $(this).find('feed_description').text();
 
-            _div = feed_option_blank.clone(true);
+            _div = feed_option_blank.clone();
             _div.find("input[name='feedaddoption']").attr('url', _url);
             _div.find("div.feedoptiontitle").html((_title.length > 0) ? 
                 _title + "<br/><small>" + _url + "</small>" :
                 _url);
 
             feed_add_options.append(_div);
+            _div.show();
         });
 
         $("input[name='feedaddoption']:first").attr('checked', 'checked');
@@ -194,12 +171,12 @@ $(document).ready(function()
             data: { url: url },
             beforeSend: function()
             {
-                set_active_request(true);
+                set_custom_active_request(true);
                 feed_msg("");
             },
             complete: function()
             {
-                set_active_request(false);
+                set_custom_active_request(false);
             },
             success: function (xml)
             {
@@ -221,7 +198,7 @@ $(document).ready(function()
                     feed_msg("<?php echo $this->translation()->feed_not_found ?>");
                 }
             },
-            error: function () { err(); }
+            error: function () { error_message(); }
         });
     }
 
@@ -235,12 +212,12 @@ $(document).ready(function()
             data: { url: url, blog: current_blog },
             beforeSend: function()
             {
-                set_active_request(true);
+                set_custom_active_request(true);
                 feed_msg("");
             },
             complete: function()
             {
-                set_active_request(false);
+                set_custom_active_request(false);
                 toggle_feed_add_form(false);
             },
             success: function (xml)
@@ -255,10 +232,10 @@ $(document).ready(function()
                 }
                 else
                 {
-                    err();
+                    error_message();
                 }
             },
-            error: function () { err(); }
+            error: function () { error_message(); }
         });
     }
 
@@ -308,7 +285,7 @@ $(document).ready(function()
     {
         if((stack_item = feed_import_stack.shift()))
         {
-            set_active_request(true);
+            set_custom_active_request(true);
             $.ajax
             ({
                 type: "POST",
@@ -331,7 +308,7 @@ $(document).ready(function()
         }
         else
         {
-            set_active_request(false);
+            set_custom_active_request(false);
             body__.trigger('after_import');
         }
     }
@@ -429,11 +406,11 @@ $(document).ready(function()
             data: { blog: current_blog },
             beforeSend: function()
             {
-                set_active_request(true);
+                set_custom_active_request(true);
             },
             complete: function()
             {
-                set_active_request(false);
+                set_custom_active_request(false);
                 body__.trigger('after_list');
             },
             success: function (xml)
@@ -441,7 +418,7 @@ $(document).ready(function()
                 d = $(xml).find('data');
                 feed_populate(d.find('feeds').children());
             },
-            error: function () { err(); }
+            error: function () { error_message(); }
         });
     }
 
@@ -457,11 +434,11 @@ $(document).ready(function()
             data: { blog: current_blog, feed: feed, position: position },
             beforeSend: function()
             {
-                set_active_request(true);
+                set_custom_active_request(true);
             },
             complete: function()
             {
-                set_active_request(false);
+                set_custom_active_request(false);
             },
             success: function (xml)
             {
@@ -473,7 +450,7 @@ $(document).ready(function()
                     feed_list();
                 }
             },
-            error: function () { err(); }
+            error: function () { error_message(); }
         });
     }
 
@@ -556,11 +533,11 @@ $(document).ready(function()
                     v    : v },
             beforeSend: function()
             {
-                set_active_request(true);
+                set_custom_active_request(true);
             },
             complete: function()
             {
-                set_active_request(false);
+                set_custom_active_request(false);
             },
             success: function (xml)
             {
@@ -570,7 +547,7 @@ $(document).ready(function()
                     feed_update_callback(r);
                 }
             },
-            error: function () { err(); }
+            error: function () { error_message(); }
         });
     }
 
@@ -592,18 +569,18 @@ $(document).ready(function()
             data: { blog: current_blog, feed: feed },
             beforeSend: function()
             {
-                set_active_request(true);
+                set_custom_active_request(true);
             },
             complete: function()
             {
-                set_active_request(false);
+                set_custom_active_request(false);
             },
             success: function (xml)
             {
                 d = $(xml).find('data');
                 feed_remove_from_list(d.find('result').text());
             },
-            error: function () { err(); }
+            error: function () { error_message(); }
         });
     }
 
@@ -637,18 +614,18 @@ $(document).ready(function()
             data: { blog: current_blog, feed: feed, enable: _e },
             beforeSend: function()
             {
-                set_active_request(true);
+                set_custom_active_request(true);
             },
             complete: function()
             {
-                set_active_request(false);
+                set_custom_active_request(false);
             },
             success: function (xml)
             {
                 d = $(xml).find('data');
                 feed_toggle_callback(d.find('result').text(), _e);
             },
-            error: function () { err(); }
+            error: function () { error_message(); }
         });
     }
 

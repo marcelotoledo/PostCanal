@@ -1,16 +1,16 @@
 <br/>
-<div class="subcontainer">
+<div id="subcontainer">
 <form id="editform">
     <h1><?php echo $this->translation()->profile ?></h1>
     <table>
         <tr>
-        <th><?php echo $this->translation()->profile_name ?>:</th>
-        <td><input type="text" name="name" value="<?php echo $this->profile->name ?>"></td>
+        <th><?php echo $this->translation()->name ?>:</th>
+        <td><input type="text" id="name" value="<?php echo $this->profile->name ?>"></td>
         </tr>
         <tr>
         <th>&nbsp;</th>
         <td class="buttons">
-            <input name="editsubmit" type="button" value="<?php echo $this->translation()->application_update ?>">
+            <input id="editsubmit" type="button" value="<?php echo $this->translation()->submit ?>">
         </td>
         </tr>
         <tr id="editmessage" style="display:none">
@@ -24,25 +24,25 @@
     <table>
         <tr>
         <th>&nbsp;</th>
-        <td><a id="pwdchangelnk"><?php echo $this->translation()->update_password ?></a></td>
+        <td><a href="#" id="pwdchangelnk"><?php echo $this->translation()->update_password ?></a></td>
         </tr>
         <tr>
         <th><?php echo $this->translation()->current_password ?>:</th>
-        <td><input type="password" name="current_password" disabled></td>
+        <td><input type="password" id="currentpwd" disabled></td>
         </tr>
         <tr>
         <th><?php echo $this->translation()->new_password ?>:</th>
-        <td><input type="password" name="new_password" disabled></td>
+        <td><input type="password" id="newpwd" disabled></td>
         </tr>
         <tr>
-        <th><?php echo $this->translation()->password_confirm ?>:</th>
-        <td><input type="password" name="confirm_password" disabled></td>
+        <th><?php echo $this->translation()->confirm_password ?>:</th>
+        <td><input type="password" id="confirmpwd" disabled></td>
         </tr>
         <tr>
         <th>&nbsp;</th>
         <td class="buttons">
-            <input name="pwdchangecancel" type="button" value="<?php echo $this->translation()->application_cancel ?>" disabled>
-            <input name="pwdchangesubmit" type="button" value="<?php echo $this->translation()->application_update ?>" disabled>
+            <input id="pwdchangecancel" type="button" value="<?php echo $this->translation()->cancel ?>" disabled>
+            <input id="pwdchangesubmit" type="button" value="<?php echo $this->translation()->submit ?>" disabled>
         </td>
         </tr>
         </tr>
@@ -57,17 +57,17 @@
     <table>
         <tr>
         <th>&nbsp;</th>
-        <td><a id="emlchangelnk"><?php echo $this->translation()->update_email ?></a></td>
+        <td><a href="#" id="emlchangelnk"><?php echo $this->translation()->update_email ?></a></td>
         </tr>
         <tr>
-        <th><?php echo $this->translation()->application_email ?>:</th>
-        <td><input type="text" name="login_email" value="<?php echo $this->profile->login_email ?>" disabled></td>
+        <th><?php echo $this->translation()->email ?>:</th>
+        <td><input type="text" id="neweml" value="<?php echo $this->profile->login_email ?>" disabled></td>
         </tr>
         <tr>
         <th>&nbsp;</th>
         <td class="buttons">
-            <input name="emlchangecancel" type="button" value="<?php echo $this->translation()->application_cancel ?>" disabled>
-            <input name="emlchangesubmit" type="button" value="<?php echo $this->translation()->application_update ?>" disabled>
+            <input id="emlchangecancel" type="button" value="<?php echo $this->translation()->cancel ?>" disabled>
+            <input id="emlchangesubmit" type="button" value="<?php echo $this->translation()->submit ?>" disabled>
         </td>
         </tr>
         </tr>
