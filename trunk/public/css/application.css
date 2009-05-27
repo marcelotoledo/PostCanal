@@ -106,18 +106,20 @@ h2
 
 form h1
 {
-    text-decoration: underline;
-    font-size: x-large;
     margin-bottom: 25px;
+    font-size: x-large;
     text-transform: capitalize;
+    text-decoration: underline;
 }
 form th
 {
-    text-align: right;
-    font-weight: bold;
+    width: 150px;
     padding-right: 5px;
     line-height: 25px;
+    font-weight: bold;
+    text-align: right;
     vertical-align: top;
+    text-transform: capitalize;
 }
 form td
 {

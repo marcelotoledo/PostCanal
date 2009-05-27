@@ -6,13 +6,13 @@
 
 <tr>
 <th><?php echo $this->translation()->blog_name ?>:</th>
-<td><input type="text" name="blog_name" value="<?php echo $this->blog->name ?>"></td>
+<td><input type="text" id="blog_name" value="<?php echo $this->blog->name ?>"></td>
 </tr>
 
 <tr id="discover_url_input_row">
 <th><?php echo $this->translation()->blog_url ?>:</th>
 <td>
-    <input type="text" name="discover_url_input" value="">
+    <input type="text" id="discover_url_input" value="">
     <a id="discover_url_lnk"><?php echo $this->translation()->blog_discover_url ?></a>
 </td>
 </tr>
@@ -32,7 +32,7 @@
 <tr id="manager_url_input_row" style="display:none">
 <th><?php echo $this->translation()->blog_manager_url ?>:</th>
 <td>
-    <input type="text" name="manager_url_input" value="">
+    <input type="text" id="manager_url_input" value="">
     <a id="manager_url_check_lnk"><?php echo $this->translation()->blog_manager_url_check ?></a>
 </td>
 </tr>
@@ -49,7 +49,7 @@
 <table id="login_table" style="display:none">
 <tr>
 <th><?php echo $this->translation()->blog_username ?>:</th>
-<td><input type="text" name="username_input"></td>
+<td><input type="text" id="username_input"></td>
 </tr>
 <tr>
 <th><?php echo $this->translation()->blog_password ?>:</th>
@@ -66,7 +66,7 @@
 <tr>
 <th>&nbsp;</th>
 <td class="buttons">
-    <input name="add_submit_button" type="button" value="<?php echo $this->translation()->submit ?>">
+    <input id="add_submit_button" type="button" value="<?php echo $this->translation()->submit ?>">
 </td>
 </tr>
 </table>
@@ -78,7 +78,7 @@
 </tr>
 </table>
 
-<table id="blogtypes" style="display:none">
+<table id="blog_types_info" style="display:none">
 <tr>
 <th>&nbsp;</th>
 <td>
