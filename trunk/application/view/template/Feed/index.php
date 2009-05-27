@@ -5,15 +5,15 @@
 
 <h1><?php echo $this->translation()->feeds ?></h1>
 <div id="feedlnkdiv">
-    <a id="feedaddlnk"><?php echo $this->translation()->feed_add ?></a>
-    <a id="feedimportlnk"><?php echo $this->translation()->feed_import ?></a>
+    <a href="#" id="feedaddlnk"><?php echo $this->translation()->feed_add ?></a>
+    <a href="#" id="feedimportlnk"><?php echo $this->translation()->feed_import ?></a>
 </div>
 
 <form id="feedaddform" style="display:none">
     <table>
-        <tr id="feedaddurlrow">
+        <tr>
         <th><?php echo $this->translation()->feed_add_url ?>:</th>
-        <td><input type="text" name="feedaddurl" value=""></td>
+        <td><input type="text" id="feedaddurl" value=""></td>
         </tr>
         <tr id="feedaddoptions"><td colspan="2">
             <div class="feedoption" id="feedoptionblank" style="display:none">
@@ -32,8 +32,8 @@
         <tr>
         <th>&nbsp;</th>
         <td class="buttons">
-            <input name="feedaddcancel" type="button" value="<?php echo $this->translation()->cancel ?>">
-            <input name="feedaddsubmit" type="button" value="<?php echo $this->translation()->submit ?>">
+            <input id="feedaddcancel" type="button" value="<?php echo $this->translation()->cancel ?>">
+            <input id="feedaddsubmit" type="button" value="<?php echo $this->translation()->submit ?>">
         </td>
         </tr>
     </table>
@@ -43,27 +43,27 @@
     <table>
         <tr>
         <th><?php echo $this->translation()->feed_import_file ?>:</th>
-        <td><input type="file" name="feedimportfile" value=""></td>
+        <td><input id="feedimportfileinput" type="file" name="feedimportfile" value=""></td>
         <tr>
         <th>&nbsp;</th>
         <td class="buttons">
-            <input name="feedimportcancel" type="button" value="<?php echo $this->translation()->cancel ?>">
-            <input name="feedimportsubmit" type="submit" value="<?php echo $this->translation()->submit ?>">
+            <input id="feedimportcancel" type="button" value="<?php echo $this->translation()->cancel ?>">
+            <input id="feedimportsubmit" type="submit" value="<?php echo $this->translation()->submit ?>">
         </td>
         </tr>
     </table>
 </form>
 
 <div id="feedlistarea">
-    <div class="feeditem" feed="blank" ord="0" style="display:none">
+    <div class="feeditem" id="feeditemblank" ord="0" style="display:none">
         <div class="feeditemleft">
             <div class="feeditemtitle"></div>
             <div class="feeditemurl"></div>
         </div>
         <div class="feeditemright">
-            <a class="feedrenamelnk" feed="blank"><?php echo $this->translation()->rename ?></a>
-            <a class="feedtogglelnk" feed="blank"><?php echo $this->translation()->disable ?></a>
-            <a class="feeddeletelnk" feed="blank"><?php echo $this->translation()->delete ?></a>
+            <a href="#" class="feedrenamelnk" feed="blank"><?php echo $this->translation()->rename ?></a>
+            <a href="#" class="feedtogglelnk" feed="blank"><?php echo $this->translation()->disable ?></a>
+            <a href="#" class="feeddeletelnk" feed="blank"><?php echo $this->translation()->delete ?></a>
         </div>
         <div style="clear:both"></div>
     </div>

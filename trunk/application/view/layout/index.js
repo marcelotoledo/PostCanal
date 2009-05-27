@@ -28,38 +28,32 @@ $(document).ready(function()
 {
     var mylyt =
     {
-        container: $("#container"),
-
-
-        disable_submit: function()
-        {
-            $("form").submit(function()
-            {
-                return false;
-            });
-        },
-
-        container_update: function()
-        {
-            var ww = $(window).width(),
-                wh = $(window).height();
-
-            mylyt.container.css('left', (ww - mylyt.container.width()) / 2);
-            mylyt.container.show();
-        },
-
-        init: function()
-        {
-            spinner_init();
-            mylyt.disable_submit();
-            mylyt.container_update();
-        }
+        container: $("#container")
     };
 
-    mylyt.init();
+    function disable_submit()
+    {
+        $("form").submit(function()
+        {
+            return false;
+        });
+    }
+
+    function container_update()
+    {
+        var ww = $(window).width(),
+            wh = $(window).height();
+
+        mylyt.container.css('left', (ww - mylyt.container.width()) / 2);
+        mylyt.container.show();
+    }
+
+    spinner_init();
+    disable_submit();
+    container_update();
 
     $(window).resize(function()
     {
-        mylyt.container_update();
+        container_update();
     });
 });

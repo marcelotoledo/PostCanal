@@ -105,6 +105,7 @@
 "blog/add","en_US","url_not_accepted","the url does not contain a valid address"
 
 "feed/index","en_US","feed_add","feed add"
+"feed/index","en_US","feed_import","feed import"
 "feed/index","en_US","feed_add_url","URL"
 "feed/index","en_US","feed_not_found","feed not found"
 "feed/index","en_US","no_registered_feeds","no registered feeds"

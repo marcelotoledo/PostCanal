@@ -1,655 +1,583 @@
-$(document).ready(function()
+var mytpl = null;
+var feed_import_stack = Array();
+
+
+function on_blog_change()
 {
-    /* defaults */
+    toggle_feed_add_form(false);
+    toggle_feed_import_form(false);
+    feed_list(); 
+}
 
-    var body__ = $("body");
+function form_message(m)
+{
+    (m=="") ? 
+        mytpl.feed_add_msg.hide().find("td").html("") :
+        mytpl.feed_add_msg.show().find("td").html(m) ;
+}
 
-    var blog_select_list = $("select[name='bloglst']");
-    var current_blog = null;
-
-    var feed_add_options = $("tr#feedaddoptions > td");
-    var feed_option_blank = feed_add_options.find("div#feedoptionblank");
-    var feed_list_area = $("div#feedlistarea");
-    var feed_item_blank = feed_list_area.find("div.feeditem[feed='blank']");
-    var feed_import_stack = Array();
-
-
-    function set_custom_active_request(b)
+function toggle_feed_add_form(s)
+{
+    if(s == true)
     {
-        set_active_request(b);
-        if(active_request==true) { blog_select_list.attr('disabled', true); }
-        else                     { blog_select_list.removeAttr('disabled'); }
+        mytpl.feed_lnk_div.hide();
+        mytpl.feed_add_form.show();
     }
-
-    /* preference */
-
-    function load_preference()
+    else
     {
-        $.ajax
-        ({
-            type: "GET",
-            url: "<?php B_Helper::url('profile', 'preference') ?>",
-            dataType: "xml",
-            data: { },
-            beforeSend: function()
-            {
-                set_custom_active_request(true);
-            },
-            complete: function()
-            {
-                set_custom_active_request(false);
-            },
-            success: function (xml)
-            {
-                d = $(xml).find('data');
-                p = d.find('preference');
-                b = p.find('current_blog').text()
-                b = b ? b : current_selected_blog();
-                set_blog(b);
-            },
-            error: function () { error_message(); }
-        });
+        mytpl.feed_lnk_div.show();
+        mytpl.feed_add_form.hide();
+        mytpl.feed_add_url.val("");
+        mytpl.feed_add_options.find("td").html("");
+        form_message("");
     }
+}
 
-    function save_preference(k, v)
+function feedaddform_options(feeds)
+{
+    mytpl.feed_add_url_row.hide();
+
+    feeds.each(function()
     {
+        var _url = $(this).find('feed_url').text();
+        var _title = $(this).find('feed_title').text();
+        var _description = $(this).find('feed_description').text();
+
+        var _opt = mytpl.feed_option_blank.clone();
+        _opt.find("input[name='feedaddoption']").attr('url', _url);
+        _opt.find("div.feedoptiontitle").html((_title.length > 0) ? 
+            _title + "<br/><small>" + _url + "</small>" :
+            _url);
+
+        mytpl.feed_add_options.append(_opt);
+        _opt.show();
+    });
+
+    mytpl.feed_add_options.find("input[name='feedaddoption']:first").attr('checked', 'checked');
+}
+
+function feed_discover(url)
+{
+    $.ajax
+    ({
+        type: "GET",
+        url: "<?php B_Helper::url('feed', 'discover') ?>",
+        dataType: "xml",
+        data: { url: url },
+        beforeSend: function()
+        {
+            set_active_request(true);
+            form_message("");
+        },
+        complete: function()
+        {
+            set_active_request(false);
+        },
+        success: function (xml)
+        {
+            var _d = $(xml).find('data');
+            var _r = _d.find('results')
+
+            if(_r.length > 0) _r = _r.children();
+
+            if(_r.length == 1)
+            {
+                feed_add(_r.find('feed_url').text());
+            }
+            else if(_r.length >  1)
+            {
+                feedaddform_options(_r);
+            }
+            else
+            {
+                form_message("<?php echo $this->translation()->feed_not_found ?>");
+            }
+        },
+        error: function () { server_error(); }
+    });
+}
+
+function feed_add(url)
+{
+    $.ajax
+    ({
+        type: "POST",
+        url: "<?php B_Helper::url('feed', 'add') ?>",
+        dataType: "xml",
+        data: { url: url, blog: current_blog },
+        beforeSend: function()
+        {
+            set_active_request(true);
+            form_message("");
+        },
+        complete: function()
+        {
+            set_active_request(false);
+            toggle_feed_add_form(false);
+        },
+        success: function (xml)
+        {
+            var _d = $(xml).find('data');
+            var _f = _d.find('feed').text();
+
+            if(_f.length > 0)
+            {
+                feed_list();
+            }
+            else
+            {
+                server_error();
+            }
+        },
+        error: function () { server_error(); }
+    });
+}
+
+function feedaddform_submit()
+{
+    var _url = null;
+
+    if((_url = mytpl.feed_add_options.find("input[name='feedaddoption']:checked").attr('url')) != undefined)
+    {
+        feed_discover(_url);
+    }
+    else
+    {
+        if((_url = mytpl.feed_add_url.val()) != "")
+        {
+            feed_discover(_url);
+        }
+        else
+        {
+            form_message("<?php echo $this->translation()->blank_url ?>");
+        }
+    }
+}
+
+function toggle_feed_import_form(s)
+{
+    if(s==true)
+    {
+        mytpl.feed_lnk_div.hide();
+        mytpl.feed_import_form.show();
+    }
+    else
+    {
+        mytpl.feed_import_form.hide();
+        mytpl.feed_lnk_div.show();
+    }
+}
+
+function feed_import_preview(title, added)
+{
+    var _st = added ? "<?php echo $this->translation()->added ?>" : 
+                      "<?php echo $this->translation()->failed ?>";
+    mytpl.feed_list_area.prepend("- <i>" + title + " " + _st + "</i><br/>");
+}
+
+function feed_import()
+{
+    var stack_item = null;
+
+    if((stack_item = feed_import_stack.shift()))
+    {
+        set_active_request(true);
         $.ajax
         ({
             type: "POST",
-            url: "<?php B_Helper::url('profile', 'preference') ?>",
+            url: "<?php B_Helper::url('feed', 'import') ?>",
             dataType: "xml",
-            data: { k: k, v: v },
-            beforeSend: function()
-            {
-                set_custom_active_request(true);
-            },
+            data: { url   : stack_item.url, 
+                    title : stack_item.title, 
+                    blog  : current_blog },
             complete: function()
             {
-                set_custom_active_request(false);
+                feed_import();
             },
             success: function (xml)
             {
-                d = $(xml).find('data');
-                k = d.find('k').text();
-                v = d.find('v').text();
-
-                if(k=='current_blog') { set_blog(v); }
-            },
-            error: function () { error_message(); }
+                var _d = $(xml).find('data');
+                feed_import_preview(stack_item.title, (_d.find('added').text() == "true"));
+            }
         });
     }
-
-
-    /* set blog */
-
-    function current_selected_blog()
+    else
     {
-        s = $("#currentblog").val();
-        s = s ? s : blog_select_list.find("option:selected").val();
-        return s;
+        set_active_request(false);
+        $(document).trigger('afterfeedimport');
     }
+}
 
-    function set_blog(b)
+function feed_import_init()
+{
+    <?php foreach($this->import as $i) : ?>
+    feed_import_stack.push({ 'url'  : "<?php echo $i['url'] ?>", 
+                             'title': "<?php echo $i['title'] ?>" });
+    <?php endforeach ?>
+
+    if(feed_import_stack.length > 0)
     {
-        if((current_blog = b))
-        {
-            toggle_feed_add_form(false);
-            toggle_feed_import_form(false);
-            body__.trigger('after_blog');
-        }
+        mylyt.blog_list.attr('disabled', true);
+        feed_import();
     }
+}
 
-    /* feed actions */
-
-    function feed_msg(m)
+function feed_populate(feeds)
+{
+    if(feeds.length > 0)
     {
-        _f  = $("#feedaddmessage");
-        _td = $("#feedaddmessage td");
+        mytpl.feed_list_area.html("");
 
-        if(m=="")
-        {
-            _td.html("");
-            _f.hide();
-        }
-        else
-        {
-            _td.html(m);
-            _f.show();
-        }
-    }
-
-    /* feed add */
-
-    function toggle_feed_add_form(s)
-    {
-        if(s == true)
-        {
-            $("#feedlnkdiv").hide();
-            $("form#feedaddform").show();
-            $("#feedaddurlrow").show();
-        }
-        else
-        {
-            $("#feedlnkdiv").show();
-            $("form#feedaddform").hide();
-            $("input[name='feedaddurl']").val("");
-            $("#feedaddoptions > td").html("");
-            feed_msg("");
-        }
-    }
-
-    function feedaddform_options(feeds)
-    {
-        $("#feedaddurlrow").hide();
+        var _lscontent = "";
+            _lscontent = "<ul>";
+        var _item = null;
+        var _data = null;
+        var _toggle = null;
 
         feeds.each(function()
         {
-            _url = $(this).find('feed_url').text();
-            _title = $(this).find('feed_title').text();
-            _description = $(this).find('feed_description').text();
-
-            _div = feed_option_blank.clone();
-            _div.find("input[name='feedaddoption']").attr('url', _url);
-            _div.find("div.feedoptiontitle").html((_title.length > 0) ? 
-                _title + "<br/><small>" + _url + "</small>" :
-                _url);
-
-            feed_add_options.append(_div);
-            _div.show();
-        });
-
-        $("input[name='feedaddoption']:first").attr('checked', 'checked');
-    }
-
-    function feed_discover(url)
-    {
-        $.ajax
-        ({
-            type: "GET",
-            url: "<?php B_Helper::url('feed', 'discover') ?>",
-            dataType: "xml",
-            data: { url: url },
-            beforeSend: function()
+            _data =
             {
-                set_custom_active_request(true);
-                feed_msg("");
-            },
-            complete: function()
-            {
-                set_custom_active_request(false);
-            },
-            success: function (xml)
-            {
-                d = $(xml).find('data');
-                r = d.find('results')
+                feed    : $(this).find('feed').text(),
+                ord     : $(this).find('ordering').text(),
+                url     : $(this).find('feed_url').text(),
+                title   : $(this).find('feed_title').text(),
+                enabled : ($(this).find('enabled').text() == 1)
+            };
 
-                if(r.length > 0) r = r.children();
+            _item = mytpl.feed_item_blank.clone();
 
-                if(r.length == 1)
-                {
-                    feed_add(r.find('feed_url').text());
-                }
-                else if(r.length >  1)
-                {
-                    feedaddform_options(r);
-                }
-                else
-                {
-                    feed_msg("<?php echo $this->translation()->feed_not_found ?>");
-                }
-            },
-            error: function () { error_message(); }
-        });
-    }
+            _item.attr('feed', _data.feed);
+            _item.attr('ord', _data.ord);
+            _item.find("div.feeditemleft")
+                .find("div.feeditemtitle").html(_data.title)
+                .find("div.feeditemurl").html(_data.url);
+            _item.find("div.feeditemright")
+                .find("a.feedrenamelnk").attr('feed', _data.feed);
+            _toggle = _item.find("div.feeditemright").find("a.feedtogglelnk")
+            _toggle.attr('feed', _data.feed);
+            _item.find("div.feeditemright")
+                .find("a.feeddeletelnk").attr('feed', _data.feed);
+                // TODO: can we get feed attr from parent?
 
-    function feed_add(url)
-    {
-        $.ajax
-        ({
-            type: "POST",
-            url: "<?php B_Helper::url('feed', 'add') ?>",
-            dataType: "xml",
-            data: { url: url, blog: current_blog },
-            beforeSend: function()
+            if(_data.enabled)
             {
-                set_custom_active_request(true);
-                feed_msg("");
-            },
-            complete: function()
-            {
-                set_custom_active_request(false);
-                toggle_feed_add_form(false);
-            },
-            success: function (xml)
-            {
-                d = $(xml).find('data');
-                f = d.find('feed').text();
-
-                if(f.length > 0)
-                {
-                    feed_list();
-                    current_feed = f;
-                }
-                else
-                {
-                    error_message();
-                }
-            },
-            error: function () { error_message(); }
-        });
-    }
-
-    function feedaddform_submit()
-    {
-        if((url = $("input[name='feedaddoption']:checked").attr('url')) != undefined)
-        {
-            feed_discover(url);
-        }
-        else
-        {
-            if((url = $("input[name='feedaddurl']").val()) != "")
-            {
-                feed_discover(url);
+                _toggle.text("<?php echo $this->translation()->disable ?>");
             }
             else
             {
-                feed_msg("<?php echo $this->translation()->blank_url ?>");
-            }
-        }
-    }
-
-    /* feed import */
-
-    function toggle_feed_import_form(s)
-    {
-        if(s == true)
-        {
-            $("#feedlnkdiv").hide();
-            $("form#feedimportform").show();
-        }
-        else
-        {
-            $("form#feedimportform").hide();
-            $("#feedlnkdiv").show();
-        }
-    }
-
-    function feed_import_preview(title, added)
-    {
-        _st = added ? "<?php echo $this->translation()->added ?>" : 
-                      "<?php echo $this->translation()->failed ?>";
-        feed_list_area.prepend("- <i>" + title + " " + _st + "</i><br/>");
-    }
-
-    function feed_import()
-    {
-        if((stack_item = feed_import_stack.shift()))
-        {
-            set_custom_active_request(true);
-            $.ajax
-            ({
-                type: "POST",
-                url: "<?php B_Helper::url('feed', 'import') ?>",
-                dataType: "xml",
-                data: { url   : stack_item.url, 
-                        title : stack_item.title, 
-                        blog  : current_blog },
-                complete: function()
-                {
-                    feed_import();
-                },
-                success: function (xml)
-                {
-                    d = $(xml).find('data');
-                    a = (d.find('added').text() == "true");
-                    feed_import_preview(stack_item.title, a);
-                }
-            });
-        }
-        else
-        {
-            set_custom_active_request(false);
-            body__.trigger('after_import');
-        }
-    }
-
-    function feed_import_init()
-    {
-        <?php foreach($this->import as $i): ?>
-        feed_import_stack.push({ 'url'  : "<?php echo $i['url'] ?>", 
-                                 'title': "<?php echo $i['title'] ?>" });
-        <?php endforeach ?>
-
-        if(feed_import_stack.length > 0)
-        {
-            feed_import();
-        }
-    }
-
-    function feed_populate(feeds)
-    {
-        if(feeds.length > 0)
-        {
-            feed_list_area.html("");
-            feeds.each(function()
-            {
-                _feed = $(this).find('feed').text();
-                _ord = $(this).find('ordering').text();
-                _url = $(this).find('feed_url').text();
-                _title = $(this).find('feed_title').text();
-                _enabled = ($(this).find('enabled').text() == 1);
-
-                _div = feed_item_blank.clone();
-                _div.attr('feed', _feed);
-                _div.attr('ord', _ord);
-                _l = _div.find("div.feeditemleft");
-                _l.find("div.feeditemtitle").html(_title);
-                _l.find("div.feeditemurl").html(_url);
-                _div.find("div.feeditemright").find("a.feedrenamelnk").attr('feed', _feed);
-                _t = _div.find("div.feeditemright > a.feedtogglelnk");
-                _t.attr('feed', _feed);
-                _div.find("div.feeditemright").find("a.feeddeletelnk").attr('feed', _feed);
-
-                if(_enabled)
-                {
-                    _t.text("<?php echo $this->translation()->disable ?>");
-                }
-                else
-                {
-                    _t.text("<?php echo $this->translation()->enable ?>");
-                    _div.addClass('feeditemdisabled');
-                }
-
-                feed_list_area.append(_div);
-                _div.show();
-            });
-        }
-        else
-        {
-            feed_list_area.html("<p><?php echo $this->translation()->no_registered_feeds ?></p>");
-        }
-
-        /* add events */
-
-        feed_list_area.find("a.feedrenamelnk").click(function()
-        {
-            feed_rename_show($(this).attr('feed'));
-        });
-
-        feed_list_area.find("a.feedtogglelnk").click(function()
-        {
-            feed_toggle($(this).attr('feed'));
-        });
-
-        feed_list_area.find("a.feeddeletelnk").click(function()
-        {
-            feed = $(this).attr('feed');
-            feed_set(feed);
-            if(confirm("<?php echo $this->translation()->are_you_sure ?>"))
-            {   
-                feed_delete(feed);
-            }
-            else
-            {
-                feed_unset(feed);
-            }
-        });
-    }
-
-    function feed_list()
-    {
-        $.ajax
-        ({
-            type: "GET",
-            url: "<?php B_Helper::url('feed', 'list') ?>",
-            dataType: "xml",
-            data: { blog: current_blog },
-            beforeSend: function()
-            {
-                set_custom_active_request(true);
-            },
-            complete: function()
-            {
-                set_custom_active_request(false);
-                body__.trigger('after_list');
-            },
-            success: function (xml)
-            {
-                d = $(xml).find('data');
-                feed_populate(d.find('feeds').children());
-            },
-            error: function () { error_message(); }
-        });
-    }
-
-    /* ordering */
-
-    function feed_position(feed, position)
-    {
-        $.ajax
-        ({
-            type: "POST",
-            url: "<?php B_Helper::url('feed', 'position') ?>",
-            dataType: "xml",
-            data: { blog: current_blog, feed: feed, position: position },
-            beforeSend: function()
-            {
-                set_custom_active_request(true);
-            },
-            complete: function()
-            {
-                set_custom_active_request(false);
-            },
-            success: function (xml)
-            {
-                d = $(xml).find('data');
-                u = (d.find('updated').text() == "true");
-
-                if(u != true)
-                {
-                    feed_list();
-                }
-            },
-            error: function () { error_message(); }
-        });
-    }
-
-    function sortable_callback(feed)
-    {
-        var __p = 1;
-
-        feed_list_area.find('.feeditem').each(function()
-        {
-            if(feed == $(this).attr('feed') && __p != $(this).attr('ord'))
-            {
-                feed_position(feed, __p);
+                _toggle.text("<?php echo $this->translation()->enable ?>");
+                _item.addClass('feeditemdisabled');
             }
 
-            __p++;
+            _item.show();
+            _lscontent+= "<li>" + _item.html() + "</li>\n";
         });
+
+        mytpl.feed_list_area.html(_lscontent + "</ul>");
+    }
+    else
+    {
+        mytpl.feed_list_area.html("<p><?php echo $this->translation()->no_registered_feeds ?></p>");
     }
 
-    function feed_sortable_init()
-    {
-        feed_list_area.sortable(
-        { 
-            stop: function(e, ui)
-            {
-                sortable_callback(ui.item.attr('feed'));
-            },
-            handle: "div.feeditemleft"
-        });
-        feed_list_area.disableSelection();
-    }
+    /* add events */
 
-    function feed_set(feed)
+    mytpl.feed_list_area.find("a.feedrenamelnk").click(function()
     {
-        $("div.feeditem[feed='" + feed + "'] > div.feeditemleft").addClass('feeditemleftbold');
-    }
+        feed_rename_show($(this).attr('feed'));
+    });
 
-    function feed_unset(feed)
+    mytpl.feed_list_area.find("a.feedtogglelnk").click(function()
     {
-        $("div.feeditem[feed='" + feed + "'] > div.feeditemleft").removeClass('feeditemleftbold');
-    }
+        feed_toggle($(this).attr('feed'));
+    });
 
-    function feed_rename_show(feed)
+    mytpl.feed_list_area.find("a.feeddeletelnk").click(function()
     {
+        feed = $(this).attr('feed');
         feed_set(feed);
-        _i = $("div.feeditem[feed='" + feed + "']");
-        _f = _i.find("div.feeditemtitle").text();
-        if(newtitle = prompt("<?php echo $this->translation()->feed_rename ?>", _f))
-        {
-            feed_update(feed, 'feed_title', newtitle);
+        if(confirm("<?php echo $this->translation()->are_you_sure ?>"))
+        {   
+            feed_delete(feed);
         }
         else
         {
             feed_unset(feed);
         }
-    }
+    });
+}
 
-    function feed_update_callback(result)
-    {
-        feed       = result.find('feed').text();
-        _i = $("div.feeditem[feed='" + feed + "']");
-
-        if((_f = result.find('feed_title')))
+function feed_list()
+{
+    $.ajax
+    ({
+        type: "GET",
+        url: "<?php B_Helper::url('feed', 'list') ?>",
+        dataType: "xml",
+        data: { blog: current_blog },
+        beforeSend: function()
         {
-            _i.find("div.feeditemtitle").text(_f.text());
+            set_active_request(true);
+        },
+        complete: function()
+        {
+            set_active_request(false);
+            $(document).trigger('afterfeedlist');
+        },
+        success: function (xml)
+        {
+            var _d = $(xml).find('data');
+            feed_populate(_d.find('feeds').children());
+        },
+        error: function () { server_error(); }
+    });
+}
+
+function feed_position(feed, position)
+{
+    $.ajax
+    ({
+        type: "POST",
+        url: "<?php B_Helper::url('feed', 'position') ?>",
+        dataType: "xml",
+        data: { blog     : current_blog, 
+                feed     : feed, 
+                position : position },
+        beforeSend: function()
+        {
+            set_active_request(true);
+        },
+        complete: function()
+        {
+            set_active_request(false);
+        },
+        success: function (xml)
+        {
+            var _d = $(xml).find('data');
+
+            if((_d.find('updated').text()=="true")!=true)
+            {
+                feed_list();
+            }
+        },
+        error: function () { server_error(); }
+    });
+}
+
+function sortable_callback(feed)
+{
+    var _p = 1;
+
+    mytpl.feed_list_area.find('.feeditem').each(function()
+    {
+        if(feed == $(this).attr('feed') && _p != $(this).attr('ord'))
+        {
+            feed_position(feed, _p);
         }
 
+        _p++;
+    });
+}
+
+function feed_sortable_init()
+{
+    mytpl.feed_list_area.sortable(
+    { 
+        stop: function(e, ui)
+        {
+            sortable_callback(ui.item.attr('feed'));
+        },
+        handle: "div.feeditemleft"
+    });
+    mytpl.feed_list_area.disableSelection();
+}
+
+function feed_set(feed)
+{
+    mytpl.feed_list_area.find("div.feeditem[feed='" + feed + "']")
+        .find("div.feeditemleft").addClass('feeditemleftbold');
+}
+
+function feed_unset(feed)
+{
+    mytpl.feed_list_area.find("div.feeditem[feed='" + feed + "']")
+        .find("div.feeditemleft").removeClass('feeditemleftbold');
+}
+
+function feed_rename_show(feed)
+{
+    feed_set(feed);
+    var _f = $("div.feeditem[feed='" + feed + "']").find("div.feeditemtitle").text();
+    var _n = null;
+    if(_n = prompt("<?php echo $this->translation()->feed_rename ?>", _f))
+    {
+        feed_update(feed, 'feed_title', _n);
+    }
+    else
+    {
         feed_unset(feed);
     }
+}
 
-    function feed_update(feed, k, v)
+function feed_update_callback(result)
+{
+    var _f = result.find('feed').text();
+    var _i = mytpl.feed_list_area.find("div.feeditem[feed='" + _f + "']");
+
+    if((_f = result.find('feed_title')))
     {
-        $.ajax
-        ({
-            type: "POST",
-            url: "<?php B_Helper::url('feed', 'update') ?>",
-            dataType: "xml",
-            data: { feed : feed,
-                    blog : current_blog,
-                    k    : k, 
-                    v    : v },
-            beforeSend: function()
-            {
-                set_custom_active_request(true);
-            },
-            complete: function()
-            {
-                set_custom_active_request(false);
-            },
-            success: function (xml)
-            {
-                d = $(xml).find('data');
-                if((r = d.find('result')))
-                {
-                    feed_update_callback(r);
-                }
-            },
-            error: function () { error_message(); }
-        });
+        _i.find("div.feeditemtitle").text(_f.text());
     }
 
-    function feed_remove_from_list(feed)
-    {
-        if(i = $("div.feeditem[feed='" + feed + "']"))
+    feed_unset(_f);
+}
+
+function feed_update(feed, k, v)
+{
+    $.ajax
+    ({
+        type: "POST",
+        url: "<?php B_Helper::url('feed', 'update') ?>",
+        dataType: "xml",
+        data: { feed : feed,
+                blog : current_blog,
+                k    : k, 
+                v    : v },
+        beforeSend: function()
         {
-            i.remove();
-        }
-    }
-
-    function feed_delete(feed)
-    {
-        $.ajax
-        ({
-            type: "POST",
-            url: "<?php B_Helper::url('feed', 'delete') ?>",
-            dataType: "xml",
-            data: { blog: current_blog, feed: feed },
-            beforeSend: function()
-            {
-                set_custom_active_request(true);
-            },
-            complete: function()
-            {
-                set_custom_active_request(false);
-            },
-            success: function (xml)
-            {
-                d = $(xml).find('data');
-                feed_remove_from_list(d.find('result').text());
-            },
-            error: function () { error_message(); }
-        });
-    }
-
-    function feed_toggle_callback(feed, _e)
-    {
-        _i = $("div.feeditem[feed='" + feed + "']");
-        _t = _i.find("div.feeditemright > a.feedtogglelnk");
-
-        if(_e == 1)
+            set_active_request(true);
+        },
+        complete: function()
         {
-            _i.removeClass('feeditemdisabled');
-            _t.text("<?php echo $this->translation()->disable ?>");
-        }
-        else
+            set_active_request(false);
+        },
+        success: function (xml)
         {
-            _i.addClass('feeditemdisabled');
-            _t.text("<?php echo $this->translation()->enable ?>");
-        }
-    }
+            var _d = $(xml).find('data');
+            var _r = null;
+            if((_r = _d.find('result')))
+            {
+                feed_update_callback(_r);
+            }
+        },
+        error: function () { server_error(); }
+    });
+}
 
-    function feed_toggle(feed)
+function feed_remove_from_list(feed)
+{
+    mytpl.feed_list_area.find("div.feeditem[feed='" + feed + "']").remove();
+}
+
+function feed_delete(feed)
+{
+    $.ajax
+    ({
+        type: "POST",
+        url: "<?php B_Helper::url('feed', 'delete') ?>",
+        dataType: "xml",
+        data: { blog: current_blog, 
+                feed: feed },
+        beforeSend: function()
+        {
+            set_active_request(true);
+        },
+        complete: function()
+        {
+            set_active_request(false);
+        },
+        success: function (xml)
+        {
+            var _d = $(xml).find('data');
+            feed_remove_from_list(_d.find('result').text());
+        },
+        error: function () { server_error(); }
+    });
+}
+
+function feed_toggle_callback(feed, _e)
+{
+    var _i = mytpl.feed_list_area.find("div.feeditem[feed='" + feed + "']");
+    var _t = _i.find("div.feeditemright").find("a.feedtogglelnk");
+
+    if(_e == 1)
     {
-        _i = $("div.feeditem[feed='" + feed + "']");
-        _e = _i.hasClass('feeditemdisabled') ? 1 : 0;
-
-        $.ajax
-        ({
-            type: "POST",
-            url: "<?php B_Helper::url('feed', 'toggle') ?>",
-            dataType: "xml",
-            data: { blog: current_blog, feed: feed, enable: _e },
-            beforeSend: function()
-            {
-                set_custom_active_request(true);
-            },
-            complete: function()
-            {
-                set_custom_active_request(false);
-            },
-            success: function (xml)
-            {
-                d = $(xml).find('data');
-                feed_toggle_callback(d.find('result').text(), _e);
-            },
-            error: function () { error_message(); }
-        });
+        _i.removeClass('feeditemdisabled');
+        _t.text("<?php echo $this->translation()->disable ?>");
     }
-
-    function main()
+    else
     {
-        <?php if(count($this->blogs) > 0) : ?>
-        load_preference();
-        <?php else : ?>
-        $.b_dialog({ selector: "#noblogmsg", modal: false });
-        $.b_dialog_show();
-        <?php endif ?>
+        _i.addClass('feeditemdisabled');
+        _t.text("<?php echo $this->translation()->enable ?>");
     }
+}
 
-    /* TRIGGERS */
+function feed_toggle(feed)
+{
+    var _i = mytpl.feed_list_area.find("div.feeditem[feed='" + feed + "']");
+    var _e = _i.hasClass('feeditemdisabled') ? 1 : 0;
 
-    $("a#feedaddlnk").click(function()
+    $.ajax
+    ({
+        type: "POST",
+        url: "<?php B_Helper::url('feed', 'toggle') ?>",
+        dataType: "xml",
+        data: { blog   : current_blog, 
+                feed   : feed, 
+                enable : _e },
+        beforeSend: function()
+        {
+            set_active_request(true);
+        },
+        complete: function()
+        {
+            set_active_request(false);
+        },
+        success: function (xml)
+        {
+            var _d = $(xml).find('data');
+            feed_toggle_callback(_d.find('result').text(), _e);
+        },
+        error: function () { server_error(); }
+    });
+}
+
+
+$(document).ready(function()
+{
+    mytpl =
+    {
+        blog_list             : $("#bloglstsel"),
+        feed_lnk_div          : $("#feedlnkdiv"),
+        feed_add_form         : $("#feedaddform"),
+        feed_add_options      : $("#feedaddoptions").find("td"),
+        feed_add_option_blank : $("#feedaddoptionblank"),
+        feed_list_area        : $("#feedlistarea"),
+        feed_item_blank       : $("#feeditemblank"),
+        feed_add_lnk          : $("#feedaddlnk"),
+        feed_add_cancel       : $("#feedaddcancel"),
+        feed_add_submit       : $("#feedaddsubmit"),
+        feed_add_url          : $("#feedaddurl"),
+        feed_add_msg          : $("#feedaddmessage"),
+        feed_import_form      : $("#feedimportform"),
+        feed_import_input     : $("#feedimportfeedinput"),
+        feed_import_lnk       : $("#feedimportlnk"),
+        feed_import_cancel    : $("#feedimportcancel")
+    };
+
+    /* triggers */
+
+    mytpl.feed_add_lnk.click(function()
     {
         if(active_request == false)
         {
             toggle_feed_add_form(true);
         }
+        return false;
     });
 
-    $("input[name='feedaddcancel']").click(function()
+    mytpl.feed_add_cancel.click(function()
     {
         if(active_request == false)
         {
@@ -657,15 +585,15 @@ $(document).ready(function()
         }
     });
 
-    $("input[name='feedaddurl']").keypress(function(e)
+    mytpl.feed_add_url.keypress(function(e)
     {
         if((e.which && e.which == 13) || (e.keyCode && e.keyCode == 13))
         {
-            $("input[name='feedaddsubmit']").click();
+            mytpl.feed_add_submit.click();
         }
     });
 
-    $("input[name='feedaddsubmit']").click(function()
+    mytpl.feed_add_submit.click(function()
     {
         if(active_request == false)
         {
@@ -673,15 +601,16 @@ $(document).ready(function()
         }
     });
 
-    $("a#feedimportlnk").click(function()
+    mytpl.feed_import_lnk.click(function()
     {
         if(active_request == false)
         {
             toggle_feed_import_form(true);
         }
+        return false;
     });
 
-    $("input[name='feedimportcancel']").click(function()
+    mytpl.feed_import_cancel.click(function()
     {
         if(active_request == false)
         {
@@ -689,31 +618,28 @@ $(document).ready(function()
         }
     });
 
-    $("input[name='feedimportfile']").change(function(e)
+    mytpl.feed_import_input.change(function(e)
     {
-        $("input[name='feedimportsubmit']").click();
-    });
-
-    blog_select_list.change(function()
-    {
-        save_preference('current_blog', $(this).find("option:selected").val());
+        mytpl.feed_import_submit.click();
     });
 
     <?php if(count($this->import) > 0) : ?>
 
-    body__.bind('main'          , function(e) { main(); });
-    body__.bind('after_blog'    , function(e) { feed_import_init(); });
-    body__.bind('after_import'  , function(e) { window.location="<?php B_Helper::url('feed') ?>" });
-    body__.bind('after_list'    , function(e) { });
+    feed_import_init();
+
+    $(document).bind('afterfeedimport' , function(e)
+    { 
+        window.location="<?php B_Helper::url('feed') ?>" 
+    });
 
     <?php else : ?>
 
-    body__.bind('main'          , function(e) { main(); });
-    body__.bind('after_blog'    , function(e) { feed_list(); });
-    body__.bind('after_list'    , function(e) { feed_sortable_init(); });
-    body__.bind('after_import'  , function(e) { });
+    feed_list();
+
+    $(document).bind('blogchange' , function(e)
+    {
+        on_blog_change();
+    });
 
     <?php endif ?>
-
-    body__.trigger('main');
 });
