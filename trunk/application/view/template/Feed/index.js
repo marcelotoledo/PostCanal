@@ -217,7 +217,7 @@ function feed_import_init()
 
     if(feed_import_stack.length > 0)
     {
-        mylyt.blog_list.attr('disabled', true);
+        $(document).trigger('beforefeedimport');
         feed_import();
     }
 }
@@ -229,9 +229,9 @@ function feed_populate(feeds)
         mytpl.feed_list_area.html("");
 
         var _lscontent = "";
-            _lscontent = "<ul>";
         var _item = null;
         var _data = null;
+        var _left = null;
         var _toggle = null;
 
         feeds.each(function()
@@ -247,17 +247,10 @@ function feed_populate(feeds)
 
             _item = mytpl.feed_item_blank.clone();
 
-            _item.attr('feed', _data.feed);
-            _item.attr('ord', _data.ord);
-            _item.find("div.feeditemleft")
-                .find("div.feeditemtitle").html(_data.title)
-                .find("div.feeditemurl").html(_data.url);
-            _item.find("div.feeditemright")
-                .find("a.feedrenamelnk").attr('feed', _data.feed);
+            _left = _item.find("div.feeditemleft")
+            _left.find("div.feeditemtitle").html(_data.title);
+            _left.find("div.feeditemurl").html(_data.url);
             _toggle = _item.find("div.feeditemright").find("a.feedtogglelnk")
-            _toggle.attr('feed', _data.feed);
-            _item.find("div.feeditemright")
-                .find("a.feeddeletelnk").attr('feed', _data.feed);
                 // TODO: can we get feed attr from parent?
 
             if(_data.enabled)
@@ -270,11 +263,12 @@ function feed_populate(feeds)
                 _item.addClass('feeditemdisabled');
             }
 
-            _item.show();
-            _lscontent+= "<li>" + _item.html() + "</li>\n";
+            _lscontent += "<div class=\"feeditem\" feed=\"" + 
+                          _data.feed + "\" ord=\"" + _data.ord + "\">" + 
+                          _item.html() + "</div>\n";
         });
 
-        mytpl.feed_list_area.html(_lscontent + "</ul>");
+        mytpl.feed_list_area.html(_lscontent);
     }
     else
     {
@@ -283,28 +277,33 @@ function feed_populate(feeds)
 
     /* add events */
 
-    mytpl.feed_list_area.find("a.feedrenamelnk").click(function()
-    {
-        feed_rename_show($(this).attr('feed'));
-    });
+    var _feed = null;
 
-    mytpl.feed_list_area.find("a.feedtogglelnk").click(function()
+    mytpl.feed_list_area.find('.feeditem').each(function()
     {
-        feed_toggle($(this).attr('feed'));
-    });
-
-    mytpl.feed_list_area.find("a.feeddeletelnk").click(function()
-    {
-        feed = $(this).attr('feed');
-        feed_set(feed);
-        if(confirm("<?php echo $this->translation()->are_you_sure ?>"))
-        {   
-            feed_delete(feed);
-        }
-        else
+        $(this).find('a.feedrenamelnk').click(function()
         {
-            feed_unset(feed);
-        }
+            feed_rename_show($(this).parent().parent().attr('feed'));
+            return false;
+        });
+        $(this).find('a.feedtogglelnk').click(function()
+        {
+            feed_toggle($(this).parent().parent().attr('feed'));
+            return false;
+        });
+        $(this).find('a.feeddeletelnk').click(function()
+        {
+            feed_set((_feed = $(this).parent().parent().attr('feed')));
+            if(confirm("<?php echo $this->translation()->are_you_sure ?>"))
+            {   
+                feed_delete(_feed);
+            }
+            else
+            {
+                feed_unset(_feed);
+            }
+            return false;
+        });
     });
 }
 
@@ -414,10 +413,7 @@ function feed_rename_show(feed)
     {
         feed_update(feed, 'feed_title', _n);
     }
-    else
-    {
-        feed_unset(feed);
-    }
+    feed_unset(feed);
 }
 
 function feed_update_callback(result)
@@ -553,17 +549,20 @@ $(document).ready(function()
         feed_add_form         : $("#feedaddform"),
         feed_add_options      : $("#feedaddoptions").find("td"),
         feed_add_option_blank : $("#feedaddoptionblank"),
-        feed_list_area        : $("#feedlistarea"),
-        feed_item_blank       : $("#feeditemblank"),
         feed_add_lnk          : $("#feedaddlnk"),
         feed_add_cancel       : $("#feedaddcancel"),
         feed_add_submit       : $("#feedaddsubmit"),
         feed_add_url          : $("#feedaddurl"),
+        feed_add_url_row      : $("#feedaddurlrow"),
         feed_add_msg          : $("#feedaddmessage"),
+        feed_option_blank     : $("#feedoptionblank"),
+        feed_list_area        : $("#feedlistarea"),
+        feed_item_blank       : $("#feeditemblank"),
         feed_import_form      : $("#feedimportform"),
         feed_import_input     : $("#feedimportfeedinput"),
         feed_import_lnk       : $("#feedimportlnk"),
-        feed_import_cancel    : $("#feedimportcancel")
+        feed_import_cancel    : $("#feedimportcancel"),
+        feed_import_submit    : $("#feedimportsubmit")
     };
 
     /* triggers */
@@ -627,6 +626,12 @@ $(document).ready(function()
 
     feed_import_init();
 
+    $(document).bind('beforefeedimport' , function(e)
+    { 
+        mylyt.blog_list.attr('disabled', true);
+        alert('eae?');
+    });
+
     $(document).bind('afterfeedimport' , function(e)
     { 
         window.location="<?php B_Helper::url('feed') ?>" 
@@ -639,6 +644,11 @@ $(document).ready(function()
     $(document).bind('blogchange' , function(e)
     {
         on_blog_change();
+    });
+
+    $(document).bind('afterfeedlist' , function(e)
+    {
+        feed_sortable_init();
     });
 
     <?php endif ?>

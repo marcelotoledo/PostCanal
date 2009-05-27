@@ -11,7 +11,7 @@
 
 <form id="feedaddform" style="display:none">
     <table>
-        <tr>
+        <tr id="feedaddurlrow">
         <th><?php echo $this->translation()->feed_add_url ?>:</th>
         <td><input type="text" id="feedaddurl" value=""></td>
         </tr>
@@ -43,7 +43,7 @@
     <table>
         <tr>
         <th><?php echo $this->translation()->feed_import_file ?>:</th>
-        <td><input id="feedimportfileinput" type="file" name="feedimportfile" value=""></td>
+        <td><input type="file" name="feedimportfile" value=""></td>
         <tr>
         <th>&nbsp;</th>
         <td class="buttons">
@@ -55,7 +55,7 @@
 </form>
 
 <div id="feedlistarea">
-    <div class="feeditem" id="feeditemblank" ord="0" style="display:none">
+    <div id="feeditemblank" style="display:none">
         <div class="feeditemleft">
             <div class="feeditemtitle"></div>
             <div class="feeditemurl"></div>

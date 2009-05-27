@@ -37,9 +37,15 @@ $(document).ready(function()
 
     function disable_submit()
     {
-        $("form").submit(function()
+        $("form").each(function()
         {
-            return false;
+            if($(this).attr('action')=="")
+            {
+                $(this).submit(function()
+                {
+                    return false;
+                });
+            }
         });
     }
 
