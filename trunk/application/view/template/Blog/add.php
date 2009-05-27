@@ -76,7 +76,26 @@
 <th>&nbsp;</th>
 <td class="message"></td>
 </tr>
-
 </table>
+
+<table id="blogtypes" style="display:none">
+<tr>
+<th>&nbsp;</th>
+<td>
+    <table>
+        <tr>
+            <td><b>Type</b></td>
+            <td><b>Example of URL</b></td>
+        </tr>
+        <tr>
+            <td><u>WordPress</u></td>
+            <td><i>http://mylogin.wordpress.com</i><br/>
+                <i>http://mywordpressdomain.com</i></td>
+        </tr>
+    </table>
+</td>
+</tr>
+</table>
+
 </form>
 </div>

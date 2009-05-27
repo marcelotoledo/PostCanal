@@ -100,6 +100,8 @@
 "blog/add","en_US","blog_password","Password"
 "blog/add","en_US","blog_login_check","check"
 "blog/add","en_US","form_incomplete","form incomplete"
+"blog/add","en_US","type_failed","unable to recognize the blog type for the specified address.<br/>check below the types available"
+"blog/add","en_US","url_not_accepted","the url does not contain a valid address"
 
 "feed/index","en_US","feed_add","feed add"
 "feed/index","en_US","feed_add_url","URL"

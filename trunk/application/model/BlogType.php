@@ -143,7 +143,15 @@ class BlogType extends B_Model
     {
         $client = new A_WebService();
         $args = array('url' => $url);
-        $result = $client->blog_discover($args);
+
+        if(count($result = ((array) $client->blog_discover($args)))==0)
+        {
+            $_m = "blog discover timeout for url (" . $url . ")";
+            $_d = array('method' => __METHOD__);
+            B_Log::write($_m, E_WARNING, $_d);
+            $result = array();
+        }
+
         $result['type_accepted'] = false;
         $result['maintenance'] = false;
 

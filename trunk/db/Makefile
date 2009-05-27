@@ -7,6 +7,7 @@ default:
 	@echo ""
 schema:
 	./db.php schema.mysql
+	sleep 2s
 translation:
 	$(BT)
 	$(DB) base_translation.mysql

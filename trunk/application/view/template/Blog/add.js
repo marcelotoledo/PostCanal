@@ -219,6 +219,7 @@ $(document).ready(function()
                 {
                     failed = true;
                     msg("<?php echo $this->translation()->type_failed ?>");
+                    $("#blogtypes").show();
                     resetURL();
                 }
 
@@ -364,6 +365,7 @@ $(document).ready(function()
     {
         if(active_request==false)
         {
+            $("#blogtypes").hide();
             discoverURL();
         }
     });

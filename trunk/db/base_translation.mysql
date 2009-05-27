@@ -89,6 +89,8 @@ INSERT INTO base_translation VALUES (NULL, 'blog/add', 'en_US', 'blog_username',
 INSERT INTO base_translation VALUES (NULL, 'blog/add', 'en_US', 'blog_password', "Password");
 INSERT INTO base_translation VALUES (NULL, 'blog/add', 'en_US', 'blog_login_check', "check");
 INSERT INTO base_translation VALUES (NULL, 'blog/add', 'en_US', 'form_incomplete', "form incomplete");
+INSERT INTO base_translation VALUES (NULL, 'blog/add', 'en_US', 'type_failed', "unable to recognize the blog type for the specified address.<br/>check below the types available");
+INSERT INTO base_translation VALUES (NULL, 'blog/add', 'en_US', 'url_not_accepted', "the url does not contain a valid address");
 INSERT INTO base_translation VALUES (NULL, 'feed/index', 'en_US', 'feed_add', "feed add");
 INSERT INTO base_translation VALUES (NULL, 'feed/index', 'en_US', 'feed_add_url', "URL");
 INSERT INTO base_translation VALUES (NULL, 'feed/index', 'en_US', 'feed_not_found', "feed not found");
