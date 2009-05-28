@@ -25,16 +25,7 @@ class C_Blog extends B_Controller
     {
         $this->view()->setLayout('dashboard');
         $user_id = $this->session()->user_profile_id;
-        $blogs_ = UserBlog::findByUser($user_id, true);
-
-        if(count($blogs_) > 0)
-        {
-            $this->view()->blogs_ = $blogs_;
-        }
-        else
-        {
-            $this->response()->setRedirect(B_Request::url('blog','add'));
-        }
+        $this->view()->blogs_ = UserBlog::findByUser($user_id, true);
     }
 
     /**
@@ -136,19 +127,21 @@ class C_Blog extends B_Controller
         $this->response()->setXML(true);
         $hash = $this->request()->blog;
         $user = $this->session()->user_profile_id;
+        $updated = array();
 
         if(is_object(($blog = UserBlog::getByUserAndHash($user, $hash))))
         {
-            $blog->name = $this->request()->blog_name;
-            $blog->blog_username = $this->request()->blog_username;
-            if(strlen(($p = $this->request()->blog_password)) > 0)
+            foreach(UserBlog::$allow_write as $k)
             {
-                $blog->blog_password = $p;
+                if(strlen($this->request()->{$k})>0)
+                {
+                    $blog->{$k} = $this->request()->{$k};
+                    $updated = array_merge($updated, array($k => $blog->{$k}));
+                }
             }
             $blog->save();
-            $this->view()->result = array('blog' => $blog->hash, 
-                                          'name' => $blog->name);
         }
+        $this->view()->updated = $updated;
     }
 
     /**
@@ -169,53 +162,5 @@ class C_Blog extends B_Controller
         }
 
         $this->view()->result = $result;
-    }
-
-    /**
-     * Get/Set blog preferences
-     *
-     * @param   string  $name
-     */
-    public function A_preference()
-    {
-        $this->response()->setXML(true);
-
-        $pk   = $this->request()->k;
-        $pv   = $this->request()->v;
-        $user = $this->session()->user_profile_id;
-        $hash = $this->request()->blog;
-
-        $allw = array('queue_running','queue_spawning');
-        $pref = array();
-
-        if(is_object(($blog = UserBlog::getByUserAndHash($user, $hash))))
-        {
-            if($pk && $pv)
-            {
-                if(in_array($pk, $allw))
-                {
-                    $blog->{$pk} = $pv;
-                }
-                $blog->save();
-            }
-            elseif($pk)
-            {
-                if(in_array($pk, $allw))
-                {
-                    $pv = $blog->{$pk};
-                }
-            }
-            else
-            {
-                foreach($allw as $k)
-                {
-                    $pref[$k] = $blog->{$k};
-                }
-            }
-        }
-
-        $this->view()->k = $pk;
-        $this->view()->v = $pv;
-        $this->view()->preference = $pref;
     }
 }

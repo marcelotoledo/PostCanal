@@ -210,10 +210,10 @@ function feed_import()
 
 function feed_import_init()
 {
-    <?php foreach($this->import as $i) : ?>
+    /*<?php foreach($this->import as $i) : ?>**/
     feed_import_stack.push({ 'url'  : "<?php echo $i['url'] ?>", 
                              'title': "<?php echo $i['title'] ?>" });
-    <?php endforeach ?>
+    /*<?php endforeach ?>**/
 
     if(feed_import_stack.length > 0)
     {
@@ -224,56 +224,50 @@ function feed_import_init()
 
 function feed_populate(feeds)
 {
-    if(feeds.length > 0)
+    if(feeds.length==0) { return null; }
+
+    mytpl.feed_list_area.html("");
+
+    var _lscontent = "";
+    var _item = null;
+    var _data = null;
+    var _left = null;
+    var _toggle = null;
+
+    feeds.each(function()
     {
-        mytpl.feed_list_area.html("");
-
-        var _lscontent = "";
-        var _item = null;
-        var _data = null;
-        var _left = null;
-        var _toggle = null;
-
-        feeds.each(function()
+        _data =
         {
-            _data =
-            {
-                feed    : $(this).find('feed').text(),
-                ord     : $(this).find('ordering').text(),
-                url     : $(this).find('feed_url').text(),
-                title   : $(this).find('feed_title').text(),
-                enabled : ($(this).find('enabled').text() == 1)
-            };
+            feed    : $(this).find('feed').text(),
+            ord     : $(this).find('ordering').text(),
+            url     : $(this).find('feed_url').text(),
+            title   : $(this).find('feed_title').text(),
+            enabled : ($(this).find('enabled').text() == 1)
+        };
 
-            _item = mytpl.feed_item_blank.clone();
+        _item = mytpl.feed_item_blank.clone();
 
-            _left = _item.find("div.feeditemleft")
-            _left.find("div.feeditemtitle").html(_data.title);
-            _left.find("div.feeditemurl").html(_data.url);
-            _toggle = _item.find("div.feeditemright").find("a.feedtogglelnk")
-                // TODO: can we get feed attr from parent?
+        _left = _item.find("div.feeditemleft")
+        _left.find("div.feeditemtitle").html(_data.title);
+        _left.find("div.feeditemurl").html(_data.url);
+        _toggle = _item.find("div.feeditemright").find("a.feedtogglelnk")
 
-            if(_data.enabled)
-            {
-                _toggle.text("<?php echo $this->translation()->disable ?>");
-            }
-            else
-            {
-                _toggle.text("<?php echo $this->translation()->enable ?>");
-                _item.addClass('feeditemdisabled');
-            }
+        if(_data.enabled)
+        {
+            _toggle.text("<?php echo $this->translation()->disable ?>");
+        }
+        else
+        {
+            _toggle.text("<?php echo $this->translation()->enable ?>");
+            _item.addClass('feeditemdisabled');
+        }
 
-            _lscontent += "<div class=\"feeditem\" feed=\"" + 
-                          _data.feed + "\" ord=\"" + _data.ord + "\">" + 
-                          _item.html() + "</div>\n";
-        });
+        _lscontent += "<div class=\"feeditem\" feed=\"" + 
+                      _data.feed + "\" ord=\"" + _data.ord + "\">" + 
+                      _item.html() + "</div>\n";
+    });
 
-        mytpl.feed_list_area.html(_lscontent);
-    }
-    else
-    {
-        mytpl.feed_list_area.html("<p><?php echo $this->translation()->no_registered_feeds ?></p>");
-    }
+    mytpl.feed_list_area.html(_lscontent);
 
     /* add events */
 
@@ -309,6 +303,8 @@ function feed_populate(feeds)
 
 function feed_list()
 {
+    if(current_blog==undefined) return null;
+
     $.ajax
     ({
         type: "GET",
@@ -622,14 +618,13 @@ $(document).ready(function()
         mytpl.feed_import_submit.click();
     });
 
-    <?php if(count($this->import) > 0) : ?>
+    /*<?php if(count($this->import) > 0) : ?>**/
 
     feed_import_init();
 
     $(document).bind('beforefeedimport' , function(e)
     { 
         mylyt.blog_list.attr('disabled', true);
-        alert('eae?');
     });
 
     $(document).bind('afterfeedimport' , function(e)
@@ -637,7 +632,14 @@ $(document).ready(function()
         window.location="<?php B_Helper::url('feed') ?>" 
     });
 
-    <?php else : ?>
+    /*<?php else : ?>**/
+
+    /*<?php if(count($this->blogs)==0) : ?>**/
+
+    $.b_dialog({ selector: "#noblogmsg", modal: false });
+    $.b_dialog_show();
+
+    /*<?php endif ?>**/
 
     feed_list();
 
@@ -651,5 +653,5 @@ $(document).ready(function()
         feed_sortable_init();
     });
 
-    <?php endif ?>
+    /*<?php endif ?>**/
 });

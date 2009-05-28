@@ -81,7 +81,7 @@ INSERT INTO base_translation VALUES (NULL, 'profile/edit', 'en_US', 'update_emai
 INSERT INTO base_translation VALUES (NULL, 'blog', 'en_US', 'blog_name', "name");
 INSERT INTO base_translation VALUES (NULL, 'blog', 'en_US', 'blog_username', "username");
 INSERT INTO base_translation VALUES (NULL, 'blog', 'en_US', 'blog_password', "password");
-INSERT INTO base_translation VALUES (NULL, 'blog/add', 'en_US', 'blog_add', "blog add");
+INSERT INTO base_translation VALUES (NULL, 'blog', 'en_US', 'blog_add', "blog add");
 INSERT INTO base_translation VALUES (NULL, 'blog/add', 'en_US', 'blog_url', "URL");
 INSERT INTO base_translation VALUES (NULL, 'blog/add', 'en_US', 'blog_discover_url', "check");
 INSERT INTO base_translation VALUES (NULL, 'blog/add', 'en_US', 'blog_change_url', "change");

@@ -118,6 +118,16 @@ class UserBlogFeed extends B_Model
 
     // -------------------------------------------------------------------------
 
+    public static $allow_write = array 
+    (
+        'feed_title','feed_description'
+    );
+
+    public static $allow_read = array 
+    (
+        'hash','ordering'
+    );
+
     /**
      * Save model
      *

@@ -635,7 +635,13 @@ class C_Profile extends B_Controller
             throw new B_Exception($_m, E_USER_WARNING, $_d);
         }
 
-        $profile->name = $this->request()->name;
+        foreach(UserProfile::$allow_write as $k)
+        {
+            if(strlen($this->request()->{$k})>0)
+            {
+                $profile->{$k} = $this->request()->{$k};
+            }
+        }
 
         try
         {

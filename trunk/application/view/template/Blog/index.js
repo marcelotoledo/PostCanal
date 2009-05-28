@@ -29,22 +29,21 @@ function blog_edit_hide(blog)
         .find("div.blogitemeditform[blog='" + blog +  "']").hide();
 }
 
-function blog_update_callback(result)
+function blog_update_callback(blog, updated)
 {
-    var _blog = result.find('blog').text();
     mytpl.bloglistarea
-        .find("div.blogitem[blog='" + _blog + "']")
+        .find("div.blogitem[blog='" + blog + "']")
         .find("div.blogitemleft")
-        .find("span.blogitemname").text(result.find('name').text());
-    blog_edit_hide(_blog);
+        .find("span.blogitemname").text(updated.find('name').text());
+    blog_edit_hide(blog);
 }
 
 function blog_update(blog)
 {
     var _f = mytpl.bloglistarea.find("div.blogitemeditform[blog='" + blog +  "']");
-    var _f_name = _f.find("input[name='blog_name']").val();
-    var _f_username = _f.find("input[name='blog_username']").val();
-    var _f_password = _f.find("input[name='blog_password']").val();
+    var _f_name = _f.find("input[name='blog_name']");
+    var _f_username = _f.find("input[name='blog_username']");
+    var _f_password = _f.find("input[name='blog_password']");
 
     $.ajax
     ({
@@ -52,9 +51,9 @@ function blog_update(blog)
         url: "<?php B_Helper::url('blog','update') ?>",
         dataType: "xml",
         data: { blog          : blog,
-                blog_name     : _f_name, 
-                blog_username : _f_username, 
-                blog_password : _f_password },
+                name          : _f_name.val(), 
+                blog_username : _f_username.val(), 
+                blog_password : _f_password.val() },
         beforeSend: function()
         {
             set_active_request(true);
@@ -66,14 +65,16 @@ function blog_update(blog)
         success: function (xml)
         {
             var _d = $(xml).find('data');
-            var _r = null;
-            if((_r = _d.find('result')))
+            var _u = null;
+            if((_u = _d.find('updated')))
             {
-                blog_update_callback(_r);
+                blog_update_callback(blog, _u);
             }
         },
         error: function () { server_error(); }
     });
+
+    _f_password.val("");
 }
 
 function blog_remove_from_list(blog)

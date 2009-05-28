@@ -228,20 +228,21 @@ class C_Feed extends B_Controller
         $blog = $this->request()->blog;
         $feed = $this->request()->feed;
         $user = $this->session()->user_profile_id;
-        $name = $this->request()->k;
-        $value = $this->request()->v;
+        $updated = array();
 
-        $result = array('feed' => $feed);
-
-        if(in_array($name, array('feed_title'))) /* allowed columns */
+        if(is_object(($feed = UserBlogFeed::getByBlogAndFeedHash($user, $blog, $feed))))
         {
-            if(self::updateColumn($user, $blog, $feed, $name, $value) != "")
+            foreach(UserBlogFeed::$allow_write as $k)
             {
-                $result = array_merge($result, array($name => $value));
+                if(strlen($this->request()->{$k})>0)
+                {
+                    $feed->{$k} = $this->request()->{$k};
+                    $updated = array_merge($updated, array($k => $feed->{$k}));
+                }
             }
+            $feed->save();
         }
-
-        $this->view()->result = $result;
+        $this->view()->updated = $updated;
     }
 
     /**
