@@ -28,7 +28,8 @@ function toggle_feed_add_form(s)
         mytpl.feed_lnk_div.show();
         mytpl.feed_add_form.hide();
         mytpl.feed_add_url.val("");
-        mytpl.feed_add_options.find("td").html("");
+        mytpl.feed_add_url_row.show();
+        mytpl.feed_add_options.find(".feedoption").remove();
         form_message("");
     }
 }
@@ -37,22 +38,29 @@ function feedaddform_options(feeds)
 {
     mytpl.feed_add_url_row.hide();
 
+    var _lscontent = "";
+    var _data = null;
+    var _opt = null;
+
     feeds.each(function()
     {
-        var _url = $(this).find('feed_url').text();
-        var _title = $(this).find('feed_title').text();
-        var _description = $(this).find('feed_description').text();
+        _data =
+        {
+            url         : $(this).find('feed_url').text(),
+            title       : $(this).find('feed_title').text(),
+            description : $(this).find('feed_description').text()
+        };
 
-        var _opt = mytpl.feed_option_blank.clone();
-        _opt.find("input[name='feedaddoption']").attr('url', _url);
-        _opt.find("div.feedoptiontitle").html((_title.length > 0) ? 
-            _title + "<br/><small>" + _url + "</small>" :
-            _url);
+        _opt = mytpl.feed_option_blank.clone();
+        _opt.find("input[name='feedaddoption']").attr('url', _data.url);
+        _opt.find("div.feedoptiontitle").html((_data.title.length > 0) ? 
+            _data.title + "<br/><small>" + _data.url + "</small>" :
+            _data.url);
 
-        mytpl.feed_add_options.append(_opt);
-        _opt.show();
+        _lscontent += "<div class=\"feedoption\">" + _opt.html() + "</div>\n";
     });
 
+    mytpl.feed_add_options.append(_lscontent);
     mytpl.feed_add_options.find("input[name='feedaddoption']:first").attr('checked', 'checked');
 }
 
@@ -135,14 +143,15 @@ function feed_add(url)
 
 function feedaddform_submit()
 {
-    var _url = null;
+    var _url = mytpl.feed_add_options.find("input[name='feedaddoption']:checked").attr('url');
 
-    if((_url = mytpl.feed_add_options.find("input[name='feedaddoption']:checked").attr('url')) != undefined)
+    if(_url!="" && _url!=undefined)
     {
         feed_discover(_url);
     }
     else
     {
+
         if((_url = mytpl.feed_add_url.val()) != "")
         {
             feed_discover(_url);

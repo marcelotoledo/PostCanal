@@ -28,5 +28,6 @@ class C_Dashboard extends B_Controller
         $id = $this->session()->user_profile_id;
         $blogs = UserBlog::findByUser($id, $enabled=true);
         $this->view()->blogs = $blogs;
+        $this->view()->preference = UserProfile::getPreference($id);
     }
 }

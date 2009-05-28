@@ -16,7 +16,7 @@
         <td><input type="text" id="feedaddurl" value=""></td>
         </tr>
         <tr id="feedaddoptions"><td colspan="2">
-            <div class="feedoption" id="feedoptionblank" style="display:none">
+            <div id="feedoptionblank" style="display:none">
                 <div class="feedoptionbutton">
                     <input name="feedaddoption" type="radio" url="">
                 </div>

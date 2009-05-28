@@ -1,10 +1,5 @@
 /* general */
 
-html
-{
-    overflow: hidden; /* IE scrollbars fixes */
-}
-
 *
 {
     font-size: small;
@@ -15,6 +10,7 @@ html, body
 {
     margin: 0;
     padding: 0;
+    overflow: hidden; /* avoid unwanted scrollbars */
 }
 
 div, form

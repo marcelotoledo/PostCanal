@@ -1,10 +1,5 @@
 /* avoid unwanted scrollbars */
 
-body
-{
-    overflow: hidden;
-}
-
 #maincontainer
 {
     overflow: hidden;
@@ -33,29 +28,29 @@ div.containerhead a:hover
 {
     background-color: gray;
 }
-#feedareahead div.title
+#feedareatitle
 {
     float: left;
     font-size: medium;
     font-weight: bold;
     text-transform: uppercase;
 }
-#feedareahead div.feeddisplay
+#feeddisplay
 {
     float: left;
     padding-left: 30px;
 }
-#feedareahead div.articledisplay
+#articledisplay
 {
     float: left;
     padding-left: 15px;
 }
-#feedareahead div.feedrefresh
+#feedrefresh
 {
     float: right;
     padding-right: 15px;
 }
-#feedareahead div.feednavigation
+#feednavigation
 {
     float: right;
     padding-right: 15px;
@@ -66,10 +61,6 @@ div.containerhead a:hover
     overflow: auto;
     overflow-x: hidden; /* IE scrollbars fixes */
     overflow-y: auto;
-}
-#feedlistarea span
-{
-    padding-left: 15px;
 }
 
 div.feeditem
@@ -210,14 +201,14 @@ div.articlecontentshow
     background-color: cyan;
 }
 */
-#queueareahead div.title
+#queueareatitle
 {
     float: left;
     font-size: medium;
     font-weight: bold;
     text-transform: uppercase;
 }
-div.queuehctrllnks
+#queuehctrllnks
 {
     float: right;
     padding-right: 15px;
@@ -229,18 +220,19 @@ div.queuehctrllnks
     overflow-x: hidden; /* IE scrollbars fixes */
     overflow-y: auto;
 }
-#queuelistarea span
-{
-    padding-left: 15px;
-}
-#queuerunning
+#queuepublication
 {
     float: left;
     padding-left: 30px;
 }
-#queuespawning
+#queueinterval
 {
     float: left;
     padding-left: 15px;
     margin-top: -5px;
+}
+#queuefeeding
+{
+    float: left;
+    padding-left: 30px;
 }

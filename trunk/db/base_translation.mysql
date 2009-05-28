@@ -14,6 +14,7 @@ INSERT INTO base_translation VALUES (NULL, 'application', 'en_US', 'blogs', "blo
 INSERT INTO base_translation VALUES (NULL, 'application', 'en_US', 'feed', "feed");
 INSERT INTO base_translation VALUES (NULL, 'application', 'en_US', 'feeds', "feeds");
 INSERT INTO base_translation VALUES (NULL, 'application', 'en_US', 'logout', "logout");
+INSERT INTO base_translation VALUES (NULL, 'application', 'en_US', 'view', "view");
 INSERT INTO base_translation VALUES (NULL, 'application', 'en_US', 'are_you_sure', "are you sure?");
 INSERT INTO base_translation VALUES (NULL, 'application', 'en_US', 'no_blog', "no registered blog");
 INSERT INTO base_translation VALUES (NULL, 'application', 'en_US', 'new_blog_instruction', "to add a new blog or use the item \"blogs\" in menu");
@@ -96,3 +97,17 @@ INSERT INTO base_translation VALUES (NULL, 'feed/index', 'en_US', 'feed_add', "f
 INSERT INTO base_translation VALUES (NULL, 'feed/index', 'en_US', 'feed_import', "feed import");
 INSERT INTO base_translation VALUES (NULL, 'feed/index', 'en_US', 'feed_add_url', "URL");
 INSERT INTO base_translation VALUES (NULL, 'feed/index', 'en_US', 'feed_not_found', "feed not found");
+INSERT INTO base_translation VALUES (NULL, 'dashboard/index', 'en_US', 'show_feeds', "show feeds");
+INSERT INTO base_translation VALUES (NULL, 'dashboard/index', 'en_US', 'all', "all");
+INSERT INTO base_translation VALUES (NULL, 'dashboard/index', 'en_US', 'threaded', "threaded");
+INSERT INTO base_translation VALUES (NULL, 'dashboard/index', 'en_US', 'content_unavailable', "content unavailable");
+INSERT INTO base_translation VALUES (NULL, 'dashboard/index', 'en_US', 'show_articles', "show articles");
+INSERT INTO base_translation VALUES (NULL, 'dashboard/index', 'en_US', 'list', "list");
+INSERT INTO base_translation VALUES (NULL, 'dashboard/index', 'en_US', 'expanded', "expanded");
+INSERT INTO base_translation VALUES (NULL, 'dashboard/index', 'en_US', 'refresh', "refresh");
+INSERT INTO base_translation VALUES (NULL, 'dashboard/index', 'en_US', 'previous', "previous");
+INSERT INTO base_translation VALUES (NULL, 'dashboard/index', 'en_US', 'next', "next");
+INSERT INTO base_translation VALUES (NULL, 'dashboard/index', 'en_US', 'publication', "publication");
+INSERT INTO base_translation VALUES (NULL, 'dashboard/index', 'en_US', 'feeding', "feeding");
+INSERT INTO base_translation VALUES (NULL, 'dashboard/index', 'en_US', 'manual', "manual");
+INSERT INTO base_translation VALUES (NULL, 'dashboard/index', 'en_US', 'automatic', "automatic");
