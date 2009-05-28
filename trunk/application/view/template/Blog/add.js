@@ -381,4 +381,6 @@ $(document).ready(function()
             add_submit();
         }
     });
+
+    mytpl.blog_name.focus();
 });

@@ -96,4 +96,3 @@ INSERT INTO base_translation VALUES (NULL, 'feed/index', 'en_US', 'feed_add', "f
 INSERT INTO base_translation VALUES (NULL, 'feed/index', 'en_US', 'feed_import', "feed import");
 INSERT INTO base_translation VALUES (NULL, 'feed/index', 'en_US', 'feed_add_url', "URL");
 INSERT INTO base_translation VALUES (NULL, 'feed/index', 'en_US', 'feed_not_found', "feed not found");
-INSERT INTO base_translation VALUES (NULL, 'feed/index', 'en_US', 'no_registered_feeds', "no registered feeds");

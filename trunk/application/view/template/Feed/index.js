@@ -168,11 +168,9 @@ function toggle_feed_import_form(s)
     }
 }
 
-function feed_import_preview(title, added)
+function feed_import_preview(title)
 {
-    var _st = added ? "<?php echo $this->translation()->added ?>" : 
-                      "<?php echo $this->translation()->failed ?>";
-    mytpl.feed_list_area.prepend("- <i>" + title + " " + _st + "</i><br/>");
+    mytpl.feed_list_area.find("ul").prepend("<li>" + title + "</li>");
 }
 
 function feed_import()
@@ -181,7 +179,6 @@ function feed_import()
 
     if((stack_item = feed_import_stack.shift()))
     {
-        set_active_request(true);
         $.ajax
         ({
             type: "POST",
@@ -192,12 +189,8 @@ function feed_import()
                     blog  : current_blog },
             complete: function()
             {
-                feed_import();
-            },
-            success: function (xml)
-            {
-                var _d = $(xml).find('data');
-                feed_import_preview(stack_item.title, (_d.find('added').text() == "true"));
+                $(document).trigger('feedimport');
+                feed_import_preview(stack_item.title);
             }
         });
     }
@@ -218,7 +211,9 @@ function feed_import_init()
     if(feed_import_stack.length > 0)
     {
         $(document).trigger('beforefeedimport');
-        feed_import();
+        set_active_request(true);
+        mytpl.feed_list_area.prepend("<ul></ul>");
+        $(document).trigger('feedimport');
     }
 }
 
@@ -259,11 +254,10 @@ function feed_populate(feeds)
         else
         {
             _toggle.text("<?php echo $this->translation()->enable ?>");
-            _item.addClass('feeditemdisabled');
         }
 
-        _lscontent += "<div class=\"feeditem\" feed=\"" + 
-                      _data.feed + "\" ord=\"" + _data.ord + "\">" + 
+        _lscontent += "<div class=\"feeditem" + ((_data.enabled) ? "" : " feeditemdisabled") + 
+                      "\" feed=\"" + _data.feed + "\" ord=\"" + _data.ord + "\">" + 
                       _item.html() + "</div>\n";
     });
 
@@ -412,17 +406,15 @@ function feed_rename_show(feed)
     feed_unset(feed);
 }
 
-function feed_update_callback(result)
+function feed_update_callback(feed, updated)
 {
-    var _f = result.find('feed').text();
-    var _i = mytpl.feed_list_area.find("div.feeditem[feed='" + _f + "']");
-
-    if((_f = result.find('feed_title')))
+    var _i = mytpl.feed_list_area.find("div.feeditem[feed='" + feed + "']");
+    var _f = null;
+    if((_f = updated.find('feed_title')))
     {
         _i.find("div.feeditemtitle").text(_f.text());
     }
-
-    feed_unset(_f);
+    feed_unset(feed);
 }
 
 function feed_update(feed, k, v)
@@ -432,10 +424,10 @@ function feed_update(feed, k, v)
         type: "POST",
         url: "<?php B_Helper::url('feed', 'update') ?>",
         dataType: "xml",
-        data: { feed : feed,
-                blog : current_blog,
-                k    : k, 
-                v    : v },
+        data: { feed             : feed,
+                blog             : current_blog,
+                feed_title       : ((k=='feed_title') ? v : null),
+                feed_description : ((k=='feed_description') ? v : null) },
         beforeSend: function()
         {
             set_active_request(true);
@@ -447,10 +439,10 @@ function feed_update(feed, k, v)
         success: function (xml)
         {
             var _d = $(xml).find('data');
-            var _r = null;
-            if((_r = _d.find('result')))
+            var _u = null;
+            if((_u = _d.find('updated')))
             {
-                feed_update_callback(_r);
+                feed_update_callback(feed, _u);
             }
         },
         error: function () { server_error(); }
@@ -613,24 +605,31 @@ $(document).ready(function()
         }
     });
 
-    mytpl.feed_import_input.change(function(e)
-    {
-        mytpl.feed_import_submit.click();
-    });
+    // not working...
+    // mytpl.feed_import_input.change(function(e)
+    // {
+    //     mytpl.feed_import_form.submit();
+    // });
 
     /*<?php if(count($this->import) > 0) : ?>**/
 
-    feed_import_init();
+    // not working...
+    // $(document).bind('beforefeedimport' , function(e)
+    // { 
+    //     mylyt.blog_list.attr('disabled', true);
+    // });
 
-    $(document).bind('beforefeedimport' , function(e)
+    $(document).bind('feedimport' , function(e)
     { 
-        mylyt.blog_list.attr('disabled', true);
+        feed_import();
     });
 
     $(document).bind('afterfeedimport' , function(e)
     { 
         window.location="<?php B_Helper::url('feed') ?>" 
     });
+
+    feed_import_init();
 
     /*<?php else : ?>**/
 
