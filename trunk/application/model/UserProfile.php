@@ -253,7 +253,7 @@ class UserProfile extends B_Model
     (
         'current_blog'    => ""    ,
         'feed_display'    => "all" ,
-        'article_display' => "lst"
+        'article_display' => "lst" 
     );
 
     /**
@@ -277,7 +277,7 @@ class UserProfile extends B_Model
             }
         }
 
-        return $preference;
+        return ((object) $preference);
     }
 
     /**

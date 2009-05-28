@@ -678,7 +678,6 @@ class C_Profile extends B_Controller
             $this->view()->k = $pk;
             $this->view()->v = $pv;
             $cs = ((array) $this->session()->profile_preference);
-            $this->session()->profile_preference = array_merge($cs, array($pk => $pv));
         }
         elseif($pk)
         {
@@ -687,13 +686,11 @@ class C_Profile extends B_Controller
             $pv = $pr[$pk];
             $this->view()->v = $pv;
             $cs = ((array) $this->session()->profile_preference);
-            $this->session()->profile_preference = array_merge($cs, array($pk => $pv));
         }
         else
         {
             $pr = UserProfile::getPreference($id);
             $this->view()->preference = $pr;
-            $this->session()->profile_preference = $pr;
         }
     }
 

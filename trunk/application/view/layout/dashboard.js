@@ -24,31 +24,28 @@ function spinner_init()
     });
 }
 
-function load_blog(b)
+function save_preference(k, v)
 {
     $.ajax
     ({
-        type: "GET",
-        url: "<?php B_Helper::url('blog', 'preference') ?>",
+        type: "POST",
+        url: "<?php B_Helper::url('profile', 'preference') ?>",
         dataType: "xml",
-        data: { },
+        data: { k: k, v: v },
         beforeSend: function()
         {
-            set_custom_active_request(true);
+            set_active_request(true);
         },
         complete: function()
         {
-            set_custom_active_request(false);
+            set_active_request(false);
         },
         success: function (xml)
         {
-            d = $(xml).find('data');
-            p = d.find('preference');
-            b = p.find('current_blog').text()
-            b = b ? b : current_selected_blog();
-            set_blog(b);
+            var _d = $(xml).find('data');
+            $(document).trigger(_d.find('k').text() + '_saved');
         },
-        error: function () { error_message(); }
+        error: function () { server_error(); }
     });
 }
 
@@ -114,8 +111,13 @@ $(document).ready(function()
             if((current_blog = selected_blog()))
             {
                 mylyt.blog_list.blur();
-                $(document).trigger('blogchange');
+                save_preference('current_blog', current_blog);
             }
         });
     }
+
+    $(document).bind('current_blog_saved', function(e)
+    {
+        $(document).trigger('blog_changed');
+    });
 });

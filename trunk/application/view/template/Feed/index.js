@@ -189,7 +189,7 @@ function feed_import()
                     blog  : current_blog },
             complete: function()
             {
-                $(document).trigger('feedimport');
+                $(document).trigger('feed_import');
                 feed_import_preview(stack_item.title);
             }
         });
@@ -197,7 +197,7 @@ function feed_import()
     else
     {
         set_active_request(false);
-        $(document).trigger('afterfeedimport');
+        $(document).trigger('after_feed_import');
     }
 }
 
@@ -210,18 +210,18 @@ function feed_import_init()
 
     if(feed_import_stack.length > 0)
     {
-        $(document).trigger('beforefeedimport');
+        $(document).trigger('before_feed_import');
         set_active_request(true);
         mytpl.feed_list_area.prepend("<ul></ul>");
-        $(document).trigger('feedimport');
+        $(document).trigger('feed_import');
     }
 }
 
 function feed_populate(feeds)
 {
-    if(feeds.length==0) { return null; }
-
     mytpl.feed_list_area.html("");
+
+    if(feeds.length==0) { return null; }
 
     var _lscontent = "";
     var _item = null;
@@ -312,7 +312,7 @@ function feed_list()
         complete: function()
         {
             set_active_request(false);
-            $(document).trigger('afterfeedlist');
+            $(document).trigger('after_feed_list');
         },
         success: function (xml)
         {
@@ -614,17 +614,17 @@ $(document).ready(function()
     /*<?php if(count($this->import) > 0) : ?>**/
 
     // not working...
-    // $(document).bind('beforefeedimport' , function(e)
+    // $(document).bind('before_feed_import' , function(e)
     // { 
     //     mylyt.blog_list.attr('disabled', true);
     // });
 
-    $(document).bind('feedimport' , function(e)
+    $(document).bind('feed_import' , function(e)
     { 
         feed_import();
     });
 
-    $(document).bind('afterfeedimport' , function(e)
+    $(document).bind('after_feed_import' , function(e)
     { 
         window.location="<?php B_Helper::url('feed') ?>" 
     });
@@ -642,12 +642,12 @@ $(document).ready(function()
 
     feed_list();
 
-    $(document).bind('blogchange' , function(e)
+    $(document).bind('blog_changed' , function(e)
     {
         on_blog_change();
     });
 
-    $(document).bind('afterfeedlist' , function(e)
+    $(document).bind('after_feed_list' , function(e)
     {
         feed_sortable_init();
     });
