@@ -12,11 +12,6 @@ var magic_q_max = 140;
 var queue_hctrl_display = 0 // 0 min | 1 exp | 2 max
 
 
-function on_blog_change()
-{
-    /* void */
-}
-
 function feed_area_enable()
 {
     mytpl.feed_area_head.removeClass('areadisabled');
@@ -583,6 +578,12 @@ $(document).ready(function()
         mytpl.feed_list_area.find('div.articlelabel').width($(window).width() * 0.6);
     }
 
+    function init()
+    {
+        set_feed_display();
+        set_article_display();
+    }
+
     /*<?php if(count($this->blogs)==0) : ?>**/
 
     $.b_dialog({ selector: "#noblogmsg", modal: false });
@@ -590,14 +591,13 @@ $(document).ready(function()
 
     /*<?php endif ?>**/
 
-    set_feed_display();
-    set_article_display();
+    init();
 
     /* triggers */
 
     $(document).bind('blog_changed' , function(e)
     {
-        on_blog_change();
+        init();
     });
 
     $(window).resize(function()
