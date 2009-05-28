@@ -73,7 +73,7 @@ function set_feed_display()
     if(feed_display=='all')
     {
         mytpl.feed_dsp_all.show();
-        // article_list(feed_list_area);
+        article_list(mytpl.feed_list_area);
     }
     if(feed_display=='thr') /* threaded */
     {
@@ -103,6 +103,155 @@ function set_article_display()
     }
 }
 
+function article_populate(articles, container, append) // TODO
+{
+    if(articles.length==0)
+    {
+        if(append==true)
+        {
+            container.find("div.articlemore").remove();
+        }
+        else
+        {
+            container.html("<br/><span><?php echo $this->translation()->no_articles ?></span>");
+        }
+
+        return null;
+    }
+
+    if(append==false)
+    {
+        container.html("");
+    }
+    else
+    {
+        if((m = container.find("div.articlemore"))) { m.remove(); }
+    }
+
+    var _data   = null;
+    var _item   = null;
+    var _inner  = null;
+    var _lsdata = "";
+
+    articles.each(function()
+    {
+        _data =
+        {
+            feed    : "",
+            article : $(this).find('article').text(),
+            title   : $(this).find('title').text(),
+            link    : $(this).find('link').text(),
+            date    : $(this).find('date').text(),
+            author  : $(this).find('author').text(),
+            content : $(this).find('content').text()
+        };
+
+        _item = mytpl.article_blank.clone();
+        _inner = _item.find('div.article');
+        _inner.attr('article', _data.article);
+        _inner.addClass('article' + feed_display);
+
+        if(feed_display == 'all')
+        {
+            _data.feed = $(this).find('feed').text();
+            _inner.find('div.articlefeed').show().text(_data.feed);
+        }
+
+        _inner.find('div.articletitle').text(_data.title);
+        _inner.find('div.articleinfo').text("@" + _data.date);
+        _inner.find('div.articlebuttons').find('a.viewlnk').attr('href', _data.link);
+        _inner.find('div.articlecontent').attr('article', _data.article);
+
+        _lsdata += _item.html() + "\n";
+
+        articles_content[_data.article] =
+        {
+            title   : _data.title,
+            author  : _data.author,
+            content : _data.content
+        };
+    });
+
+    container.append(_lsdata);
+    container.append(mytpl.article_more_blank.clone().find('div.articlemore').attr('older', _data.date));
+
+    /* article triggers must be created after populate, otherwise
+     * will not work (because populate write elements after document loading */
+
+    container.find("div.article[bound='no']").each(function()
+    {
+        $(this).attr('bound', 'yes');
+
+        $(this).click(function()
+        {
+//            if(article_display == 'lst')
+//            {
+//                _a = $(this).attr('article');
+//
+//                if($(this).hasClass('articlecontentshow'))
+//                {
+//                    article_content_hide(_a);
+//                }
+//                else
+//                {
+//                    article_content_hide_all();
+//                    article_content_show(_a);
+//                }
+//            }
+        });
+    });
+//
+//    container.find("div.articlemore").click(function()
+//    {
+//        article_more(container, $(this).attr('older'));
+//    });
+//
+//    window_update();
+//
+//    if(article_display == 'exp')
+//    {
+//        article_content_show_all();
+//    }
+//
+//    body__.trigger('article_next_evt');
+//    body__.unbind('article_next_evt');
+}
+
+function __article_load(container, append, older)
+{
+    url = (feed_display == 'thr') ? 
+                "<?php B_Helper::url('article', 'threaded') ?>" : 
+                "<?php B_Helper::url('article', 'all') ?>";
+    $.ajax
+    ({
+        type: "GET",
+        url: url,
+        dataType: "xml",
+        data: { blog  : current_blog, 
+                feed  : container.attr('feed'), 
+                older : older },
+        beforeSend: function()
+        {
+            set_active_request(true);
+        },
+        complete: function()
+        {
+            set_active_request(false);
+        },
+        success: function (xml)
+        {
+            var _d = $(xml).find('data');
+            article_populate(_d.find('articles').children(), container, append);
+        },
+        error: function () { server_error(); }
+    });
+}
+
+function article_list(container)
+{
+    __article_load(container, false, null);
+}
+
 
 $(document).ready(function()
 {
@@ -121,6 +270,8 @@ $(document).ready(function()
         article_dsp_lst_lnk  : $("#articledsplstlnk"),
         article_dsp_exp      : $("#articledspexp"),
         article_dsp_exp_lnk  : $("#articledspexplnk"),
+        article_blank        : $("#articleblank"),
+        article_more_blank   : $("#articlemoreblank"),
         feed_navigation      : $("#feednavigation"),
         article_previous_lnk : $("#articlepreviouslnk"),
         article_next_lnk     : $("#articlepreviouslnk"),
@@ -208,12 +359,14 @@ $(document).ready(function()
     {
         feed_display = 'all';
         save_preference('feed_display', feed_display);
+        return false;
     });
 
     mytpl.feed_dsp_thr_lnk.click(function()
     {
         feed_display = 'thr';
         save_preference('feed_display', feed_display);
+        return false;
     });
 
     $(document).bind('feed_display_saved' , function(e)
@@ -225,12 +378,14 @@ $(document).ready(function()
     {
         article_display = 'lst';
         save_preference('article_display', article_display);
+        return false;
     });
 
     mytpl.article_dsp_exp_lnk.click(function()
     {
         article_display = 'exp';
         save_preference('article_display', article_display);
+        return false;
     });
 
     $(document).bind('article_display_saved' , function(e)

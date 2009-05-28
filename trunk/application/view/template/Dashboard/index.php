@@ -42,6 +42,25 @@
 <div id="feedlistarea"></div>
 </div>
 
+<div id="articleblank" style="display:none">
+<div class="article" article="" bound="no">
+    <div class="articlelabel">
+        <div class="articlefeed" style="display:none"></div>
+        <div class="articletitle"></div>
+    </div>
+    <div class="articleinfo"></div>
+    <div class="articlebuttons">
+        <a class="viewlnk" href="#" target="_blank"><?php echo $this->translation()->view ?></a>
+    </div>
+    <div style="clear:both"></div>
+</div>
+<div class="articlecontent" article=""></div>
+</div>
+
+<div id="articlemoreblank" style="display:none">
+    <div class="articlemore" older=""><center><?php echo $this->translation()->older ?></center></div>
+</div>
+
 <div id="queuearea">
 <div id="queueareahctrlbar">&nbsp;</div>
 <div id="queueareahead" class="containerhead">

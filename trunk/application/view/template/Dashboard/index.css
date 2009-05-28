@@ -95,6 +95,7 @@ div.article
     padding-left: 15px;
     border-bottom: 1px solid silver;
     vertical-align: middle;
+    background-color: white;
 }
 div.article:hover
 {
@@ -127,7 +128,8 @@ div.articlelabel
     text-align: left;
     overflow: hidden;
     margin-right: 15px;
-    /* TODO: background-color: (transparent pixel); > fix div hover IE bug */
+    width: 70%;
+    background-image: url("<?php B_Helper::img_src('transparent.png') ?>"); /* fix div hover IE bug */
 }
 div.articlefeed
 {
