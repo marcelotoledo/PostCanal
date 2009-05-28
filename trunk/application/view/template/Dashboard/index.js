@@ -1,9 +1,9 @@
 var mytpl = null;
 
-var feed_display = 'all';
-var article_display = 'lst';
+var feed_display     = "<?php echo $this->preference->feed_display ?>";
+var article_display  = "<?php echo $this->preference->article_display ?>";
 var articles_content = Array();
-var current_article = null;
+var current_article  = null;
 
 var magic_q_min = 5;
 var magic_q_exp = 16;
@@ -63,6 +63,44 @@ function queue_maximize()
     feed_area_disable();
     mytpl.queue_hctrl_lnks.find("a").hide();
     mytpl.queue_hctrl_min.show();
+}
+
+function set_feed_display()
+{
+    mytpl.feed_dsp_all.hide();
+    mytpl.feed_dsp_thr.hide();
+
+    if(feed_display=='all')
+    {
+        mytpl.feed_dsp_all.show();
+        // article_list(feed_list_area);
+    }
+    if(feed_display=='thr') /* threaded */
+    {
+        mytpl.feed_dsp_thr.show();
+        // feed_list();
+    }
+
+    mytpl.feed_list_area.scrollTop(0);
+}
+
+function set_article_display()
+{
+    mytpl.article_dsp_lst.hide();
+    mytpl.article_dsp_exp.hide();
+
+    if(article_display=='lst') /* list */
+    {
+        mytpl.article_dsp_lst.show();
+        mytpl.feed_navigation.show();
+        // article_content_hide_all();
+    }
+    if(article_display=='exp') /* expanded */
+    {
+        mytpl.article_dsp_exp.show();
+        mytpl.feed_navigation.hide();
+        //article_content_show_all();
+    }
 }
 
 
@@ -145,6 +183,9 @@ $(document).ready(function()
 
     /*<?php endif ?>**/
 
+    set_feed_display();
+    set_article_display();
+
     /* triggers */
 
     $(document).bind('blog_changed' , function(e)
@@ -161,5 +202,39 @@ $(document).ready(function()
     {
         queue_hctrl_display = (queue_hctrl_display < 2) ? queue_hctrl_display + 1 : 0;
         window_update();
+    });
+
+    mytpl.feed_dsp_all_lnk.click(function()
+    {
+        feed_display = 'all';
+        save_preference('feed_display', feed_display);
+    });
+
+    mytpl.feed_dsp_thr_lnk.click(function()
+    {
+        feed_display = 'thr';
+        save_preference('feed_display', feed_display);
+    });
+
+    $(document).bind('feed_display_saved' , function(e)
+    {
+        set_feed_display();
+    });
+
+    mytpl.article_dsp_lst_lnk.click(function()
+    {
+        article_display = 'lst';
+        save_preference('article_display', article_display);
+    });
+
+    mytpl.article_dsp_exp_lnk.click(function()
+    {
+        article_display = 'exp';
+        save_preference('article_display', article_display);
+    });
+
+    $(document).bind('article_display_saved' , function(e)
+    {
+        set_article_display();
     });
 });
