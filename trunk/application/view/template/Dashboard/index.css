@@ -127,9 +127,16 @@ div.articlelabel
     float: left;
     text-align: left;
     overflow: hidden;
-    margin-right: 15px;
+    margin-right: 10px;
     width: 70%;
+    cursor: pointer;
+    cursor: hand;
     background-image: url("<?php B_Helper::img_src('transparent.png') ?>"); /* fix div hover IE bug */
+}
+/*"**/
+div.articlelabel:hover
+{
+    color: navy;
 }
 div.articlefeed
 {

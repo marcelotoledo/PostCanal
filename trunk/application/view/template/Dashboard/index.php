@@ -42,6 +42,11 @@
 <div id="feedlistarea"></div>
 </div>
 
+<div id="feeditemblank" style="display:none">
+<div class="feeditem" feed=""></div>
+<div class="feeditemarticles"></div>
+</div>
+
 <div id="articleblank" style="display:none">
 <div class="article" article="" bound="no">
     <div class="articlelabel">
@@ -54,7 +59,8 @@
     </div>
     <div style="clear:both"></div>
 </div>
-<div class="articlecontent" article=""></div>
+<div class="articlecontent">
+</div>
 </div>
 
 <div id="articlemoreblank" style="display:none">

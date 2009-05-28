@@ -78,7 +78,7 @@ function set_feed_display()
     if(feed_display=='thr') /* threaded */
     {
         mytpl.feed_dsp_thr.show();
-        // feed_list();
+        feed_list();
     }
 
     mytpl.feed_list_area.scrollTop(0);
@@ -93,17 +93,97 @@ function set_article_display()
     {
         mytpl.article_dsp_lst.show();
         mytpl.feed_navigation.show();
-        // article_content_hide_all();
+        article_content_hide_all();
     }
     if(article_display=='exp') /* expanded */
     {
         mytpl.article_dsp_exp.show();
         mytpl.feed_navigation.hide();
-        //article_content_show_all();
+        article_content_show_all();
     }
 }
 
-function article_populate(articles, container, append) // TODO
+function feed_populate(feeds)
+{
+    if(feeds.length > 0)
+    {
+        mytpl.feed_list_area.html("");
+
+        var _data   = null;
+        var _item   = null;
+        var _inner  = null;
+        var _lsdata = "";
+
+        feeds.each(function()
+        {
+            _data =
+            {
+                feed  : $(this).find('feed').text(),
+                title : $(this).find('feed_title').text()
+            };
+
+            _item = mytpl.feed_item_blank.clone();
+            _inner = _item.find('div.feeditem');
+            _inner.attr('feed', _data.feed);
+            _inner.text(_data.title);
+
+            _lsdata += _item.html() + "\n";
+        });
+
+        mytpl.feed_list_area.html(_lsdata);
+    }
+    else
+    {
+        feed_list_area.html("<br/><span><?php echo $this->translation()->no_registered_feeds ?></span>");
+    }
+
+    /* this trigger must be created after populate, otherwise
+     * will not work (because populate write elements after document loading */
+
+    var _feed = null;
+
+    mytpl.feed_list_area.find("div.feeditem").click(function()
+    {
+        _feed = $(this).attr('feed');
+
+        if($(this).hasClass('feeditemthreaded'))
+        {
+            article_unthread(_feed);
+        }
+        else
+        {
+            article_thread(_feed);
+        }
+    });
+}
+
+function feed_list()
+{
+    $.ajax
+    ({
+        type: "GET",
+        url: "<?php B_Helper::url('feed', 'list') ?>",
+        dataType: "xml",
+        data: { blog    : current_blog, 
+                enabled : true },
+        beforeSend: function()
+        {
+            set_active_request(true);
+        },
+        complete: function()
+        {
+            set_active_request(false);
+        },
+        success: function (xml)
+        {
+            var _d = $(xml).find('data');
+            feed_populate(_d.find('feeds').children());
+        },
+        error: function () { server_error(); }
+    });
+}
+
+function article_populate(articles, container, append)
 {
     if(articles.length==0)
     {
@@ -125,7 +205,7 @@ function article_populate(articles, container, append) // TODO
     }
     else
     {
-        if((m = container.find("div.articlemore"))) { m.remove(); }
+        container.find("div.articlemore").remove();
     }
 
     var _data   = null;
@@ -173,48 +253,50 @@ function article_populate(articles, container, append) // TODO
     });
 
     container.append(_lsdata);
-    container.append(mytpl.article_more_blank.clone().find('div.articlemore').attr('older', _data.date));
+    container.append(mytpl.article_more_blank.clone()
+        .find('div.articlemore').attr('older', _data.date));
 
     /* article triggers must be created after populate, otherwise
      * will not work (because populate write elements after document loading */
+
+    var _feed = null;
 
     container.find("div.article[bound='no']").each(function()
     {
         $(this).attr('bound', 'yes');
 
-        $(this).click(function()
+        $(this).find('div.articlelabel').click(function()
         {
-//            if(article_display == 'lst')
-//            {
-//                _a = $(this).attr('article');
-//
-//                if($(this).hasClass('articlecontentshow'))
-//                {
-//                    article_content_hide(_a);
-//                }
-//                else
-//                {
-//                    article_content_hide_all();
-//                    article_content_show(_a);
-//                }
-//            }
+            if(article_display == 'lst')
+            {
+                _feed = $(this).parent().attr('article');
+
+                if($(this).hasClass('articlecontentshow'))
+                {
+                    article_content_hide(_feed);
+                }
+                else
+                {
+                    article_content_hide_all();
+                    article_content_show(_feed);
+                }
+            }
         });
     });
-//
-//    container.find("div.articlemore").click(function()
-//    {
-//        article_more(container, $(this).attr('older'));
-//    });
-//
-//    window_update();
-//
-//    if(article_display == 'exp')
-//    {
-//        article_content_show_all();
-//    }
-//
-//    body__.trigger('article_next_evt');
-//    body__.unbind('article_next_evt');
+
+    container.find("div.articlemore").click(function()
+    {
+        article_more(container, $(this).attr('older'));
+    });
+
+    if(article_display == 'exp')
+    {
+        article_content_show_all();
+    }
+
+    $(document).trigger('article_populated');
+    $(document).trigger('article_next_older_event'); // @see article_next()
+    $(document).unbind('article_next_older_event');
 }
 
 function __article_load(container, append, older)
@@ -228,7 +310,7 @@ function __article_load(container, append, older)
         url: url,
         dataType: "xml",
         data: { blog  : current_blog, 
-                feed  : container.attr('feed'), 
+                feed  : container.prev().attr('feed'), 
                 older : older },
         beforeSend: function()
         {
@@ -252,6 +334,179 @@ function article_list(container)
     __article_load(container, false, null);
 }
 
+function article_more(container, older)
+{
+    __article_load(container, true, older);
+}
+
+function article_thread(feed)
+{
+    var _b = mytpl.feed_list_area.find("div.feeditem[feed='" + feed + "']");;
+    var _c = _b.next();
+    article_list(_c);
+    _c.show();
+    _b.addClass('feeditemthreaded');
+}
+
+function article_unthread(feed)
+{
+    var _b = mytpl.feed_list_area.find("div.feeditem[feed='" + feed + "']");;
+    var _c = _b.next();
+    _c.html("");
+    _c.hide();
+    _b.removeClass('feeditemthreaded');
+}
+
+function article_refresh()
+{
+    if(feed_display=='all')
+    {
+        article_list(mytpl.feed_list_area);
+    }
+    if(feed_display=='thr') /* threaded */
+    {
+        feed_list();
+    }
+
+    mytpl.feed_list_area.scrollTop(0);
+}
+
+function article_next()
+{
+    var _c  = null;
+    var _j  = null;
+    var _k  = null;
+    var _m  = null;
+    var _ca = null;
+    var _na = null;
+
+    if(current_article==null)
+    {
+        _ca = mytpl.feed_list_area.find("div.article");
+        _k = null;
+
+        if(_k = _ca.attr('article'))
+        {
+            article_content_show(_k);
+        }
+    }
+    else
+    {
+        _ca = mytpl.feed_list_area.find("div.article[article='" + current_article + "']");
+        _na = _ca.nextAll("div.article");
+
+           _j = _ca.attr('article');
+        if(_k = _na.attr('article'))
+        {
+            article_content_hide(_j)
+            article_content_show(_k);
+        }
+        else // try to load older articles
+        {
+            _c = (feed_display=='thr') ? _ca.parents() : mytpl.feed_list_area;
+            if((_m = _c.find("div.articlemore")))
+            {
+                _m.click();
+                $(document).bind('article_next_older_event', function(e) { article_next(); });
+            }
+        }
+    }
+}
+
+function article_previous()
+{
+    var _j  = null;
+    var _k  = null;
+    var _ca = null;
+    var _pa = null;
+
+    if(current_article)
+    {
+        _ca = mytpl.feed_list_area.find("div.article[article='" + current_article + "']");
+        _pa = _ca.prevAll("div.article");
+
+           _j = _ca.attr('article');
+        if(_k = _pa.attr('article'))
+        {
+            article_content_hide(_j)
+            article_content_show(_k);
+        }
+    }
+}
+
+function article_scroll(article)
+{
+    var _b = mytpl.feed_list_area.find("div.article[article='" + article + "']");
+    var _fa_p = mytpl.feed_list_area.position().top;
+    var _fa_s = mytpl.feed_list_area.scrollTop();
+    var _ah_p = _b.position().top;
+    mytpl.feed_list_area.scrollTop(_fa_s + _ah_p - _fa_p);
+}
+
+function article_content_show(article)
+{
+    if(articles_content[article])
+    {
+        current_article = article;
+        var a = articles_content[article];
+        var b = mytpl.feed_list_area.find("div.article[article='" + article + "']");
+        var c = b.next(); // div.articlecontent
+        var d = "";
+
+        if(a.content)
+        {
+            if(a.title)  { d += "<h1>" + a.title   + "</h1>";  }
+            if(a.author) { d += "<h2>" + a.author  + "</h2>";  }
+                           d += "<p>"  + a.content + "</p>\n";
+        }
+        else
+        {
+            d += "<?php echo $this->translation()->no_content ?>\n";
+        }
+
+        c.html(d);
+        b.addClass('articlecontentshow'); 
+        c.show();
+
+        /* scroll */
+
+        if(article_display == 'lst')
+        {
+            article_scroll(article);
+        }
+    }
+}
+
+function article_content_show_all()
+{
+    mytpl.feed_list_area.find("div.article").each(function()
+    {
+        if($(this).hasClass('articlecontentshow') == false)
+        {
+            article_content_show($(this).attr('article'));
+        }
+        $(this).hide(); // hide title
+    });
+}
+
+function article_content_hide(article)
+{
+    var b = mytpl.feed_list_area.find("div.article[article='" + article + "']"); 
+    var c = b.next(); // div.articlecontent
+    c.html("");
+    c.hide();
+    b.removeClass('articlecontentshow'); 
+    b.show(); // when hide
+}
+
+function article_content_hide_all()
+{
+    mytpl.feed_list_area.find("div.articlecontentshow").each(function()
+    {
+        article_content_hide($(this).attr('article'));
+    });
+}
+
 
 $(document).ready(function()
 {
@@ -265,6 +520,7 @@ $(document).ready(function()
         feed_dsp_all_lnk     : $("#feeddspalllnk"),
         feed_dsp_thr         : $("#feeddspthr"),
         feed_dsp_thr_lnk     : $("#feeddspthrlnk"),
+        feed_item_blank      : $("#feeditemblank"),
         article_dsp          : $("#articledisplay"),
         article_dsp_lst      : $("#articledsplst"),
         article_dsp_lst_lnk  : $("#articledsplstlnk"),
@@ -391,5 +647,10 @@ $(document).ready(function()
     $(document).bind('article_display_saved' , function(e)
     {
         set_article_display();
+    });
+
+    $(document).bind('article_populated', function(e) 
+    {
+        window_update();
     });
 });
