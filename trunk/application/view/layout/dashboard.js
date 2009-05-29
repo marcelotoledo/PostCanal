@@ -1,6 +1,7 @@
 var active_request = false;
 var mylyt = null;
 var current_blog = null;
+var current_blog_info = Array();
 
 
 function set_active_request(b)
@@ -49,6 +50,33 @@ function save_preference(k, v)
     });
 }
 
+function current_blog_load()
+{
+    $.ajax
+    ({
+        type: "POST",
+        url: "<?php B_Helper::url('blog', 'load') ?>",
+        dataType: "xml",
+        data: { blog: current_blog },
+        beforeSend: function()
+        {
+            set_active_request(true);
+        },
+        complete: function()
+        {
+            set_active_request(false);
+        },
+        success: function (xml)
+        {
+            $(xml).find('data').find('result').children().each(function()
+            {
+                current_blog_info[($(this).context.nodeName)] = $(this).text();
+            });
+            $(document).trigger('current_blog_loaded');
+        },
+        error: function () { server_error(); }
+    });
+}
 
 $(document).ready(function()
 {
@@ -117,6 +145,11 @@ $(document).ready(function()
     }
 
     $(document).bind('current_blog_saved', function(e)
+    {
+        current_blog_load();
+    });
+
+    $(document).bind('current_blog_loaded', function(e)
     {
         $(document).trigger('blog_changed');
     });

@@ -123,11 +123,6 @@ class UserBlogFeed extends B_Model
         'feed_title','feed_description'
     );
 
-    public static $allow_read = array 
-    (
-        'hash','ordering'
-    );
-
     /**
      * Save model
      *

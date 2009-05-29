@@ -163,4 +163,30 @@ class C_Blog extends B_Controller
 
         $this->view()->result = $result;
     }
+
+    /**
+     * load blog info
+     */
+    public function A_load()
+    {
+        $this->response()->setXML(true);
+        $hash = $this->request()->blog;
+        $user = $this->session()->user_profile_id;
+        $result = array('name'                       => "",
+                        'blog_url'                   => "",
+                        'queue_feeding'              => "",
+                        'queue_feeding_keyword'      => "",
+                        'queue_publication'          => "",
+                        'queue_publication_interval' => 3600);
+
+        if(is_object(($blog = UserBlog::getByUserAndHash($user, $hash))))
+        {
+            foreach(array_keys($result) as $k)
+            {
+                $result[$k] = $blog->{$k};
+            }
+        }
+
+        $this->view()->result = $result;
+    }
 }

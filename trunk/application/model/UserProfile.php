@@ -116,10 +116,6 @@ class UserProfile extends B_Model
         'name'
     );
 
-    public static $allow_read = array 
-    (
-    );
-
     /**
      * Get UserProfile by primary key
      *

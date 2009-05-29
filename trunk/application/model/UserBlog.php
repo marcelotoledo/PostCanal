@@ -133,11 +133,6 @@ class UserBlog extends B_Model
         'queue_publication','queue_publication_interval'
     );
 
-    public static $allow_read = array 
-    (
-        'hash','blog_url'
-    );
-
     /**
      * Save model
      *

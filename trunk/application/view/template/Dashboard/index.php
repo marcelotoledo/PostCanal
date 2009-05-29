@@ -72,7 +72,7 @@
 <div id="queueareahead" class="containerhead">
     <div id="queueareatitle"><?php echo $this->translation()->queue ?></div>
 
-    <div id="queuepublication">
+    <div id="queuepublication" style="display:none">
         <b><?php echo $this->translation()->publication ?>: </b>
 
         <a href="#" id="queuepublicationmanuallnk" style="display:none"><?php echo $this->translation()->manual ?></a>
@@ -98,7 +98,7 @@
         </form></td></tr></table>
     </div>
 
-    <div id="queuefeeding">
+    <div id="queuefeeding" style="display:none"><!-- TODO -->
         <b><?php echo $this->translation()->feeding ?>: </b>
 
         <a href="#" id="queuefeedingmanuallnk" style="display:none"><?php echo $this->translation()->manual ?></a>
