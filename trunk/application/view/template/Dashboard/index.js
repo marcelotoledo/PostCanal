@@ -62,6 +62,8 @@ function queue_maximize()
 
 function set_feed_display()
 {
+    articles_content = Array();
+
     mytpl.feed_dsp_all.hide();
     mytpl.feed_dsp_thr.hide();
 
@@ -178,6 +180,22 @@ function feed_list()
     });
 }
 
+function feed_refresh()
+{
+    articles_content = Array();
+
+    if(feed_display=='all')
+    {
+        article_list(mytpl.feed_list_area);
+    }
+    if(feed_display=='thr') /* threaded */
+    {
+        feed_list();
+    }
+
+    mytpl.feed_list_area.scrollTop(0);
+}
+
 function article_populate(articles, container, append)
 {
     if(articles.length==0)
@@ -221,23 +239,28 @@ function article_populate(articles, container, append)
             content : $(this).find('content').text()
         };
 
-        _item = mytpl.article_blank.clone();
-        _inner = _item.find('div.article');
-        _inner.attr('article', _data.article);
-        _inner.addClass('article' + feed_display);
-
-        if(feed_display == 'all')
+        if(articles_content[_data.article]==undefined) /* avoid duplicated items */
         {
-            _data.feed = $(this).find('feed').text();
-            _inner.find('div.articlefeed').show().text(_data.feed);
+            _item = mytpl.article_blank.clone();
+            _inner = _item.find('div.article');
+            _inner.attr('article', _data.article);
+            _inner.addClass('article' + feed_display);
+
+            if(feed_display == 'all')
+            {
+                _data.feed = $(this).find('feed').text();
+                _inner.find('div.articlefeed').show().text(_data.feed);
+            }
+
+            _inner.find('div.articletitle')
+                .text(_data.title.substring(0,80).replace(/\w+$/,'') + 
+                ((_data.title.length>=80) ? '...' : ''));
+            _inner.find('div.articleinfo').text("@" + _data.date);
+            _inner.find('div.articlebuttons').find('a.viewlnk').attr('href', _data.link);
+            _inner.find('div.articlecontent').attr('article', _data.article);
+
+            _lsdata += _item.html() + "\n";
         }
-
-        _inner.find('div.articletitle').text(_data.title);
-        _inner.find('div.articleinfo').text("@" + _data.date);
-        _inner.find('div.articlebuttons').find('a.viewlnk').attr('href', _data.link);
-        _inner.find('div.articlecontent').attr('article', _data.article);
-
-        _lsdata += _item.html() + "\n";
 
         articles_content[_data.article] =
         {
@@ -260,13 +283,13 @@ function article_populate(articles, container, append)
     {
         $(this).attr('bound', 'yes');
 
-        $(this).find('div.articlelabel').click(function()
+        $(this).find('div.articlelabel').click(function(e)
         {
             if(article_display == 'lst')
             {
                 _feed = $(this).parent().attr('article');
 
-                if($(this).hasClass('articlecontentshow'))
+                if($(this).parent().hasClass('articlecontentshow'))
                 {
                     article_content_hide(_feed);
                 }
@@ -274,6 +297,7 @@ function article_populate(articles, container, append)
                 {
                     article_content_hide_all();
                     article_content_show(_feed);
+                    article_scroll_top();
                 }
             }
         });
@@ -352,20 +376,6 @@ function article_unthread(feed)
     _b.removeClass('feeditemthreaded');
 }
 
-function article_refresh()
-{
-    if(feed_display=='all')
-    {
-        article_list(mytpl.feed_list_area);
-    }
-    if(feed_display=='thr') /* threaded */
-    {
-        feed_list();
-    }
-
-    mytpl.feed_list_area.scrollTop(0);
-}
-
 function article_next()
 {
     var _c  = null;
@@ -383,11 +393,12 @@ function article_next()
         if(_k = _ca.attr('article'))
         {
             article_content_show(_k);
+            article_scroll_top();
         }
     }
     else
     {
-        _ca = mytpl.feed_list_area.find("div.article[article='" + current_article + "']");
+        _ca = current_article;
         _na = _ca.nextAll("div.article");
 
            _j = _ca.attr('article');
@@ -395,6 +406,7 @@ function article_next()
         {
             article_content_hide(_j)
             article_content_show(_k);
+            article_scroll_top();
         }
         else // try to load older articles
         {
@@ -415,9 +427,8 @@ function article_previous()
     var _ca = null;
     var _pa = null;
 
-    if(current_article)
+    if((_ca = current_article))
     {
-        _ca = mytpl.feed_list_area.find("div.article[article='" + current_article + "']");
         _pa = _ca.prevAll("div.article");
 
            _j = _ca.attr('article');
@@ -425,24 +436,28 @@ function article_previous()
         {
             article_content_hide(_j)
             article_content_show(_k);
+            article_scroll_top();
         }
     }
 }
 
-function article_scroll(article)
+function article_scroll_top()
 {
-    var _b = mytpl.feed_list_area.find("div.article[article='" + article + "']");
-    var _fa_p = mytpl.feed_list_area.position().top;
-    var _fa_s = mytpl.feed_list_area.scrollTop();
-    var _ah_p = _b.position().top;
-    mytpl.feed_list_area.scrollTop(_fa_s + _ah_p - _fa_p);
+    var _b = null;
+
+    if((_b = current_article))
+    {
+        var _fa_p = mytpl.feed_list_area.position().top;
+        var _fa_s = mytpl.feed_list_area.scrollTop();
+        var _ah_p = _b.position().top;
+        mytpl.feed_list_area.scrollTop(_fa_s + _ah_p - _fa_p);
+    }
 }
 
 function article_content_show(article)
 {
     if(articles_content[article])
     {
-        current_article = article;
         var a = articles_content[article];
         var b = mytpl.feed_list_area.find("div.article[article='" + article + "']");
         var c = b.next(); // div.articlecontent
@@ -462,13 +477,7 @@ function article_content_show(article)
         c.html(d);
         b.addClass('articlecontentshow'); 
         c.show();
-
-        /* scroll */
-
-        if(article_display == 'lst')
-        {
-            article_scroll(article);
-        }
+        current_article = b;
     }
 }
 
@@ -525,7 +534,7 @@ $(document).ready(function()
         article_more_blank   : $("#articlemoreblank"),
         feed_navigation      : $("#feednavigation"),
         article_previous_lnk : $("#articlepreviouslnk"),
-        article_next_lnk     : $("#articlepreviouslnk"),
+        article_next_lnk     : $("#articlenextlnk"),
         feed_refresh         : $("#feedrefresh"),
         feed_refresh_lnk     : $("#feedrefreshlnk"),
         feed_list_area       : $("#feedlistarea"),
@@ -641,6 +650,24 @@ $(document).ready(function()
     {
         article_display = 'exp';
         save_preference('article_display', article_display);
+        return false;
+    });
+
+    mytpl.feed_refresh_lnk.click(function()
+    {
+        feed_refresh();
+        return false;
+    });
+
+    mytpl.article_previous_lnk.click(function()
+    {
+        article_previous();
+        return false;
+    });
+
+    mytpl.article_next_lnk.click(function()
+    {
+        article_next();
         return false;
     });
 
