@@ -52,7 +52,7 @@ function queue_minimize()
     mytpl.queue_list_area.hide();
     feed_area_enable();
     mytpl.feed_list_area.show();
-    mytpl.queue_height_lnks.find("a").hide();
+    mytpl.queue_height_lnks.find('a').hide();
     mytpl.queue_height_med.show();
 }
 
@@ -60,7 +60,7 @@ function queue_expanded(h)
 {
     mytpl.queue_area.css('bottom', h - mytpl.queue_area.outerHeight() - magic_q_expanded);
     mytpl.queue_list_area.show();
-    mytpl.queue_height_lnks.find("a").hide();
+    mytpl.queue_height_lnks.find('a').hide();
     mytpl.queue_height_max.show();
 }
 
@@ -69,7 +69,7 @@ function queue_maximize()
     mytpl.queue_area.css('bottom', $(window).height() - magic_q_max);
     mytpl.feed_list_area.hide();
     feed_area_disable();
-    mytpl.queue_height_lnks.find("a").hide();
+    mytpl.queue_height_lnks.find('a').hide();
     mytpl.queue_height_min.show();
 }
 
@@ -679,10 +679,11 @@ $(document).ready(function()
         window_update();
     });
 
-    mytpl.queue_height_lnks.find("a").click(function()
+    mytpl.queue_height_lnks.find('a').click(function()
     {
         queue.height = (queue.height < 2) ? queue.height + 1 : 0;
         window_update();
+        return false;
     });
 
     mytpl.feed_dsp_all_lnk.click(function()
