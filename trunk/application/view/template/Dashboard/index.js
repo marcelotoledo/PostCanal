@@ -1,27 +1,27 @@
 var mytpl = null;
 
-var feeds = 
+var feed = 
 {
-    display : "<?php echo $this->preference->feed_display ?>"
+    display : "<?php echo $this->settings->feed->display ?>"
 };
 
-var articles = 
+var article = 
 {
-    display : "<?php echo $this->preference->article_display ?>",
+    display : "<?php echo $this->settings->article->display ?>",
     content : Array(),
     current : null
 };
 
 var queue = 
 {
-    hctrl_display : 0    , // 0 min | 1 exp | 2 max
-    publication   : null ,
-    interval      : null ,
-    feeding       : null
+    height      : 0    , // 0 minimum | 1 half | 2 maximum
+    publication : null ,
+    interval    : null ,
+    feeding     : null
 };
 
 var magic_q_min = 5;
-var magic_q_exp = 16;
+var magic_q_expanded = 16;
 var magic_q_max = 140;
 
 
@@ -30,7 +30,7 @@ function feed_area_enable()
     mytpl.feed_area_head.removeClass('areadisabled');
     mytpl.feed_dsp.show();
     mytpl.article_dsp.show();
-    if(articles.display=='lst') // @see set_article_display()
+    if(article.display=='list') // @see set_article_display()
     {
         mytpl.feed_navigation.show();
     }
@@ -52,16 +52,16 @@ function queue_minimize()
     mytpl.queue_list_area.hide();
     feed_area_enable();
     mytpl.feed_list_area.show();
-    mytpl.queue_hctrl_lnks.find("a").hide();
-    mytpl.queue_hctrl_exp.show();
+    mytpl.queue_height_lnks.find("a").hide();
+    mytpl.queue_height_expanded.show();
 }
 
-function queue_expand(h)
+function queue_expandedand(h)
 {
-    mytpl.queue_area.css('bottom', h - mytpl.queue_area.outerHeight() - magic_q_exp);
+    mytpl.queue_area.css('bottom', h - mytpl.queue_area.outerHeight() - magic_q_expanded);
     mytpl.queue_list_area.show();
-    mytpl.queue_hctrl_lnks.find("a").hide();
-    mytpl.queue_hctrl_max.show();
+    mytpl.queue_height_lnks.find("a").hide();
+    mytpl.queue_height_max.show();
 }
 
 function queue_maximize()
@@ -69,25 +69,25 @@ function queue_maximize()
     mytpl.queue_area.css('bottom', $(window).height() - magic_q_max);
     mytpl.feed_list_area.hide();
     feed_area_disable();
-    mytpl.queue_hctrl_lnks.find("a").hide();
-    mytpl.queue_hctrl_min.show();
+    mytpl.queue_height_lnks.find("a").hide();
+    mytpl.queue_height_min.show();
 }
 
 function set_feed_display()
 {
-    articles.content = Array();
+    article.content = Array();
 
     mytpl.feed_dsp_all.hide();
-    mytpl.feed_dsp_thr.hide();
+    mytpl.feed_dsp_threaded.hide();
 
-    if(feeds.display=='all')
+    if(feed.display=='all')
     {
         mytpl.feed_dsp_all.show();
         article_list(mytpl.feed_list_area);
     }
-    if(feeds.display=='thr') /* threaded */
+    if(feed.display=='threaded') /* threaded */
     {
-        mytpl.feed_dsp_thr.show();
+        mytpl.feed_dsp_threaded.show();
         feed_list();
     }
 
@@ -96,18 +96,18 @@ function set_feed_display()
 
 function set_article_display()
 {
-    mytpl.article_dsp_lst.hide();
-    mytpl.article_dsp_exp.hide();
+    mytpl.article_dsp_list.hide();
+    mytpl.article_dsp_expanded.hide();
 
-    if(articles.display=='lst') /* list */
+    if(article.display=='list') /* list */
     {
-        mytpl.article_dsp_lst.show();
+        mytpl.article_dsp_list.show();
         mytpl.feed_navigation.show();
         article_content_hide_all();
     }
-    if(articles.display=='exp') /* expanded */
+    if(article.display=='expanded') /* expanded */
     {
-        mytpl.article_dsp_exp.show();
+        mytpl.article_dsp_expanded.show();
         mytpl.feed_navigation.hide();
         article_content_show_all();
     }
@@ -144,7 +144,7 @@ function feed_populate(feeds)
     }
     else
     {
-        feed_list_area.html("<br/><span><?php echo $this->translation()->no_registered_feeds ?></span>");
+        mytpl.feed_list_area.html("<br/><span><?php echo $this->translation()->no_registered_feeds ?></span>");
     }
 
     /* this trigger must be created after populate, otherwise
@@ -158,11 +158,11 @@ function feed_populate(feeds)
 
         if($(this).hasClass('feeditemthreaded'))
         {
-            article_unthread(_feed);
+            article_unthreadedead(_feed);
         }
         else
         {
-            article_thread(_feed);
+            article_threadedead(_feed);
         }
     });
 }
@@ -174,7 +174,7 @@ function feed_list()
         type: "GET",
         url: "<?php B_Helper::url('feed', 'list') ?>",
         dataType: "xml",
-        data: { blog    : current_blog, 
+        data: { blog    : blog.current , 
                 enabled : true },
         beforeSend: function()
         {
@@ -195,13 +195,13 @@ function feed_list()
 
 function feed_refresh()
 {
-    articles.content = Array();
+    article.content = Array();
 
-    if(feeds.display=='all')
+    if(feed.display=='all')
     {
         article_list(mytpl.feed_list_area);
     }
-    if(feeds.display=='thr') /* threaded */
+    if(feed.display=='threaded') /* threaded */
     {
         feed_list();
     }
@@ -252,14 +252,14 @@ function article_populate(a, container, append)
             content : $(this).find('content').text()
         };
 
-        if(articles.content[_data.article]==undefined) /* avoid duplicated items */
+        if(article.content[_data.article]==undefined) /* avoid duplicated items */
         {
             _item = mytpl.article_blank.clone();
             _inner = _item.find('div.article');
             _inner.attr('article', _data.article);
-            _inner.addClass('article' + feeds.display);
+            _inner.addClass('article' + feed.display);
 
-            if(feeds.display == 'all')
+            if(feed.display == 'all')
             {
                 _data.feed = $(this).find('feed').text();
                 _inner.find('div.articlefeed').show().text(_data.feed);
@@ -275,7 +275,7 @@ function article_populate(a, container, append)
             _lsdata += _item.html() + "\n";
         }
 
-        articles.content[_data.article] =
+        article.content[_data.article] =
         {
             title   : _data.title,
             author  : _data.author,
@@ -290,15 +290,24 @@ function article_populate(a, container, append)
     /* article triggers must be created after populate, otherwise
      * will not work (because populate write elements after document loading */
 
-    var _feed = null;
+    var _feed  = null;
+    var _label = null;
 
     container.find("div.article[bound='no']").each(function()
     {
         $(this).attr('bound', 'yes');
 
-        $(this).find('div.articlelabel').click(function(e)
+        _label = $(this).find('div.articlelabel');
+
+        _label.hover
+        (
+            function() { $(this).parent().addClass('articlehover');    },
+            function() { $(this).parent().removeClass('articlehover'); }
+        );
+
+        _label.click(function(e)
         {
-            if(articles.display == 'lst')
+            if(article.display == 'list')
             {
                 _feed = $(this).parent().attr('article');
 
@@ -321,7 +330,7 @@ function article_populate(a, container, append)
         article_more(container, $(this).attr('older'));
     });
 
-    if(articles.display == 'exp')
+    if(article.display == 'expanded')
     {
         article_content_show_all();
     }
@@ -333,7 +342,7 @@ function article_populate(a, container, append)
 
 function __article_load(container, append, older)
 {
-    url = (feeds.display == 'thr') ? 
+    url = (feed.display == 'threaded') ? 
                 "<?php B_Helper::url('article', 'threaded') ?>" : 
                 "<?php B_Helper::url('article', 'all') ?>";
     $.ajax
@@ -341,7 +350,7 @@ function __article_load(container, append, older)
         type: "GET",
         url: url,
         dataType: "xml",
-        data: { blog  : current_blog, 
+        data: { blog  : blog.current , 
                 feed  : container.prev().attr('feed'), 
                 older : older },
         beforeSend: function()
@@ -371,7 +380,7 @@ function article_more(container, older)
     __article_load(container, true, older);
 }
 
-function article_thread(feed)
+function article_threadedead(feed)
 {
     var _b = mytpl.feed_list_area.find("div.feeditem[feed='" + feed + "']");;
     var _c = _b.next();
@@ -380,7 +389,7 @@ function article_thread(feed)
     _b.addClass('feeditemthreaded');
 }
 
-function article_unthread(feed)
+function article_unthreadedead(feed)
 {
     var _b = mytpl.feed_list_area.find("div.feeditem[feed='" + feed + "']");;
     var _c = _b.next();
@@ -398,7 +407,7 @@ function article_next()
     var _ca = null;
     var _na = null;
 
-    if(articles.current==null)
+    if(article.current==null)
     {
         _ca = mytpl.feed_list_area.find("div.article");
         _k = null;
@@ -411,7 +420,7 @@ function article_next()
     }
     else
     {
-        _ca = articles.current;
+        _ca = article.current;
         _na = _ca.nextAll("div.article");
 
            _j = _ca.attr('article');
@@ -423,7 +432,7 @@ function article_next()
         }
         else // try to load older articles
         {
-            _c = (feeds.display=='thr') ? _ca.parents() : mytpl.feed_list_area;
+            _c = (feed.display=='threaded') ? _ca.parents() : mytpl.feed_list_area;
             if((_m = _c.find("div.articlemore")))
             {
                 _m.click();
@@ -440,7 +449,7 @@ function article_previous()
     var _ca = null;
     var _pa = null;
 
-    if((_ca = articles.current))
+    if((_ca = article.current))
     {
         _pa = _ca.prevAll("div.article");
 
@@ -458,7 +467,7 @@ function article_scroll_top()
 {
     var _b = null;
 
-    if((_b = articles.current))
+    if((_b = article.current))
     {
         var _fa_p = mytpl.feed_list_area.position().top;
         var _fa_s = mytpl.feed_list_area.scrollTop();
@@ -467,30 +476,30 @@ function article_scroll_top()
     }
 }
 
-function article_content_show(article)
+function article_content_show(a)
 {
-    if(articles.content[article])
+    if(article.content[a])
     {
-        var a = articles.content[article];
-        var b = mytpl.feed_list_area.find("div.article[article='" + article + "']");
-        var c = b.next(); // div.articlecontent
-        var d = "";
+        var _a = article.content[a];
+        var _b = mytpl.feed_list_area.find("div.article[article='" + a + "']");
+        var _c = _b.next(); // div.articlecontent
+        var _d = "";
 
-        if(a.content)
+        if(_a.content)
         {
-            if(a.title)  { d += "<h1>" + a.title   + "</h1>";  }
-            if(a.author) { d += "<h2>" + a.author  + "</h2>";  }
-                           d += "<p>"  + a.content + "</p>\n";
+            if(_a.title)  { _d += "<h1>" + _a.title   + "</h1>";  }
+            if(_a.author) { _d += "<h2>" + _a.author  + "</h2>";  }
+                            _d += "<p>"  + _a.content + "</p>\n";
         }
         else
         {
-            d += "<?php echo $this->translation()->no_content ?>\n";
+            _d += "<?php echo $this->translation()->no_content ?>\n";
         }
 
-        c.html(d);
-        b.addClass('articlecontentshow'); 
-        c.show();
-        articles.current = b;
+        _c.html(_d);
+        _b.addClass('articlecontentshow'); 
+        _c.show();
+        article.current = _b;
     }
 }
 
@@ -506,9 +515,9 @@ function article_content_show_all()
     });
 }
 
-function article_content_hide(article)
+function article_content_hide(a)
 {
-    var b = mytpl.feed_list_area.find("div.article[article='" + article + "']"); 
+    var b = mytpl.feed_list_area.find("div.article[article='" + a + "']"); 
     var c = b.next(); // div.articlecontent
     c.html("");
     c.hide();
@@ -528,56 +537,33 @@ function set_queue_publication()
 {
     if(queue.publication==null)
     {
-        if((queue.publication = current_blog_info['queue.publication'])==undefined)
-        {
-            queue.publication = 'manual';
-        }
+        queue.publication = (blog.info['publication_auto']==1);
     }
 
-    if(queue.publication=='manual')
-    {
-        mytpl.queue_publication_manual_lnk.hide();
-        mytpl.queue_publication_manual_label.show();
-        mytpl.queue_publication_automatic_label.hide();
-        mytpl.queue_publication_automatic_lnk.show();
-    }
-    if(queue.publication=='automatic')
+    if(queue.publication)
     {
         mytpl.queue_publication_manual_label.hide();
         mytpl.queue_publication_manual_lnk.show();
         mytpl.queue_publication_automatic_lnk.hide();
         mytpl.queue_publication_automatic_label.show();
     }
+    else
+    {
+        mytpl.queue_publication_manual_lnk.hide();
+        mytpl.queue_publication_manual_label.show();
+        mytpl.queue_publication_automatic_label.hide();
+        mytpl.queue_publication_automatic_lnk.show();
+    }
 }
 
 function set_queue_interval()
 {
+    // TODO
 }
 
 function set_queue_feeding()
 {
-    if(queue.feeding==null)
-    {
-        if((queue.feeding = current_blog_info['queue_feeding'])==undefined)
-        {
-            queue.feeding= 'manual';
-        }
-    }
-
-    if(queue.feeding=='manual')
-    {
-        mytpl.queue_feeding_manual_lnk.hide();
-        mytpl.queue_feeding_manual_label.show();
-        mytpl.queue_feeding_automatic_label.hide();
-        mytpl.queue_feeding_automatic_lnk.show();
-    }
-    if(queue.feeding=='automatic')
-    {
-        mytpl.queue_feeding_manual_label.hide();
-        mytpl.queue_feeding_manual_lnk.show();
-        mytpl.queue_feeding_automatic_lnk.hide();
-        mytpl.queue_feeding_automatic_label.show();
-    }
+    // TODO
 }
 
 
@@ -591,14 +577,14 @@ $(document).ready(function()
         feed_dsp                          : $("#feeddisplay"),
         feed_dsp_all                      : $("#feeddspall"),
         feed_dsp_all_lnk                  : $("#feeddspalllnk"),
-        feed_dsp_thr                      : $("#feeddspthr"),
-        feed_dsp_thr_lnk                  : $("#feeddspthrlnk"),
+        feed_dsp_threaded                 : $("#feeddspthreaded"),
+        feed_dsp_threaded_lnk             : $("#feeddspthreadedlnk"),
         feed_item_blank                   : $("#feeditemblank"),
         article_dsp                       : $("#articledisplay"),
-        article_dsp_lst                   : $("#articledsplst"),
-        article_dsp_lst_lnk               : $("#articledsplstlnk"),
-        article_dsp_exp                   : $("#articledspexp"),
-        article_dsp_exp_lnk               : $("#articledspexplnk"),
+        article_dsp_list                  : $("#articledsplist"),
+        article_dsp_list_lnk              : $("#articledsplistlnk"),
+        article_dsp_expanded              : $("#articledspexpanded"),
+        article_dsp_expanded_lnk          : $("#articledspexpandedlnk"),
         article_blank                     : $("#articleblank"),
         article_more_blank                : $("#articlemoreblank"),
         feed_navigation                   : $("#feednavigation"),
@@ -609,7 +595,7 @@ $(document).ready(function()
         feed_list_area                    : $("#feedlistarea"),
         queue_area                        : $("#queuearea"),
         queue_area_head                   : $("#queueareahead"),
-        queue_area_hctrlbar               : $("#queueareahctrlbar"),
+        queue_area_heightbar              : $("#queueareaheightbar"),
         queue_publication                 : $("#queuepublication"),
         queue_publication_manual_lnk      : $("#queuepublicationmanuallnk"),
         queue_publication_manual_label    : $("#queuepublicationmanuallabel"),
@@ -622,10 +608,10 @@ $(document).ready(function()
         queue_feeding_manual_label        : $("#queuefeedingmanuallabel"),
         queue_feeding_automatic_lnk       : $("#queuefeedingautomaticlnk"),
         queue_feeding_automatic_label     : $("#queuefeedingautomaticlabel"),
-        queue_hctrl_lnks                  : $("#queuehctrllnks"),
-        queue_hctrl_min                   : $("#queuehctrlmin"),
-        queue_hctrl_exp                   : $("#queuehctrlexp"),
-        queue_hctrl_max                   : $("#queuehctrlmax"),
+        queue_height_lnks                 : $("#queueheightlnks"),
+        queue_height_min                  : $("#queueheightmin"),
+        queue_height_expanded             : $("#queueheightexpanded"),
+        queue_height_max                  : $("#queueheightmax"),
         queue_list_area                   : $("#queuelistarea")
     };
 
@@ -634,17 +620,17 @@ $(document).ready(function()
         var _th = mytpl.top_bar.outerHeight() + mytpl.feed_area_head.outerHeight();
             _bh = 0;
 
-        if(queue.hctrl_display == 0)
+        if(queue.height == 0)
         {
             _bh = mytpl.queue_area_head.outerHeight() + magic_q_min;
             queue_minimize();
         }
-        if(queue.hctrl_display == 1)
+        if(queue.height == 1)
         {
             _bh = $(window).height() / 2;
-            queue_expand(_bh);
+            queue_expandedand(_bh);
         }
-        if(queue.hctrl_display == 2)
+        if(queue.height == 2)
         {
             _bh = $(window).height();
             queue_maximize();
@@ -661,6 +647,10 @@ $(document).ready(function()
     {
         set_feed_display();
         set_article_display();
+    }
+
+    function init_queue()
+    {
         set_queue_publication();
         mytpl.queue_publication.show();
         // set_queue_feeding();
@@ -676,6 +666,11 @@ $(document).ready(function()
 
     init();
 
+    $(document).bind('blog_loaded' , function(e)
+    {
+        init_queue();
+    });
+
     /* triggers */
 
     $(document).bind('blog_changed' , function(e)
@@ -688,42 +683,42 @@ $(document).ready(function()
         window_update();
     });
 
-    mytpl.queue_hctrl_lnks.find("a").click(function()
+    mytpl.queue_height_lnks.find("a").click(function()
     {
-        queue.hctrl_display = (queue.hctrl_display < 2) ? queue.hctrl_display + 1 : 0;
+        queue.height = (queue.height < 2) ? queue.height + 1 : 0;
         window_update();
     });
 
     mytpl.feed_dsp_all_lnk.click(function()
     {
-        feeds.display = 'all';
-        save_preference('feed_display', feeds.display);
+        feed.display = 'all';
+        save_setting('feed', 'display', feed.display);
         return false;
     });
 
-    mytpl.feed_dsp_thr_lnk.click(function()
+    mytpl.feed_dsp_threaded_lnk.click(function()
     {
-        feeds.display = 'thr';
-        save_preference('feed_display', feeds.display);
+        feed.display = 'threaded';
+        save_setting('feed', 'display', feed.display);
         return false;
     });
 
-    $(document).bind('feed_display_saved' , function(e)
+    $(document).bind('setting_feed_display_saved' , function(e)
     {
         set_feed_display();
     });
 
-    mytpl.article_dsp_lst_lnk.click(function()
+    mytpl.article_dsp_list_lnk.click(function()
     {
-        articles.display = 'lst';
-        save_preference('article_display', articles.display);
+        article.display = 'list';
+        save_setting('article', 'display', article.display);
         return false;
     });
 
-    mytpl.article_dsp_exp_lnk.click(function()
+    mytpl.article_dsp_expanded_lnk.click(function()
     {
-        articles.display = 'exp';
-        save_preference('article_display', articles.display);
+        article.display = 'expanded';
+        save_setting('article', 'display', article.display);
         return false;
     });
 
@@ -745,7 +740,7 @@ $(document).ready(function()
         return false;
     });
 
-    $(document).bind('article_display_saved' , function(e)
+    $(document).bind('setting_article_display_saved' , function(e)
     {
         set_article_display();
     });
@@ -757,9 +752,13 @@ $(document).ready(function()
 
     mytpl.queue_publication.find('a').click(function()
     {
-        queue.publication = ($(this).attr('id')==mytpl.queue_publication_automatic_lnk.attr('id'))
-            ? 'automatic' : 'manual' ;
-        set_queue_publication();
+        queue.publication = ($(this).attr('id')==mytpl.queue_publication_automatic_lnk.attr('id'));
+        blog_update('publication_auto', (queue.publication ? 1 : 0));
         return false;
+    });
+
+    $(document).bind('blog_publication_auto_updated' , function(e)
+    {
+        set_queue_publication();
     });
 });

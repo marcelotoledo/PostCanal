@@ -74,7 +74,7 @@ class C_Feed extends B_Controller
         $id = $this->session()->user_profile_id;
         $blogs = UserBlog::findByUser($id, $enabled=true);
         $this->view()->blogs = $blogs;
-        $this->view()->preference = UserProfile::getPreference($id);
+        $this->view()->settings = UserDashboard::getByUser($id);
     }
 
     /**

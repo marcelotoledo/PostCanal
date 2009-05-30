@@ -37,7 +37,6 @@ class UserProfile extends B_Model
 		'recovery_message_time' => array ('type' => 'date','size' => 0,'required' => false),
 		'recovery_allowed' => array ('type' => 'boolean','size' => 0,'required' => false),
 		'update_email_message_time' => array ('type' => 'date','size' => 0,'required' => false),
-		'preference_serialized' => array ('type' => 'string','size' => 0,'required' => false),
 		'created_at' => array ('type' => 'date','size' => 0,'required' => false),
 		'updated_at' => array ('type' => 'date','size' => 0,'required' => false),
 		'enabled' => array ('type' => 'boolean','size' => 0,'required' => false));
@@ -243,62 +242,5 @@ class UserProfile extends B_Model
             " WHERE login_email_local = ? AND login_email_domain = ? " .
             " AND hash = ? AND enabled = ?", 
             array($local, $domain, $hash, true), PDO::FETCH_CLASS, get_class()));
-    }
-
-    protected static $preference_default = array
-    (
-        'current_blog'    => ""    ,
-        'feed_display'    => "all" ,
-        'article_display' => "lst" 
-    );
-
-    /**
-     * Get preference array
-     *
-     * @param   integer     $id     User Profile ID
-     *
-     * @return  array
-     */
-    public static function getPreference($id)
-    {
-        $preference = array();
-
-        if(is_object(($profile = self::getByPrimaryKey($id))))
-        {
-            $varr = ((array) unserialize($profile->preference_serialized));
-
-            foreach(self::$preference_default as $k => $v)
-            {
-                $preference[$k] = array_key_exists($k, $varr) ? $varr[$k] : $v;
-            }
-        }
-
-        return ((object) $preference);
-    }
-
-    /**
-     * Set preference array
-     *
-     * @param   integer     $id     User Profile ID
-     * @param   array       $narr   Preference array
-     */
-    public static function setPreference($id, $narr)
-    {
-        $preference = array();
-
-        if(is_object(($profile = self::getByPrimaryKey($id))))
-        {
-            $varr = ((array) unserialize($profile->preference_serialized));
-
-            foreach(self::$preference_default as $k => $v)
-            {
-                $preference[$k] = array_key_exists($k, $narr) ? 
-                    $narr[$k] : 
-                    (array_key_exists($k, $varr) ? $varr[$k] : $v);
-            }
-
-            $profile->preference_serialized = serialize($preference);
-            $profile->save();
-        }
     }
 }

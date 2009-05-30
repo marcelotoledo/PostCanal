@@ -97,7 +97,7 @@ div.article
     vertical-align: middle;
     background-color: white;
 }
-div.article:hover
+div.articlehover
 {
     background-color: khaki;
 }
@@ -105,7 +105,7 @@ div.articleall
 {
     line-height: 2.4em;
 }
-div.articlethr
+div.articlethreaded
 {
     line-height: 1.5em;
 }
@@ -134,10 +134,6 @@ div.articlelabel
     background-image: url("<?php B_Helper::img_src('transparent.png') ?>"); /* fix div hover IE bug */
 }
 /*"**/
-div.articlelabel:hover
-{
-    color: navy;
-}
 div.articlefeed
 {
     font-weight: xx-small;
@@ -154,13 +150,17 @@ div.articleinfo
     float: left;
     text-align: right;
     margin-right: 15px;
+    background-image: url("<?php B_Helper::img_src('transparent.png') ?>"); /* fix div hover IE bug */
 }
+/*"**/
 div.articlebuttons
 {
     float: right;
     text-align: right;
     margin-right: 15px;
+    background-image: url("<?php B_Helper::img_src('transparent.png') ?>"); /* fix div hover IE bug */
 }
+/*"**/
 div.articlebuttons a
 {
     padding-left: 10px;
@@ -171,7 +171,9 @@ div.articlecontent
     padding: 15px;
     border: 2px solid dimgray;
     border-top: 0;
+    background-image: url("<?php B_Helper::img_src('transparent.png') ?>"); /* fix div hover IE bug */
 }
+/*"**/
 div.articlecontent h1
 {
     font-size: large;
@@ -198,14 +200,14 @@ div.articlecontentshow
     left: 0;
     width: 100%;
 }
-#queueareahctrlbar
+#queueareaheightbar
 {
     background-color: lightgray;
     line-height: 5px;
     vertical-align: top;
 }
 /*
-#queueareahctrlbar:hover
+#queueareaheightbar:hover
 {
     background-color: cyan;
 }
@@ -217,7 +219,7 @@ div.articlecontentshow
     font-weight: bold;
     text-transform: uppercase;
 }
-#queuehctrllnks
+#queueheightlnks
 {
     float: right;
     padding-right: 15px;

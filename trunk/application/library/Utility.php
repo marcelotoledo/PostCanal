@@ -56,4 +56,22 @@ class A_Utility
         for($i=0;$i<$length;$i++) $s.=$d[mt_rand(0,50)];
         return $s;
     }
+
+    /**
+     * Array to Object
+     *
+     * @param   array   $in
+     * @return  object
+     */
+    public static function array2Object($in)
+    {
+        $r = new stdClass();
+
+        foreach($in as $k => $v)
+        {
+            $r->{$k} = is_array($v) ? self::array2Object($v) : $v;
+        }
+
+        return $r;
+    }
 }

@@ -1,7 +1,11 @@
 var active_request = false;
 var mylyt = null;
-var current_blog = null;
-var current_blog_info = Array();
+
+var blog =
+{
+    current : null,
+    info    : Array()
+};
 
 
 function set_active_request(b)
@@ -25,14 +29,16 @@ function spinner_init()
     });
 }
 
-function save_preference(k, v)
+function save_setting(c, n, v)
 {
     $.ajax
     ({
         type: "POST",
-        url: "<?php B_Helper::url('profile', 'preference') ?>",
+        url: "<?php B_Helper::url('dashboard', 'setting') ?>",
         dataType: "xml",
-        data: { k: k, v: v },
+        data: { context : c , 
+                name    : n ,
+                value   : v },
         beforeSend: function()
         {
             set_active_request(true);
@@ -43,21 +49,20 @@ function save_preference(k, v)
         },
         success: function (xml)
         {
-            var _d = $(xml).find('data');
-            $(document).trigger(_d.find('k').text() + '_saved');
+            $(document).trigger('setting_' + c + '_' + n + '_saved');
         },
         error: function () { server_error(); }
     });
 }
 
-function current_blog_load()
+function blog_load()
 {
     $.ajax
     ({
-        type: "POST",
+        type: "GET",
         url: "<?php B_Helper::url('blog', 'load') ?>",
         dataType: "xml",
-        data: { blog: current_blog },
+        data: { blog: blog.current },
         beforeSend: function()
         {
             set_active_request(true);
@@ -70,9 +75,37 @@ function current_blog_load()
         {
             $(xml).find('data').find('result').children().each(function()
             {
-                current_blog_info[($(this).context.nodeName)] = $(this).text();
+                blog.info[($(this).context.nodeName)] = $(this).text();
             });
-            $(document).trigger('current_blog_loaded');
+            $(document).trigger('blog_loaded');
+        },
+        error: function () { server_error(); }
+    });
+}
+
+function blog_update(k, v)
+{
+    var _par = new Object;
+        _par.blog = blog.current;
+        _par[k] = v;
+
+    $.ajax
+    ({
+        type: "POST",
+        url: "<?php B_Helper::url('blog', 'update') ?>",
+        dataType: "xml",
+        data: _par,
+        beforeSend: function()
+        {
+            set_active_request(true);
+        },
+        complete: function()
+        {
+            set_active_request(false);
+        },
+        success: function (xml)
+        {
+            $(document).trigger('blog_' + k + '_updated');
         },
         error: function () { server_error(); }
     });
@@ -125,7 +158,8 @@ $(document).ready(function()
     spinner_init();
     disable_submit();
     container_update();
-    current_blog = selected_blog();
+    blog.current = selected_blog();
+    blog_load();
 
     $(window).resize(function()
     {
@@ -136,21 +170,17 @@ $(document).ready(function()
     {
         mylyt.blog_list.change(function()
         {
-            if((current_blog = selected_blog()))
+            if((blog.current = selected_blog()))
             {
                 mylyt.blog_list.blur();
-                save_preference('current_blog', current_blog);
+                save_setting('blog', 'current', blog.current);
+                $(document).trigger('blog_changed');
             }
         });
     }
 
-    $(document).bind('current_blog_saved', function(e)
+    $(document).bind('setting_blog_current_saved', function(e)
     {
-        current_blog_load();
-    });
-
-    $(document).bind('current_blog_loaded', function(e)
-    {
-        $(document).trigger('blog_changed');
+        blog_load();
     });
 });

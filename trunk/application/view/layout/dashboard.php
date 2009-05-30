@@ -30,7 +30,7 @@
     <b><?php echo $this->translation()->blog ?>: </b>
     <select id="bloglstsel">
     <?php foreach($this->blogs as $c) : ?>
-    <option value="<?php echo $c->hash ?>" <?php if($this->preference->current_blog == $c->hash) echo "selected"; ?>><?php echo $c->name ?></option>
+    <option value="<?php echo $c->hash ?>" <?php if($this->settings->blog->current == $c->hash) echo "selected"; ?>><?php echo $c->name ?></option>
     <?php endforeach ?>
     </select>
 <?php endif ?>

@@ -8,9 +8,9 @@
     <b><?php echo $this->translation()->show_feeds ?>: </b>
     <span id="feeddspall" style="display:none">
         <?php echo $this->translation()->all ?> | 
-        <a href="#" id="feeddspthrlnk"><?php echo $this->translation()->threaded ?></a>
+        <a href="#" id="feeddspthreadedlnk"><?php echo $this->translation()->threaded ?></a>
     </span>
-    <span id="feeddspthr" style="display:none">
+    <span id="feeddspthreaded" style="display:none">
         <a href="#" id="feeddspalllnk"><?php echo $this->translation()->all ?></a> | 
         <?php echo $this->translation()->threaded ?>
     </span>
@@ -18,12 +18,12 @@
 
     <div id="articledisplay">
     <b><?php echo $this->translation()->show_articles ?>: </b>
-    <span id="articledsplst" style="display:none">
+    <span id="articledsplist" style="display:none">
         <?php echo $this->translation()->list ?> | 
-        <a href="#" id="articledspexplnk"><?php echo $this->translation()->expanded ?></a>
+        <a href="#" id="articledspexpandedlnk"><?php echo $this->translation()->expanded ?></a>
     </span>
-    <span id="articledspexp" style="display:none">
-        <a href="#" id="articledsplstlnk"><?php echo $this->translation()->list ?></a> | 
+    <span id="articledspexpanded" style="display:none">
+        <a href="#" id="articledsplistlnk"><?php echo $this->translation()->list ?></a> | 
         <?php echo $this->translation()->expanded ?>
     </span>
     </div>
@@ -68,7 +68,7 @@
 </div>
 
 <div id="queuearea">
-<div id="queueareahctrlbar">&nbsp;</div>
+<div id="queueareaheightbar">&nbsp;</div>
 <div id="queueareahead" class="containerhead">
     <div id="queueareatitle"><?php echo $this->translation()->queue ?></div>
 
@@ -107,16 +107,16 @@
         <span id="queuefeedingautomaticlabel" style="display:none"><?php echo $this->translation()->automatic ?></span>
     </div>
 
-    <div id="queuehctrllnks">
-        <a href="#" id="queuehctrlmin" class="queuehctrllnk" style="display:none"><?php echo $this->translation()->minimize ?></a>
-        <a href="#" id="queuehctrlexp" class="queuehctrllnk"><?php echo $this->translation()->expand ?></a>
-        <a href="#" id="queuehctrlmax" class="queuehctrllnk" style="display:none"><?php echo $this->translation()->maximize ?></a>
+    <div id="queueheightlnks">
+        <a href="#" id="queueheightmin" class="queueheightlnk" style="display:none"><?php echo $this->translation()->minimize ?></a>
+        <a href="#" id="queueheightexp" class="queueheightlnk"><?php echo $this->translation()->expand ?></a>
+        <a href="#" id="queueheightmax" class="queueheightlnk" style="display:none"><?php echo $this->translation()->maximize ?></a>
     </div>
 
     <div style="clear:both"></div>
 </div>
 <div id="queuelistarea" style="display:none">
-queue list area
+&nbsp;
 </div>
 </div>
 

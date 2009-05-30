@@ -5,6 +5,7 @@ START TRANSACTION;
 DROP TABLE IF EXISTS model_user_blog_entry CASCADE;
 DROP TABLE IF EXISTS model_user_blog_feed CASCADE;
 DROP TABLE IF EXISTS model_user_blog CASCADE;
+DROP TABLE IF EXISTS model_user_dashboard_setting CASCADE;
 DROP TABLE IF EXISTS model_user_profile CASCADE;
 DROP TABLE IF EXISTS model_aggregator_feed_article CASCADE;
 DROP TABLE IF EXISTS model_aggregator_feed_discover CASCADE;
@@ -160,7 +161,6 @@ CREATE TABLE model_user_profile
     recovery_message_time TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
     recovery_allowed TINYINT(1) NOT NULL DEFAULT 0,
     update_email_message_time TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
-    preference_serialized TEXT NOT NULL DEFAULT '',
     -- -------------------------------------------------------------------------
     created_at TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
     updated_at TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
@@ -169,6 +169,20 @@ CREATE TABLE model_user_profile
 ) ENGINE=InnoDB DEFAULT CHARSET='utf8' COLLATE='utf8_unicode_ci';
 
 CREATE INDEX m_upf_idx ON model_user_profile (hash(8), login_email_local(8), login_email_domain(4), login_password_md5(8), enabled);
+
+CREATE TABLE model_user_dashboard_setting
+(
+    user_dashboard_setting_id INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
+    user_profile_id INTEGER UNSIGNED NOT NULL,
+    context VARCHAR(100) NOT NULL DEFAULT '',
+    name VARCHAR(100) NOT NULL,
+    value VARCHAR(200) NOT NULL DEFAULT '',
+    PRIMARY KEY (user_dashboard_setting_id),
+    CONSTRAINT m_uds_m_upf_fk FOREIGN KEY (user_profile_id) 
+        REFERENCES model_user_profile (user_profile_id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET='utf8' COLLATE='utf8_bin';
+
+CREATE INDEX m_uds_idx ON model_user_dashboard_setting (context(4), name(8));
 
 CREATE TABLE model_user_blog
 (
@@ -182,10 +196,10 @@ CREATE TABLE model_user_blog
     blog_manager_url TEXT NOT NULL,
     blog_username CHAR(255),
     blog_password CHAR(255),
-    queue_feeding ENUM('manual','automatic') NOT NULL DEFAULT 'manual',
-    queue_feeding_keyword TEXT NOT NULL DEFAULT '',
-    queue_publication ENUM('manual','automatic') NOT NULL DEFAULT 'manual',
-    queue_publication_interval INTEGER UNSIGNED NOT NULL DEFAULT 0,
+    feeding_auto TINYINT(1) NOT NULL DEFAULT 0,
+    feeding_keywords TEXT NOT NULL DEFAULT '',
+    publication_auto TINYINT(1) NOT NULL DEFAULT 0,
+    publication_interval INTEGER UNSIGNED NOT NULL DEFAULT 0,
     created_at TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
     updated_at TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
     enabled TINYINT(1) NOT NULL DEFAULT 1,

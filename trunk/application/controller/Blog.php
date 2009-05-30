@@ -172,12 +172,12 @@ class C_Blog extends B_Controller
         $this->response()->setXML(true);
         $hash = $this->request()->blog;
         $user = $this->session()->user_profile_id;
-        $result = array('name'                       => "",
-                        'blog_url'                   => "",
-                        'queue_feeding'              => "",
-                        'queue_feeding_keyword'      => "",
-                        'queue_publication'          => "",
-                        'queue_publication_interval' => 3600);
+        $result = array('name'                 =>   "" ,
+                        'blog_url'             =>   "" ,
+                        'feeding_auto'         =>    0 ,
+                        'feeding_keywords'     =>   "" ,
+                        'publication_auto'     =>    0 ,
+                        'publication_interval' => 3600);
 
         if(is_object(($blog = UserBlog::getByUserAndHash($user, $hash))))
         {

@@ -112,7 +112,7 @@ function feed_add(url)
         type: "POST",
         url: "<?php B_Helper::url('feed', 'add') ?>",
         dataType: "xml",
-        data: { url: url, blog: current_blog },
+        data: { url: url, blog: blog.current },
         beforeSend: function()
         {
             set_active_request(true);
@@ -195,7 +195,7 @@ function feed_import()
             dataType: "xml",
             data: { url   : stack_item.url, 
                     title : stack_item.title, 
-                    blog  : current_blog },
+                    blog  : blog.current },
             complete: function()
             {
                 $(document).trigger('feed_import');
@@ -306,14 +306,14 @@ function feed_populate(feeds)
 
 function feed_list()
 {
-    if(current_blog==undefined) return null;
+    if(blog.current==undefined) return null;
 
     $.ajax
     ({
         type: "GET",
         url: "<?php B_Helper::url('feed', 'list') ?>",
         dataType: "xml",
-        data: { blog: current_blog },
+        data: { blog: blog.current },
         beforeSend: function()
         {
             set_active_request(true);
@@ -339,7 +339,7 @@ function feed_position(feed, position)
         type: "POST",
         url: "<?php B_Helper::url('feed', 'position') ?>",
         dataType: "xml",
-        data: { blog     : current_blog, 
+        data: { blog     : blog.current , 
                 feed     : feed, 
                 position : position },
         beforeSend: function()
@@ -434,7 +434,7 @@ function feed_update(feed, k, v)
         url: "<?php B_Helper::url('feed', 'update') ?>",
         dataType: "xml",
         data: { feed             : feed,
-                blog             : current_blog,
+                blog             : blog.current,
                 feed_title       : ((k=='feed_title') ? v : null),
                 feed_description : ((k=='feed_description') ? v : null) },
         beforeSend: function()
@@ -470,7 +470,7 @@ function feed_delete(feed)
         type: "POST",
         url: "<?php B_Helper::url('feed', 'delete') ?>",
         dataType: "xml",
-        data: { blog: current_blog, 
+        data: { blog: blog.current, 
                 feed: feed },
         beforeSend: function()
         {
@@ -516,7 +516,7 @@ function feed_toggle(feed)
         type: "POST",
         url: "<?php B_Helper::url('feed', 'toggle') ?>",
         dataType: "xml",
-        data: { blog   : current_blog, 
+        data: { blog   : blog.current, 
                 feed   : feed, 
                 enable : _e },
         beforeSend: function()

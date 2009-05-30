@@ -33,10 +33,10 @@ class UserBlog extends B_Model
 		'blog_manager_url' => array ('type' => 'string','size' => 0,'required' => true),
 		'blog_username' => array ('type' => 'string','size' => 255,'required' => false),
 		'blog_password' => array ('type' => 'string','size' => 255,'required' => false),
-		'queue_feeding' => array ('type' => 'string','size' => 0,'required' => false),
-		'queue_feeding_keyword' => array ('type' => 'string','size' => 0,'required' => false),
-		'queue_publication' => array ('type' => 'string','size' => 0,'required' => false),
-		'queue_publication_interval' => array ('type' => 'integer','size' => 0,'required' => false),
+		'feeding_auto' => array ('type' => 'integer','size' => 0,'required' => false),
+		'feeding_keywords' => array ('type' => 'string','size' => 0,'required' => false),
+		'publication_auto' => array ('type' => 'integer','size' => 0,'required' => false),
+		'publication_interval' => array ('type' => 'integer','size' => 0,'required' => false),
 		'created_at' => array ('type' => 'date','size' => 0,'required' => false),
 		'updated_at' => array ('type' => 'date','size' => 0,'required' => false),
 		'enabled' => array ('type' => 'boolean','size' => 0,'required' => false));
@@ -128,9 +128,12 @@ class UserBlog extends B_Model
     public static $allow_write = array 
     (
         'name',
-        'blog_username','blog_password',
-        'queue_feeding','queue_feeding_keyword',
-        'queue_publication','queue_publication_interval'
+        'blog_username',
+        'blog_password',
+        'feeding_auto',
+        'feeding_keywords',
+        'publication_auto',
+        'publication_interval'
     );
 
     /**
