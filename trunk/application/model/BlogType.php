@@ -151,19 +151,21 @@ class BlogType extends B_Model
             B_Log::write($_m, E_WARNING, $_d);
             $result = array();
         }
-
-        $result['type_accepted'] = false;
-        $result['maintenance'] = false;
-
-        if(strlen($result['type']) > 0 && strlen($result['version']) > 0)
+        else
         {
-            if(is_object(($blog_type = self::getByName($result['type'], 
-                                                       $result['version']))))
+            $result['type_accepted'] = false;
+            $result['maintenance'] = false;
+
+            if(strlen($result['type']) > 0 && strlen($result['version']) > 0)
             {
-                $result['type_label']    = $blog_type->type_label;
-                $result['version_label'] = $blog_type->version_label;
-                $result['type_accepted'] = true;
-                $result['maintenance']   = $blog_type->maintenance;
+                if(is_object(($blog_type = self::getByName($result['type'], 
+                                                           $result['version']))))
+                {
+                    $result['type_label']    = $blog_type->type_label;
+                    $result['version_label'] = $blog_type->version_label;
+                    $result['type_accepted'] = true;
+                    $result['maintenance']   = $blog_type->maintenance;
+                }
             }
         }
 
