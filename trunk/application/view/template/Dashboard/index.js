@@ -753,4 +753,9 @@ $(document).ready(function()
     {
         set_queue_publication();
     });
+
+    $(document).bind('article_populated' , function(e)
+    {
+        window_update();
+    });
 });
