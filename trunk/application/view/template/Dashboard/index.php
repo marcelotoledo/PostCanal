@@ -109,7 +109,7 @@
 
     <div id="queueheightlnks">
         <a href="#" id="queueheightmin" class="queueheightlnk" style="display:none"><?php echo $this->translation()->minimize ?></a>
-        <a href="#" id="queueheightexp" class="queueheightlnk"><?php echo $this->translation()->expand ?></a>
+        <a href="#" id="queueheightmed" class="queueheightlnk"><?php echo $this->translation()->expand ?></a>
         <a href="#" id="queueheightmax" class="queueheightlnk" style="display:none"><?php echo $this->translation()->maximize ?></a>
     </div>
 

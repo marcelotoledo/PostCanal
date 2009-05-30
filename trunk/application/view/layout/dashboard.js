@@ -159,11 +159,15 @@ $(document).ready(function()
     disable_submit();
     container_update();
     blog.current = selected_blog();
-    blog_load();
 
     $(window).resize(function()
     {
         container_update();
+    });
+
+    $(document).bind('setting_blog_current_saved', function(e)
+    {
+        $(document).trigger('blog_changed');
     });
 
     if(mylyt.blog_list.length>0)
@@ -174,13 +178,7 @@ $(document).ready(function()
             {
                 mylyt.blog_list.blur();
                 save_setting('blog', 'current', blog.current);
-                $(document).trigger('blog_changed');
             }
         });
     }
-
-    $(document).bind('setting_blog_current_saved', function(e)
-    {
-        blog_load();
-    });
 });

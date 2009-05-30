@@ -53,10 +53,10 @@ function queue_minimize()
     feed_area_enable();
     mytpl.feed_list_area.show();
     mytpl.queue_height_lnks.find("a").hide();
-    mytpl.queue_height_expanded.show();
+    mytpl.queue_height_med.show();
 }
 
-function queue_expandedand(h)
+function queue_expanded(h)
 {
     mytpl.queue_area.css('bottom', h - mytpl.queue_area.outerHeight() - magic_q_expanded);
     mytpl.queue_list_area.show();
@@ -336,8 +336,8 @@ function article_populate(a, container, append)
     }
 
     $(document).trigger('article_populated');
-    $(document).trigger('article_next_older_event'); // @see article_next()
-    $(document).unbind('article_next_older_event');
+    $(document).trigger('article_populated_once'); // @see article_next()
+    $(document).unbind('article_populated_once');
 }
 
 function __article_load(container, append, older)
@@ -436,7 +436,7 @@ function article_next()
             if((_m = _c.find("div.articlemore")))
             {
                 _m.click();
-                $(document).bind('article_next_older_event', function(e) { article_next(); });
+                $(document).bind('article_populated_once', function(e) { article_next(); });
             }
         }
     }
@@ -610,7 +610,7 @@ $(document).ready(function()
         queue_feeding_automatic_label     : $("#queuefeedingautomaticlabel"),
         queue_height_lnks                 : $("#queueheightlnks"),
         queue_height_min                  : $("#queueheightmin"),
-        queue_height_expanded             : $("#queueheightexpanded"),
+        queue_height_med                  : $("#queueheightmed"),
         queue_height_max                  : $("#queueheightmax"),
         queue_list_area                   : $("#queuelistarea")
     };
@@ -628,7 +628,7 @@ $(document).ready(function()
         if(queue.height == 1)
         {
             _bh = $(window).height() / 2;
-            queue_expandedand(_bh);
+            queue_expanded(_bh);
         }
         if(queue.height == 2)
         {
@@ -647,10 +647,6 @@ $(document).ready(function()
     {
         set_feed_display();
         set_article_display();
-    }
-
-    function init_queue()
-    {
         set_queue_publication();
         mytpl.queue_publication.show();
         // set_queue_feeding();
@@ -664,19 +660,19 @@ $(document).ready(function()
 
     /*<?php endif ?>**/
 
-    init();
-
-    $(document).bind('blog_loaded' , function(e)
-    {
-        init_queue();
-    });
-
-    /* triggers */
+    blog_load();
 
     $(document).bind('blog_changed' , function(e)
     {
+        blog_load();
+    });
+
+    $(document).bind('blog_loaded' , function(e)
+    {
         init();
     });
+
+    /* triggers */
 
     $(window).resize(function()
     {
@@ -743,11 +739,6 @@ $(document).ready(function()
     $(document).bind('setting_article_display_saved' , function(e)
     {
         set_article_display();
-    });
-
-    $(document).bind('article_populated', function(e) 
-    {
-        window_update();
     });
 
     mytpl.queue_publication.find('a').click(function()
