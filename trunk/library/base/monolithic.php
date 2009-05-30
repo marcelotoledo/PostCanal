@@ -2277,8 +2277,8 @@ class B_Session
         }
 
         return B_Model::execute("DELETE FROM " . self::$table_name . " " .
-                                 "WHERE (session_expires < ? AND session_active = 0) " .
-                                 "OR (session_expires < ? AND session_active = 1)",
+                                 "WHERE (session_expires < ? AND active = 0) " .
+                                 "OR (session_expires < ? AND active = 1)",
                                  array((time() - $max), (time() - $expiration)));
     }
 
