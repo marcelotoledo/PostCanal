@@ -8,7 +8,7 @@ var feed =
 var article = 
 {
     display : "<?php echo $this->settings->article->display ?>",
-    content : Array(),
+    data    : Array(),
     current : null
 };
 
@@ -75,7 +75,7 @@ function queue_maximize()
 
 function set_feed_display()
 {
-    article.content = Array();
+    article.data = Array();
 
     mytpl.feed_dsp_all.hide();
     mytpl.feed_dsp_threaded.hide();
@@ -195,7 +195,7 @@ function feed_list()
 
 function feed_refresh()
 {
-    article.content = Array();
+    article.data = Array();
 
     if(feed.display=='all')
     {
@@ -207,6 +207,57 @@ function feed_refresh()
     }
 
     mytpl.feed_list_area.scrollTop(0);
+}
+
+function article_queue_mark(c)
+{
+    c.attr('disabled', true).blur();
+}
+
+function article_queue_add(c)
+{
+    var _i = c.parent().parent();
+
+    $.ajax
+    ({
+        type: "POST",
+        url: "<?php B_Helper::url('queue', 'add') ?>",
+        dataType: "xml",
+        data: { blog    : blog.current ,
+                feed    : _i.attr('feed') , 
+                article : _i.attr('article') },
+        beforeSend: function()
+        {
+            set_active_request(true);
+        },
+        complete: function()
+        {
+            set_active_request(false);
+        },
+        success: function (xml)
+        {
+            var _d = $(xml).find('data');
+            article_queue_mark(c);
+            // entry_populate(_d.find('result')); // TODO
+        },
+        error: function () { server_error(); }
+    });
+}
+
+function feed_refresh()
+{
+    article.data = Array();
+
+    if(feed.display=='all')
+    {
+        article_list(mytpl.feed_list_area);
+    }
+    if(feed.display=='threaded') /* threaded */
+    {
+        feed_list();
+    }
+
+
 }
 
 function article_populate(a, container, append)
@@ -243,49 +294,49 @@ function article_populate(a, container, append)
     {
         _data =
         {
-            feed    : "",
-            article : $(this).find('article').text(),
-            title   : $(this).find('title').text(),
-            link    : $(this).find('link').text(),
-            date    : $(this).find('date').text(),
-            author  : $(this).find('author').text(),
-            content : $(this).find('content').text()
+            feed            : $(this).find('feed').text(),
+            feed_title      : $(this).find('feed_title').text(),
+            article         : $(this).find('article').text(),
+            article_title   : $(this).find('article_title').text(),
+            article_link    : $(this).find('article_link').text(),
+            article_date    : $(this).find('article_date').text(),
+            article_author  : $(this).find('article_author').text(),
+            article_content : $(this).find('article_content').text()
         };
 
-        if(article.content[_data.article]==undefined) /* avoid duplicated items */
+        if(article.data[_data.article]==undefined) /* avoid duplicated items */
         {
             _item = mytpl.article_blank.clone();
             _inner = _item.find('div.article');
+            _inner.attr('feed', _data.feed);
             _inner.attr('article', _data.article);
             _inner.addClass('article' + feed.display);
 
             if(feed.display == 'all')
             {
-                _data.feed = $(this).find('feed').text();
-                _inner.find('div.articlefeed').show().text(_data.feed);
+                _inner.find('div.articlefeed').show().text(_data.feed_title);
             }
 
             _inner.find('div.articletitle')
-                .text(_data.title.substring(0,80).replace(/\w+$/,'') + 
-                ((_data.title.length>=80) ? '...' : ''));
-            _inner.find('div.articleinfo').text("@" + _data.date);
-            _inner.find('div.articlebuttons').find('a.viewlnk').attr('href', _data.link);
-            _inner.find('div.articlecontent').attr('article', _data.article);
+                .text(_data.article_title.substring(0,80).replace(/\w+$/,'') + 
+                ((_data.article_title.length>=80) ? '...' : ''));
+            _inner.find('div.articleinfo').text("@" + _data.article_date);
+            _inner.find('div.articlebuttons').find('a.viewlnk').attr('href', _data.article_link);
 
             _lsdata += _item.html() + "\n";
         }
 
-        article.content[_data.article] =
+        article.data[_data.article] =
         {
-            title   : _data.title,
-            author  : _data.author,
-            content : _data.content
+            title   : _data.article_title,
+            author  : _data.article_author,
+            content : _data.article_content
         };
     });
 
     container.append(_lsdata);
     container.append(mytpl.article_more_blank.clone()
-        .find('div.articlemore').attr('older', _data.date));
+        .find('div.articlemore').attr('older', _data.article_date));
 
     /* article triggers must be created after populate, otherwise
      * will not work (because populate write elements after document loading */
@@ -297,6 +348,14 @@ function article_populate(a, container, append)
     {
         $(this).attr('bound', 'yes');
 
+        $(this).find('div.articlequeue').find('input').click(function()
+        {
+            if($(this).attr('checked'))
+            {
+                article_queue_add($(this));
+            }
+        });
+
         _label = $(this).find('div.articlelabel');
 
         _label.hover
@@ -305,7 +364,7 @@ function article_populate(a, container, append)
             function() { $(this).parent().removeClass('articlehover'); }
         );
 
-        _label.click(function(e)
+        _label.click(function()
         {
             if(article.display == 'list')
             {
@@ -478,9 +537,9 @@ function article_scroll_top()
 
 function article_content_show(a)
 {
-    if(article.content[a])
+    if(article.data[a])
     {
-        var _a = article.content[a];
+        var _a = article.data[a];
         var _b = mytpl.feed_list_area.find("div.article[article='" + a + "']");
         var _c = _b.next(); // div.articlecontent
         var _d = "";

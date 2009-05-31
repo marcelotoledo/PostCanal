@@ -49,6 +49,9 @@
 
 <div id="articleblank" style="display:none">
 <div class="article" article="" bound="no">
+    <div class="articlequeue">
+        <input type="checkbox"/>
+    </div>
     <div class="articlelabel">
         <div class="articlefeed" style="display:none"></div>
         <div class="articletitle"></div>

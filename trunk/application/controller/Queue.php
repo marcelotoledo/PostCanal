@@ -19,7 +19,7 @@ class C_Queue extends B_Controller
     }
 
     /**
-     * List queue items
+     * List blog entries
      *
      * @return void
      */
@@ -53,22 +53,22 @@ class C_Queue extends B_Controller
     {
         $this->response()->setXML(true);
 
-        $feed_item_md5 = $this->request()->item;
+        $article_md5 = $this->request()->article;
         $blog_hash = $this->request()->blog;
         $feed_hash = $this->request()->feed;
-        $user_profile_id = $this->session()->user_profile_id;
+        $profile_id = $this->session()->user_profile_id;
 
-        $queue_item = BlogEntry::newFromFeedItem($feed_item_md5,
-                                                 $blog_hash,
-                                                 $feed_hash,
-                                                 $user_profile_id);
+        $entry = BlogEntry::newFromFeedArticle($article_md5,
+                                               $blog_hash,
+                                               $feed_hash,
+                                               $profile_id);
 
         $this->view->result = array(
-            'blog' => $blog_hash,
-            'feed' => $feed_hash,
-            'item' => $queue_item->hash,
-            'item_title' => $queue_item->item_title,
-            'item_content' => $queue_item->item_content
+            'blog'          => $blog_hash,
+            'feed'          => $feed_hash,
+            'entry'         => $entry->hash,
+            'entry_title'   => $entry->entry_title,
+            'entry_content' => $entry->entry_content
         );
     }
 

@@ -122,6 +122,11 @@ div.articlemore:hover
     background-color: khaki;
     font-weight: bold;
 }
+div.articlequeue
+{
+    float: left;
+    padding-right: 15px;
+}
 div.articlelabel
 {
     float: left;

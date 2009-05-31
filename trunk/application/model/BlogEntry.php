@@ -29,10 +29,11 @@ class BlogEntry extends B_Model
 		'hash' => array ('type' => 'string','size' => 8,'required' => true),
 		'entry_title' => array ('type' => 'string','size' => 0,'required' => true),
 		'entry_content' => array ('type' => 'string','size' => 0,'required' => true),
-		'status_' => array ('type' => 'string','size' => 0,'required' => false),
+		'publication_status' => array ('type' => 'string','size' => 0,'required' => false),
 		'publication_date' => array ('type' => 'date','size' => 0,'required' => false),
 		'created_at' => array ('type' => 'date','size' => 0,'required' => false),
-		'updated_at' => array ('type' => 'date','size' => 0,'required' => false));
+		'updated_at' => array ('type' => 'date','size' => 0,'required' => false),
+		'deleted' => array ('type' => 'boolean','size' => 0,'required' => false));
 
     /**
      * Sequence name
@@ -116,13 +117,13 @@ class BlogEntry extends B_Model
     // -------------------------------------------------------------------------
 
     /**
-     * status_ column options 
+     * publication_status column options 
      * 
      * The ordering here is relevant
      */
     const STATUS_NEW       = 'new';
-    const STATUS_WAITING   = 'publication_waiting';
-    const STATUS_FAILED    = 'publication_failed';
+    const STATUS_WAITING   = 'waiting';
+    const STATUS_FAILED    = 'failed';
     const STATUS_PUBLISHED = 'published';
 
     /**
@@ -155,7 +156,7 @@ class BlogEntry extends B_Model
                 WHERE user_blog_id = (
                     SELECT user_blog_id FROM model_user_blog
                     WHERE hash = ? AND user_profile_id = ?)
-                AND status_ IN (" . $_in . ") AND deleted = 0
+                AND publication_status IN (" . $_in . ") AND deleted = 0
                 ORDER BY publication_date ASC, updated_at ASC";
                
         return self::select($sql, array($blog_hash, $profile_id));
@@ -184,7 +185,7 @@ class BlogEntry extends B_Model
                 LEFT JOIN 
                     model_blog_type AS c ON (b.blog_type_id = c.blog_type_id) 
                 WHERE
-                    a.status_ = ? AND
+                    a.publication_status = ? AND
                     a.publication_date < UTC_TIMESTAMP() AND
                     a.deleted = 0
                 ORDER BY
@@ -222,7 +223,7 @@ class BlogEntry extends B_Model
      *
      * @return  BlogEntry
      */ 
-    public static function newFromFeedArticle($feed_article_md5, 
+    public static function newFromFeedArticle($article_md5, 
                                               $blog_hash, 
                                               $feed_hash, 
                                               $profile_id)
@@ -236,17 +237,13 @@ class BlogEntry extends B_Model
                 LEFT JOIN model_user_blog AS c ON (b.user_blog_id = c.user_blog_id)
                 WHERE a.article_md5 = ? AND b.hash = ? 
                 AND c.user_profile_id = ? AND c.hash = ?";
-        $args = array($feed_article_md5, $feed_hash, $profile_id, $blog_hash);
+        $args = array($article_md5, $feed_hash, $profile_id, $blog_hash);
 
-        $result = current(self::select($sql, $args, PDO::FETCH_ASSOC));
+        $entry = new self();
+        $entry->populate(current(self::select($sql, $args, PDO::FETCH_ASSOC)));
+        $entry->save();
 
-        /* new entry */
-
-        $blog_entry = new self();
-        $blog_entry->populate($result);
-        $blog_entry->save();
-
-        return $blog_entry;
+        return $entry;
     }
 
     /**
@@ -264,7 +261,7 @@ class BlogEntry extends B_Model
                                                            $blog_hash,
                                                            $entry_hash))))
         {
-            $entry->status_ = self::STATUS_WAITING;
+            $entry->publication_status = self::STATUS_WAITING;
             $entry->publication_date = time(); // asap
             $entry->save();
         }
@@ -290,7 +287,7 @@ class BlogEntry extends B_Model
 
         $_in = "'" . implode("','", $array_entry_hash) . "'";
 
-        $_q = "SELECT hash AS entry, status_ AS status 
+        $_q = "SELECT hash AS entry, publication_status AS status 
                FROM " . self::$table_name . "
                WHERE user_blog_id = (
                     SELECT user_blog_id FROM model_user_blog

@@ -254,8 +254,10 @@ class UserBlogFeed extends B_Model
     {
         if(!$older) $older = time();
 
-        $sql = "SELECT article_md5 AS article, article_title AS title, article_link AS link, 
-                       article_date AS date, article_author AS author, article_content AS content
+        $sql = "SELECT a.feed_title AS feed_title, a.hash AS feed, 
+                       b.article_md5 AS article, b.article_title AS article_title, 
+                       b.article_link AS article_link, b.article_date AS article_date, 
+                       b.article_author AS article_author, b.article_content AS article_content
                 FROM model_user_blog_feed AS a
                 LEFT JOIN model_aggregator_feed_article AS b
                 ON (a.aggregator_feed_id = b.aggregator_feed_id)
@@ -289,10 +291,10 @@ class UserBlogFeed extends B_Model
     {
         if(!$older) $older= time();
 
-        $sql = "SELECT a.feed_title AS feed, b.article_md5 AS article, 
-                       b.article_title AS title, b.article_link AS link, 
-                       b.article_date AS date, b.article_author AS author, 
-                       b.article_content AS content
+        $sql = "SELECT a.feed_title AS feed_title, a.hash AS feed, 
+                       b.article_md5 AS article, b.article_title AS article_title, 
+                       b.article_link AS article_link, b.article_date AS article_date, 
+                       b.article_author AS article_author, b.article_content AS article_content
                 FROM model_user_blog_feed AS a 
                 LEFT JOIN model_aggregator_feed_article AS b 
                 ON (a.aggregator_feed_id = b.aggregator_feed_id) 

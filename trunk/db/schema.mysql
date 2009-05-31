@@ -60,9 +60,9 @@ CREATE INDEX b_trn_idx ON base_translation (template(4), culture(4));
 CREATE TABLE application_mailer_relay
 (
     id INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
-    recipient_email_local CHAR(64) NOT NULL,
-    recipient_email_domain CHAR(255) NOT NULL,
-    identifier_md5 CHAR(32) DEFAULT NULL,
+    recipient_email_local VARCHAR(64) NOT NULL,
+    recipient_email_domain VARCHAR(255) NOT NULL,
+    identifier_md5 VARCHAR(32) DEFAULT NULL,
     created_at TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
     PRIMARY KEY (id)
 ) ENGINE=InnoDB DEFAULT CHARSET='utf8' COLLATE='utf8_unicode_ci';
@@ -74,10 +74,10 @@ CREATE INDEX a_mry_idx ON application_mailer_relay (created_at, recipient_email_
 CREATE TABLE model_blog_type
 (
     blog_type_id SMALLINT UNSIGNED NOT NULL AUTO_INCREMENT,
-    type_name CHAR(50) COLLATE 'utf8_bin' NOT NULL,
-    type_label CHAR(50) NOT NULL,
-    version_name CHAR(50) COLLATE 'utf8_bin' NOT NULL,
-    version_label CHAR(50) NOT NULL,
+    type_name VARCHAR(50) COLLATE 'utf8_bin' NOT NULL,
+    type_label VARCHAR(50) NOT NULL,
+    version_name VARCHAR(50) COLLATE 'utf8_bin' NOT NULL,
+    version_label VARCHAR(50) NOT NULL,
     current_revision SMALLINT UNSIGNED NOT NULL DEFAULT 0,
     maintenance TINYINT(1) NOT NULL DEFAULT 0,
     enabled TINYINT(1) NOT NULL DEFAULT 0,
@@ -129,7 +129,7 @@ CREATE TABLE model_aggregator_feed_article
     article_md5 VARCHAR(32) NOT NULL,
     article_date TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00', 
     article_link TEXT NOT NULL, 
-    article_title TEXT NOT NULL, 
+    article_title TEXT NOT NULL NOT NULL DEFAULT '',
     article_author VARCHAR(200) NOT NULL DEFAULT '', 
     article_content TEXT NOT NULL NOT NULL DEFAULT '', 
     created_at TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00', 
@@ -146,12 +146,12 @@ CREATE INDEX m_afa_idx ON model_aggregator_feed_article (article_md5(8), article
 CREATE TABLE model_user_profile
 (
     user_profile_id INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
-    hash CHAR(8) COLLATE 'utf8_bin' NOT NULL,
-    login_email_local CHAR(64) NOT NULL,
-    login_email_domain CHAR(255) NOT NULL,
-    login_password_md5 CHAR(32) NOT NULL,
+    hash VARCHAR(8) COLLATE 'utf8_bin' NOT NULL,
+    login_email_local VARCHAR(64) NOT NULL,
+    login_email_domain VARCHAR(255) NOT NULL,
+    login_password_md5 VARCHAR(32) NOT NULL,
     -- -------------------------------------------------------------------------
-    name CHAR(100) NOT NULL DEFAULT '',
+    name VARCHAR(100) NOT NULL DEFAULT '',
     -- -------------------------------------------------------------------------
     register_confirmation TINYINT(1) NOT NULL DEFAULT 0,
     update_email_to TEXT NOT NULL DEFAULT '',
@@ -190,12 +190,12 @@ CREATE TABLE model_user_blog
     user_profile_id INTEGER UNSIGNED NOT NULL,
     blog_type_id SMALLINT UNSIGNED NOT NULL,
     blog_type_revision SMALLINT UNSIGNED NOT NULL DEFAULT 0,
-    hash CHAR(8) COLLATE 'utf8_bin' NOT NULL,
-    name CHAR(200) NOT NULL,
+    hash VARCHAR(8) COLLATE 'utf8_bin' NOT NULL,
+    name VARCHAR(200) NOT NULL,
     blog_url TEXT NOT NULL,
     blog_manager_url TEXT NOT NULL,
-    blog_username CHAR(255),
-    blog_password CHAR(255),
+    blog_username VARCHAR(255),
+    blog_password VARCHAR(255),
     feeding_auto TINYINT(1) NOT NULL DEFAULT 0,
     feeding_keywords TEXT NOT NULL DEFAULT '',
     publication_auto TINYINT(1) NOT NULL DEFAULT 0,
@@ -218,7 +218,7 @@ CREATE TABLE model_user_blog_feed
     user_blog_feed_id INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
     user_blog_id INTEGER UNSIGNED NOT NULL,
     aggregator_feed_id INTEGER UNSIGNED NOT NULL,
-    hash CHAR(8) COLLATE 'utf8_bin' NOT NULL,
+    hash VARCHAR(8) COLLATE 'utf8_bin' NOT NULL,
     feed_title VARCHAR(100) NOT NULL,
     feed_description TEXT NOT NULL,
     ordering SMALLINT UNSIGNED NOT NULL DEFAULT 1,
@@ -240,10 +240,10 @@ CREATE TABLE model_user_blog_entry
     user_blog_entry_id INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
     aggregator_feed_article_id INTEGER UNSIGNED NOT NULL,
     user_blog_id INTEGER UNSIGNED NOT NULL,
-    hash CHAR(8) COLLATE 'utf8_bin' NOT NULL,
-    entry_title TEXT NOT NULL, 
-    entry_content TEXT NOT NULL,
-    status_ ENUM('new','publication_waiting','publication_failed','published') NOT NULL DEFAULT 'new',
+    hash VARCHAR(8) COLLATE 'utf8_bin' NOT NULL,
+    entry_title TEXT NOT NULL DEFAULT '', 
+    entry_content TEXT NOT NULL DEFAULT '',
+    publication_status ENUM('new','waiting','failed','published') NOT NULL DEFAULT 'new',
     publication_date TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
     created_at TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
     updated_at TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
@@ -255,6 +255,6 @@ CREATE TABLE model_user_blog_entry
         REFERENCES model_user_blog (user_blog_id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET='utf8';
 
-CREATE INDEX m_bge_idx ON model_user_blog_entry (hash(8), status_, publication_date, updated_at, deleted);
+CREATE INDEX m_bge_idx ON model_user_blog_entry (hash(8), publication_status, publication_date, updated_at, deleted);
 
 COMMIT;
