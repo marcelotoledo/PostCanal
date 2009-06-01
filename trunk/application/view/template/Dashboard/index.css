@@ -232,6 +232,10 @@ div.articlecontentshow
 
 #queuelistarea
 {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
     overflow: auto;
     overflow-x: hidden; /* IE scrollbars fixes */
     overflow-y: auto;

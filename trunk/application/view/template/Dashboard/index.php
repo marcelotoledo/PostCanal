@@ -118,9 +118,9 @@
 
     <div style="clear:both"></div>
 </div>
-<div id="queuelistarea" style="display:none">
 </div>
-</div>
+
+<div id="queuelistarea" style="display:none"></div>
 
 <div id="entryblank" style="display:none">
 <div class="entry" entry="" bound="no">
