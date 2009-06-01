@@ -144,22 +144,42 @@ class BlogEntry extends B_Model
     }
 
     /**
-     * Find by user blog
+     * Find Queue for user and blog
+     *
+     * @param   integer     $profile_id     User Profile ID
+     * @param   string      $blog_hash      User Blog Hash
+     * @param   integer     $published      Show N published entries
      */ 
-    public static function findByUserAndBlogHash($profile_id, $blog_hash)
+    public static function findQueueByUserAndBlog($profile_id, $blog_hash, $published=10)
     {
-        $_in = "'" . implode("','", array(self::STATUS_NEW, 
-                                          self::STATUS_WAITING, 
-                                          self::STATUS_FAILED)) . "'";
-
-        $sql = "SELECT * FROM " . self::$table_name . "
+        $sql = "SELECT hash AS entry, entry_title, entry_content, 
+                       publication_status, publication_date 
+                FROM " . self::$table_name . "
                 WHERE user_blog_id = (
                     SELECT user_blog_id FROM model_user_blog
-                    WHERE hash = ? AND user_profile_id = ?)
-                AND publication_status IN (" . $_in . ") AND deleted = 0
+                    WHERE hash = ? AND user_profile_id = ?) AND deleted=0
+                AND publication_status {status}
                 ORDER BY publication_date ASC, updated_at ASC";
                
-        return self::select($sql, array($blog_hash, $profile_id));
+        $results = array();
+
+        $_in = "'" . implode("','", array(self::STATUS_NEW,
+                                          self::STATUS_WAITING,
+                                          self::STATUS_FAILED)) . "'";
+
+        $results = array_merge($results, 
+            self::select(str_replace('{status}', 'IN (' . $_in . ')', $sql), 
+                         array($blog_hash, $profile_id), 
+                         PDO::FETCH_ASSOC));
+
+        $sql.= " LIMIT " . intval($published);
+
+        $results = array_merge($results, 
+            self::select(str_replace('{status}', '=?', $sql), 
+                         array($blog_hash, $profile_id, self::STATUS_PUBLISHED), 
+                         PDO::FETCH_ASSOC));
+
+        return $results;
     }
 
     /**
@@ -243,7 +263,13 @@ class BlogEntry extends B_Model
         $entry->populate(current(self::select($sql, $args, PDO::FETCH_ASSOC)));
         $entry->save();
 
-        return $entry;
+        return array(
+            'entry'              => $entry->hash,
+            'entry_title'        => $entry->entry_title,
+            'entry_content'      => $entry->entry_content,
+            'publication_status' => $entry->publication_status,
+            'publication_date'   => $entry->publication_date
+        );
     }
 
     /**

@@ -252,3 +252,84 @@ div.articlecontentshow
     float: left;
     padding-left: 30px;
 }
+
+/* entry */
+
+div.entry
+{
+    padding: 2px;
+    padding-left: 15px;
+    border-bottom: 1px solid silver;
+    vertical-align: middle;
+    background-color: white;
+}
+div.entryhover
+{
+    background-color: khaki;
+}
+div.entrypublish
+{
+    float: left;
+    padding-right: 15px;
+}
+div.entrylabel
+{
+    float: left;
+    text-align: left;
+    overflow: hidden;
+    margin-right: 10px;
+    width: 70%;
+    cursor: pointer;
+    cursor: hand;
+    background-image: url("<?php B_Helper::img_src('transparent.png') ?>"); /* fix div hover IE bug */
+}
+/*"**/
+div.entrytitle
+{
+    line-height: 1.5em;
+}
+div.entryinfo
+{
+    float: left;
+    text-align: right;
+    margin-right: 15px;
+    background-image: url("<?php B_Helper::img_src('transparent.png') ?>"); /* fix div hover IE bug */
+}
+/*"**/
+div.entrybuttons
+{
+    float: right;
+    text-align: right;
+    margin-right: 15px;
+    background-image: url("<?php B_Helper::img_src('transparent.png') ?>"); /* fix div hover IE bug */
+}
+/*"**/
+div.entrybuttons a
+{
+    padding-left: 10px;
+}
+div.entrycontent
+{
+    display: none;
+    padding: 15px;
+    border: 2px solid dimgray;
+    border-top: 0;
+    background-image: url("<?php B_Helper::img_src('transparent.png') ?>"); /* fix div hover IE bug */
+}
+/*"**/
+div.entrycontent h1
+{
+    font-size: large;
+}
+div.entrycontent h2
+{
+    font-size: small;
+    color: gray;
+}
+div.entrycontentshow
+{
+    background-color: khaki;
+    border-bottom: 0;
+    border: 2px solid dimgray;
+    border-bottom: 1px solid gainsboro;
+}

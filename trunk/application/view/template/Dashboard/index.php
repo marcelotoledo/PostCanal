@@ -119,7 +119,24 @@
     <div style="clear:both"></div>
 </div>
 <div id="queuelistarea" style="display:none">
-&nbsp;
+</div>
+</div>
+
+<div id="entryblank" style="display:none">
+<div class="entry" entry="" bound="no">
+    <div class="entrypublish">
+        <input type="checkbox"/>
+    </div>
+    <div class="entrylabel">
+        <div class="entrytitle"></div>
+    </div>
+    <div class="entryinfo"></div>
+    <div class="entrybuttons">
+        <a class="editlnk" href="#" target="_blank"><?php echo $this->translation()->edit ?></a>
+    </div>
+    <div style="clear:both"></div>
+</div>
+<div class="entrycontent">
 </div>
 </div>
 

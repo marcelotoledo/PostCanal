@@ -146,7 +146,7 @@ HORAS TRABALHADAS: 8h
 HORAS TRABALHADAS: 6h
 
 ==========
-21/05/2009
+22/05/2009
 ==========
 
 - bugfixes
@@ -196,3 +196,12 @@ HORAS TRABALHADAS: 6h
 - inclusao de botao para adicionar artigo ao queue
 
 HORAS TRABALHADAS: 5h
+
+==========
+31/05/2009
+==========
+
+- listagem de entradas do queue
+- TODO: bugfix c/ comportamento incorreto do controle de altura da area de queue
+
+HORAS TRABALHADAS: 4h

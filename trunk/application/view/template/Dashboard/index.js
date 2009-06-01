@@ -17,7 +17,8 @@ var queue =
     height      : 0    , // 0 minimum | 1 half | 2 maximum
     publication : null ,
     interval    : null ,
-    feeding     : null
+    feeding     : null ,
+    data        : Array()
 };
 
 var magic_q_min = 5;
@@ -209,57 +210,6 @@ function feed_refresh()
     mytpl.feed_list_area.scrollTop(0);
 }
 
-function article_queue_mark(c)
-{
-    c.attr('disabled', true).blur();
-}
-
-function article_queue_add(c)
-{
-    var _i = c.parent().parent();
-
-    $.ajax
-    ({
-        type: "POST",
-        url: "<?php B_Helper::url('queue', 'add') ?>",
-        dataType: "xml",
-        data: { blog    : blog.current ,
-                feed    : _i.attr('feed') , 
-                article : _i.attr('article') },
-        beforeSend: function()
-        {
-            set_active_request(true);
-        },
-        complete: function()
-        {
-            set_active_request(false);
-        },
-        success: function (xml)
-        {
-            var _d = $(xml).find('data');
-            article_queue_mark(c);
-            // entry_populate(_d.find('result')); // TODO
-        },
-        error: function () { server_error(); }
-    });
-}
-
-function feed_refresh()
-{
-    article.data = Array();
-
-    if(feed.display=='all')
-    {
-        article_list(mytpl.feed_list_area);
-    }
-    if(feed.display=='threaded') /* threaded */
-    {
-        feed_list();
-    }
-
-
-}
-
 function article_populate(a, container, append)
 {
     if(a.length==0)
@@ -352,7 +302,7 @@ function article_populate(a, container, append)
         {
             if($(this).attr('checked'))
             {
-                article_queue_add($(this));
+                queue_add($(this));
             }
         });
 
@@ -625,6 +575,154 @@ function set_queue_feeding()
     // TODO
 }
 
+function queue_populate(e)
+{
+    if(e.length==0)
+    {
+        mytpl.queue_list_area.html("<br/><span><?php echo $this->translation()->no_entries ?></span>");
+    }
+
+    var _data   = null;
+    var _item   = null;
+    var _inner  = null;
+    var _lsdata = "";
+
+    e.each(function()
+    {
+        _data =
+        {
+            entry              : $(this).find('entry').text(),
+            entry_title        : $(this).find('entry_title').text(),
+            entry_content      : $(this).find('entry_content').text(),
+            publication_status : $(this).find('publication_status').text(),
+            publication_date   : $(this).find('publication_date').text()
+        };
+
+        _item = mytpl.entry_blank.clone();
+        _inner = _item.find('div.entry');
+        _inner.attr('entry', _data.entry);
+
+        _inner.find('div.entrytitle')
+            .text(_data.entry_title.substring(0,80).replace(/\w+$/,'') + 
+            ((_data.entry_title.length>=80) ? '...' : ''));
+        _inner.find('div.entryinfo').text("@" + _data.publication_date);
+
+        _lsdata += _item.html() + "\n";
+
+        queue.data[_data.entry] =
+        {
+            title   : _data.entry_title,
+            content : _data.entry_content
+        };
+    });
+
+    mytpl.queue_list_area.prepend(_lsdata);
+
+    var _entry = null;
+    var _label = null;
+
+    mytpl.queue_list_area.find("div.entry[bound='no']").each(function()
+    {
+        $(this).attr('bound', 'yes');
+
+        $(this).find('div.entryqueue').find('input').click(function()
+        {
+            if($(this).attr('checked'))
+            {
+                // queue_publish($(this)); // TODO
+            }
+        });
+
+        _label = $(this).find('div.entrylabel');
+
+        _label.hover
+        (
+            function() { $(this).parent().addClass('entryhover');    },
+            function() { $(this).parent().removeClass('entryhover'); }
+        );
+
+        _label.click(function()
+        {
+            _entry = $(this).parent().attr('entry');
+
+            if($(this).parent().hasClass('entrycontentshow'))
+            {
+                // entry_content_hide(_entry); // TODO
+            }
+            else
+            {
+                /* TODO
+                entry_content_hide_all();
+                entry_content_show(_entry);
+                entry_scroll_top();
+                */
+            }
+        });
+    });
+
+    $(document).trigger('queue_populated');
+}
+
+function queue_list()
+{
+    $.ajax
+    ({
+        type: "GET",
+        url: "<?php B_Helper::url('queue', 'list') ?>",
+        dataType: "xml",
+        data: { blog : blog.current },
+        beforeSend: function()
+        {
+            set_active_request(true);
+        },
+        complete: function()
+        {
+            set_active_request(false);
+        },
+        success: function (xml)
+        {
+            var _d = $(xml).find('data');
+            queue_populate(_d.find('queue').children());
+        },
+        error: function () { server_error(); }
+    });
+}
+
+function queue_mark(c)
+{
+    c.attr('disabled', true).blur();
+}
+
+function queue_add(c)
+{
+    var _i = c.parent().parent();
+
+    $.ajax
+    ({
+        type: "POST",
+        url: "<?php B_Helper::url('queue', 'add') ?>",
+        dataType: "xml",
+        data: { blog    : blog.current ,
+                feed    : _i.attr('feed') , 
+                article : _i.attr('article') },
+        beforeSend: function()
+        {
+            set_active_request(true);
+        },
+        complete: function()
+        {
+            set_active_request(false);
+        },
+        success: function (xml)
+        {
+            var _d = $(xml).find('data');
+            queue_mark(c);
+            queue_populate(_d.find('result'));
+        },
+        error: function () { server_error(); }
+    });
+}
+
 
 $(document).ready(function()
 {
@@ -671,7 +769,8 @@ $(document).ready(function()
         queue_height_min                  : $("#queueheightmin"),
         queue_height_med                  : $("#queueheightmed"),
         queue_height_max                  : $("#queueheightmax"),
-        queue_list_area                   : $("#queuelistarea")
+        queue_list_area                   : $("#queuelistarea"),
+        entry_blank                       : $("#entryblank")
     };
 
     function window_update()
@@ -710,6 +809,7 @@ $(document).ready(function()
         mytpl.queue_publication.show();
         // set_queue_feeding();
         // mytpl.queue_feeding.show();
+        queue_list();
     }
 
     /*<?php if(count($this->blogs)==0) : ?>**/
@@ -814,6 +914,11 @@ $(document).ready(function()
     });
 
     $(document).bind('article_populated' , function(e)
+    {
+        window_update();
+    });
+
+    $(document).bind('queue_populated' , function(e)
     {
         window_update();
     });

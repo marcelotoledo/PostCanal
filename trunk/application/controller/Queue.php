@@ -26,22 +26,9 @@ class C_Queue extends B_Controller
     public function A_list()
     {
         $this->response()->setXML(true);
-
         $blog_hash = $this->request()->blog;
-        $user_profile_id = $this->session()->user_profile_id;
-
-        $queue = array();
-
-        foreach(BlogEntry::findByUserAndBlogHash($user_profile_id, $blog_hash) as $_i)
-        {
-            $queue[] = array('item' => $_i->hash,
-                             'item_title' => $_i->item_title,
-                             'item_content' => $_i->item_content,
-                             'publish_status' => $_i->publish_status,
-                             'publish_date' => $_i->publish_date);
-        }
-
-        $this->view()->queue = $queue;
+        $profile_id = $this->session()->user_profile_id;
+        $this->view->queue = BlogEntry::findQueueByUserAndBlog($profile_id, $blog_hash);
     }
 
     /**
@@ -58,18 +45,10 @@ class C_Queue extends B_Controller
         $feed_hash = $this->request()->feed;
         $profile_id = $this->session()->user_profile_id;
 
-        $entry = BlogEntry::newFromFeedArticle($article_md5,
-                                               $blog_hash,
-                                               $feed_hash,
-                                               $profile_id);
-
-        $this->view->result = array(
-            'blog'          => $blog_hash,
-            'feed'          => $feed_hash,
-            'entry'         => $entry->hash,
-            'entry_title'   => $entry->entry_title,
-            'entry_content' => $entry->entry_content
-        );
+        $this->view->result = BlogEntry::newFromFeedArticle($article_md5,
+                                                            $blog_hash,
+                                                            $feed_hash,
+                                                            $profile_id);
     }
 
     /**
