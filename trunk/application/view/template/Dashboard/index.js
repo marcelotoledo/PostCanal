@@ -247,14 +247,15 @@ function article_populate(a, container, append)
     {
         _data =
         {
-            feed            : $(this).find('feed').text(),
-            feed_title      : $(this).find('feed_title').text(),
-            article         : $(this).find('article').text(),
-            article_title   : $(this).find('article_title').text(),
-            article_link    : $(this).find('article_link').text(),
-            article_date    : $(this).find('article_date').text(),
-            article_author  : $(this).find('article_author').text(),
-            article_content : $(this).find('article_content').text()
+            feed               : $(this).find('feed').text(),
+            feed_title         : $(this).find('feed_title').text(),
+            article            : $(this).find('article').text(),
+            article_title      : $(this).find('article_title').text(),
+            article_link       : $(this).find('article_link').text(),
+            article_date       : $(this).find('article_date').text(),
+            article_author     : $(this).find('article_author').text(),
+            article_content    : $(this).find('article_content').text(),
+            publication_status : $(this).find('publication_status').text()
         };
 
         if(article.data[_data.article]==undefined) /* avoid duplicated items */
@@ -268,6 +269,13 @@ function article_populate(a, container, append)
             if(feed.display == 'all')
             {
                 _inner.find('div.articlefeed').show().text(_data.feed_title);
+            }
+
+            if(_data.publication_status.length>0)
+            {
+                _inner.find('div.articlequeue').find('input')
+                    .replaceWith("<input type=\"checkbox\" checked/>"); /* FF does not check :P */
+                queue_added_mark(_inner.find('div.articlequeue').find('input'));
             }
 
             _inner.find('div.articletitle')

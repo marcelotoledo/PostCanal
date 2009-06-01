@@ -159,8 +159,8 @@ class BlogEntry extends B_Model
                     SELECT user_blog_id FROM model_user_blog
                     WHERE hash = ? AND user_profile_id = ?) AND deleted=0
                 AND publication_status {status}
-                ORDER BY publication_date ASC, updated_at ASC";
-               
+                ORDER BY publication_date DESC, updated_at DESC";
+
         $results = array();
 
         $_in = "'" . implode("','", array(self::STATUS_NEW,

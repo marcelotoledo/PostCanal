@@ -257,10 +257,13 @@ class UserBlogFeed extends B_Model
         $sql = "SELECT a.feed_title AS feed_title, a.hash AS feed, 
                        b.article_md5 AS article, b.article_title AS article_title, 
                        b.article_link AS article_link, b.article_date AS article_date, 
-                       b.article_author AS article_author, b.article_content AS article_content
+                       b.article_author AS article_author, b.article_content AS article_content,
+                       c.publication_status AS publication_status
                 FROM model_user_blog_feed AS a
                 LEFT JOIN model_aggregator_feed_article AS b
-                ON (a.aggregator_feed_id = b.aggregator_feed_id)
+                    ON (a.aggregator_feed_id = b.aggregator_feed_id)
+                LEFT JOIN model_user_blog_entry AS c
+                    ON (b.aggregator_feed_article_id = c.aggregator_feed_article_id) 
                 WHERE a.enabled = 1 AND a.deleted = 0 AND b.article_date < ? 
                 AND a.hash = ? AND a.user_blog_id = (
                     SELECT user_blog_id
@@ -294,10 +297,13 @@ class UserBlogFeed extends B_Model
         $sql = "SELECT a.feed_title AS feed_title, a.hash AS feed, 
                        b.article_md5 AS article, b.article_title AS article_title, 
                        b.article_link AS article_link, b.article_date AS article_date, 
-                       b.article_author AS article_author, b.article_content AS article_content
+                       b.article_author AS article_author, b.article_content AS article_content,
+                       c.publication_status AS publication_status
                 FROM model_user_blog_feed AS a 
                 LEFT JOIN model_aggregator_feed_article AS b 
-                ON (a.aggregator_feed_id = b.aggregator_feed_id) 
+                    ON (a.aggregator_feed_id = b.aggregator_feed_id) 
+                LEFT JOIN model_user_blog_entry AS c
+                    ON (b.aggregator_feed_article_id = c.aggregator_feed_article_id) 
                 WHERE a.enabled = 1 AND a.deleted = 0 
                 AND b.article_date < ? AND a.user_blog_id = (
                     SELECT user_blog_id
