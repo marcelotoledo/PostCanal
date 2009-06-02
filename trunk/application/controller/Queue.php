@@ -59,14 +59,10 @@ class C_Queue extends B_Controller
     public function A_publish()
     {
         $this->response()->setXML(true);
-
-        $item_hash = $this->request()->item;
         $blog_hash = $this->request()->blog;
-        $user_profile_id = $this->session()->user_profile_id;
-
-        BlogEntry::itemToPublish($item_hash, 
-                                 $blog_hash, 
-                                 $user_profile_id);
+        $entry_hash = $this->request()->entry;
+        $profile_id = $this->session()->user_profile_id;
+        BlogEntry::updateEntryToPublish($entry_hash, $blog_hash, $profile_id);
     }
 
     /**

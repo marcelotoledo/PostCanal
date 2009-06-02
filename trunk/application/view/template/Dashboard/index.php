@@ -131,7 +131,7 @@
         <div class="entrytitle"></div>
     </div>
     <div class="entryinfo"></div>
-    <div class="entrybuttons">
+    <div class="entrybuttons" style="display:none">
         <a class="editlnk" href="#" target="_blank"><?php echo $this->translation()->edit ?></a>
     </div>
     <div style="clear:both"></div>

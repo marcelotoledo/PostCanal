@@ -279,11 +279,9 @@ class BlogEntry extends B_Model
      * @param   string  $blog_hash
      * @param   integer $user_profile_id
      */ 
-    public static function updateEntryToPublish($entry_hash, 
-                                                $blog_hash,
-                                                $user_profile_id)
+    public static function updateEntryToPublish($entry_hash, $blog_hash,$profile_id)
     {
-        if(is_object(($entry = self::getByBlogAndEntryHash($user_profile_id,
+        if(is_object(($entry = self::getByBlogAndEntryHash($profile_id,
                                                            $blog_hash,
                                                            $entry_hash))))
         {

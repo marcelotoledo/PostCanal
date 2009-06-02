@@ -590,7 +590,7 @@ function queue_populate(e)
 {
     if(e.length==0)
     {
-        mytpl.queue_list_area.html("<br/><span><?php echo $this->translation()->no_entries ?></span>");
+        // mytpl.queue_list_area.html("<br/><span><?php echo $this->translation()->no_entries ?></span>");
         return null;
     }
 
@@ -613,6 +613,13 @@ function queue_populate(e)
         _item = mytpl.entry_blank.clone();
         _inner = _item.find('div.entry');
         _inner.attr('entry', _data.entry);
+
+        if(_data.publication_status=='waiting')
+        {
+            _inner.find('div.entrypublish').find('input')
+                .replaceWith("<input type=\"checkbox\" checked/>"); /* FF does not check :P */
+            queue_waiting_mark(_inner.find('div.entrypublish').find('input'));
+        }
 
         _inner.find('div.entrytitle')
             .text(_data.entry_title.substring(0,80).replace(/\w+$/,'') + 
@@ -637,11 +644,11 @@ function queue_populate(e)
     {
         $(this).attr('bound', 'yes');
 
-        $(this).find('div.entryqueue').find('input').click(function()
+        $(this).find('div.entrypublish').find('input').click(function()
         {
             if($(this).attr('checked'))
             {
-                // queue_publish($(this)); // TODO
+                queue_publish($(this));
             }
         });
 
@@ -694,6 +701,7 @@ function queue_list()
         success: function (xml)
         {
             var _d = $(xml).find('data');
+            mytpl.queue_list_area.html("");
             queue_populate(_d.find('queue').children());
         },
         error: function () { server_error(); }
@@ -733,6 +741,38 @@ function queue_add(c)
         },
         error: function () { server_error(); }
     });
+}
+
+function queue_publish(c)
+{
+    var _i = c.parent().parent();
+
+    $.ajax
+    ({
+        type: "POST",
+        url: "<?php B_Helper::url('queue', 'publish') ?>",
+        dataType: "xml",
+        data: { blog  : blog.current ,
+                entry : _i.attr('entry') },
+        beforeSend: function()
+        {
+            set_active_request(true);
+        },
+        complete: function()
+        {
+            set_active_request(false);
+        },
+        success: function (xml)
+        {
+            queue_waiting_mark(c);
+        },
+        error: function () { server_error(); }
+    });
+}
+
+function queue_waiting_mark(c)
+{
+    c.attr('disabled', true).blur();
 }
 
 
