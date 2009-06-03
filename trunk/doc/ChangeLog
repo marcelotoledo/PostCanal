@@ -15,3 +15,12 @@ HORAS TRABALHADAS: 6h
 - correcao dos scripts e backend; metodo de publicacao funcional
 
 HORAS TRABALHADAS: 4h
+
+==========
+03/06/2009
+==========
+
+- inclusao de metodo observador de publicacao no queue
+- atualizacao do status de publicacao (waiting, published, failed)
+
+HORAS TRABALHADAS: 5h

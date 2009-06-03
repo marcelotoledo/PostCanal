@@ -28,7 +28,7 @@ class C_Queue extends B_Controller
         $this->response()->setXML(true);
         $blog_hash = $this->request()->blog;
         $profile_id = $this->session()->user_profile_id;
-        $this->view->queue = BlogEntry::findQueueByUserAndBlog($profile_id, $blog_hash);
+        $this->view->result = BlogEntry::findQueueByUserAndBlog($profile_id, $blog_hash);
     }
 
     /**
@@ -59,10 +59,14 @@ class C_Queue extends B_Controller
     public function A_publish()
     {
         $this->response()->setXML(true);
+
         $blog_hash = $this->request()->blog;
         $entry_hash = $this->request()->entry;
         $profile_id = $this->session()->user_profile_id;
-        BlogEntry::updateEntryToPublish($entry_hash, $blog_hash, $profile_id);
+
+        $this->view()->result = 
+            BlogEntry::updateEntryToPublish($entry_hash, $blog_hash, $profile_id) ?
+            $entry_hash : "";
     }
 
     /**
@@ -76,10 +80,10 @@ class C_Queue extends B_Controller
 
         $waiting = explode(",", $this->request()->waiting);
         $blog_hash = $this->request()->blog;
-        $user_profile_id = $this->session()->user_profile_id;
+        $profile_id = $this->session()->user_profile_id;
 
         $this->view->result = BlogEntry::checkStatus($waiting,
                                                      $blog_hash, 
-                                                     $user_profile_id);
+                                                     $profile_id);
     }
 }

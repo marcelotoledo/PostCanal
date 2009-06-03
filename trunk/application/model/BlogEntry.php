@@ -151,7 +151,7 @@ class BlogEntry extends B_Model
      *
      * @param   integer     $profile_id     User Profile ID
      * @param   string      $blog_hash      User Blog Hash
-     * @param   integer     $published      Show N published entries
+     * @param   integer     $published      Load last N published entries
      */ 
     public static function findQueueByUserAndBlog($profile_id, $blog_hash, $published=10)
     {
@@ -164,23 +164,24 @@ class BlogEntry extends B_Model
                 AND publication_status {status}
                 ORDER BY publication_date DESC, updated_at DESC";
 
-        $results = array();
+        $results = array('queue' => array(), 'published' => array());
 
         $_in = "'" . implode("','", array(self::STATUS_NEW,
                                           self::STATUS_WAITING,
                                           self::STATUS_FAILED)) . "'";
 
-        $results = array_merge($results, 
-            self::select(str_replace('{status}', 'IN (' . $_in . ')', $sql), 
-                         array($blog_hash, $profile_id), 
-                         PDO::FETCH_ASSOC));
+        $results['queue'] = self::select(str_replace('{status}', 'IN (' . $_in . ')', $sql), 
+            array($blog_hash, $profile_id), 
+            PDO::FETCH_ASSOC);
 
-        $sql.= " LIMIT " . intval($published);
+        if($published > 0)
+        {
+            $sql.= " LIMIT " . intval($published);
 
-        $results = array_merge($results, 
-            self::select(str_replace('{status}', '=?', $sql), 
-                         array($blog_hash, $profile_id, self::STATUS_PUBLISHED), 
-                         PDO::FETCH_ASSOC));
+            $results['published'] = self::select(str_replace('{status}', '=?', $sql), 
+                array($blog_hash, $profile_id, self::STATUS_PUBLISHED), 
+                PDO::FETCH_ASSOC);
+        }
 
         return $results;
     }
@@ -282,9 +283,13 @@ class BlogEntry extends B_Model
      * @param   string  $entry_hash
      * @param   string  $blog_hash
      * @param   integer $user_profile_id
+     * 
+     * @return  boolean
      */ 
     public static function updateEntryToPublish($entry_hash, $blog_hash,$profile_id)
     {
+        $updated = false;
+
         if(is_object(($entry = self::getByBlogAndEntryHash($profile_id,
                                                            $blog_hash,
                                                            $entry_hash))))
@@ -292,7 +297,10 @@ class BlogEntry extends B_Model
             $entry->publication_status = self::STATUS_WAITING;
             $entry->publication_date = time(); // asap
             $entry->save();
+            $updated = true;
         }
+
+        return $updated;
     }
 
     /**

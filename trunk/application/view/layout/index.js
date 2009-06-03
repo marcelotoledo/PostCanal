@@ -1,12 +1,12 @@
-var active_request = false;
+var active_request = 0;
 var mylyt = null;
 
 
 function set_active_request(b)
 {
-    ((active_request = b) == true) ?
-        $.b_spinner_start() :
-        $.b_spinner_stop();
+    active_request+= b ? 1 : -1;
+    if(active_request<0) { active_request = 0; }
+    (active_request > 0) ? $.b_spinner_start() : $.b_spinner_stop();
 }
 
 function server_error()

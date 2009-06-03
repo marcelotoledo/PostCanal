@@ -134,6 +134,7 @@ class Daemon:
             logging.info(_m % (id))
 
             published = False
+            message = ""
 
             try:
                 post_id = t.publish({ 'title'  : entry_title,
@@ -142,17 +143,17 @@ class Daemon:
                 _m = _m + "published successfully for blog entry id (%d)"
                 logging.info(_m % (int(post_id), id))
                 published = True
-            except xmlrpclib.Fault, err:
+            except xmlrpclib.Fault, message:
                 _m = "blog publish post: failed to publish for blog entry id (%d); (%s)"
-                logging.warning(_m % (id, err))
+                logging.warning(_m % (id, message))
             except:
-                err = sys.exc_info()[0].__name__
                 _m = "blog publish post: failed to publish for blog entry id (%d); (%s)"
-                logging.error(_m % (id, err))
+                logging.error(_m % (id, sys.exc_info()[0].__name__))
 
             self.client.blog_publish_set({ 'token'     : self.token, 
                                            'id'        : id, 
-                                           'published' : published })
+                                           'published' : published,
+                                           'message'   : message })
 
 def start(argv):
     base_path = os.path.abspath("../")

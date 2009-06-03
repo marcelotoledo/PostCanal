@@ -14,15 +14,24 @@ var article =
 
 var queue = 
 {
-    height      : 0    , // 0 minimum | 1 half | 2 maximum
-    publication : null ,
-    interval    : null ,
-    feeding     : null ,
-    data        : Array()
+    height         : 0    , // 0 minimum | 1 half | 2 maximum
+    publication    : null ,
+    interval       : null ,
+    feeding        : null ,
+    data           : Array(),
+    active_request : false
 };
 
 var magic_q_min = 5;
 var magic_q_max = 126;
+
+var updater_interval = 15000;
+
+
+function checkbox_freeze(c)
+{
+    c.attr('disabled', true).blur();
+}
 
 
 function feed_area_enable()
@@ -241,7 +250,8 @@ function article_populate(a, container, append)
     var _data   = null;
     var _item   = null;
     var _inner  = null;
-    var _lsdata = "";
+    var _lsdata = Array();
+    var _i      = 0;
 
     a.each(function()
     {
@@ -275,9 +285,9 @@ function article_populate(a, container, append)
             {
                 if(_data.publication_status=='new')
                 {
-                    _inner.find('div.articlequeue').find('input')
-                        .replaceWith("<input type=\"checkbox\" checked/>");
-                    queue_added_mark(_inner.find('div.articlequeue').find('input'));
+                    _inner.find('div.articlequeue')
+                        .html("<input type=\"checkbox\" checked/>");
+                    checkbox_freeze(_inner.find('div.articlequeue').find('input'));
                 }
             }
 
@@ -287,7 +297,7 @@ function article_populate(a, container, append)
             _inner.find('div.articleinfo').text("@" + _data.article_date);
             _inner.find('div.articlebuttons').find('a.viewlnk').attr('href', _data.article_link);
 
-            _lsdata += _item.html() + "\n";
+            _lsdata[_i] = _item.html(); _i++;
         }
 
         article.data[_data.article] =
@@ -298,7 +308,7 @@ function article_populate(a, container, append)
         };
     });
 
-    container.append(_lsdata);
+    container.append(_lsdata.join("\n"));
     container.append(mytpl.article_more_blank.clone()
         .find('div.articlemore').attr('older', _data.article_date));
 
@@ -312,7 +322,7 @@ function article_populate(a, container, append)
     {
         $(this).attr('bound', 'yes');
 
-        $(this).find('div.articlequeue').find('input').click(function()
+        $(this).find('div.articlequeue').find('input').change(function()
         {
             if($(this).attr('checked'))
             {
@@ -368,6 +378,7 @@ function __article_load(container, append, older)
     url = (feed.display == 'threaded') ? 
                 "<?php B_Helper::url('article', 'threaded') ?>" : 
                 "<?php B_Helper::url('article', 'all') ?>";
+
     $.ajax
     ({
         type: "GET",
@@ -589,18 +600,47 @@ function set_queue_feeding()
     // TODO
 }
 
+function queue_entry_set_status(e, s)
+{
+    if(typeof e == 'string' && e.length > 0)
+    {
+        e = mytpl.queue_list_area.find("div.entry[entry='" + e + "']");
+    }
+
+    if(typeof e == 'object')
+    {
+        e.attr('status', s);
+
+        if(s=='waiting')
+        {
+            e.find('div.entrypublish')
+                .html("<input type=\"checkbox\" checked/>");
+            checkbox_freeze(e.find('div.entrypublish').find('input'));
+        }
+        if(s=='failed')
+        {
+            e.find('div.entrypublish')
+                .html("<nobr><input type=\"checkbox\"/><img src=\"<?php B_Helper::img_src('warning.png') ?>\"/></nobr>");
+        }
+        if(s=='published')
+        {
+            e.find('div.entrypublish').html("<b>[P]</b>");
+        }
+    }
+}
+
 function queue_populate(e)
 {
     if(e.length==0)
     {
-        // mytpl.queue_list_area.html("<br/><span><?php echo $this->translation()->no_entries ?></span>");
         return null;
     }
 
     var _data   = null;
     var _item   = null;
     var _inner  = null;
-    var _lsdata = "";
+    var _lsdata = Array();
+    var _i      = 0;
 
     e.each(function()
     {
@@ -617,23 +657,14 @@ function queue_populate(e)
         _inner = _item.find('div.entry');
         _inner.attr('entry', _data.entry);
 
-        if(_data.publication_status=='waiting')
-        {
-            _inner.find('div.entrypublish').find('input')
-                .replaceWith("<input type=\"checkbox\" checked/>");
-            queue_waiting_mark(_inner.find('div.entrypublish').find('input'));
-        }
-        if(_data.publication_status=='published')
-        {
-            _inner.find('div.entrypublish').find('input').replaceWith("<b>[P]</b>");
-        }
+        queue_entry_set_status(_inner, _data.publication_status);
 
         _inner.find('div.entrytitle')
             .text(_data.entry_title.substring(0,80).replace(/\w+$/,'') + 
             ((_data.entry_title.length>=80) ? '...' : ''));
         _inner.find('div.entryinfo').text("@" + _data.publication_date);
 
-        _lsdata += _item.html() + "\n";
+        _lsdata[_i] = _item.html(); _i++;
 
         queue.data[_data.entry] =
         {
@@ -642,7 +673,7 @@ function queue_populate(e)
         };
     });
 
-    mytpl.queue_list_area.prepend(_lsdata);
+    mytpl.queue_list_area.prepend(_lsdata.join("\n"));
 
     var _entry = null;
     var _label = null;
@@ -651,11 +682,11 @@ function queue_populate(e)
     {
         $(this).attr('bound', 'yes');
 
-        $(this).find('div.entrypublish').find('input').click(function()
+        $(this).find('div.entrypublish').find('input').change(function()
         {
             if($(this).attr('checked'))
             {
-                queue_publish($(this));
+                queue_publish($(this).closest('div.entry'));
             }
         });
 
@@ -709,15 +740,11 @@ function queue_list()
         {
             var _d = $(xml).find('data');
             mytpl.queue_list_area.html("");
-            queue_populate(_d.find('queue').children());
+            queue_populate(_d.find('result').find('published').children());
+            queue_populate(_d.find('result').find('queue').children());
         },
         error: function () { server_error(); }
     });
-}
-
-function queue_added_mark(c)
-{
-    c.attr('disabled', true).blur();
 }
 
 function queue_add(c)
@@ -743,24 +770,22 @@ function queue_add(c)
         success: function (xml)
         {
             var _d = $(xml).find('data');
-            queue_added_mark(c);
+            checkbox_freeze(c);
             queue_populate(_d.find('result'));
         },
         error: function () { server_error(); }
     });
 }
 
-function queue_publish(c)
+function queue_publish(e)
 {
-    var _i = c.parent().parent();
-
     $.ajax
     ({
         type: "POST",
         url: "<?php B_Helper::url('queue', 'publish') ?>",
         dataType: "xml",
         data: { blog  : blog.current ,
-                entry : _i.attr('entry') },
+                entry : e.attr('entry') },
         beforeSend: function()
         {
             set_active_request(true);
@@ -771,15 +796,75 @@ function queue_publish(c)
         },
         success: function (xml)
         {
-            queue_waiting_mark(c);
+            queue_entry_set_status($(xml).find('result').text(), 'waiting');
         },
         error: function () { server_error(); }
     });
 }
 
-function queue_waiting_mark(c)
+function queue_updater_callback(r)
 {
-    c.attr('disabled', true).blur();
+    r.each(function()
+    {
+        queue_entry_set_status($(this).find('entry').text(),
+                               $(this).find('status').text());
+    });
+}
+
+function queue_updater()
+{
+    var _wdom = mytpl.queue_list_area.find("div.entry[status='waiting']");
+    var _wpar = Array();
+
+    if(_wdom.length > 0)
+    {
+        updater_interval = 5000;
+
+        if(queue.active_request == false)
+        {
+            _wdom.each(function() { _wpar.push($(this).attr('entry')); });
+
+            $.ajax
+            ({
+                type: "GET",
+                url: "<?php B_Helper::url('queue', 'check') ?>",
+                dataType: "xml",
+                data: { blog    : blog.current ,
+                        waiting : _wpar.join(',') },
+                beforeSend: function()
+                {
+                    queue.active_request = true;
+                },
+                complete: function()
+                {
+                    queue.active_request = false;
+                },
+                success: function (xml)
+                {
+                    queue_updater_callback($(xml).find('data')
+                                                 .find('result')
+                                                 .children());
+                },
+                error: function () { server_error(); }
+            });
+        }
+    }
+    else
+    {
+        updater_interval = 15000;
+    }
+}
+
+function updater_run()
+{
+    queue_updater();
+    updater_init();
+}
+
+function updater_init()
+{
+    if(updater_interval < 1000) { updater_interval = 1000; }
+    setTimeout("updater_run()", updater_interval);
 }
 
 
@@ -879,6 +964,7 @@ $(document).ready(function()
     /*<?php endif ?>**/
 
     blog_load();
+    updater_init();
 
     $(document).bind('blog_changed' , function(e)
     {
