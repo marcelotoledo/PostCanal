@@ -35,11 +35,11 @@ class Daemon:
 
         if type(update) != type(list()):
             logging.error("feed update get: wrong type, expected <list>")
-            pass
+            return None;
 
         if len(update) == 0:
             logging.info("feed update get: no feeds")
-            pass
+            return None
 
         from aggregator import get_feed, feed_dump
 
@@ -47,7 +47,7 @@ class Daemon:
 
             if type(feed) != type(dict()):
                 logging.error("feed update get: wrong type, expected <dict>")
-                pass
+                return None
 
             try:
                 id       = int(feed['aggregator_feed_id'])
@@ -55,7 +55,7 @@ class Daemon:
                 modified = str(feed['feed_modified'])
             except:
                 logging.error("feed update get: invalid feed dictionary")
-                pass
+                return None
 
             _m = "feed update post: started for url (%s) modified in (%s)"
             logging.info(_m % (url, modified))
@@ -64,14 +64,17 @@ class Daemon:
 
             if type(dump) != type(dict()):
                 logging.error("feed update post: wrong type for feed dump")
-                pass
+                return None
+
+            status = ""
+            total_articles = 0
+            updated = 0
 
             try:
                 status         = dump['feed_status']
                 total_articles = len(dump['articles'])
             except:
-                logging.error("feed update post: invalid feed dump dictionary")
-                pass
+                logging.error("feed update post: invalid feed dump dictionary, probably not parsed")
 
             _m = "feed update post: feed dump returned status (%s) and (%d) articles"
             logging.info(_m % (status, total_articles))
@@ -90,11 +93,11 @@ class Daemon:
 
         if type(publish) != type(list()):
             logging.error("blog publish get: wrong type, expected <list>")
-            pass
+            return None
 
         if len(publish) == 0:
             logging.info("blog publish get: no entries")
-            pass
+            return None
 
         from blog import init_type
 
@@ -102,7 +105,7 @@ class Daemon:
 
             if type(entry) != type(dict()):
                 logging.error("blog publish get: wrong type, expected <dict>")
-                pass
+                return None
 
             try:
                 id            = int(entry['id'])
@@ -114,38 +117,42 @@ class Daemon:
                 entry_title   = str(entry['entry_title'])
                 entry_content = str(entry['entry_content'])
             except:
-                logging.error("blog publish get: invalid entry dictionary")
-                pass
+                err = sys.exc_info()[0].__name__
+                logging.warning("blog publish get: invalid entry dictionary (%s)" % (err))
 
             t = init_type(blog_type, blog_version)
 
-            if type(t) != type(object()):
+            if t == None:
                 logging.error("blog publish get: unknown blog type")
-                pass
+                return None
 
             t.set_manager_url(manager_url)
             t.username = blog_username
             t.password = blog_password
 
-
             _m = "blog publish post: started for blog entry id (%d)"
             logging.info(_m % (id))
+
+            published = False
 
             try:
                 post_id = t.publish({ 'title'  : entry_title,
                                       'content': entry_content })
-                self.client.blog_publish_set({ 'token'     : self.token, 
-                                               'id'        : id, 
-                                               'published' : True })
                 _m = "blog publish post: post id (%d) "
                 _m = _m + "published successfully for blog entry id (%d)"
                 logging.info(_m % (int(post_id), id))
+                published = True
+            except xmlrpclib.Fault, err:
+                _m = "blog publish post: failed to publish for blog entry id (%d); (%s)"
+                logging.warning(_m % (id, err))
             except:
-                _m = "blog publish post: failed to publish for blog entry id (%d)"
-                logging.info(_m % (id))
-                self.client.blog_publish_set({ 'token'     : self.token, 
-                                               'id'        : id, 
-                                               'published' : False })
+                err = sys.exc_info()[0].__name__
+                _m = "blog publish post: failed to publish for blog entry id (%d); (%s)"
+                logging.error(_m % (id, err))
+
+            self.client.blog_publish_set({ 'token'     : self.token, 
+                                           'id'        : id, 
+                                           'published' : published })
 
 def start(argv):
     base_path = os.path.abspath("../")

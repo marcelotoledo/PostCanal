@@ -203,10 +203,10 @@ class <class> extends B_Model
      */
     public static function getByPrimaryKey(\$id)
     {
-        return self::select(
+        return current(self::select(
             "SELECT * FROM " . self::\$table_name . 
             " WHERE " . self::\$primary_key_name . " = ?", 
-            array(\$id), PDO::FETCH_CLASS, get_class());
+            array(\$id), PDO::FETCH_CLASS, get_class()));
     }
 
     // -------------------------------------------------------------------------

@@ -265,6 +265,7 @@ class UserBlogFeed extends B_Model
                 LEFT JOIN model_user_blog_entry AS c
                     ON (b.aggregator_feed_article_id = c.aggregator_feed_article_id) 
                     AND (a.user_blog_id = c.user_blog_id)
+                    AND (c.deleted = 0)
                 WHERE a.enabled = 1 AND a.deleted = 0 AND b.article_date < ? 
                 AND a.hash = ? AND a.user_blog_id = (
                     SELECT user_blog_id
@@ -306,6 +307,7 @@ class UserBlogFeed extends B_Model
                 LEFT JOIN model_user_blog_entry AS c
                     ON (b.aggregator_feed_article_id = c.aggregator_feed_article_id) 
                     AND (a.user_blog_id = c.user_blog_id)
+                    AND (c.deleted = 0)
                 WHERE a.enabled = 1 AND a.deleted = 0 
                 AND b.article_date < ? AND a.user_blog_id = (
                     SELECT user_blog_id

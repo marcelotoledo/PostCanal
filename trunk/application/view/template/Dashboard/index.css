@@ -60,7 +60,7 @@ div.containerhead a:hover
 {
     overflow: auto;
     overflow-x: hidden; /* IE scrollbars fixes */
-    overflow-y: auto;
+    overflow-y: scroll;
 }
 
 div.feeditem
@@ -125,6 +125,7 @@ div.articlemore:hover
 div.articlequeue
 {
     float: left;
+    width: 20px;
     padding-right: 15px;
 }
 div.articlelabel
@@ -238,7 +239,7 @@ div.articlecontentshow
     width: 100%;
     overflow: auto;
     overflow-x: hidden; /* IE scrollbars fixes */
-    overflow-y: auto;
+    overflow-y: scroll;
 }
 #queuepublication
 {
@@ -274,6 +275,7 @@ div.entryhover
 div.entrypublish
 {
     float: left;
+    width: 20px;
     padding-right: 15px;
 }
 div.entrylabel

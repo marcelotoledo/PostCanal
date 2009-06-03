@@ -111,7 +111,10 @@ class BlogEntry extends B_Model
      */
     public static function getByPrimaryKey($id)
     {
-        return self::get(array(self::$primary_key_name => $id));
+        return current(self::select(
+            "SELECT * FROM " . self::$table_name . 
+            " WHERE " . self::$primary_key_name . " = ?", 
+            array($id), PDO::FETCH_CLASS, get_class()));
     }
 
     // -------------------------------------------------------------------------
@@ -261,6 +264,7 @@ class BlogEntry extends B_Model
 
         $entry = new self();
         $entry->populate(current(self::select($sql, $args, PDO::FETCH_ASSOC)));
+        $entry->publication_date = time();
         $entry->save();
 
         return array(

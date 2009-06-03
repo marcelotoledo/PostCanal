@@ -273,9 +273,12 @@ function article_populate(a, container, append)
 
             if(_data.publication_status.length>0)
             {
-                _inner.find('div.articlequeue').find('input')
-                    .replaceWith("<input type=\"checkbox\" checked/>"); /* FF does not check :P */
-                queue_added_mark(_inner.find('div.articlequeue').find('input'));
+                if(_data.publication_status=='new')
+                {
+                    _inner.find('div.articlequeue').find('input')
+                        .replaceWith("<input type=\"checkbox\" checked/>");
+                    queue_added_mark(_inner.find('div.articlequeue').find('input'));
+                }
             }
 
             _inner.find('div.articletitle')
@@ -617,8 +620,12 @@ function queue_populate(e)
         if(_data.publication_status=='waiting')
         {
             _inner.find('div.entrypublish').find('input')
-                .replaceWith("<input type=\"checkbox\" checked/>"); /* FF does not check :P */
+                .replaceWith("<input type=\"checkbox\" checked/>");
             queue_waiting_mark(_inner.find('div.entrypublish').find('input'));
+        }
+        if(_data.publication_status=='published')
+        {
+            _inner.find('div.entrypublish').find('input').replaceWith("<b>[P]</b>");
         }
 
         _inner.find('div.entrytitle')
@@ -850,7 +857,7 @@ $(document).ready(function()
         mytpl.feed_list_area.css('left', 0);
         mytpl.feed_list_area.width($(window).width());
         mytpl.feed_list_area.height($(window).height() - _th - _bh);
-        mytpl.feed_list_area.find('div.articlelabel').width($(window).width() * 0.6);
+        // mytpl.feed_list_area.find('div.articlelabel').width($(window).width() * 0.6);
     }
 
     function init()
