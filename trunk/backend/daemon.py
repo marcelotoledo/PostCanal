@@ -162,7 +162,8 @@ def start(argv):
 
     # logger
     logging.basicConfig(level=logging.DEBUG, 
-                        format="[%(asctime)s] [%(levelname)s] %(message)s")
+                        format="[%(asctime)s] [%(levelname)s] %(message)s",
+                        filename="./daemon.log")
 
     logging.info("daemon started")
 
