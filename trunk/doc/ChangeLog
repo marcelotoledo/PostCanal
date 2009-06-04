@@ -22,5 +22,6 @@ HORAS TRABALHADAS: 4h
 
 - inclusao de metodo observador de publicacao no queue
 - atualizacao do status de publicacao (waiting, published, failed)
+- bugfixes no cadastro de blog (password undefined) e cadastro de feed (radio option unchecked)
 
-HORAS TRABALHADAS: 5h
+HORAS TRABALHADAS: 7h

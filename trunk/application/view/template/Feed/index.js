@@ -61,7 +61,7 @@ function feedaddform_options(feeds)
     });
 
     mytpl.feed_add_options.append(_lscontent);
-    mytpl.feed_add_options.find("input[name='feedaddoption']:first").attr('checked', 'checked');
+    mytpl.feed_add_options.find("input[name='feedaddoption']:first").attr('checked', true);
 }
 
 function feed_discover(url)
@@ -151,7 +151,6 @@ function feedaddform_submit()
     }
     else
     {
-
         if((_url = mytpl.feed_add_url.val()) != "")
         {
             feed_discover(_url);

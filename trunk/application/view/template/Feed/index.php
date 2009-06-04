@@ -16,14 +16,6 @@
         <td><input type="text" id="feedaddurl" value=""></td>
         </tr>
         <tr id="feedaddoptions"><td colspan="2">
-            <div id="feedoptionblank" style="display:none">
-                <div class="feedoptionbutton">
-                    <input name="feedaddoption" type="radio" url="">
-                </div>
-                <div class="feedoptiontitle">
-                </div>
-                <div style="clear:left"></div>
-            </div>
         </td></tr>
         <tr id="feedaddmessage" style="display:none">
         <th>&nbsp;</th>
@@ -38,6 +30,15 @@
         </tr>
     </table>
 </form>
+
+<div id="feedoptionblank" style="display:none">
+    <div class="feedoptionbutton">
+        <input name="feedaddoption" type="radio" url="">
+    </div>
+    <div class="feedoptiontitle">
+    </div>
+    <div style="clear:left"></div>
+</div>
 
 <form id="feedimportform" enctype="multipart/form-data" action="<?php B_Helper::url('feed','index') ?>" method="POST" style="display:none">
     <table>

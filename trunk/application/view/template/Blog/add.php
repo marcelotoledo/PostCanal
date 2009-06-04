@@ -54,7 +54,7 @@
 <tr>
 <th><?php echo $this->translation()->blog_password ?>:</th>
 <td>
-    <input type="password" name="password_input">
+    <input type="password" id="password_input">
     <!--
     <a id="login_check_lnk"><?php echo $this->translation()->blog_login_check ?></a>
     -->
