@@ -25,3 +25,12 @@ HORAS TRABALHADAS: 4h
 - bugfixes no cadastro de blog (password undefined) e cadastro de feed (radio option unchecked)
 
 HORAS TRABALHADAS: 7h
+
+==========
+05/06/2009
+==========
+
+- remocao do recurso "importar feeds"
+- correcoes na exibicao de mensagens no cadastro de blogs / feeds
+
+HORAS TRABALHADAS: 2h

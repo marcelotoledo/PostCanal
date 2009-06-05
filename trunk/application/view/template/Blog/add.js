@@ -261,15 +261,15 @@ function add_submit()
         complete: function ()   { set_active_request(false); },
         success: function (xml) 
         { 
-            var _d = $(xml).find('data');
+            var _b = $(xml).find('data').find('blog').text();
 
-            if(_d.find('added').text()=="true")
+            if(_b.length > 0)
             {
-                window.location = "<?php B_Helper::url('blog') ?>";
+                save_setting('blog', 'current', _b);
             }
             else
             {
-                form_message(_d.find('message').text());
+                server_error();
             }
         }, 
         error: function () { server_error(); }
@@ -380,6 +380,11 @@ $(document).ready(function()
         {
             add_submit();
         }
+    });
+
+    $(document).bind('setting_blog_current_saved', function(e)
+    {
+        document.location="<?php B_Helper::url('feed') ?>";
     });
 
     mytpl.blog_name.focus();

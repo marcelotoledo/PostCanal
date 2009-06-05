@@ -6,7 +6,6 @@
 <h1><?php echo $this->translation()->feeds ?></h1>
 <div id="feedlnkdiv">
     <a href="#" id="feedaddlnk"><?php echo $this->translation()->feed_add ?></a>
-    <a href="#" id="feedimportlnk"><?php echo $this->translation()->feed_import ?></a>
 </div>
 
 <form id="feedaddform" style="display:none">
@@ -40,21 +39,6 @@
     <div style="clear:left"></div>
 </div>
 
-<form id="feedimportform" enctype="multipart/form-data" action="<?php B_Helper::url('feed','index') ?>" method="POST" style="display:none">
-    <table>
-        <tr>
-        <th><?php echo $this->translation()->feed_import_file ?>:</th>
-        <td><input type="file" name="feedimportfile" value=""></td>
-        <tr>
-        <th>&nbsp;</th>
-        <td class="buttons">
-            <input id="feedimportcancel" type="button" value="<?php echo $this->translation()->cancel ?>">
-            <input id="feedimportsubmit" type="submit" value="<?php echo $this->translation()->submit ?>">
-        </td>
-        </tr>
-    </table>
-</form>
-
 <div id="feedlistarea">
     <div id="feeditemblank" style="display:none">
         <div class="feeditemleft">
@@ -73,3 +57,11 @@
 </div>
 
 <?php endif ?>
+
+<div id="nofeedmsg" class="b-dialog" style="display:none">
+<?php echo $this->translation()->new_feed_instruction ?>.
+<hr>
+<div class="b-dialog-buttons">
+<a class="b-dialog-close"><?php echo $this->translation()->close ?></a>
+</div>
+</div>

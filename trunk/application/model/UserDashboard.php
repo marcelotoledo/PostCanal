@@ -129,9 +129,7 @@ class UserDashboard extends B_Model
         ),
         'queue' => array
         (
-            'height'      => 0,
-            'publication' => 0,
-            'feeding'     => 0
+            'height' => 0,
         )
     );
 

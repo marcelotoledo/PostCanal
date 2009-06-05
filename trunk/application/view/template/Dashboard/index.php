@@ -86,17 +86,18 @@
 
     <div id="queueinterval" style="display:none">
         <table><tr><td>
-        <b><?php echo $this->translation()->spawning ?>: </b>
+        <b><?php echo $this->translation()->interval ?>: </b>
         </td><td>
         <form>
         <select id="queueintervalsel">
-            <option value="0"><?php echo $this->translation()->asap ?></option>
+            <option value="0">ASAP</option>
             <option value="300">5'</option>
             <option value="900">15'</option>
             <option value="1800">30'</option>
             <option value="3600">1h</option>
             <option value="10800">3h</option>
             <option value="43200">12h</option>
+            <option value="86400">1D</option>
         </select>
         </form></td></tr></table>
     </div>
@@ -141,3 +142,11 @@
 </div>
 
 <?php endif ?>
+
+<div id="noblogmsg" class="b-dialog" style="display:none">
+<?php echo $this->translation()->no_blog ?>. <?php B_Helper::a(ucfirst($this->translation()->click_here), 'blog', 'add') ?> <?php echo $this->translation()->new_blog_instruction ?>.
+<hr>
+<div class="b-dialog-buttons">
+<a class="b-dialog-close"><?php echo $this->translation()->close ?></a>
+</div>
+</div>

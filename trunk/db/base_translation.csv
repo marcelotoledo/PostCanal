@@ -15,8 +15,6 @@
 "application","en_US","logout","logout"
 "application","en_US","view","view"
 "application","en_US","are_you_sure","are you sure?"
-"application","en_US","no_blog","no registered blog"
-"application","en_US","new_blog_instruction","to add a new blog or use the item \"blogs\" in menu"
 
 "index/index","en_US","login","login"
 "index/index","en_US","register","register"
@@ -109,6 +107,7 @@
 "feed/index","en_US","feed_import","feed import"
 "feed/index","en_US","feed_add_url","URL"
 "feed/index","en_US","feed_not_found","feed not found"
+"feed/index","en_US","new_feed_instruction","No registered feeds. To add new feed, click in the \"feed_add\" link"
 
 "dashboard/index","en_US","show_feeds","show feeds"
 "dashboard/index","en_US","all","all"
@@ -124,3 +123,5 @@
 "dashboard/index","en_US","feeding","feeding"
 "dashboard/index","en_US","manual","manual"
 "dashboard/index","en_US","automatic","automatic"
+"application","en_US","no_blog","No registered blog"
+"application","en_US","new_blog_instruction","to add a new blog or use the item \"blogs\" in menu"

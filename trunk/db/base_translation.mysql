@@ -16,8 +16,6 @@ INSERT INTO base_translation VALUES (NULL, 'application', 'en_US', 'feeds', "fee
 INSERT INTO base_translation VALUES (NULL, 'application', 'en_US', 'logout', "logout");
 INSERT INTO base_translation VALUES (NULL, 'application', 'en_US', 'view', "view");
 INSERT INTO base_translation VALUES (NULL, 'application', 'en_US', 'are_you_sure', "are you sure?");
-INSERT INTO base_translation VALUES (NULL, 'application', 'en_US', 'no_blog', "no registered blog");
-INSERT INTO base_translation VALUES (NULL, 'application', 'en_US', 'new_blog_instruction', "to add a new blog or use the item \"blogs\" in menu");
 INSERT INTO base_translation VALUES (NULL, 'index/index', 'en_US', 'login', "login");
 INSERT INTO base_translation VALUES (NULL, 'index/index', 'en_US', 'register', "register");
 INSERT INTO base_translation VALUES (NULL, 'index/index', 'en_US', 'email', "email");
@@ -97,6 +95,7 @@ INSERT INTO base_translation VALUES (NULL, 'feed/index', 'en_US', 'feed_add', "f
 INSERT INTO base_translation VALUES (NULL, 'feed/index', 'en_US', 'feed_import', "feed import");
 INSERT INTO base_translation VALUES (NULL, 'feed/index', 'en_US', 'feed_add_url', "URL");
 INSERT INTO base_translation VALUES (NULL, 'feed/index', 'en_US', 'feed_not_found', "feed not found");
+INSERT INTO base_translation VALUES (NULL, 'feed/index', 'en_US', 'new_feed_instruction', "No registered feed. To add new feed, click in the \"feed_add\" link");
 INSERT INTO base_translation VALUES (NULL, 'dashboard/index', 'en_US', 'show_feeds', "show feeds");
 INSERT INTO base_translation VALUES (NULL, 'dashboard/index', 'en_US', 'all', "all");
 INSERT INTO base_translation VALUES (NULL, 'dashboard/index', 'en_US', 'threaded', "threaded");
@@ -111,3 +110,5 @@ INSERT INTO base_translation VALUES (NULL, 'dashboard/index', 'en_US', 'publicat
 INSERT INTO base_translation VALUES (NULL, 'dashboard/index', 'en_US', 'feeding', "feeding");
 INSERT INTO base_translation VALUES (NULL, 'dashboard/index', 'en_US', 'manual', "manual");
 INSERT INTO base_translation VALUES (NULL, 'dashboard/index', 'en_US', 'automatic', "automatic");
+INSERT INTO base_translation VALUES (NULL, 'application', 'en_US', 'no_blog', "No registered blog");
+INSERT INTO base_translation VALUES (NULL, 'application', 'en_US', 'new_blog_instruction', "to add a new blog or use the item \"blogs\" in menu");

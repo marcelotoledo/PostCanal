@@ -18,7 +18,7 @@ VERSION = "1.0.0"
 
 import sys, os, time, logging, xmlrpclib
 
-TIME_SLEEP = 1
+TIME_SLEEP = 3
 
 class Daemon:
     def __init__(self, config_path=None):

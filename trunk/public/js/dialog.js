@@ -48,22 +48,27 @@ jQuery.b_dialog = function(config)
 
     /* actions */
 
-    $.b_dialog_show = function()
-    {
-        if(dialog) { dialog.show(); }
-        if(modal)  { modal.show();  }
-    }
-
     $.b_dialog_hide = function()
     {
         if(dialog) { dialog.hide(); }
         if(modal)  { modal.hide();  }
     }
 
-    /* triggers */
-
-    $(".b-dialog-close").click(function() 
+    $.b_dialog_show = function()
     {
-        $.b_dialog_hide();
-    });
+        if(dialog) { dialog.show(); }
+        if(modal)  { modal.show();  }
+
+        $(document).bind('click.b-dialog', function()
+        {
+            $.b_dialog_hide();
+            $(document).unbind('click.b-dialog');
+        })
+
+        $(document).bind('keypress.b-dialog', function()
+        {
+            $.b_dialog_hide();
+            $(document).unbind('keypress.b-dialog');
+        })
+    }
 }

@@ -14,9 +14,9 @@ var article =
 
 var queue = 
 {
-    height         : 0    , // 0 minimum | 1 half | 2 maximum
+    height         : <?php echo $this->settings->queue->height ?>, // 0 minimum | 1 half | 2 maximum
     publication    : null ,
-    interval       : null ,
+    interval       :    0 ,
     feeding        : null ,
     data           : Array(),
     active_request : false
@@ -81,6 +81,7 @@ function queue_maximize()
     mytpl.queue_area.css('bottom', _th);
     mytpl.queue_list_area.css('height', _th);
     mytpl.feed_list_area.hide();
+    mytpl.queue_list_area.show();
     feed_area_disable();
     mytpl.queue_height_lnks.find('a').hide();
     mytpl.queue_height_min.show();
@@ -157,7 +158,7 @@ function feed_populate(feeds)
     }
     else
     {
-        mytpl.feed_list_area.html("<br/><span><?php echo $this->translation()->no_registered_feeds ?></span>");
+        mytpl.feed_list_area.html("");
     }
 
     /* this trigger must be created after populate, otherwise
@@ -232,9 +233,8 @@ function article_populate(a, container, append)
         }
         else
         {
-            container.html("<br/><span><?php echo $this->translation()->no_articles ?></span>");
+            container.html("");
         }
-
         return null;
     }
 
@@ -580,6 +580,7 @@ function set_queue_publication()
         mytpl.queue_publication_manual_lnk.show();
         mytpl.queue_publication_automatic_lnk.hide();
         mytpl.queue_publication_automatic_label.show();
+        mytpl.queue_interval.show();
     }
     else
     {
@@ -587,12 +588,12 @@ function set_queue_publication()
         mytpl.queue_publication_manual_label.show();
         mytpl.queue_publication_automatic_label.hide();
         mytpl.queue_publication_automatic_lnk.show();
+        mytpl.queue_interval.hide();
     }
 }
 
 function set_queue_interval()
 {
-    // TODO
 }
 
 function set_queue_feeding()
@@ -942,7 +943,6 @@ $(document).ready(function()
         mytpl.feed_list_area.css('left', 0);
         mytpl.feed_list_area.width($(window).width());
         mytpl.feed_list_area.height($(window).height() - _th - _bh);
-        // mytpl.feed_list_area.find('div.articlelabel').width($(window).width() * 0.6);
     }
 
     function init()
@@ -951,9 +951,11 @@ $(document).ready(function()
         set_article_display();
         set_queue_publication();
         mytpl.queue_publication.show();
+        window_update();
         // set_queue_feeding();
         // mytpl.queue_feeding.show();
         queue_list();
+        updater_init();
     }
 
     /*<?php if(count($this->blogs)==0) : ?>**/
@@ -964,7 +966,6 @@ $(document).ready(function()
     /*<?php endif ?>**/
 
     blog_load();
-    updater_init();
 
     $(document).bind('blog_changed' , function(e)
     {
@@ -983,11 +984,14 @@ $(document).ready(function()
         window_update();
     });
 
-    mytpl.queue_height_lnks.find('a').click(function()
+    $(document).bind('article_populated' , function(e)
     {
-        queue.height = (queue.height < 2) ? queue.height + 1 : 0;
         window_update();
-        return false;
+    });
+
+    $(document).bind('queue_populated' , function(e)
+    {
+        window_update();
     });
 
     mytpl.feed_dsp_all_lnk.click(function()
@@ -1058,12 +1062,28 @@ $(document).ready(function()
         set_queue_publication();
     });
 
-    $(document).bind('article_populated' , function(e)
+    mytpl.queue_interval_sel.change(function()
     {
-        window_update();
+        if((queue.interval = $(this).find("option:selected").val()))
+        {
+            $(this).blur();
+            blog_update('publication_interval', queue.interval);
+        }
     });
 
-    $(document).bind('queue_populated' , function(e)
+    $(document).bind('blog_publication_interval_updated' , function(e)
+    {
+        // TODO
+    });
+
+    mytpl.queue_height_lnks.find('a').click(function()
+    {
+        queue.height = (queue.height < 2) ? queue.height + 1 : 0;
+        save_setting('queue', 'height', queue.height);
+        return false;
+    });
+
+    $(document).bind('setting_queue_height_saved' , function(e)
     {
         window_update();
     });

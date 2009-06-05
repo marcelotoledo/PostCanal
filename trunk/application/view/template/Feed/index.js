@@ -1,11 +1,9 @@
 var mytpl = null;
-var feed_import_stack = Array();
 
 
 function on_blog_change()
 {
     toggle_feed_add_form(false);
-    toggle_feed_import_form(false);
     feed_list(); 
 }
 
@@ -162,69 +160,6 @@ function feedaddform_submit()
     }
 }
 
-function toggle_feed_import_form(s)
-{
-    if(s==true)
-    {
-        mytpl.feed_lnk_div.hide();
-        mytpl.feed_import_form.show();
-    }
-    else
-    {
-        mytpl.feed_import_form.hide();
-        mytpl.feed_lnk_div.show();
-    }
-}
-
-function feed_import_preview(title)
-{
-    mytpl.feed_list_area.find("ul").prepend("<li>" + title + "</li>");
-}
-
-function feed_import()
-{
-    var stack_item = null;
-
-    if((stack_item = feed_import_stack.shift()))
-    {
-        $.ajax
-        ({
-            type: "POST",
-            url: "<?php B_Helper::url('feed', 'import') ?>",
-            dataType: "xml",
-            data: { url   : stack_item.url, 
-                    title : stack_item.title, 
-                    blog  : blog.current },
-            complete: function()
-            {
-                $(document).trigger('feed_import');
-                feed_import_preview(stack_item.title);
-            }
-        });
-    }
-    else
-    {
-        set_active_request(false);
-        $(document).trigger('after_feed_import');
-    }
-}
-
-function feed_import_init()
-{
-    /*<?php foreach($this->import as $i) : ?>**/
-    feed_import_stack.push({ 'url'  : "<?php echo $i['url'] ?>", 
-                             'title': "<?php echo $i['title'] ?>" });
-    /*<?php endforeach ?>**/
-
-    if(feed_import_stack.length > 0)
-    {
-        $(document).trigger('before_feed_import');
-        set_active_request(true);
-        mytpl.feed_list_area.prepend("<ul></ul>");
-        $(document).trigger('feed_import');
-    }
-}
-
 function feed_populate(feeds)
 {
     mytpl.feed_list_area.html("");
@@ -324,8 +259,17 @@ function feed_list()
         },
         success: function (xml)
         {
-            var _d = $(xml).find('data');
-            feed_populate(_d.find('feeds').children());
+            var _d = $(xml).find('data').find('feeds').children();
+            
+            if(_d.length > 0)
+            {
+                feed_populate(_d);
+            }
+            else
+            {
+                $.b_dialog({ selector: "#nofeedmsg", modal: false });
+                $.b_dialog_show();
+            }
         },
         error: function () { server_error(); }
     });
@@ -553,12 +497,7 @@ $(document).ready(function()
         feed_add_msg          : $("#feedaddmessage"),
         feed_option_blank     : $("#feedoptionblank"),
         feed_list_area        : $("#feedlistarea"),
-        feed_item_blank       : $("#feeditemblank"),
-        feed_import_form      : $("#feedimportform"),
-        feed_import_input     : $("#feedimportfeedinput"),
-        feed_import_lnk       : $("#feedimportlnk"),
-        feed_import_cancel    : $("#feedimportcancel"),
-        feed_import_submit    : $("#feedimportsubmit")
+        feed_item_blank       : $("#feeditemblank")
     };
 
     /* triggers */
@@ -596,50 +535,6 @@ $(document).ready(function()
         }
     });
 
-    mytpl.feed_import_lnk.click(function()
-    {
-        if(active_request == false)
-        {
-            toggle_feed_import_form(true);
-        }
-        return false;
-    });
-
-    mytpl.feed_import_cancel.click(function()
-    {
-        if(active_request == false)
-        {
-            toggle_feed_import_form(false);
-        }
-    });
-
-    // not working...
-    // mytpl.feed_import_input.change(function(e)
-    // {
-    //     mytpl.feed_import_form.submit();
-    // });
-
-    /*<?php if(count($this->import) > 0) : ?>**/
-
-    // not working...
-    // $(document).bind('before_feed_import' , function(e)
-    // { 
-    //     mylyt.blog_list.attr('disabled', true);
-    // });
-
-    $(document).bind('feed_import' , function(e)
-    { 
-        feed_import();
-    });
-
-    $(document).bind('after_feed_import' , function(e)
-    { 
-        window.location="<?php B_Helper::url('feed') ?>" 
-    });
-
-    feed_import_init();
-
-    /*<?php else : ?>**/
 
     /*<?php if(count($this->blogs)==0) : ?>**/
 
@@ -659,6 +554,4 @@ $(document).ready(function()
     {
         feed_sortable_init();
     });
-
-    /*<?php endif ?>**/
 });

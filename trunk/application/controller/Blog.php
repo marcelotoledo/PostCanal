@@ -58,8 +58,6 @@ class C_Blog extends B_Controller
     {
         $this->response()->setXML(true);
 
-        $added = false;
-
         $_type     = $this->request()->blog_type;
         $_version  = $this->request()->blog_version;
 
@@ -85,7 +83,6 @@ class C_Blog extends B_Controller
         try
         {
             $blog->save();
-            $added = true;
         }
         catch(B_Exception $exception)
         {
@@ -94,7 +91,7 @@ class C_Blog extends B_Controller
             B_Exception::forward($_m, E_USER_WARNING, $exception, $_d);
         }
 
-        $this->view()->added = $added;
+        $this->view()->blog = $blog->hash;
     }
 
     /**

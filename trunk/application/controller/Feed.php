@@ -19,58 +19,11 @@ class C_Feed extends B_Controller
     }
 
     /**
-     * Feed import
-     */
-    protected static function importFromFile($filename, $filetype, $filesize)
-    {
-        $results = array();
-
-        if(file_exists($filename) && 
-           is_readable($filename) &&
-           $filesize < 2e05 && 
-           strtolower($filetype) == 'text/xml')
-        {
-            $opml = new A_OPML();
-            $f = fopen($filename, "r");
-            $opml->Parse(fread($f, $filesize));
-            fclose($f);
-            unlink($filename);
-
-            foreach($opml->data as $i)
-            {
-                $_u = addslashes($i['feeds']);
-                $_t = addslashes($i['names']);
-
-                if($_u && $_t)
-                {
-                    $results[] = array('url' => $_u, 'title' => $_t);
-                }
-            }
-        }
-
-        return $results;
-    }
-
-    /**
      * List feeds
      */
     public function A_index()
     {
         $this->view()->setLayout('dashboard');
-
-        /* feed import from file upload */
-
-        $this->view()->import = array();
-
-        if($this->request()->getMethod() == B_Request::METHOD_POST &&
-           array_key_exists('feedimportfile', $_FILES))
-        {
-            $f = $_FILES['feedimportfile'];
-            $this->view()->import = self::importFromFile($f['tmp_name'], 
-                                                         $f['type'], 
-                                                         $f['size']);
-        }
-
         $id = $this->session()->user_profile_id;
         $blogs = UserBlog::findByUser($id, $enabled=true);
         $this->view()->blogs = $blogs;
@@ -242,28 +195,5 @@ class C_Feed extends B_Controller
             $feed->save();
         }
         $this->view()->updated = $updated;
-    }
-
-    /**
-     * Import feed from URL (discover + add)
-     */
-    public function A_import()
-    {
-        $this->response()->setXML(true);
-
-        $url = $this->request()->url;
-        $title = $this->request()->title;
-        $blog_hash = $this->request()->blog;
-
-        $result = current(AggregatorFeed::discover($url));
-
-        if(array_key_exists('feed_url', $result))
-        {
-            $url = $result['feed_url'];
-        }
-
-        $blog_feed = $this->feedAdd($url, $title, $blog_hash);
-
-        $this->view()->added = is_object($blog_feed);
     }
 }
