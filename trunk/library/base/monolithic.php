@@ -109,9 +109,13 @@ class B_Bootstrap
                 $session = new B_Session($session_name);
                 $registry->session()->object = $session;
 
+                /* initialize default timezone */
+
+                date_default_timezone_set($session->getTimezone());
+
                 /* initialize translation */
 
-                $culture = $registry->translation()->culture;
+                $culture = $session->getCulture();
                 $translation = new B_Translation($culture);
                 $registry->translation()->object = $translation;
 
@@ -2335,6 +2339,44 @@ class B_Session
                                           array(session_id())));
 
         return ($result->total > 0);
+    }
+
+    /**
+     * Set culture 
+     *
+     * @param   string  $culture
+     */
+    public function setCulture($culture)
+    {
+        $this->__set('B_Session__culture', $culture);
+    }
+
+    /**
+     * Get culture 
+     */
+    public function getCulture()
+    {
+        $c = $this->__get('B_Session__culture');
+        return (strlen($c) > 0) ? $c : 'en_US';
+    }
+
+    /**
+     * Set timezone
+     *
+     * @param   string  $timezone
+     */
+    public function setTimezone($timezone)
+    {
+        $this->__set('B_Session__timezone', $timezone);
+    }
+
+    /**
+     * Get timezone
+     */
+    public function getTimezone()
+    {
+        $t = $this->__get('B_Session__timezone');
+        return (strlen($t) > 0) ? $t : 'UTC';
     }
 }
 

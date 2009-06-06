@@ -247,4 +247,42 @@ class B_Session
 
         return ($result->total > 0);
     }
+
+    /**
+     * Set culture 
+     *
+     * @param   string  $culture
+     */
+    public function setCulture($culture)
+    {
+        $this->__set('B_Session__culture', $culture);
+    }
+
+    /**
+     * Get culture 
+     */
+    public function getCulture()
+    {
+        $c = $this->__get('B_Session__culture');
+        return (strlen($c) > 0) ? $c : 'en_US';
+    }
+
+    /**
+     * Set timezone
+     *
+     * @param   string  $timezone
+     */
+    public function setTimezone($timezone)
+    {
+        $this->__set('B_Session__timezone', $timezone);
+    }
+
+    /**
+     * Get timezone
+     */
+    public function getTimezone()
+    {
+        $t = $this->__get('B_Session__timezone');
+        return (strlen($t) > 0) ? $t : 'UTC';
+    }
 }

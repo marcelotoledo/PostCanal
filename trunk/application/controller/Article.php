@@ -43,8 +43,6 @@ class C_Article extends B_Controller
      */
     public function A_all()
     {
-        $this->response()->setXML(true);
-
         $blog_hash = $this->request()->blog;
         $older = strtotime($this->request()->older);
         $user_id = $this->session()->user_profile_id;

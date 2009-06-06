@@ -47,6 +47,8 @@ class C_Profile extends B_Controller
             else
             {
                 $this->session()->setActive(true);
+                $this->session()->setCulture($profile->local_culture);
+                $this->session()->setTimezone($profile->local_timezone);
                 $this->session()->user_profile_id = $profile->user_profile_id;
                 $this->session()->user_profile_hash = $profile->hash;
                 $this->session()->user_profile_login_email = $profile->login_email;

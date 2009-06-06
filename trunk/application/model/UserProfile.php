@@ -37,6 +37,8 @@ class UserProfile extends B_Model
 		'recovery_message_time' => array ('type' => 'date','size' => 0,'required' => false),
 		'recovery_allowed' => array ('type' => 'boolean','size' => 0,'required' => false),
 		'update_email_message_time' => array ('type' => 'date','size' => 0,'required' => false),
+		'local_culture' => array ('type' => 'string','size' => 0,'required' => false),
+		'local_timezone' => array ('type' => 'string','size' => 0,'required' => false),
 		'created_at' => array ('type' => 'date','size' => 0,'required' => false),
 		'updated_at' => array ('type' => 'date','size' => 0,'required' => false),
 		'enabled' => array ('type' => 'boolean','size' => 0,'required' => false));

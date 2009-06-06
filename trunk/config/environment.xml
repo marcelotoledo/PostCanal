@@ -16,10 +16,6 @@
         <name>postcanal</name>
         <expiration>43200</expiration>
     </session>
-    <translation>
-        <!-- default culture to use when it's not set by user -->
-        <culture>en_US</culture>
-    </translation>
     <mailer>
         <default>
             <transport>smtp</transport>

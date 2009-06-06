@@ -57,6 +57,8 @@ function save_setting(c, n, v)
 
 function blog_load()
 {
+    if(blog.current==undefined) { return false; }
+
     $.ajax
     ({
         type: "GET",
