@@ -32,5 +32,6 @@ HORAS TRABALHADAS: 7h
 
 - remocao do recurso "importar feeds"
 - correcoes na exibicao de mensagens no cadastro de blogs / feeds
+- inclusao de timezone e culture no perfil do usuario
 
-HORAS TRABALHADAS: 2h
+HORAS TRABALHADAS: 4h
