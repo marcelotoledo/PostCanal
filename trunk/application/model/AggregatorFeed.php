@@ -29,7 +29,6 @@ class AggregatorFeed extends B_Model
 		'feed_link' => array ('type' => 'string','size' => 0,'required' => true),
 		'feed_title' => array ('type' => 'string','size' => 100,'required' => true),
 		'feed_description' => array ('type' => 'string','size' => 0,'required' => true),
-		'feed_modified' => array ('type' => 'string','size' => 100,'required' => true),
 		'feed_update_time' => array ('type' => 'integer','size' => 0,'required' => false),
 		'feed_status' => array ('type' => 'string','size' => 3,'required' => false),
 		'created_at' => array ('type' => 'date','size' => 0,'required' => false),
@@ -146,7 +145,8 @@ class AggregatorFeed extends B_Model
      */
     public static function findAssocByURL($url, $lifetime=86400)
     {
-        $_s = "SELECT a.feed_url, b.feed_title, b.feed_description 
+        $_s = "SELECT a.feed_url, b.feed_title, b.feed_description, 
+                      b.feed_status, b.feed_link, b.feed_update_time
                FROM model_aggregator_feed_discover AS a
                LEFT JOIN model_aggregator_feed AS b 
                ON (a.feed_url_md5 = b.feed_url_md5)
@@ -177,7 +177,7 @@ class AggregatorFeed extends B_Model
      */
     public static function findOutdated($limit=10)
     {
-        $sql = "SELECT aggregator_feed_id, feed_url, feed_modified
+        $sql = "SELECT aggregator_feed_id, feed_url
                 FROM " . self::$table_name . "
                 WHERE (feed_update_time + UNIX_TIMESTAMP(updated_at)) < 
                        UNIX_TIMESTAMP(UTC_TIMESTAMP())
@@ -198,10 +198,10 @@ class AggregatorFeed extends B_Model
     {
         $url = $data['feed_url'];
 
-        self::transaction();
-
         if(($feed = self::getByURL($url)) == null)
         {
+            self::transaction();
+
             $feed = new self();
             $feed->populate($data);
 
@@ -216,9 +216,9 @@ class AggregatorFeed extends B_Model
                 $_d = array ('method' => __METHOD__);
                 B_Exception::forward($_m, E_USER_ERROR, $_e, $_d);
             }
-        }
 
-        self::commit();
+            self::commit();
+        }
 
         if(array_key_exists('articles', $data) && is_object($feed))
         {
@@ -288,7 +288,12 @@ class AggregatorFeed extends B_Model
             {
                 if(is_object(($feed = self::rawInsert(current($discover)))))
                 {
-                    $feeds[] = $feed->dump(array('feed_url', 'feed_title', 'feed_description'));
+                    $feeds[] = $feed->dump(array('feed_url', 
+                                                 'feed_title', 
+                                                 'feed_description',
+                                                 'feed_status',
+                                                 'feed_link',
+                                                 'feed_update_time'));
                 }
             }
             /* if discover return more than one feed

@@ -13,7 +13,6 @@
 # Code:
 # postcanal utility
 
-VERSION = "1.0.0"
 
 class PostCanalConfig:
     def __init__(self, config_path=None):

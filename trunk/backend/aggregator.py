@@ -14,7 +14,6 @@
 # Code:
 # feed aggregator for backend system of postcanal
 
-VERSION = "1.0.0"
 
 import re
 import time
@@ -89,16 +88,16 @@ def feed_dump(feed):
     r['feed_url'] = feed['url']
     r['feed_title'] = ''
     r['feed_description'] = ''
+    r['feed_status'] = feed['status']
+    r['feed_link'] = ""
+    r['feed_title'] = ""
+    r['feed_description'] = ""
+    r['articles'] = []
+    r['feed_update_time'] = 0
 
     parsed = feed['parsed']
     
     if parsed:
-        # modified | etag
-        _modified = parsed.get('etag', "")
-        if _modified != "": _modified = "etag: " + _modified
-        if _modified == "": parsed.get('modified', "")
-        r['feed_modified'] = _modified
-
         # status
         r['feed_status'] = parsed.get('status', "200")
 
@@ -122,16 +121,23 @@ def feed_dump(feed):
 
 def guess_feeds(url):
     from vendor import feedfinder
+
     r = []
-    f = feedfinder.feeds(url)
+    f = []
+
+    try:
+        f = feedfinder.feeds(url)
+    except:
+        pass
+
     if len(f) == 1:
         r.append(get_feed(f[0]))
     else:
         for i in f:
-            r.append({'url': i, 'parsed': None, 'articles': [] })
+            r.append({'url': i, 'parsed': None, 'articles': [], 'status': "100" })
     return r
 
-def get_feed(url, modified=None):
+def get_feed(url):
     from vendor import feedparser
 
     # sanitizer whitelist
@@ -140,38 +146,15 @@ def get_feed(url, modified=None):
     _wl = ['flashvars']
     feedparser._HTMLSanitizer.acceptable_attributes.extend(_wl)
 
-    p = None
-    if modified == '': modified = None
+    result = { 'url': url, 'parsed': None, 'articles': [], 'status': "404" }
 
-    if modified != None and re.search("etag: ", modified):
-        p = feedparser.parse(url, etag=re.sub("etag: ", "", modified))
-    elif modified != None and len(modified) > 0:
-        p = feedparser.parse(url, modified=modified)
-    else:
-        p = feedparser.parse(url)
+    try:
+        parsed = feedparser.parse(url)
+        if parsed.feed:
+            result['parsed'] = parsed.feed
+            result['articles'] = parsed['entries']
+            result['status'] = "200"
+    except:
+        result['status'] = "500"
 
-    return { 'url': url, 'parsed': p.feed, 'articles': p['entries'] }
-
-
-if __name__ == '__main__':
-    url = "http://www.slashdot.org"
-    #url = "http://www.terra.com.br"
-    #url = "http://www.cnn.com"
-    #url = "rtp.pt"
-    #url = "http://wergeeks.wordpress.com/feed/"
-    #url = "www.uol.com.br"
-    #url = "http://rss.terra.com.br/0,,EI1,00.xml"
-    #url = "http://www.bovespa.com.br/rss/"
-    
-    feeds = []
-    for f in guess_feeds(url):
-        feeds.append(feed_dump(f))
-
-    print feeds
-
-
-    #feed = "http://www.gazetaesportiva.net/rss/jogoRapido.xml"
-    #d = feed_dump(get_feed(feed))
-    #print d
-    #print feed_dump(get_feed(feed, d['modified']))
-    #print feed_dump(d)
+    return result

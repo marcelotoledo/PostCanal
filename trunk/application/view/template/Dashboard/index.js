@@ -291,9 +291,7 @@ function article_populate(a, container, append)
                 }
             }
 
-            _inner.find('div.articletitle')
-                .text(_data.article_title.substring(0,80).replace(/\w+$/,'') + 
-                ((_data.article_title.length>=80) ? '...' : ''));
+            _inner.find('div.articletitle').text(_data.article_title);
             _inner.find('div.articleinfo').text("@" + _data.article_date);
             _inner.find('div.articlebuttons').find('a.viewlnk').attr('href', _data.article_link);
 

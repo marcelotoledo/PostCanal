@@ -23,9 +23,7 @@
 <li><?php B_Helper::a($this->translation()->dashboard, "dashboard") ?></li>
 <li><?php B_Helper::a($this->translation()->profile, "profile", "edit") ?></li>
 <li><?php B_Helper::a($this->translation()->blogs, "blog") ?></li>
-<?php if($bc>0) : ?>
 <li><?php B_Helper::a($this->translation()->feeds, "feed") ?></li>
-<?php endif ?>
 
 <li id="bloglstbar">
 <?php if($bc==1) : ?>

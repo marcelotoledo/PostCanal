@@ -13,9 +13,9 @@
 # Code:
 # client/server class for web services methods
 
-VERSION = "1.0.0"
 
 class WebService:
+
     def __init__(self, config_path=None):
         from postcanal import PostCanalConfig
         self.token = PostCanalConfig(config_path).get('webservice/token')
@@ -62,42 +62,3 @@ class WebService:
         for f in aggregator.guess_feeds(args['url']):
             feeds.append(aggregator.feed_dump(f))
         return feeds
-
-def usage(argv):
-    print 'PostCanal Backend %s - WebService system for postcanal.com' % VERSION
-    print 'Copyright  (C)  2009 PostCanal Inc. <https://www.postcanal.com>\n'
-    
-    print 'Usage: %s test' % argv[0]
-
-def test(argv):
-    from postcanal import PostCanalConfig
-    token = PostCanalConfig().get('webservice/token')
-
-    # blog discover
-
-    # url = "http://test.wordpress.com"
-    # ws = WebService()
-    # ws.token = token
-    # print ws.blog_discover({'token': token, 'url': url})
-
-    # feed discover
-
-    url = "http://www.slashdot.org/"
-    # ws = WebService()
-    # ws.token = token
-    # print ws.feed_discover({'token': token, 'url': url})
-
-    import xmlrpclib
-    remote = "http://localhost:8080/webservice/backend"
-    server = xmlrpclib.ServerProxy(remote)
-    print server.feed_discover({'token': token, 'url': url})
-
-if __name__ == '__main__':
-    import sys
-
-    if len(sys.argv) <= 1:
-        usage(sys.argv)
-        sys.exit(-1)
-
-    if sys.argv[1] == 'test':
-        test(sys.argv)

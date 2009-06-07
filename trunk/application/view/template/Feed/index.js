@@ -88,7 +88,20 @@ function feed_discover(url)
 
             if(_r.length == 1)
             {
-                feed_add(_r.find('feed_url').text());
+                var _s = _r.find('feed_status').text();
+                
+                if(_s=="200")
+                {
+                    feed_add(_r.find('feed_url').text());
+                }
+                if(_s=="404")
+                {
+                    form_message("<?php echo $this->translation()->feed_not_found ?>");
+                }
+                if(_s=="500")
+                {
+                    form_message("<?php echo $this->translation()->feed_error ?>");
+                }
             }
             else if(_r.length >  1)
             {
@@ -96,7 +109,7 @@ function feed_discover(url)
             }
             else
             {
-                form_message("<?php echo $this->translation()->feed_not_found ?>");
+                form_message("<?php echo $this->translation()->invalid_url ?>");
             }
         },
         error: function () { server_error(); }
