@@ -31,7 +31,12 @@ class Daemon:
         self.client = xmlrpclib.ServerProxy(frontend_url)
 
     def feed_update(self):
-        update = self.client.feed_update_get({ 'token': self.token })
+        try:
+            update = self.client.feed_update_get({ 'token': self.token })
+        except:
+            _m = "feed update get: webservice call failed; (%s)"
+            logging.error(_m % (sys.exc_info()[0].__name__))
+            return None
 
         if type(update) != type(list()):
             logging.error("feed update get: wrong type, expected <list>")
@@ -52,15 +57,14 @@ class Daemon:
             try:
                 id       = int(feed['aggregator_feed_id'])
                 url      = str(feed['feed_url'])
-                modified = str(feed['feed_modified'])
             except:
                 logging.error("feed update get: invalid feed dictionary")
                 return None
 
-            _m = "feed update post: started for url (%s) modified in (%s)"
-            logging.info(_m % (url, modified))
+            _m = "feed update post: started for url (%s)"
+            logging.info(_m % (url))
 
-            dump = feed_dump(get_feed(url, modified))
+            dump = feed_dump(get_feed(url))
 
             if type(dump) != type(dict()):
                 logging.error("feed update post: wrong type for feed dump")
@@ -68,7 +72,7 @@ class Daemon:
 
             status = ""
             total_articles = 0
-            updated = 0
+            saved = 0
 
             try:
                 status         = dump['feed_status']
@@ -79,17 +83,26 @@ class Daemon:
             _m = "feed update post: feed dump returned status (%s) and (%d) articles"
             logging.info(_m % (status, total_articles))
 
-            updated = self.client.feed_update_post({ 'token' : self.token, 
-                                                     'id'    : id, 
-                                                     'data'  : dump })
+            try:
+                saved = self.client.feed_update_post({ 'token' : self.token, 
+                                                       'id'    : id, 
+                                                       'data'  : dump })
+            except:
+                _m = "feed update post: webservice call failed; (%s)"
+                logging.error(_m % (sys.exc_info()[0].__name__))
 
-            if type(updated) != type(int()): updated = 0
+            if type(saved) != type(int()): saved = 0
 
-            _m = "feed update post: feed id (%d) updated (%d) articles"
-            logging.info(_m % (id, updated))
+            _m = "feed update post: feed id (%d) saved (%d) articles"
+            logging.info(_m % (id, saved))
 
     def blog_publish(self):
-        publish = self.client.blog_publish_get({ 'token': self.token })
+        try:
+            publish = self.client.blog_publish_get({ 'token': self.token })
+        except:
+            _m = "blog publish get: webservice call failed; (%s)"
+            logging.error(_m % (sys.exc_info()[0].__name__))
+            return None
 
         if type(publish) != type(list()):
             logging.error("blog publish get: wrong type, expected <list>")
@@ -108,14 +121,14 @@ class Daemon:
                 return None
 
             try:
-                id            = int(entry['id'])
-                blog_type     = str(entry['blog_type'])
-                blog_version  = str(entry['blog_version'])
-                manager_url   = str(entry['blog_manager_url'])
-                blog_username = str(entry['blog_username'])
-                blog_password = str(entry['blog_password'])
-                entry_title   = str(entry['entry_title'])
-                entry_content = str(entry['entry_content'])
+                id            = entry['id']
+                blog_type     = entry['blog_type']
+                blog_version  = entry['blog_version']
+                manager_url   = entry['blog_manager_url']
+                blog_username = entry['blog_username']
+                blog_password = entry['blog_password']
+                entry_title   = entry['entry_title']
+                entry_content = entry['entry_content']
             except:
                 err = sys.exc_info()[0].__name__
                 logging.warning("blog publish get: invalid entry dictionary (%s)" % (err))
@@ -130,7 +143,7 @@ class Daemon:
             t.username = blog_username
             t.password = blog_password
 
-            _m = "blog publish post: started for blog entry id (%d)"
+            _m = "blog publish post: started for blog entry id (%s)"
             logging.info(_m % (id))
 
             published = False
@@ -140,20 +153,25 @@ class Daemon:
                 post_id = t.publish({ 'title'  : entry_title,
                                       'content': entry_content })
                 _m = "blog publish post: post id (%d) "
-                _m = _m + "published successfully for blog entry id (%d)"
+                _m = _m + "published successfully for blog entry id (%s)"
                 logging.info(_m % (int(post_id), id))
                 published = True
             except xmlrpclib.Fault, message:
-                _m = "blog publish post: failed to publish for blog entry id (%d); (%s)"
+                _m = "blog publish post: failed to publish blog entry id (%d); (%s)"
                 logging.warning(_m % (id, message))
             except:
-                _m = "blog publish post: failed to publish for blog entry id (%d); (%s)"
+                _m = "blog publish post: failed to publish blog entry id (%d); (%s)"
                 logging.error(_m % (id, sys.exc_info()[0].__name__))
 
-            self.client.blog_publish_set({ 'token'     : self.token, 
-                                           'id'        : id, 
-                                           'published' : published,
-                                           'message'   : message })
+            try:
+                self.client.blog_publish_set({ 'token'     : self.token, 
+                                               'id'        : id, 
+                                               'published' : published,
+                                               'message'   : message })
+            except:
+                _m = "blog publish post: webservice call failed; (%s)"
+                logging.error(_m % (sys.exc_info()[0].__name__))
+                return None
 
 def start(argv):
     base_path = os.path.abspath("../")

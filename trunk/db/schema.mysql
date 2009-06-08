@@ -67,7 +67,7 @@ CREATE TABLE application_mailer_relay
     PRIMARY KEY (id)
 ) ENGINE=InnoDB DEFAULT CHARSET='utf8' COLLATE='utf8_unicode_ci';
 
-CREATE INDEX a_mry_idx ON application_mailer_relay (created_at, recipient_email_local(8), recipient_email_domain(4), identifier_md5(8));
+CREATE INDEX a_mry_idx ON application_mailer_relay (created_at, recipient_email_local(8), recipient_email_domain(4), identifier_md5(6));
 
 -- blog type --
 
@@ -105,7 +105,7 @@ CREATE TABLE model_aggregator_feed
     PRIMARY KEY (aggregator_feed_id)
 ) ENGINE=InnoDB DEFAULT CHARSET='utf8' COLLATE='utf8_unicode_ci';
 
-CREATE INDEX m_agf_idx ON model_aggregator_feed (feed_url_md5(8), feed_update_time, updated_at, enabled);
+CREATE INDEX m_agf_idx ON model_aggregator_feed (feed_url_md5(6), feed_update_time, updated_at, enabled);
 
 CREATE TABLE model_aggregator_feed_discover
 (
@@ -119,7 +119,7 @@ CREATE TABLE model_aggregator_feed_discover
     CONSTRAINT m_afd_un UNIQUE (url_md5, feed_url_md5)
 ) ENGINE=InnoDB DEFAULT CHARSET='utf8' COLLATE='utf8_unicode_ci';
 
-CREATE INDEX m_afd_idx ON model_aggregator_feed_discover (url_md5(8), feed_url_md5(8), updated_at);
+CREATE INDEX m_afd_idx ON model_aggregator_feed_discover (url_md5(6), feed_url_md5(6), updated_at);
 
 CREATE TABLE model_aggregator_feed_article
 (
@@ -138,7 +138,7 @@ CREATE TABLE model_aggregator_feed_article
         REFERENCES model_aggregator_feed (aggregator_feed_id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET='utf8' COLLATE='utf8_unicode_ci';
 
-CREATE INDEX m_afa_idx ON model_aggregator_feed_article (article_md5(8), article_date, created_at);
+CREATE INDEX m_afa_idx ON model_aggregator_feed_article (article_md5(6), created_at, article_date);
 
 -- user --
 
@@ -170,7 +170,7 @@ CREATE TABLE model_user_profile
     PRIMARY KEY (user_profile_id)
 ) ENGINE=InnoDB DEFAULT CHARSET='utf8' COLLATE='utf8_unicode_ci';
 
-CREATE INDEX m_upf_idx ON model_user_profile (hash(8), login_email_local(8), login_email_domain(4), login_password_md5(8), enabled);
+CREATE INDEX m_upf_idx ON model_user_profile (hash(8), login_email_local(8), login_email_domain(4), login_password_md5(6), enabled);
 
 CREATE TABLE model_user_dashboard_setting
 (

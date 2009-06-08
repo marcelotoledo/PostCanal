@@ -109,7 +109,7 @@ function feed_discover(url)
             }
             else
             {
-                form_message("<?php echo $this->translation()->invalid_url ?>");
+                form_message("<?php echo $this->translation()->feed_not_found ?>");
             }
         },
         error: function () { server_error(); }

@@ -61,7 +61,7 @@ def article_dump(article):
     _date = article.get('date_parsed')
     if _date: _date = time.mktime(_date)
     if _date == None: _date = time.time()
-    r['article_date'] = int(_date)
+    r['article_date'] = int(_date - time.timezone)
 
     # link, title, author
     r['article_link'] = article.get('link', "")

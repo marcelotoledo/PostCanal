@@ -107,6 +107,8 @@
 "feed/index","en_US","feed_import","feed import"
 "feed/index","en_US","feed_add_url","URL"
 "feed/index","en_US","feed_not_found","feed not found"
+"feed/index","en_US","feed_error","this feed contain errors"
+"feed/index","en_US","invalid_url","invalid url"
 "feed/index","en_US","new_feed_instruction","No registered feeds. To add new feed, click in the \"feed_add\" link"
 
 "dashboard/index","en_US","show_feeds","show feeds"

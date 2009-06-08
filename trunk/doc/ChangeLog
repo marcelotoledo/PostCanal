@@ -35,3 +35,11 @@ HORAS TRABALHADAS: 7h
 - inclusao de timezone e culture no perfil do usuario
 
 HORAS TRABALHADAS: 4h
+
+==========
+07/06/2009
+==========
+
+- correcoes de bug com timezone e unicode
+
+HORAS TRABALHADAS: 6h

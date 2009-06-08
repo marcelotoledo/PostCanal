@@ -109,10 +109,6 @@ class B_Bootstrap
                 $session = new B_Session($session_name);
                 $registry->session()->object = $session;
 
-                /* initialize default timezone */
-
-                date_default_timezone_set($session->getTimezone());
-
                 /* initialize translation */
 
                 $culture = $session->getCulture();

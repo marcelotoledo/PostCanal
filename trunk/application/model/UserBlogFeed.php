@@ -256,7 +256,7 @@ class UserBlogFeed extends B_Model
 
         $sql = "SELECT a.feed_title AS feed_title, a.hash AS feed, 
                        b.article_md5 AS article, b.article_title AS article_title, 
-                       b.article_link AS article_link, b.article_date AS article_date, 
+                       b.article_link AS article_link, b.created_at AS article_date, 
                        b.article_author AS article_author, b.article_content AS article_content,
                        c.publication_status AS publication_status
                 FROM model_user_blog_feed AS a
@@ -266,12 +266,13 @@ class UserBlogFeed extends B_Model
                     ON (b.aggregator_feed_article_id = c.aggregator_feed_article_id) 
                     AND (a.user_blog_id = c.user_blog_id)
                     AND (c.deleted = 0)
-                WHERE a.enabled = 1 AND a.deleted = 0 AND b.article_date < ? 
+                WHERE a.enabled = 1 AND a.deleted = 0 AND b.updated_at < ? 
                 AND a.hash = ? AND a.user_blog_id = (
                     SELECT user_blog_id
                     FROM model_user_blog
                     WHERE hash = ? AND user_profile_id = ?) 
-                ORDER BY b.article_date DESC, b.created_at DESC LIMIT " . intval($limit);
+                ORDER BY b.created_at DESC, b.article_date DESC, b.aggregator_feed_article_id DESC
+                LIMIT " . intval($limit);
 
         return self::select($sql, array(date("Y-m-d H:i:s", $older), 
                                         $feed_hash,
@@ -298,7 +299,7 @@ class UserBlogFeed extends B_Model
 
         $sql = "SELECT a.feed_title AS feed_title, a.hash AS feed, 
                        b.article_md5 AS article, b.article_title AS article_title, 
-                       b.article_link AS article_link, b.article_date AS article_date, 
+                       b.article_link AS article_link, b.created_at AS article_date, 
                        b.article_author AS article_author, b.article_content AS article_content,
                        c.publication_status AS publication_status
                 FROM model_user_blog_feed AS a 
@@ -309,11 +310,12 @@ class UserBlogFeed extends B_Model
                     AND (a.user_blog_id = c.user_blog_id)
                     AND (c.deleted = 0)
                 WHERE a.enabled = 1 AND a.deleted = 0 
-                AND b.article_date < ? AND a.user_blog_id = (
+                AND b.updated_at < ? AND a.user_blog_id = (
                     SELECT user_blog_id
                     FROM model_user_blog
                     WHERE hash = ? AND user_profile_id = ?) 
-                ORDER BY b.article_date DESC, b.created_at DESC LIMIT " . intval($limit);
+                ORDER BY b.created_at DESC, b.article_date DESC, b.aggregator_feed_article_id DESC
+                LIMIT " . intval($limit);
 
         return self::select($sql, array(date("Y-m-d H:i:s", $older), 
                                         $blog_hash, 

@@ -119,24 +119,34 @@ class AggregatorFeedArticle extends B_Model
     // -------------------------------------------------------------------------
 
     /**
+     * Generate article MD5 
+     */
+    protected function makeArticleMd5()
+    {
+        if(strlen($this->article_md5) == 0 && strlen($this->article_link) > 0)
+        {
+            $this->article_md5 = md5($this->article_link);
+        }
+        if(strlen($this->article_md5) == 0 && strlen($this->article_title) > 0)
+        {
+            $this->article_md5 = md5($this->article_title);
+        }
+        if(strlen($this->article_md5) == 0)
+        {
+            $this->article_md5 = md5(A_Utility::randomString(8));
+        }
+    }
+
+    /**
      * Save model
      *
      * @return  boolean
      */
     public function save()
     {
-        /* generate article md5 */
-
-        if($this->isNew()) 
+        if($this->isNew() && strlen($this->article_md5) == 0)
         {
-            if(strlen($this->article_link) > 0)
-            {
-                $this->article_md5 = md5($this->article_link);
-            }
-            else
-            {
-                $this->article_md5 = md5(A_Utility::randomString(8));
-            }
+            $this->makeArticleMd5();
         }
 
         return parent::save();
@@ -217,25 +227,6 @@ class AggregatorFeedArticle extends B_Model
     }
 
     /**
-     * Get last article time
-     *
-     * @param   integer $feed_id    AggregatorFeed ID
-     *
-     * @return  integer
-     */
-    public static function getLastArticleTime($feed_id)
-    {
-        $sql = "SELECT UNIX_TIMESTAMP(article_date) AS last_article_time " .
-               "FROM " . self::$table_name . " " .
-               "WHERE aggregator_feed_id = ? " .
-               "ORDER BY article_date DESC, created_at DESC LIMIT 1";
-
-        $result = current(self::select($sql, array($feed_id)));
-
-        return is_object($result) ? $result->last_article_time : 0;
-    }
-
-    /**
      * Insert feed item (raw)
      *
      * @param   AggregatorFeed  $feed
@@ -247,56 +238,62 @@ class AggregatorFeedArticle extends B_Model
         self::transaction();
 
         $feed_id = $feed->aggregator_feed_id;
-        $last_article_time = self::getLastArticleTime($feed->aggregator_feed_id);
-        $total = count($data);
         $inserted = 0;
-        $rewritten = 0;
+        $updated = 0;
 
         foreach($data as $entry)
         {
-            if($entry['article_date'] > $last_article_time) // only new items based on item date
+            $article = new self();
+            $article->aggregator_feed_id = $feed->aggregator_feed_id;
+            $article->populate($entry);
+            $article->makeArticleMd5();
+
+            $is_new = false;
+            $is_update = false;
+
+            if(is_object($_i = self::getByArticleMd5(
+                $feed->aggregator_feed_id, $article->article_md5)))
             {
-                $article = new self();
-                $article->aggregator_feed_id = $feed->aggregator_feed_id;
-                $article->populate($entry);
-
-                // check item md5 (rewrite existing item)
-
-                $is_rewrite = false;
-
-                if(is_object($_i = self::getByArticleMd5(
-                    $feed->aggregator_feed_id, $article->article_md5)))
+                if($article->article_date != $_i->article_date)
                 {
+                    $is_update = true;
                     $article->setPrimaryKey($_i->getPrimaryKey());
-                    $is_rewrite = true;
                 }
+            }
+            else
+            {
+                $is_new = true;
+            }
 
-                try
+            try
+            {
+                if($is_new || $is_update)
                 {
                     $article->save();
-                    $is_rewrite ? $rewritten++ : $inserted++;
+                    $is_new ? $inserted++ : $updated++;
                 }
-                catch(B_Exception $_e)
-                {
-                    $saved = false;
-                    self::rollback();
-                    $_m = "new aggregator feed article failed from " .
-                          "article link (" . $article->article_link . ")";
-                    $_d = array ('method' => __METHOD__);
-                    B_Exception::forward($_m, E_USER_ERROR, $_e, $_d);
-                }
+            }
+            catch(B_Exception $_e)
+            {
+                self::rollback();
+                $_m = "new aggregator feed article failed from " .
+                      "article link (" . $article->article_link . ")";
+                $_d = array ('method' => __METHOD__);
+                B_Exception::forward($_m, E_USER_ERROR, $_e, $_d);
             }
         }
 
         self::commit();
 
-        $_m = "aggregator feed id (" . $feed_id . ") " .
-              "updated with a total of (" . $total . ") articles, " .
-              "inserted (" . $inserted . ") " .
-              "and rewritten (" . $rewritten . ")";
-        $_d = array ('method' => __METHOD__);
-        B_Log::write($_m);
+        $_t = $inserted + $updated;
 
-        return ($inserted + $rewritten);
+        $_m = "aggregator feed id (" . $feed_id . ") " .
+              "updated with a total of (" . $_t . ") articles : " .
+              "inserted (" . $inserted . ") " .
+              "and updated (" . $updated . ")";
+        $_d = array ('method' => __METHOD__);
+        B_Log::write($_m, E_NOTICE);
+
+        return ($inserted + $updated);
     }
 }

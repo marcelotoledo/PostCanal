@@ -58,6 +58,11 @@ server = xmlrpclib.ServerProxy(remote)
 # result = server.blog_publication_check({ 'token' : token, 'url' : 'http://castilho1024.wordpress.com/xmlrpc.php', 'type' : 'wordpress', 'version' : 'wordpress_domain', 'username' : 'castilho1024', 'password' : 'castilho' })
 # print "publication accepted = %s" % (result['publication_accepted'])
 
+
+def print_feed_discover_result_article(a):
+    print "\tarticle date = %s" % (a['article_date'])
+    print "\tarticle title = %s" % (a['article_title'])
+
 def print_feed_discover_result(r):
     print "feed url = %s" % (r['feed_url'])
     print "feed title = %s" % (r['feed_title'])
@@ -68,26 +73,32 @@ def print_feed_discover_result(r):
     print "feed description = %s" % (r['feed_description'])
     print "len(articles) = %d" % (len(r['articles']))
     print "feed update time = %d" % (r['feed_update_time'])
+    for i in r['articles']:
+        print_feed_discover_result_article(i)
 
 print "---------------------------------------------------------------------------------"
 print "feed discover"
 print "---------------------------------------------------------------------------------"
-url = "http://www.google.com"
+# url = "http://www.google.com"
+# for r in server.feed_discover({ 'token' : token, 'url' : url }):
+#     print_feed_discover_result(r)
+# print ""
+# url = "http://www.slashdot.org"
+# for r in server.feed_discover({ 'token' : token, 'url' : url }):
+#     print_feed_discover_result(r)
+# print ""
+# url = "http://www.cnn.com"
+# for r in server.feed_discover({ 'token' : token, 'url' : url }):
+#     print_feed_discover_result(r)
+# print ""
+# url = "http://br-linux.org/feed/rss/"
+# for r in server.feed_discover({ 'token' : token, 'url' : url }):
+#     print_feed_discover_result(r)
+# print ""
+# url = "http://www.bovespa.com.br/rss/"
+# for r in server.feed_discover({ 'token' : token, 'url' : url }):
+#     print_feed_discover_result(r)
+url = "http://rss.terra.com.br/0,,EI1,00.xml"
 for r in server.feed_discover({ 'token' : token, 'url' : url }):
     print_feed_discover_result(r)
-print ""
-url = "http://www.slashdot.org"
-for r in server.feed_discover({ 'token' : token, 'url' : url }):
-    print_feed_discover_result(r)
-print ""
-url = "http://www.cnn.com"
-for r in server.feed_discover({ 'token' : token, 'url' : url }):
-    print_feed_discover_result(r)
-print ""
-url = "http://br-linux.org/feed/rss/"
-for r in server.feed_discover({ 'token' : token, 'url' : url }):
-    print_feed_discover_result(r)
-print ""
-url = "http://www.bovespa.com.br/rss/"
-for r in server.feed_discover({ 'token' : token, 'url' : url }):
-    print_feed_discover_result(r)
+
