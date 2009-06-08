@@ -148,7 +148,7 @@ class BlogType extends B_Model
         {
             $_m = "blog discover timeout for url (" . $url . ")";
             $_d = array('method' => __METHOD__);
-            B_Log::write($_m, E_WARNING, $_d);
+            B_Log::write($_m, E_USER_WARNING, $_d);
             $result = array();
         }
         else

@@ -41,7 +41,7 @@ CREATE TABLE base_session
     active TINYINT(1) NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET='utf8' COLLATE='utf8_unicode_ci';
 
-CREATE INDEX b_ses_idx ON base_session (id, session_expires, active);
+CREATE INDEX b_ses_idx ON base_session (id(6), session_expires, active);
 
 CREATE TABLE base_translation
 (

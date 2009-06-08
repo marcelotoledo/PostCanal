@@ -169,7 +169,7 @@ class A_WebService
         {
             $_m = "feed update post webservice failed";
             $_d = array ('method' => __METHOD__);
-            B_Log::write($_m, E_ERROR, $_d);
+            B_Log::write($_m, E_USER_ERROR, $_d);
         }
 
         return $updated;
@@ -205,7 +205,7 @@ class A_WebService
         {
             $_m = "trying to set blog entry as published failed";
             $_d = array ('method' => __METHOD__);
-            B_Log::write($_m, E_ERROR, $_d);
+            B_Log::write($_m, E_USER_ERROR, $_d);
         }
         
         return true;

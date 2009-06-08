@@ -386,13 +386,13 @@ class B_Exception extends Exception
      * @param   array   $data
      * @return void
      */
-    public function __construct($message, $code=E_NOTICE, $data=array())
+    public function __construct($message, $code=E_USER_NOTICE, $data=array())
     {
         /* force use of predefined codes */
 
-        if(!in_array($code, array(E_NOTICE, E_WARNING, E_ERROR)))
+        if(!in_array($code, array(E_USER_NOTICE, E_USER_WARNING, E_USER_ERROR)))
         {
-            $code = E_ERROR;
+            $code = E_USER_ERROR;
         }
 
         $this->data = $data;
@@ -412,9 +412,9 @@ class B_Exception extends Exception
 
         switch($this->getCode())
         {
-            case E_ERROR:   $priority = "ERROR";   break;
-            case E_WARNING: $priority = "WARNING"; break;
-            case E_NOTICE:  $priority = "NOTICE";  break;
+            case E_USER_ERROR:   $priority = "ERROR";   break;
+            case E_USER_WARNING: $priority = "WARNING"; break;
+            case E_USER_NOTICE:  $priority = "NOTICE";  break;
             default:             $priority = "ERROR";
         }
 
@@ -501,7 +501,7 @@ class B_Exception extends Exception
             {
                 $message.= ";\n" . $exception->getMessage();
 
-                /* E_ERROR < E_WARNING < E_NOTICE */
+                /* E_USER_ERROR < E_USER_WARNING < E_USER_NOTICE */
 
                 if($exception->getCode() < $code)
                 {

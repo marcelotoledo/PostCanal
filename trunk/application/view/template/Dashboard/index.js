@@ -263,6 +263,7 @@ function article_populate(a, container, append)
             article_title      : $(this).find('article_title').text(),
             article_link       : $(this).find('article_link').text(),
             article_date       : $(this).find('article_date').text(),
+            article_date_local : $(this).find('article_date_local').text(),
             article_author     : $(this).find('article_author').text(),
             article_content    : $(this).find('article_content').text(),
             publication_status : $(this).find('publication_status').text()
@@ -292,7 +293,7 @@ function article_populate(a, container, append)
             }
 
             _inner.find('div.articletitle').text(_data.article_title);
-            _inner.find('div.articleinfo').text("@" + _data.article_date);
+            _inner.find('div.articleinfo').text("@" + _data.article_date_local);
             _inner.find('div.articlebuttons').find('a.viewlnk').attr('href', _data.article_link);
 
             _lsdata[_i] = _item.html(); _i++;

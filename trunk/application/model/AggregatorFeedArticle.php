@@ -292,7 +292,7 @@ class AggregatorFeedArticle extends B_Model
               "inserted (" . $inserted . ") " .
               "and updated (" . $updated . ")";
         $_d = array ('method' => __METHOD__);
-        B_Log::write($_m, E_NOTICE);
+        B_Log::write($_m, E_USER_NOTICE);
 
         return ($inserted + $updated);
     }

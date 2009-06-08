@@ -43,3 +43,11 @@ HORAS TRABALHADAS: 4h
 - correcoes de bug com timezone e unicode
 
 HORAS TRABALHADAS: 6h
+
+==========
+08/06/2009
+==========
+
+- exibicao de data / hora nos articles do dashboard com timezone e culture local
+
+HORAS TRABALHADAS: 3h
