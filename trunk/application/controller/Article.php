@@ -25,13 +25,12 @@ class C_Article extends B_Controller
     {
         $articles = array();
 
-        $ct = $this->session()->getCulture();
-        $tz = $this->session()->getTimezone();
+        $zd = new Zend_Date(time(), false, $this->session()->getCulture());
+        $zd->setTimezone($this->session()->getTimezone());
 
         foreach($results as $a)
         {
-            $zd = new Zend_Date(strtotime($a['article_date']), false, $ct);
-            $zd->setTimezone($tz);
+            $zd->setTimestamp(strtotime($a['article_date']));
 
             $articles[] = array_merge($a, array
             (
