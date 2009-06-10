@@ -237,7 +237,7 @@ class BlogEntry extends B_Model
                     a.publication_date < UTC_TIMESTAMP() AND
                     a.deleted = 0
                 ORDER BY
-                    a.updated_at ASC
+                    a.ordering ASC
                 LIMIT 1";
 
         return self::select($sql, array(self::STATUS_WAITING), PDO::FETCH_ASSOC);
@@ -307,10 +307,11 @@ class BlogEntry extends B_Model
      * @param   string  $entry_hash
      * @param   string  $blog_hash
      * @param   integer $user_profile_id
+     * @param   integer $pts                Publication date (in timestamp)
      * 
      * @return  boolean
      */ 
-    public static function updateEntryToPublish($entry_hash, $blog_hash,$profile_id)
+    public static function updateEntryToPublish($entry_hash, $blog_hash,$profile_id, $pts=0)
     {
         $updated = false;
 
@@ -319,7 +320,32 @@ class BlogEntry extends B_Model
                                                            $entry_hash))))
         {
             $entry->publication_status = self::STATUS_WAITING;
-            $entry->publication_date = time(); // asap
+            $entry->publication_date = $pts>0 ? $pts : time();
+            $entry->save();
+            $updated = true;
+        }
+
+        return $updated;
+    }
+
+    /**
+     * cancel entry to publish
+     *
+     * @param   string  $entry_hash
+     * @param   string  $blog_hash
+     * @param   integer $user_profile_id
+     * 
+     * @return  boolean
+     */ 
+    public static function cancelEntryToPublish($entry_hash, $blog_hash, $profile_id)
+    {
+        $updated = false;
+
+        if(is_object(($entry = self::getByBlogAndEntryHash($profile_id,
+                                                           $blog_hash,
+                                                           $entry_hash))))
+        {
+            $entry->publication_status = self::STATUS_NEW;
             $entry->save();
             $updated = true;
         }
@@ -426,5 +452,36 @@ class BlogEntry extends B_Model
         }
 
         self::commit();
+    }
+
+    /**
+     * Update entries acording to auto publication
+     *
+     * @param   string      $blog           Blog Hash
+     * @param   integer     $user           User Profile ID
+     * @param   boolean     $publication    Publication Auto?
+     * @param   integer     $interval       Entry publication interval
+     */
+    public static function updateAutoPublication($blog, $user, $publication, $interval)
+    {
+        $queue = self::findQueueByUserAndBlog($user, $blog);
+        if($interval<0) { $interval=0; }
+
+        if($publication==true)
+        {
+            $t = time();
+
+            foreach($queue['queue'] as $i)
+            {
+                self::updateEntryToPublish($i['entry'], $blog, $user, ($t+=$interval));
+            }
+        }
+        else
+        {
+            foreach($queue['queue'] as $i)
+            {
+                self::cancelEntryToPublish($i['entry'], $blog, $user);
+            }
+        }
     }
 }

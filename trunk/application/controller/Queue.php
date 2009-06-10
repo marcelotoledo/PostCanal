@@ -112,6 +112,26 @@ class C_Queue extends B_Controller
     }
 
     /**
+     * Set publication automatic
+     *
+     * @return void
+     */
+    public function A_auto()
+    {
+        $this->response()->setXML(true);
+
+        $blog_hash = $this->request()->blog;
+        $queue_publication = $this->request()->publication==1 ? true : false;
+        $queue_interval = intval($this->request()->interval);
+        $profile_id = $this->session()->user_profile_id;
+
+        BlogEntry::updateAutoPublication($blog_hash, 
+                                         $profile_id, 
+                                         $queue_publication, 
+                                         $queue_interval);
+    }
+
+    /**
      * Feed update ordering position
      */
     public function A_position()

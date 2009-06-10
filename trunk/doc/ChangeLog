@@ -66,5 +66,7 @@ HORAS TRABALHADAS: 4h
 ==========
 
 - inclusao de ordenacao no queue (sortable)
+- inclusao de publicacao automatica de queue
+- inclusao de intervalo de tempo na publicacao automatica de queue
 
-HORAS TRABALHADAS: 2h
+HORAS TRABALHADAS: 5h

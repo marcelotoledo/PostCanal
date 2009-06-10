@@ -578,7 +578,6 @@ function set_queue_publication()
         mytpl.queue_publication_manual_lnk.show();
         mytpl.queue_publication_automatic_lnk.hide();
         mytpl.queue_publication_automatic_label.show();
-        mytpl.queue_interval.show();
     }
     else
     {
@@ -586,12 +585,42 @@ function set_queue_publication()
         mytpl.queue_publication_manual_label.show();
         mytpl.queue_publication_automatic_label.hide();
         mytpl.queue_publication_automatic_lnk.show();
-        mytpl.queue_interval.hide();
     }
 }
 
 function set_queue_interval()
 {
+    queue.interval = blog.info['publication_interval'];
+    mytpl.queue_interval_sel.find("option").each(function()
+    {
+        if($(this).val()==queue.interval)
+        {
+            $(this).attr('selected', true);
+        }
+    });
+}
+
+function set_queue_publication_auto()
+{
+    $.ajax
+    ({
+        type: "POST",
+        url: "<?php B_Helper::url('queue','auto') ?>",
+        dataType: "xml",
+        data: { blog        : blog.current,
+                interval    : queue.interval,
+                publication : ((queue.publication==true) ? 1 : 0) },
+        beforeSend: function()
+        {
+            set_active_request(true);
+        },
+        complete: function()
+        {
+            set_active_request(false);
+            queue_list();
+        },
+        error: function () { server_error(); }
+    });
 }
 
 function set_queue_feeding()
@@ -662,7 +691,12 @@ function queue_populate(e)
         queue_entry_set_status(_inner, _data.publication_status);
 
         _inner.find('div.entrytitle').text(_data.entry_title);
-        _inner.find('div.entryinfo').text("@" + _data.publication_date_local);
+
+        if(_data.publication_status=='waiting' || 
+           _data.publication_status=='published')
+        {
+            _inner.find('div.entryinfo').text("@" + _data.publication_date_local);
+        }
 
         _lsdata[_i] = _item.html(); _i++;
 
@@ -1008,8 +1042,13 @@ $(document).ready(function()
     {
         set_feed_display();
         set_article_display();
+
         set_queue_publication();
         mytpl.queue_publication.show();
+
+        set_queue_interval();
+        mytpl.queue_interval.show();
+
         window_update();
         // set_queue_feeding();
         // mytpl.queue_feeding.show();
@@ -1120,6 +1159,7 @@ $(document).ready(function()
     $(document).bind('blog_publication_auto_updated' , function(e)
     {
         set_queue_publication();
+        set_queue_publication_auto();
     });
 
     mytpl.queue_interval_sel.change(function()
@@ -1133,7 +1173,7 @@ $(document).ready(function()
 
     $(document).bind('blog_publication_interval_updated' , function(e)
     {
-        // TODO
+        set_queue_publication_auto();
     });
 
     mytpl.queue_height_lnks.find('a').click(function()
