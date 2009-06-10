@@ -141,9 +141,36 @@ class BlogEntry extends B_Model
         if($this->isNew()) 
         {
             $this->hash = A_Utility::randomString(8);
+            $this->setDefaultOrdering();
         }
 
         return parent::save();
+    }
+
+    /**
+     * Set default ordering
+     */
+    public function setDefaultOrdering()
+    {
+        $this->ordering = 1;
+
+        if($this->user_blog_id)
+        {
+            $sql = "SELECT MAX(ordering) as maxord FROM " . self::$table_name . " " .
+                   "WHERE user_blog_id = ? AND publication_status {status}";
+
+            $_in = "'" . implode("','", array(self::STATUS_NEW,
+                                              self::STATUS_WAITING,
+                                              self::STATUS_FAILED)) . "'";
+
+            $sql = str_replace('{status}', 'IN (' . $_in . ')', $sql);
+            $result = current(self::select($sql, array($this->user_blog_id), PDO::FETCH_ASSOC));
+
+            if($result['maxord'] > 0)
+            {
+                $this->ordering = $result['maxord'] + 1;
+            }
+        }
     }
 
     /**
@@ -156,13 +183,12 @@ class BlogEntry extends B_Model
     public static function findQueueByUserAndBlog($profile_id, $blog_hash, $published=10)
     {
         $sql = "SELECT hash AS entry, entry_title, entry_content, 
-                       publication_status, publication_date 
+                       publication_status, publication_date, ordering 
                 FROM " . self::$table_name . "
                 WHERE user_blog_id = (
                     SELECT user_blog_id FROM model_user_blog
                     WHERE hash = ? AND user_profile_id = ?) AND deleted=0
-                AND publication_status {status}
-                ORDER BY publication_date DESC, updated_at DESC";
+                AND publication_status {status}";
 
         $results = array('queue' => array(), 'published' => array());
 
@@ -170,15 +196,13 @@ class BlogEntry extends B_Model
                                           self::STATUS_WAITING,
                                           self::STATUS_FAILED)) . "'";
 
-        $results['queue'] = self::select(str_replace('{status}', 'IN (' . $_in . ')', $sql), 
-            array($blog_hash, $profile_id), 
-            PDO::FETCH_ASSOC);
+        $_s = str_replace('{status}', 'IN (' . $_in . ')', $sql) . " ORDER BY ordering ASC";
+        $results['queue'] = self::select($_s, array($blog_hash, $profile_id), PDO::FETCH_ASSOC);
 
         if($published > 0)
         {
-            $sql.= " LIMIT " . intval($published);
-
-            $results['published'] = self::select(str_replace('{status}', '=?', $sql), 
+            $_s = $sql . " ORDER BY publication_date DESC LIMIT " . intval($published);
+            $results['published'] = self::select(str_replace('{status}', '=?', $_s), 
                 array($blog_hash, $profile_id, self::STATUS_PUBLISHED), 
                 PDO::FETCH_ASSOC);
         }
@@ -335,4 +359,72 @@ class BlogEntry extends B_Model
         return self::select($_q, array($blog_hash, $profile_id), PDO::FETCH_ASSOC);
     }
 
+    /**
+     * Update column
+     * 
+     * @param   integer     $user_id        
+     * @param   string      $blog_hash
+     * @param   string      $entry_hash
+     * @param   string      $column_name
+     * @param   string      $column_value
+     * 
+     * @return  string      entry_hash
+     */
+    public static function updateColumn($user, $blog, $entry, $name, $value)
+    {
+        $result = "";
+
+        if(is_object(($_o = self::getByBlogAndEntryHash($user, $blog, $entry))))
+        {
+            $_o->{$name} = $value;
+            $_o->save();
+            $result = $entry;
+        }
+
+        return $entry;
+    }
+
+    /**
+     * Update queue ordering
+     *
+     * @param   string      $blog_hash
+     * @param   integer     $profile_id        
+     * @param   string      $entry_hash
+     * @param   integer     $ordering
+     */
+    public static function updateOrdering($blog_hash, $profile_id, $entry_hash, $ordering)
+    {
+        $j = 1;
+
+        self::transaction();
+
+        $queue = self::findQueueByUserAndBlog($profile_id, $blog_hash);
+
+        foreach($queue['queue'] as $i)
+        {
+            try
+            {
+                if($i['entry']==$entry_hash)
+                {
+                    self::updateColumn($profile_id, $blog_hash, $entry_hash, 'ordering', $ordering);
+                }
+                else
+                {
+                    if($j==$ordering) { $j++; }
+                    self::updateColumn($profile_id, $blog_hash, $i['entry'], 'ordering', $j);
+                    $j++;
+                }
+            }
+            catch(Exception $e)
+            {
+                self::rollback();
+                $m = "user blog entry ordering update failed for blog (" . $blog_hash . ") " .
+                     ", entry (" . $i['entry'] . ") and ordering (" . $j . ");\n" . 
+                     $e->getMessage();
+                B_Log::write($m, E_USER_ERROR);
+            }
+        }
+
+        self::commit();
+    }
 }

@@ -650,18 +650,18 @@ function queue_populate(e)
             entry_content          : $(this).find('entry_content').text(),
             publication_status     : $(this).find('publication_status').text(),
             publication_date       : $(this).find('publication_date').text(),
-            publication_date_local : $(this).find('publication_date_local').text()
+            publication_date_local : $(this).find('publication_date_local').text(),
+            ordering               : $(this).find('ordering').text()
         };
 
         _item = mytpl.entry_blank.clone();
         _inner = _item.find('div.entry');
         _inner.attr('entry', _data.entry);
+        _inner.attr('ord', _data.ordering);
 
         queue_entry_set_status(_inner, _data.publication_status);
 
-        _inner.find('div.entrytitle')
-            .text(_data.entry_title.substring(0,80).replace(/\w+$/,'') + 
-            ((_data.entry_title.length>=80) ? '...' : ''));
+        _inner.find('div.entrytitle').text(_data.entry_title);
         _inner.find('div.entryinfo').text("@" + _data.publication_date_local);
 
         _lsdata[_i] = _item.html(); _i++;
@@ -720,6 +720,66 @@ function queue_populate(e)
     $(document).trigger('queue_populated');
 }
 
+function queue_sortable_callback(entry)
+{
+    var _p = 1;
+
+    mytpl.queue_list_area.find('div.entry').each(function()
+    {
+        if(entry == $(this).attr('entry') && _p != $(this).attr('ord'))
+        {
+            queue_position(entry, _p);
+        }
+
+        _p++;
+    });
+}
+
+function queue_sortable_init()
+{
+    mytpl.queue_list_area.sortable(
+    { 
+        stop: function(e, ui)
+        {
+            queue_sortable_callback(ui.item.attr('entry'));
+        },
+        handle: "div.entrytitle",
+        distance: 10
+    });
+    mytpl.queue_list_area.disableSelection();
+}
+
+function queue_position(entry, position)
+{
+    $.ajax
+    ({
+        type: "POST",
+        url: "<?php B_Helper::url('queue', 'position') ?>",
+        dataType: "xml",
+        data: { blog     : blog.current , 
+                entry    : entry, 
+                position : position },
+        beforeSend: function()
+        {
+            set_active_request(true);
+        },
+        complete: function()
+        {
+            set_active_request(false);
+        },
+        success: function (xml)
+        {
+            var _d = $(xml).find('data');
+
+            if((_d.find('updated').text()=="true")!=true)
+            {
+                queue_list();
+            }
+        },
+        error: function () { server_error(); }
+    });
+}
+
 function queue_list()
 {
     $.ajax
@@ -740,8 +800,8 @@ function queue_list()
         {
             var _d = $(xml).find('data');
             mytpl.queue_list_area.html("");
-            queue_populate(_d.find('result').find('published').children());
             queue_populate(_d.find('result').find('queue').children());
+            queue_populate(_d.find('result').find('published').children());
         },
         error: function () { server_error(); }
     });
@@ -991,6 +1051,7 @@ $(document).ready(function()
     $(document).bind('queue_populated' , function(e)
     {
         window_update();
+        queue_sortable_init();
     });
 
     mytpl.feed_dsp_all_lnk.click(function()

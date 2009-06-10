@@ -141,6 +141,9 @@ class UserBlogFeed extends B_Model
         return parent::save();
     }
 
+    /**
+     * Set default ordering
+     */
     public function setDefaultOrdering()
     {
         $this->ordering = 1;

@@ -248,6 +248,7 @@ CREATE TABLE model_user_blog_entry
     entry_content TEXT NOT NULL DEFAULT '',
     publication_status ENUM('new','waiting','failed','published') NOT NULL DEFAULT 'new',
     publication_date TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
+    ordering SMALLINT UNSIGNED NOT NULL DEFAULT 1,
     created_at TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
     updated_at TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
     deleted TINYINT(1) NOT NULL DEFAULT 0,
@@ -258,6 +259,6 @@ CREATE TABLE model_user_blog_entry
         REFERENCES model_user_blog (user_blog_id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET='utf8';
 
-CREATE INDEX m_bge_idx ON model_user_blog_entry (hash(8), publication_status, publication_date, updated_at, deleted);
+CREATE INDEX m_bge_idx ON model_user_blog_entry (hash(8), ordering, publication_status, publication_date, updated_at, deleted);
 
 COMMIT;

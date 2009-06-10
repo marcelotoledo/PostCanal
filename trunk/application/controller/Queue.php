@@ -110,4 +110,63 @@ class C_Queue extends B_Controller
                                                      $blog_hash, 
                                                      $profile_id);
     }
+
+    /**
+     * Feed update ordering position
+     */
+    public function A_position()
+    {
+        $this->response()->setXML(true);
+
+        $blog_hash = $this->request()->blog;
+        $entry_hash = $this->request()->entry;
+        $profile_id = $this->session()->user_profile_id;
+        $position = $this->request()->position;
+
+        BlogEntry::updateOrdering($blog_hash, $profile_id, $entry_hash, $position);
+
+        $this->view()->updated = true;
+    }
+
+    /**
+     * Feed delete
+     */
+    public function A_delete()
+    {
+        $this->response()->setXML(true);
+        /*
+        $blog = $this->request()->blog;
+        $feed = $this->request()->feed;
+        $user = $this->session()->user_profile_id;
+        $this->view()->result = UserBlogFeed::updateColumn($user, $blog, $feed, 'deleted', true);
+        */
+    }
+
+    /**
+     * Feed Update
+     */
+    public function A_update()
+    {
+        $this->response()->setXML(true);
+        /*
+        $blog = $this->request()->blog;
+        $feed = $this->request()->feed;
+        $user = $this->session()->user_profile_id;
+        $updated = array();
+
+        if(is_object(($feed = UserBlogFeed::getByBlogAndFeedHash($user, $blog, $feed))))
+        {
+            foreach(UserBlogFeed::$allow_write as $k)
+            {
+                if(strlen($this->request()->{$k})>0)
+                {
+                    $feed->{$k} = $this->request()->{$k};
+                    $updated = array_merge($updated, array($k => $feed->{$k}));
+                }
+            }
+            $feed->save();
+        }
+        $this->view()->updated = $updated;
+        */
+    }
 }
