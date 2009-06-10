@@ -51,3 +51,12 @@ HORAS TRABALHADAS: 6h
 - exibicao de data / hora nos articles do dashboard com timezone e culture local
 
 HORAS TRABALHADAS: 3h
+
+==========
+09/06/2009
+==========
+
+- correcao de exibicao de data local no queue
+- correcao do algoritmo de ordenacao de feeds
+
+HORAS TRABALHADAS: 4h

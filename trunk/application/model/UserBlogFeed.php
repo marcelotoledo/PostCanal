@@ -135,10 +135,16 @@ class UserBlogFeed extends B_Model
         if($this->isNew()) 
         {
             $this->hash = A_Utility::randomString(8);
-            $this->increaseOrdering();
+            $this->setDefaultOrdering();
         }
 
         return parent::save();
+    }
+
+    public function setDefaultOrdering()
+    {
+        $this->ordering = 1;
+        $this->increaseOrdering();
     }
 
     /**
@@ -150,7 +156,7 @@ class UserBlogFeed extends B_Model
         {
             $sql = "UPDATE " . self::$table_name . " " . 
                    "SET ordering=(ordering + 1) " .
-                   "WHERE user_blog_id = ?";
+                   "WHERE user_blog_id = ? AND ordering > 0";
             self::execute($sql, array($this->user_blog_id));
         }
     }
@@ -323,6 +329,31 @@ class UserBlogFeed extends B_Model
     }
 
     /**
+     * Update column
+     * 
+     * @param   integer     $user_id        
+     * @param   string      $blog_hash
+     * @param   string      $feed_hash
+     * @param   string      $column_name
+     * @param   string      $column_value
+     * 
+     * @return  string      feed_hash
+     */
+    public static function updateColumn($user, $blog, $feed, $name, $value)
+    {
+        $result = "";
+
+        if(is_object(($_o = self::getByBlogAndFeedHash($user, $blog, $feed))))
+        {
+            $_o->{$name} = $value;
+            $_o->save();
+            $result = $feed;
+        }
+
+        return $result;
+    }
+
+    /**
      * Update feed ordering
      *
      * @param   string      $blog_hash
@@ -332,44 +363,35 @@ class UserBlogFeed extends B_Model
      */
     public static function updateOrdering($blog_hash, $user_id, $feed_hash, $ordering)
     {
-        $_s = "SELECT * FROM model_user_blog_feed WHERE user_blog_id = (SELECT user_blog_id FROM model_user_blog WHERE hash = ? AND user_profile_id = ?) AND hash = ?";
-        $_d = array($blog_hash, $user_id, $feed_hash);
-        $_o = current(self::select($_s, $_d, PDO::FETCH_CLASS, get_class()));
+        $i = 1;
 
-        $i = $_o->ordering;
-        $j = $ordering;
-        $k = ($j < $i);
+        self::transaction();
 
-        if($j == $i) return null;
-
-        $_s = "UPDATE model_user_blog_feed SET ";
-        
-        if($k)
+        foreach(self::findAssocByBlogAndUser($blog_hash, $user_id, false) as $f)
         {
-            $_s .= "ordering = (ordering + 1) ";
-        }
-        else
-        {
-            $_s .= "ordering = (ordering - 1) ";
-        }
-        
-        $_s .= "WHERE user_blog_id = (SELECT user_blog_id FROM model_user_blog WHERE hash = ? AND user_profile_id = ?) ";
-        $_d = array($blog_hash, $user_id);
-
-        if($k)
-        {
-            $_s .= "AND ordering >= ? AND ordering < ?";
-            $_d = array_merge($_d, array($j, $i));
-        }
-        else
-        {
-            $_s .= "AND ordering > ? AND ordering <= ?";
-            $_d = array_merge($_d , array($i, $j));
+            try
+            {
+                if($f['feed']==$feed_hash)
+                {
+                    self::updateColumn($user_id, $blog_hash, $feed_hash, 'ordering', $ordering);
+                }
+                else
+                {
+                    if($i==$ordering) { $i++; }
+                    self::updateColumn($user_id, $blog_hash, $f['feed'], 'ordering', $i);
+                    $i++;
+                }
+            }
+            catch(Exception $e)
+            {
+                self::rollback();
+                $m = "user blog feed ordering update failed for blog (" . $blog_hash . ") " .
+                     ", feed (" . $f['feed'] . ") and ordering (" . $i . ");\n" . 
+                     $e->getMessage();
+                B_Log::write($m, E_USER_ERROR);
+            }
         }
 
-        self::execute($_s, $_d);
-
-        $_o->ordering = $j;
-        $_o->save();
+        self::commit();
     }
 }

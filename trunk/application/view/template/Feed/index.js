@@ -342,7 +342,8 @@ function feed_sortable_init()
         {
             sortable_callback(ui.item.attr('feed'));
         },
-        handle: "div.feeditemleft"
+        handle: "div.feeditemleft",
+        distance: 10
     });
     mytpl.feed_list_area.disableSelection();
 }

@@ -83,6 +83,7 @@ class C_Feed extends B_Controller
             if(is_object($blog_feed) == true)
             {
                 $blog_feed->deleted = false;
+                $blog_feed->setDefaultOrdering();
                 $blog_feed->save();
             }
             else
@@ -127,23 +128,6 @@ class C_Feed extends B_Controller
     }
 
     /**
-     * Feed update column
-     */
-    protected static function updateColumn($user, $blog, $feed, $name, $value)
-    {
-        $result = "";
-
-        if(is_object(($_o = UserBlogFeed::getByBlogAndFeedHash($user, $blog, $feed))))
-        {
-            $_o->{$name} = $value;
-            $_o->save();
-            $result = $feed;
-        }
-
-        return $result;
-    }
-
-    /**
      * Feed toggle (enable/disable)
      */
     public function A_toggle()
@@ -153,7 +137,7 @@ class C_Feed extends B_Controller
         $feed = $this->request()->feed;
         $enable = $this->request()->enable;
         $user = $this->session()->user_profile_id;
-        $this->view()->result = self::updateColumn($user, $blog, $feed, 'enabled', $enable);
+        $this->view()->result = UserBlogFeed::updateColumn($user, $blog, $feed, 'enabled', $enable);
     }
 
     /**
@@ -165,7 +149,7 @@ class C_Feed extends B_Controller
         $blog = $this->request()->blog;
         $feed = $this->request()->feed;
         $user = $this->session()->user_profile_id;
-        $this->view()->result = self::updateColumn($user, $blog, $feed, 'deleted', true);
+        $this->view()->result = UserBlogFeed::updateColumn($user, $blog, $feed, 'deleted', true);
     }
 
     /**

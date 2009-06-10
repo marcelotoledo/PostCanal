@@ -544,7 +544,6 @@ function article_content_show_all()
         {
             article_content_show($(this).attr('article'));
         }
-        $(this).hide(); // hide title
     });
 }
 
@@ -646,11 +645,12 @@ function queue_populate(e)
     {
         _data =
         {
-            entry              : $(this).find('entry').text(),
-            entry_title        : $(this).find('entry_title').text(),
-            entry_content      : $(this).find('entry_content').text(),
-            publication_status : $(this).find('publication_status').text(),
-            publication_date   : $(this).find('publication_date').text()
+            entry                  : $(this).find('entry').text(),
+            entry_title            : $(this).find('entry_title').text(),
+            entry_content          : $(this).find('entry_content').text(),
+            publication_status     : $(this).find('publication_status').text(),
+            publication_date       : $(this).find('publication_date').text(),
+            publication_date_local : $(this).find('publication_date_local').text()
         };
 
         _item = mytpl.entry_blank.clone();
@@ -662,7 +662,7 @@ function queue_populate(e)
         _inner.find('div.entrytitle')
             .text(_data.entry_title.substring(0,80).replace(/\w+$/,'') + 
             ((_data.entry_title.length>=80) ? '...' : ''));
-        _inner.find('div.entryinfo').text("@" + _data.publication_date);
+        _inner.find('div.entryinfo').text("@" + _data.publication_date_local);
 
         _lsdata[_i] = _item.html(); _i++;
 
@@ -673,7 +673,7 @@ function queue_populate(e)
         };
     });
 
-    mytpl.queue_list_area.prepend(_lsdata.join("\n"));
+    mytpl.queue_list_area.append(_lsdata.join("\n"));
 
     var _entry = null;
     var _label = null;
