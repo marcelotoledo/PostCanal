@@ -284,7 +284,7 @@ function article_populate(a, container, append)
 
             if(_data.publication_status.length>0)
             {
-                if(_data.publication_status=='new')
+                if(_data.publication_status.length>0)
                 {
                     _inner.find('div.articlequeue')
                         .html("<input type=\"checkbox\" checked/>");
@@ -632,7 +632,7 @@ function queue_entry_set_status(e, s)
 {
     if(typeof e == 'string' && e.length > 0)
     {
-        e = mytpl.queue_list_area.find("div.entry[entry='" + e + "']");
+        e = mytpl.queue_list_area_not.find("div.entry[entry='" + e + "']");
     }
 
     if(typeof e == 'object')
@@ -657,7 +657,7 @@ function queue_entry_set_status(e, s)
     }
 }
 
-function queue_populate(e)
+function queue_populate(e, c)
 {
     if(e.length==0)
     {
@@ -707,12 +707,12 @@ function queue_populate(e)
         };
     });
 
-    mytpl.queue_list_area.append(_lsdata.join("\n"));
+    c.append(_lsdata.join("\n"));
 
     var _entry = null;
     var _label = null;
 
-    mytpl.queue_list_area.find("div.entry[bound='no']").each(function()
+    c.find("div.entry[bound='no']").each(function()
     {
         $(this).attr('bound', 'yes');
 
@@ -758,7 +758,7 @@ function queue_sortable_callback(entry)
 {
     var _p = 1;
 
-    mytpl.queue_list_area.find('div.entry').each(function()
+    mytpl.queue_list_area_not.find('div.entry').each(function()
     {
         if(entry == $(this).attr('entry') && _p != $(this).attr('ord'))
         {
@@ -771,7 +771,9 @@ function queue_sortable_callback(entry)
 
 function queue_sortable_init()
 {
-    mytpl.queue_list_area.sortable(
+    if(queue.publication==true) { return false; }
+
+    mytpl.queue_list_area_not.sortable(
     { 
         stop: function(e, ui)
         {
@@ -780,7 +782,7 @@ function queue_sortable_init()
         handle: "div.entrytitle",
         distance: 10
     });
-    mytpl.queue_list_area.disableSelection();
+    mytpl.queue_list_area_not.disableSelection();
 }
 
 function queue_position(entry, position)
@@ -833,9 +835,10 @@ function queue_list()
         success: function (xml)
         {
             var _d = $(xml).find('data');
-            mytpl.queue_list_area.html("");
-            queue_populate(_d.find('result').find('queue').children());
-            queue_populate(_d.find('result').find('published').children());
+            mytpl.queue_list_area_not.html("");
+            mytpl.queue_list_area_pub.html("");
+            queue_populate(_d.find('result').find('queue').children(), mytpl.queue_list_area_not);
+            queue_populate(_d.find('result').find('published').children(), mytpl.queue_list_area_pub);
         },
         error: function () { server_error(); }
     });
@@ -865,7 +868,7 @@ function queue_add(c)
         {
             var _d = $(xml).find('data');
             checkbox_freeze(c);
-            queue_populate(_d.find('result'));
+            queue_populate(_d.find('result'), mytpl.queue_list_area_not);
         },
         error: function () { server_error(); }
     });
@@ -907,7 +910,7 @@ function queue_updater_callback(r)
 
 function queue_updater()
 {
-    var _wdom = mytpl.queue_list_area.find("div.entry[status='waiting']");
+    var _wdom = mytpl.queue_list_area_not.find("div.entry[status='waiting']");
     var _wpar = Array();
 
     if(_wdom.length > 0)
@@ -1008,6 +1011,8 @@ $(document).ready(function()
         queue_height_med                  : $("#queueheightmed"),
         queue_height_max                  : $("#queueheightmax"),
         queue_list_area                   : $("#queuelistarea"),
+        queue_list_area_not               : $("#queuelistareanot"),
+        queue_list_area_pub               : $("#queuelistareapub"),
         entry_blank                       : $("#entryblank")
     };
 

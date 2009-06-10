@@ -28,21 +28,45 @@ class C_Queue extends B_Controller
         $this->response()->setXML(true);
         $blog_hash = $this->request()->blog;
         $profile_id = $this->session()->user_profile_id;
-        $results = BlogEntry::findQueueByUserAndBlog($profile_id, $blog_hash);
+
+        $queue = BlogEntry::findQueue($profile_id, $blog_hash);
+        $published = BlogEntry::findQueuePublished($profile_id, $blog_hash);
+
+        $results = array('queue' => array(), 'published' => array());
 
         $zd = new Zend_Date(time(), false, $this->session()->getCulture());
         $zd->setTimezone($this->session()->getTimezone());
 
-        for($i=0;$i<count($results['queue']);$i++)
+        foreach($queue as $o)
         {
-            $zd->setTimestamp(strtotime($results['queue'][$i]['publication_date']));
-            $results['queue'][$i]['publication_date_local'] = $zd->toString();
+            $zd->setTimestamp($o->publication_date);
+
+            $results['queue'][] = array
+            (
+                'entry'                  => $o->hash,
+                'entry_title'            => $o->entry_title,
+                'entry_content'          => $o->entry_content,
+                'publication_status'     => $o->publication_status,
+                'publication_date'       => $o->publication_date,
+                'publication_date_local' => $zd->toString(),
+                'ordering'               => $o->ordering
+            );
         }
 
-        for($i=0;$i<count($results['published']);$i++)
+        foreach($published as $o)
         {
-            $zd->setTimestamp(strtotime($results['published'][$i]['publication_date']));
-            $results['published'][$i]['publication_date_local'] = $zd->toString();
+            $zd->setTimestamp($o->publication_date);
+
+            $results['published'][] = array
+            (
+                'entry'                  => $o->hash,
+                'entry_title'            => $o->entry_title,
+                'entry_content'          => $o->entry_content,
+                'publication_status'     => $o->publication_status,
+                'publication_date'       => $o->publication_date,
+                'publication_date_local' => $zd->toString(),
+                'ordering'               => $o->ordering
+            );
         }
 
         $this->view->result = $results;

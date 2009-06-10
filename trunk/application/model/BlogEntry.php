@@ -173,41 +173,45 @@ class BlogEntry extends B_Model
         }
     }
 
-    /**
-     * Find Queue for user and blog
-     *
-     * @param   integer     $profile_id     User Profile ID
-     * @param   string      $blog_hash      User Blog Hash
-     * @param   integer     $published      Load last N published entries
-     */ 
-    public static function findQueueByUserAndBlog($profile_id, $blog_hash, $published=10)
+    public static function findQueue($profile_id, $blog_hash)
     {
-        $sql = "SELECT hash AS entry, entry_title, entry_content, 
-                       publication_status, publication_date, ordering 
-                FROM " . self::$table_name . "
+        $sql = "SELECT * FROM " . self::$table_name . "
                 WHERE user_blog_id = (
                     SELECT user_blog_id FROM model_user_blog
                     WHERE hash = ? AND user_profile_id = ?) AND deleted=0
-                AND publication_status {status}";
-
-        $results = array('queue' => array(), 'published' => array());
+                AND publication_status {status} ORDER BY ordering ASC ";
 
         $_in = "'" . implode("','", array(self::STATUS_NEW,
                                           self::STATUS_WAITING,
                                           self::STATUS_FAILED)) . "'";
 
-        $_s = str_replace('{status}', 'IN (' . $_in . ')', $sql) . " ORDER BY ordering ASC";
-        $results['queue'] = self::select($_s, array($blog_hash, $profile_id), PDO::FETCH_ASSOC);
+        $sql = str_replace('{status}', 'IN (' . $_in . ')', $sql);
 
-        if($published > 0)
-        {
-            $_s = $sql . " ORDER BY publication_date DESC LIMIT " . intval($published);
-            $results['published'] = self::select(str_replace('{status}', '=?', $_s), 
-                array($blog_hash, $profile_id, self::STATUS_PUBLISHED), 
-                PDO::FETCH_ASSOC);
-        }
+        return self::select($sql, array($blog_hash, $profile_id), PDO::FETCH_CLASS, get_class());
+    }
 
-        return $results;
+    public static function findQueuePublished($profile_id, $blog_hash, $last=10)
+    {
+        $sql = "SELECT * FROM " . self::$table_name . "
+                WHERE user_blog_id = (
+                    SELECT user_blog_id FROM model_user_blog
+                    WHERE hash = ? AND user_profile_id = ?) 
+                AND publication_status = ? AND deleted=0
+                ORDER BY publication_date DESC LIMIT " . intval($last);
+
+        return self::select($sql, array($blog_hash, $profile_id, self::STATUS_PUBLISHED), 
+                            PDO::FETCH_CLASS, get_class());
+    }
+
+    public static function getMaxPublicationTime($blog_id)
+    {
+        $sql = "SELECT MAX(publication_date) as maxpub
+                FROM " . self::$table_name . "
+                WHERE user_blog_id = ? AND publication_status = ? AND deleted=0"; 
+        $result = current(self::select($sql, 
+                                       array($blog_id, self::STATUS_WAITING), 
+                                       PDO::FETCH_ASSOC));
+        return $result['maxpub'] ? strtotime($result['maxpub']) : time();
     }
 
     /**
@@ -279,17 +283,31 @@ class BlogEntry extends B_Model
         $sql = "SELECT a.aggregator_feed_article_id AS aggregator_feed_article_id,
                        a.article_title AS entry_title,
                        a.article_content AS entry_content,
-                       b.user_blog_id AS user_blog_id
+                       b.user_blog_id AS user_blog_id,
+                       c.publication_auto as publication_auto,
+                       c.publication_interval as publication_interval
                 FROM model_aggregator_feed_article AS a
                 LEFT JOIN model_user_blog_feed AS b ON (a.aggregator_feed_id = b.aggregator_feed_id)
                 LEFT JOIN model_user_blog AS c ON (b.user_blog_id = c.user_blog_id)
                 WHERE a.article_md5 = ? AND b.hash = ? 
                 AND c.user_profile_id = ? AND c.hash = ?";
         $args = array($article_md5, $feed_hash, $profile_id, $blog_hash);
+        $result = current(self::select($sql, $args, PDO::FETCH_ASSOC));
 
         $entry = new self();
+
+        if($result['publication_auto']==1)
+        {
+            /* new item start waiting publication */
+
+            $mtime = self::getMaxPublicationTime($result['user_blog_id']);
+            $mtime+= $result['publication_interval'];
+
+            $entry->publication_status = self::STATUS_WAITING;
+            $entry->publication_date = $mtime;
+        }
+
         $entry->populate(current(self::select($sql, $args, PDO::FETCH_ASSOC)));
-        $entry->publication_date = time();
         $entry->save();
 
         return array(
@@ -321,31 +339,6 @@ class BlogEntry extends B_Model
         {
             $entry->publication_status = self::STATUS_WAITING;
             $entry->publication_date = $pts>0 ? $pts : time();
-            $entry->save();
-            $updated = true;
-        }
-
-        return $updated;
-    }
-
-    /**
-     * cancel entry to publish
-     *
-     * @param   string  $entry_hash
-     * @param   string  $blog_hash
-     * @param   integer $user_profile_id
-     * 
-     * @return  boolean
-     */ 
-    public static function cancelEntryToPublish($entry_hash, $blog_hash, $profile_id)
-    {
-        $updated = false;
-
-        if(is_object(($entry = self::getByBlogAndEntryHash($profile_id,
-                                                           $blog_hash,
-                                                           $entry_hash))))
-        {
-            $entry->publication_status = self::STATUS_NEW;
             $entry->save();
             $updated = true;
         }
@@ -424,28 +417,28 @@ class BlogEntry extends B_Model
 
         self::transaction();
 
-        $queue = self::findQueueByUserAndBlog($profile_id, $blog_hash);
-
-        foreach($queue['queue'] as $i)
+        foreach(self::findQueue($profile_id, $blog_hash) as $o)
         {
+            if($o->hash==$entry_hash)
+            {
+                $o->ordering = $ordering;
+            }
+            else
+            {
+                if($j==$ordering) { $j++; }
+                $o->ordering = $j;
+                $j++;
+            }
+
             try
             {
-                if($i['entry']==$entry_hash)
-                {
-                    self::updateColumn($profile_id, $blog_hash, $entry_hash, 'ordering', $ordering);
-                }
-                else
-                {
-                    if($j==$ordering) { $j++; }
-                    self::updateColumn($profile_id, $blog_hash, $i['entry'], 'ordering', $j);
-                    $j++;
-                }
+                $o->save();
             }
             catch(Exception $e)
             {
                 self::rollback();
                 $m = "user blog entry ordering update failed for blog (" . $blog_hash . ") " .
-                     ", entry (" . $i['entry'] . ") and ordering (" . $j . ");\n" . 
+                     ", entry (" . $o->hash . ") and ordering (" . $j . ");\n" . 
                      $e->getMessage();
                 B_Log::write($m, E_USER_ERROR);
             }
@@ -464,24 +457,22 @@ class BlogEntry extends B_Model
      */
     public static function updateAutoPublication($blog, $user, $publication, $interval)
     {
-        $queue = self::findQueueByUserAndBlog($user, $blog);
         if($interval<0) { $interval=0; }
+        $t = time();
 
-        if($publication==true)
+        foreach($queue = self::findQueue($user, $blog) as $o)
         {
-            $t = time();
-
-            foreach($queue['queue'] as $i)
+            if($publication==true)
             {
-                self::updateEntryToPublish($i['entry'], $blog, $user, ($t+=$interval));
+                $o->publication_status = self::STATUS_WAITING;
+                $o->publication_date = ($t+=$interval);
             }
-        }
-        else
-        {
-            foreach($queue['queue'] as $i)
+            else
             {
-                self::cancelEntryToPublish($i['entry'], $blog, $user);
+                $o->publication_status = self::STATUS_NEW;
             }
+            
+            $o->save();
         }
     }
 }

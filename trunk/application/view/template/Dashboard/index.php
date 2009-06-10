@@ -121,7 +121,10 @@
 </div>
 </div>
 
-<div id="queuelistarea" style="display:none"></div>
+<div id="queuelistarea" style="display:none">
+    <div id="queuelistareanot"></div>
+    <div id="queuelistareapub"></div>
+</div>
 
 <div id="entryblank" style="display:none">
 <div class="entry" entry="" bound="no">

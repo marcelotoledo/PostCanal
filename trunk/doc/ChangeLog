@@ -68,5 +68,8 @@ HORAS TRABALHADAS: 4h
 - inclusao de ordenacao no queue (sortable)
 - inclusao de publicacao automatica de queue
 - inclusao de intervalo de tempo na publicacao automatica de queue
+- definicao de publicacao automatica para novos itens adicionados ao queue, quando
+  este esta no modo de publicacao automatica
+- bugfixes
 
-HORAS TRABALHADAS: 5h
+HORAS TRABALHADAS: 7h
