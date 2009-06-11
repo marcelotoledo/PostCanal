@@ -206,41 +206,47 @@ abstract class B_Model
 
         $this->sanitize();
 
+        /* ignore non-column data and split name=>value */
+
+        $structure = $this->getTableStructure();
+        $scolumns = array_keys($structure);
+        $dcolumns = array_keys($this->data);
+
+        $ndata = array_diff($dcolumns, $scolumns);
+        $datak = array();
+        $datav = array();
+        $datac = 0;
+
+        foreach($this->data as $name => $value)
+        {
+            if(in_array($name, $ndata)==false)
+            {
+                $datak[] = $name;
+                $datav[] = $value;
+                $datac++;
+            }
+        }
+
         if($this->isNew())
         {
-            $columns = array_keys($this->data);
-
             $sql = "INSERT INTO " . $this->getTableName() . " " . 
-                   "(" . implode(", ", $columns) . ") VALUES " .
-                   "(?" . str_repeat(", ?", count($columns) - 1) . ")";
+                   "(" . implode(", ", $datak) . ") VALUES " .
+                   "(?" . str_repeat(", ?", $datac - 1) . ")";
 
-            $id = self::insert_($sql, 
-                                array_values($this->data), 
-                                $this->getSequenceName());
+            $id = self::insert_($sql, $datav, $this->getSequenceName());
 
             $this->setPrimaryKey($id);
             $saved = ($id > 0);
         }
         else
         {
-            $values = array();
-
-            foreach($this->data as $name => $value)
-            {
-                if($name != $this->getPrimaryKeyName())
-                {
-                    $arguments[] = $name . " = ?";
-                    $values[] = $value;
-                }
-            }
-
             $sql = "UPDATE " . $this->getTableName() .
-                   " SET " . implode(", ", $arguments) .
+                   " SET " . implode(" = ?, ", $datak) . " = ?" .
                    " WHERE " . $this->getPrimaryKeyName() . " = ?";
             
-            array_push($values, $this->getPrimaryKey());
+            array_push($datav, $this->getPrimaryKey());
 
-            $affected = self::execute($sql, $values);
+            $affected = self::execute($sql, $datav);
             $saved = ($affected > 0);
         }
 

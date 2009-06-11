@@ -475,4 +475,35 @@ class BlogEntry extends B_Model
             $o->save();
         }
     }
+
+    /**
+     * Delete queue entry AND return Article HASH
+     *
+     * @param   string      $blog           Blog Hash
+     * @param   string      $entry          Blog Entry
+     * @param   integer     $user           User Profile ID
+     * @return  string                      AggregatorFeedArticle Hash
+     */
+    public static function deleteEntry($user, $blog, $entry)
+    {
+        $sql = "SELECT a.*, b.article_md5 
+                FROM " . self::$table_name . " AS a
+                LEFT JOIN model_aggregator_feed_article AS b 
+                    ON (a.aggregator_feed_article_id = b.aggregator_feed_article_id)
+                WHERE a.hash = ? AND user_blog_id = (
+                    SELECT user_blog_id FROM model_user_blog
+                    WHERE user_profile_id = ? AND hash = ?)";
+        $args = array($entry, $user, $blog);
+
+        $article = null;
+
+        if(is_object($obj = current(self::select($sql, $args, PDO::FETCH_CLASS, get_class()))))
+        {
+            $article = $obj->article_md5;
+            $obj->deleted = 1;
+            $obj->save();
+        }
+
+        return $article;
+    }
 }

@@ -136,7 +136,7 @@
     </div>
     <div class="entryinfo"></div>
     <div class="entrybuttons" style="display:none">
-        <a class="editlnk" href="#" target="_blank"><?php echo $this->translation()->edit ?></a>
+        <a class="queuedeletelnk" href="#"><?php echo $this->translation()->delete ?></a>
     </div>
     <div style="clear:both"></div>
 </div>

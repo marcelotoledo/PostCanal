@@ -33,6 +33,11 @@ function checkbox_freeze(c)
     c.attr('disabled', true).blur();
 }
 
+function checkbox_unfreeze(c)
+{
+    c.attr('disabled', false).blur();
+    c.attr('checked', false);
+}
 
 function feed_area_enable()
 {
@@ -321,7 +326,7 @@ function article_populate(a, container, append)
     {
         $(this).attr('bound', 'yes');
 
-        $(this).find('div.articlequeue').find('input').change(function()
+        $(this).find('div.articlequeue').find('input').click(function()
         {
             if($(this).attr('checked'))
             {
@@ -657,6 +662,22 @@ function queue_entry_set_status(e, s)
     }
 }
 
+function queue_set(e)
+{
+    mytpl.queue_list_area_not
+        .find("div.entry[entry='" + e + "']")
+        .find("div.entrylabel")
+        .find("div.entrytitle").css('font-weight','bold');
+}
+
+function queue_unset(e)
+{
+    mytpl.queue_list_area_not
+        .find("div.entry[entry='" + e + "']")
+        .find("div.entrylabel")
+        .find("div.entrytitle").css('font-weight','normal');
+}
+
 function queue_populate(e, c)
 {
     if(e.length==0)
@@ -698,6 +719,11 @@ function queue_populate(e, c)
             _inner.find('div.entryinfo').text("@" + _data.publication_date_local);
         }
 
+        if(_data.publication_status!='published')
+        {
+            _inner.find('div.entrybuttons').show();
+        }
+
         _lsdata[_i] = _item.html(); _i++;
 
         queue.data[_data.entry] =
@@ -711,12 +737,13 @@ function queue_populate(e, c)
 
     var _entry = null;
     var _label = null;
+    var _buttn = null;
 
     c.find("div.entry[bound='no']").each(function()
     {
         $(this).attr('bound', 'yes');
 
-        $(this).find('div.entrypublish').find('input').change(function()
+        $(this).find('div.entrypublish').find('input').click(function()
         {
             if($(this).attr('checked'))
             {
@@ -748,6 +775,24 @@ function queue_populate(e, c)
                 entry_scroll_top();
                 */
             }
+        });
+
+        _buttn = $(this).find('div.entrybuttons');
+
+        _buttn.find("a.queuedeletelnk").click(function()
+        {
+            _entry = $(this).parent().parent().attr('entry');
+
+            queue_set(_entry);
+            if(confirm("<?php echo $this->translation()->are_you_sure ?>"))
+            {
+                queue_delete(_entry);
+            }
+            else
+            {
+                queue_unset(_entry);
+            }
+            return false;
         });
     });
 
@@ -874,6 +919,37 @@ function queue_add(c)
     });
 }
 
+function queue_remove_from_list(d)
+{
+    mytpl.queue_list_area_not.find("div.entry[entry='" + d.find('entry').text() + "']").remove();
+    checkbox_unfreeze(mytpl.feed_list_area.find("div.article[article='" + d.find('article').text() + "']").find('div.articlequeue').find('input'));
+}
+
+function queue_delete(e)
+{
+    $.ajax
+    ({
+        type: "POST",
+        url: "<?php B_Helper::url('queue','delete') ?>",
+        dataType: "xml",
+        data: { blog  : blog.current ,
+                entry : e },
+        beforeSend: function()
+        {
+            set_active_request(true);
+        },
+        complete: function()
+        {
+            set_active_request(false);
+        },
+        success: function (xml)
+        {
+            queue_remove_from_list($(xml).find('data'));
+        },
+        error: function () { server_error(); }
+    });
+}
+
 function queue_publish(e)
 {
     $.ajax
@@ -942,7 +1018,7 @@ function queue_updater()
                                                  .find('result')
                                                  .children());
                 },
-                error: function () { server_error(); }
+                error: function () { /* server_error(); */ }
             });
         }
     }
