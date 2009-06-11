@@ -19,7 +19,8 @@ var queue =
     interval       :    0 ,
     feeding        : null ,
     data           : Array(),
-    active_request : false
+    active_request : false,
+    entry          : null
 };
 
 var magic_q_min = 5;
@@ -723,6 +724,13 @@ function queue_populate(e, c)
         {
             _inner.find('div.entrybuttons').show();
         }
+        
+        /* disable all events for published */
+
+        if(_data.publication_status=='published')
+        {
+            _inner.attr('bound','yes');
+        }
 
         _lsdata[_i] = _item.html(); _i++;
 
@@ -765,15 +773,13 @@ function queue_populate(e, c)
 
             if($(this).parent().hasClass('entrycontentshow'))
             {
-                // entry_content_hide(_entry); // TODO
+                entry_content_hide(_entry);
             }
             else
             {
-                /* TODO
                 entry_content_hide_all();
                 entry_content_show(_entry);
                 entry_scroll_top();
-                */
             }
         });
 
@@ -797,6 +803,62 @@ function queue_populate(e, c)
     });
 
     $(document).trigger('queue_populated');
+}
+
+function entry_scroll_top()
+{
+    var _b = null;
+
+    if((_b = queue.entry))
+    {
+        var _fa_s = mytpl.queue_list_area.scrollTop();
+        var _ah_p = _b.position().top;
+        mytpl.queue_list_area.scrollTop(_fa_s + _ah_p);
+    }
+}
+
+function entry_content_show(a)
+{
+    if(queue.data[a])
+    {
+        var _a = queue.data[a];
+        var _b = mytpl.queue_list_area_not.find("div.entry[entry='" + a + "']");
+        var _c = _b.next(); // entrycontent
+        var _d = "";
+
+        if(_a.content)
+        {
+            if(_a.title)  { _d += "<h1>" + _a.title   + "</h1>";  }
+                            _d += "<p>"  + _a.content + "</p>\n";
+        }
+        else
+        {
+            _d += "<?php echo $this->translation()->no_content ?>\n";
+        }
+
+        _c.html(_d);
+        _b.addClass('entrycontentshow'); 
+        _c.show();
+        queue.entry = _b;
+    }
+}
+
+function entry_content_hide(a)
+{
+    var b = mytpl.queue_list_area_not.find("div.entry[entry='" + a + "']"); 
+    var c = b.next(); // entrycontent
+    c.html("");
+    c.hide();
+    b.removeClass('entrycontentshow'); 
+    b.show(); // when hide
+}
+
+function entry_content_hide_all()
+{
+    mytpl.queue_list_area_not.find("div.entrycontentshow").each(function()
+    {
+        entry_content_hide($(this).attr('entry'));
+    });
 }
 
 function queue_sortable_callback(entry)
@@ -921,7 +983,9 @@ function queue_add(c)
 
 function queue_remove_from_list(d)
 {
-    mytpl.queue_list_area_not.find("div.entry[entry='" + d.find('entry').text() + "']").remove();
+    var _e = mytpl.queue_list_area_not.find("div.entry[entry='" + d.find('entry').text() + "']");
+        _e.next().remove(); // entrycontent
+        _e.remove()
     checkbox_unfreeze(mytpl.feed_list_area.find("div.article[article='" + d.find('article').text() + "']").find('div.articlequeue').find('input'));
 }
 
@@ -991,8 +1055,6 @@ function queue_updater()
 
     if(_wdom.length > 0)
     {
-        updater_interval = 5000;
-
         if(queue.active_request == false)
         {
             _wdom.each(function() { _wpar.push($(this).attr('entry')); });
@@ -1022,10 +1084,6 @@ function queue_updater()
             });
         }
     }
-    else
-    {
-        updater_interval = 15000;
-    }
 }
 
 function updater_run()
@@ -1036,7 +1094,6 @@ function updater_run()
 
 function updater_init()
 {
-    if(updater_interval < 1000) { updater_interval = 1000; }
     setTimeout("updater_run()", updater_interval);
 }
 
