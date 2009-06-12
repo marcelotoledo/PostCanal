@@ -316,7 +316,6 @@ div.entrybuttons a
 }
 div.entrycontent
 {
-    display: none;
     padding: 15px;
     border: 2px solid dimgray;
     border-top: 0;
@@ -339,6 +338,7 @@ div.entrycontentshow
     border: 2px solid dimgray;
     border-bottom: 1px solid gainsboro;
 }
+
 span.entryeditlabel
 {
     font-size: large;

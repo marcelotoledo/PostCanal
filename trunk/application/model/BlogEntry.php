@@ -31,6 +31,7 @@ class BlogEntry extends B_Model
 		'entry_content' => array ('type' => 'string','size' => 0,'required' => true),
 		'publication_status' => array ('type' => 'string','size' => 0,'required' => false),
 		'publication_date' => array ('type' => 'date','size' => 0,'required' => false),
+		'ordering' => array ('type' => 'integer','size' => 0,'required' => false),
 		'created_at' => array ('type' => 'date','size' => 0,'required' => false),
 		'updated_at' => array ('type' => 'date','size' => 0,'required' => false),
 		'deleted' => array ('type' => 'boolean','size' => 0,'required' => false));

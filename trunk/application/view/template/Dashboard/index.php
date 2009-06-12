@@ -122,8 +122,6 @@
 </div>
 
 <div id="queuelistarea" style="display:none">
-    <div id="queuelistareanot"></div>
-    <div id="queuelistareapub"></div>
 </div>
 
 <div id="entryblank" style="display:none">
@@ -140,8 +138,6 @@
         <a class="queuedeletelnk" href="#"><?php echo $this->translation()->delete ?></a>
     </div>
     <div style="clear:both"></div>
-</div>
-<div class="entrycontent">
 </div>
 </div>
 

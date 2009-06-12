@@ -20,12 +20,13 @@ var queue =
     feeding        : null ,
     data           : Array(),
     active_request : false,
-    entry          : null
+    entry          : null,
+    sorting        : false
 };
 
 var magic_q_min = 5;
 var magic_q_max = 126;
-
+var magic_fscrl = 50;
 var updater_interval = 15000;
 
 
@@ -357,7 +358,7 @@ function article_populate(a, container, append)
                 {
                     article_content_hide_all();
                     article_content_show(_feed);
-                    article_scroll_top();
+                    article_fix_vertical_display();
                 }
             }
         });
@@ -502,6 +503,17 @@ function article_previous()
     }
 }
 
+function article_fix_vertical_display()
+{
+    var _ac_pt = article.current.position().top;
+    var _fa_st = mytpl.feed_list_area.scrollTop();
+
+    if(_ac_pt < magic_fscrl)
+    {
+        mytpl.feed_list_area.scrollTop(_fa_st + _ac_pt - magic_fscrl);
+    }
+}
+
 function article_scroll_top()
 {
     var _b = null;
@@ -536,6 +548,7 @@ function article_content_show(a)
         }
 
         _c.html(_d);
+
         _b.addClass('articlecontentshow'); 
         _c.show();
         article.current = _b;
@@ -638,7 +651,7 @@ function queue_entry_set_status(e, s)
 {
     if(typeof e == 'string' && e.length > 0)
     {
-        e = mytpl.queue_list_area_not.find("div.entry[entry='" + e + "']");
+        e = mytpl.queue_list_area.find("div.entry[entry='" + e + "']");
     }
 
     if(typeof e == 'object')
@@ -665,7 +678,7 @@ function queue_entry_set_status(e, s)
 
 function queue_set(e)
 {
-    mytpl.queue_list_area_not
+    mytpl.queue_list_area
         .find("div.entry[entry='" + e + "']")
         .find("div.entrylabel")
         .find("div.entrytitle").css('font-weight','bold');
@@ -673,13 +686,13 @@ function queue_set(e)
 
 function queue_unset(e)
 {
-    mytpl.queue_list_area_not
+    mytpl.queue_list_area
         .find("div.entry[entry='" + e + "']")
         .find("div.entrylabel")
         .find("div.entrytitle").css('font-weight','normal');
 }
 
-function queue_populate(e, c)
+function queue_populate(e)
 {
     if(e.length==0)
     {
@@ -720,14 +733,16 @@ function queue_populate(e, c)
             _inner.find('div.entryinfo').text("@" + _data.publication_date_local);
         }
 
-        if(_data.publication_status!='published')
+        if(_data.publication_status!='published' &&
+           queue.publication!=true)
         {
             _inner.find('div.entrybuttons').show();
         }
         
         /* disable all events for published */
 
-        if(_data.publication_status=='published')
+        if(_data.publication_status=='published' ||
+           queue.publication==true)
         {
             _inner.attr('bound','yes');
         }
@@ -741,13 +756,22 @@ function queue_populate(e, c)
         };
     });
 
-    c.append(_lsdata.join("\n"));
+    var _publs = mytpl.queue_list_area.find("div.entry[status='published']").eq(0);
+
+    if(_publs.length>0)
+    {
+        _publs.before(_lsdata.join("\n"));
+    }
+    else
+    {
+        mytpl.queue_list_area.append(_lsdata.join("\n"));
+    }
 
     var _entry = null;
     var _label = null;
     var _buttn = null;
 
-    c.find("div.entry[bound='no']").each(function()
+    mytpl.queue_list_area.find("div.entry[bound='no']").each(function()
     {
         $(this).attr('bound', 'yes');
 
@@ -779,7 +803,7 @@ function queue_populate(e, c)
             {
                 entry_content_hide_all();
                 entry_content_show(_entry);
-                entry_scroll_top();
+                // entry_scroll_top();
             }
         });
 
@@ -829,63 +853,59 @@ function entry_scroll_top()
 
 function entry_content_show(a)
 {
-    if(queue.data[a])
+    if(queue.data[a] && queue.sorting==false)
     {
         var _a = queue.data[a];
-        var _b = mytpl.queue_list_area_not.find("div.entry[entry='" + a + "']");
-        var _c = _b.next(); // entrycontent
-        var _d = "";
+        var _b = mytpl.queue_list_area.find("div.entry[entry='" + a + "']");
+        var _c = "";
 
         if(_a.content)
         {
-            if(_a.title)  { _d += "<h1>" + _a.title   + "</h1>";  }
-                            _d += "<p>"  + _a.content + "</p>\n";
+            if(_a.title)  { _c += "<h1>" + _a.title   + "</h1>";  }
+                            _c += "<p>"  + _a.content + "</p>\n";
         }
         else
         {
-            _d += "<?php echo $this->translation()->no_content ?>\n";
+            _c += "<?php echo $this->translation()->no_content ?>\n";
         }
 
-        _c.html(_d);
+        _b.after("<div class=\"entrycontent\">" + _c + "</div>");
         _b.addClass('entrycontentshow'); 
-        _c.show();
         queue.entry = _b;
     }
+    queue.sorting=false;
 }
 
 function entry_content_hide(a)
 {
-    var b = mytpl.queue_list_area_not.find("div.entry[entry='" + a + "']"); 
-    var c = b.next(); // entrycontent
-    c.html("");
-    c.hide();
-    b.removeClass('entrycontentshow'); 
-    b.show(); // when hide
+    var b = mytpl.queue_list_area.find("div.entry[entry='" + a + "']"); 
+    b.removeClass('entrycontentshow');
+    b.next("div.entrycontent").remove();
 }
 
 function entry_content_hide_all()
 {
-    mytpl.queue_list_area_not.find("div.entrycontentshow").each(function()
-    {
-        entry_content_hide($(this).attr('entry'));
-    });
+    mytpl.queue_list_area.find("div.entry").removeClass('entrycontentshow');
+    mytpl.queue_list_area.find("div.entrycontent").remove();
 }
 
 function entry_content_edit(a)
 {
     if(queue.data[a])
     {
+        entry_content_hide_all();
+
         var _a = queue.data[a];
-        var _b = mytpl.queue_list_area_not.find("div.entry[entry='" + a + "']");
-        var _c = _b.next(); // entrycontent
+        var _b = mytpl.queue_list_area.find("div.entry[entry='" + a + "']");
 
+        _b.after("<div class=\"entrycontent\">&nbsp;</div>");
+
+        _c = _b.next("div.entrycontent");
         _c.html(mytpl.entry_edit_blank.clone().html());
-
         _c.find("input.entryedittitle").val(_a.title);
         _c.find("textarea.entryeditcontent").val(_a.content);
 
         _b.addClass('entrycontentshow'); 
-        _c.show();
         queue.entry = _b;
 
         /*
@@ -900,7 +920,7 @@ function queue_sortable_callback(entry)
 {
     var _p = 1;
 
-    mytpl.queue_list_area_not.find('div.entry').each(function()
+    mytpl.queue_list_area.find('div.entry').each(function()
     {
         if(entry == $(this).attr('entry') && _p != $(this).attr('ord'))
         {
@@ -913,18 +933,28 @@ function queue_sortable_callback(entry)
 
 function queue_sortable_init()
 {
-    if(queue.publication==true) { return false; }
+    if(queue.publication==true)
+    {
+        mytpl.queue_list_area.sortable('destroy');
+        return false;
+    }
 
-    mytpl.queue_list_area_not.sortable(
+    mytpl.queue_list_area.sortable(
     { 
-        stop: function(e, ui)
-        {
-            queue_sortable_callback(ui.item.attr('entry'));
-        },
         handle: "div.entrytitle",
-        distance: 10
+        items: "div.entry[status!='published']",
+        cancel: "div.entrycontentshow",
+        distance: 10,
+        start: function(e,u)
+        {
+            queue.sorting = true;
+        },
+        update: function(e, u)
+        {
+            queue_sortable_callback(u.item.attr('entry'));
+        }
     });
-    mytpl.queue_list_area_not.disableSelection();
+    mytpl.queue_list_area.disableSelection();
 }
 
 function queue_position(entry, position)
@@ -977,10 +1007,9 @@ function queue_list()
         success: function (xml)
         {
             var _d = $(xml).find('data');
-            mytpl.queue_list_area_not.html("");
-            mytpl.queue_list_area_pub.html("");
-            queue_populate(_d.find('result').find('queue').children(), mytpl.queue_list_area_not);
-            queue_populate(_d.find('result').find('published').children(), mytpl.queue_list_area_pub);
+            mytpl.queue_list_area.html("");
+            queue_populate(_d.find('result').find('queue').children());
+            queue_populate(_d.find('result').find('published').children());
         },
         error: function () { server_error(); }
     });
@@ -1010,7 +1039,7 @@ function queue_add(c)
         {
             var _d = $(xml).find('data');
             checkbox_freeze(c);
-            queue_populate(_d.find('result'), mytpl.queue_list_area_not);
+            queue_populate(_d.find('result'));
         },
         error: function () { server_error(); }
     });
@@ -1018,8 +1047,8 @@ function queue_add(c)
 
 function queue_remove_from_list(d)
 {
-    var _e = mytpl.queue_list_area_not.find("div.entry[entry='" + d.find('entry').text() + "']");
-        _e.next().remove(); // entrycontent
+    var _e = mytpl.queue_list_area.find("div.entry[entry='" + d.find('entry').text() + "']");
+        _e.next("div.entrycontent").remove();
         _e.remove()
     checkbox_unfreeze(mytpl.feed_list_area.find("div.article[article='" + d.find('article').text() + "']").find('div.articlequeue').find('input'));
 }
@@ -1085,7 +1114,7 @@ function queue_updater_callback(r)
 
 function queue_updater()
 {
-    var _wdom = mytpl.queue_list_area_not.find("div.entry[status='waiting']");
+    var _wdom = mytpl.queue_list_area.find("div.entry[status='waiting']");
     var _wpar = Array();
 
     if(_wdom.length > 0)
@@ -1179,8 +1208,6 @@ $(document).ready(function()
         queue_height_med                  : $("#queueheightmed"),
         queue_height_max                  : $("#queueheightmax"),
         queue_list_area                   : $("#queuelistarea"),
-        queue_list_area_not               : $("#queuelistareanot"),
-        queue_list_area_pub               : $("#queuelistareapub"),
         entry_blank                       : $("#entryblank"),
         entry_edit_blank                  : $("#entryeditblank")
     };
