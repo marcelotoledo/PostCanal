@@ -803,7 +803,7 @@ function queue_populate(e)
             {
                 entry_content_hide_all();
                 entry_content_show(_entry);
-                // entry_scroll_top();
+                entry_fix_vertical_display();
             }
         });
 
@@ -839,6 +839,17 @@ function queue_populate(e)
     $(document).trigger('queue_populated');
 }
 
+function entry_fix_vertical_display()
+{
+    var _qe_pt = queue.entry.position().top;
+    var _qa_st = mytpl.queue_list_area.scrollTop();
+
+    if(_qe_pt < 0)
+    {
+        mytpl.queue_list_area.scrollTop(_qa_st + _qe_pt);
+    }
+}
+
 function entry_scroll_top()
 {
     var _b = null;
@@ -851,12 +862,12 @@ function entry_scroll_top()
     }
 }
 
-function entry_content_show(a)
+function entry_content_show(e)
 {
-    if(queue.data[a] && queue.sorting==false)
+    if(queue.data[e] && queue.sorting==false)
     {
-        var _a = queue.data[a];
-        var _b = mytpl.queue_list_area.find("div.entry[entry='" + a + "']");
+        var _a = queue.data[e];
+        var _b = mytpl.queue_list_area.find("div.entry[entry='" + e + "']");
         var _c = "";
 
         if(_a.content)
@@ -876,9 +887,9 @@ function entry_content_show(a)
     queue.sorting=false;
 }
 
-function entry_content_hide(a)
+function entry_content_hide(e)
 {
-    var b = mytpl.queue_list_area.find("div.entry[entry='" + a + "']"); 
+    var b = mytpl.queue_list_area.find("div.entry[entry='" + e + "']"); 
     b.removeClass('entrycontentshow');
     b.next("div.entrycontent").remove();
 }
@@ -889,14 +900,14 @@ function entry_content_hide_all()
     mytpl.queue_list_area.find("div.entrycontent").remove();
 }
 
-function entry_content_edit(a)
+function entry_content_edit(e)
 {
-    if(queue.data[a])
+    if(queue.data[e])
     {
         entry_content_hide_all();
 
-        var _a = queue.data[a];
-        var _b = mytpl.queue_list_area.find("div.entry[entry='" + a + "']");
+        var _a = queue.data[e];
+        var _b = mytpl.queue_list_area.find("div.entry[entry='" + e + "']");
 
         _b.after("<div class=\"entrycontent\">&nbsp;</div>");
 
@@ -904,6 +915,16 @@ function entry_content_edit(a)
         _c.html(mytpl.entry_edit_blank.clone().html());
         _c.find("input.entryedittitle").val(_a.title);
         _c.find("textarea.entryeditcontent").val(_a.content);
+
+        _c.find("input.entryeditcancel").click(function()
+        {
+            entry_content_hide(queue.entry.attr('entry'));
+        });
+
+        _c.find("input.entryeditsubmit").click(function()
+        {
+            entry_content_update();
+        });
 
         _b.addClass('entrycontentshow'); 
         queue.entry = _b;
@@ -914,6 +935,53 @@ function entry_content_edit(a)
         _c.html(fck.CreateHtml());
         */
     }
+}
+
+function entry_content_update_local(r)
+{
+    var _e = r.find('entry').text();
+    queue.data[_e].title = r.find('title').text();
+    queue.data[_e].content = r.find('content').text();
+    queue.entry.find("div.entrylabel").find("div.entrytitle").html(queue.data[_e].title);
+    entry_content_hide(_e);
+}
+
+function entry_content_update()
+{
+    var _a = queue.entry.next("div.entrycontent");
+
+    $.ajax
+    ({
+        type: "POST",
+        url: "<?php B_Helper::url('queue', 'update') ?>",
+        dataType: "xml",
+        data: { blog    : blog.current , 
+                entry   : queue.entry.attr('entry'), 
+                title   : _a.find("input.entryedittitle").val(),
+                content : _a.find("textarea.entryeditcontent").val() },
+        beforeSend: function()
+        {
+            set_active_request(true);
+        },
+        complete: function()
+        {
+            set_active_request(false);
+        },
+        success: function (xml)
+        {
+            var _r = $(xml).find('data').find('result');
+
+            if(_r.length>0)
+            {
+                entry_content_update_local(_r);
+            }
+            else
+            {
+                server_error();
+            }
+        },
+        error: function () { server_error(); }
+    });
 }
 
 function queue_sortable_callback(entry)

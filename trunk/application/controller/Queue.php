@@ -195,25 +195,30 @@ class C_Queue extends B_Controller
     public function A_update()
     {
         $this->response()->setXML(true);
-        /*
-        $blog = $this->request()->blog;
-        $feed = $this->request()->feed;
-        $user = $this->session()->user_profile_id;
-        $updated = array();
 
-        if(is_object(($feed = UserBlogFeed::getByBlogAndFeedHash($user, $blog, $feed))))
+        $blog = $this->request()->blog;
+        $entry = $this->request()->entry;
+        $user = $this->session()->user_profile_id;
+        $result = array();
+
+        if(is_object(($e = BlogEntry::getByBlogAndEntryHash($user, $blog, $entry))))
         {
-            foreach(UserBlogFeed::$allow_write as $k)
+            if(in_array($e->publication_status, array(BlogEntry::STATUS_NEW,
+                                                      BlogEntry::STATUS_FAILED)))
             {
-                if(strlen($this->request()->{$k})>0)
-                {
-                    $feed->{$k} = $this->request()->{$k};
-                    $updated = array_merge($updated, array($k => $feed->{$k}));
-                }
+                $e->entry_title = $this->request()->title;
+                $e->entry_content = $this->request()->content;
+                $e->save();
             }
-            $feed->save();
+
+            $result = array
+            (
+                'entry'   => $e->hash,
+                'title'   => $e->entry_title,
+                'content' => $e->entry_content
+            );
         }
-        $this->view()->updated = $updated;
-        */
+
+        $this->view()->result = $result;
     }
 }

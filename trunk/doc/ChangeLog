@@ -90,5 +90,6 @@ HORAS TRABALHADAS: 5h
 ==========
 
 - bugfixes
+- inclusao de metodo para persistencia nas alteracoes de um item do queue
 
-HORAS TRABALHADAS: 3h
+HORAS TRABALHADAS: 5h

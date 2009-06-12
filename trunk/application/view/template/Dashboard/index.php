@@ -152,8 +152,8 @@
     <textarea class="entryeditcontent" cols="80" rows="5"></textarea>
     </p>
     <p>
-        <input type="button" value="<?php echo $this->translation()->cancel ?>">
-        <input type="button" value="<?php echo $this->translation()->submit ?>">
+        <input class="entryeditcancel" type="button" value="<?php echo $this->translation()->cancel ?>">
+        <input class="entryeditsubmit" type="button" value="<?php echo $this->translation()->submit ?>">
     </p>
     </form>
 </div>
