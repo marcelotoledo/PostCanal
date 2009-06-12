@@ -21,7 +21,8 @@ var queue =
     data           : Array(),
     active_request : false,
     entry          : null,
-    sorting        : false
+    sorting        : false,
+    editor         : null
 };
 
 var magic_q_min = 5;
@@ -919,10 +920,7 @@ function entry_content_edit(e)
         _c = _b.next("div.entrycontent");
         _c.html(mytpl.entry_edit_blank.clone().html());
         _c.find("input.entryedittitle").val(_a.title);
-
-        var _fck = new FCKeditor("FCKQueueEntryEditor");
-        _fck.Config["CustomConfigurationsPath"] = "/js/fckconfig.js?t=<?php echo time() ?>";
-        _c.find("div.entryeditcontent").replaceWith(_fck.CreateHtml());
+        _c.find("div.entryeditcontent").replaceWith(queue.editor.CreateHtml());
 
         _c.find("input.entryeditcancel").click(function()
         {
@@ -1174,6 +1172,13 @@ function queue_publish(e)
     });
 }
 
+function queue_entry_editor_init()
+{
+    queue.editor = new FCKeditor("FCKQueueEntryEditor");
+    // _fck.Config["CustomConfigurationsPath"] = "/js/fckconfig.js?t=<?php echo time() ?>";
+    queue.editor.Config["CustomConfigurationsPath"] = "/js/fckconfig.js";
+}
+
 function queue_updater_callback(r)
 {
     r.each(function()
@@ -1325,7 +1330,10 @@ $(document).ready(function()
         // set_queue_feeding();
         // mytpl.queue_feeding.show();
         queue_list();
+
         updater_init();
+
+        queue_entry_editor_init();
     }
 
     /*<?php if(count($this->blogs)==0) : ?>**/
