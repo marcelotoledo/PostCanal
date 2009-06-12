@@ -99,12 +99,16 @@ FCKConfig.TemplateReplaceCheckbox = true ;
 FCKConfig.ToolbarLocation = 'In' ;
 
 FCKConfig.ToolbarSets["Default"] = [
+    /*
 	['Source','ShowBlocks','-','Undo','Redo','-','SelectAll','RemoveFormat'],
 	['Bold','Italic','Underline','StrikeThrough','-','Subscript','Superscript'],
 	['OrderedList','UnorderedList','-','Outdent','Indent','Blockquote'],
 	['JustifyLeft','JustifyCenter','JustifyRight','JustifyFull','-','Rule','PageBreak'],
-	['Style','FontFormat','FontName','FontSize'],
+    '/',
+	['FontFormat','FontName','FontSize'],
 	['TextColor','BGColor']
+    */
+	['Bold','Italic','Underline','StrikeThrough','-','Subscript','Superscript','-','OrderedList','UnorderedList','-','Outdent','Indent','Blockquote','-','JustifyLeft','JustifyCenter','JustifyRight','JustifyFull','-','FontFormat','FontName','FontSize','TextColor','-','Source'],
 ] ;
 
 FCKConfig.ToolbarSets["Basic"] = [

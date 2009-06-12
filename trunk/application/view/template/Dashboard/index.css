@@ -339,3 +339,18 @@ div.entrycontentshow
     border: 2px solid dimgray;
     border-bottom: 1px solid gainsboro;
 }
+span.entryeditlabel
+{
+    font-size: large;
+    font-weight: bold;
+    text-transform: capitalize;
+    line-height: 30px;
+}
+form.entryeditform input
+{
+    padding: 5px 2px 5px 2px;
+}
+form.entryeditform textarea
+{
+    padding: 5px 2px 5px 2px;
+}

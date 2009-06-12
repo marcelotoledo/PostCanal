@@ -136,12 +136,30 @@
     </div>
     <div class="entryinfo"></div>
     <div class="entrybuttons" style="display:none">
+        <a class="queueeditlnk" href="#"><?php echo $this->translation()->edit ?></a>
         <a class="queuedeletelnk" href="#"><?php echo $this->translation()->delete ?></a>
     </div>
     <div style="clear:both"></div>
 </div>
 <div class="entrycontent">
 </div>
+</div>
+
+<div id="entryeditblank" style="display:none">
+    <form class="entryeditform">
+    <p>
+    <span class="entryeditlabel"><?php echo $this->translation()->title ?>:</span><br/>
+    <input type="text" class="entryedittitle" size="80">
+    </p>
+    <p>
+    <span class="entryeditlabel"><?php echo $this->translation()->content?>:</span><br/>
+    <textarea class="entryeditcontent" cols="80" rows="5"></textarea>
+    </p>
+    <p>
+        <input type="button" value="<?php echo $this->translation()->cancel ?>">
+        <input type="button" value="<?php echo $this->translation()->submit ?>">
+    </p>
+    </form>
 </div>
 
 <?php endif ?>

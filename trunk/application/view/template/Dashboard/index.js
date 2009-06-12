@@ -790,6 +790,7 @@ function queue_populate(e, c)
             _entry = $(this).parent().parent().attr('entry');
 
             queue_set(_entry);
+
             if(confirm("<?php echo $this->translation()->are_you_sure ?>"))
             {
                 queue_delete(_entry);
@@ -798,6 +799,15 @@ function queue_populate(e, c)
             {
                 queue_unset(_entry);
             }
+            return false;
+        });
+
+        _buttn.find("a.queueeditlnk").click(function()
+        {
+            entry_content_hide_all();
+            entry_content_edit($(this).parent().parent().attr('entry'));
+            entry_scroll_top();
+            $(this).blur();
             return false;
         });
     });
@@ -859,6 +869,31 @@ function entry_content_hide_all()
     {
         entry_content_hide($(this).attr('entry'));
     });
+}
+
+function entry_content_edit(a)
+{
+    if(queue.data[a])
+    {
+        var _a = queue.data[a];
+        var _b = mytpl.queue_list_area_not.find("div.entry[entry='" + a + "']");
+        var _c = _b.next(); // entrycontent
+
+        _c.html(mytpl.entry_edit_blank.clone().html());
+
+        _c.find("input.entryedittitle").val(_a.title);
+        _c.find("textarea.entryeditcontent").val(_a.content);
+
+        _b.addClass('entrycontentshow'); 
+        _c.show();
+        queue.entry = _b;
+
+        /*
+        var fck = new FCKeditor("myFCKeditor");
+        fck.Config["CustomConfigurationsPath"] = "/js/fckconfig.js?t=<?php echo time() ?>";
+        _c.html(fck.CreateHtml());
+        */
+    }
 }
 
 function queue_sortable_callback(entry)
@@ -1146,7 +1181,8 @@ $(document).ready(function()
         queue_list_area                   : $("#queuelistarea"),
         queue_list_area_not               : $("#queuelistareanot"),
         queue_list_area_pub               : $("#queuelistareapub"),
-        entry_blank                       : $("#entryblank")
+        entry_blank                       : $("#entryblank"),
+        entry_edit_blank                  : $("#entryeditblank")
     };
 
     function window_update()
