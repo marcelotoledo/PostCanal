@@ -149,7 +149,7 @@
     </p>
     <p>
     <span class="entryeditlabel"><?php echo $this->translation()->content?>:</span><br/>
-    <textarea class="entryeditcontent" cols="80" rows="5"></textarea>
+    <div class="entryeditcontent"></div>
     </p>
     <p>
         <input class="entryeditcancel" type="button" value="<?php echo $this->translation()->cancel ?>">

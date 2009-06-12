@@ -900,6 +900,11 @@ function entry_content_hide_all()
     mytpl.queue_list_area.find("div.entrycontent").remove();
 }
 
+function FCKeditor_OnComplete(i)
+{
+    i.SetData(queue.data[queue.entry.attr('entry')].content);
+}
+
 function entry_content_edit(e)
 {
     if(queue.data[e])
@@ -914,7 +919,10 @@ function entry_content_edit(e)
         _c = _b.next("div.entrycontent");
         _c.html(mytpl.entry_edit_blank.clone().html());
         _c.find("input.entryedittitle").val(_a.title);
-        _c.find("textarea.entryeditcontent").val(_a.content);
+
+        var _fck = new FCKeditor("FCKQueueEntryEditor");
+        _fck.Config["CustomConfigurationsPath"] = "/js/fckconfig.js?t=<?php echo time() ?>";
+        _c.find("div.entryeditcontent").replaceWith(_fck.CreateHtml());
 
         _c.find("input.entryeditcancel").click(function()
         {
@@ -928,12 +936,6 @@ function entry_content_edit(e)
 
         _b.addClass('entrycontentshow'); 
         queue.entry = _b;
-
-        /*
-        var fck = new FCKeditor("myFCKeditor");
-        fck.Config["CustomConfigurationsPath"] = "/js/fckconfig.js?t=<?php echo time() ?>";
-        _c.html(fck.CreateHtml());
-        */
     }
 }
 
@@ -949,6 +951,7 @@ function entry_content_update_local(r)
 function entry_content_update()
 {
     var _a = queue.entry.next("div.entrycontent");
+    var _fck = FCKeditorAPI.GetInstance("FCKQueueEntryEditor");
 
     $.ajax
     ({
@@ -958,7 +961,7 @@ function entry_content_update()
         data: { blog    : blog.current , 
                 entry   : queue.entry.attr('entry'), 
                 title   : _a.find("input.entryedittitle").val(),
-                content : _a.find("textarea.entryeditcontent").val() },
+                content : _fck.GetData() },
         beforeSend: function()
         {
             set_active_request(true);

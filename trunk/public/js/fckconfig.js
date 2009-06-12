@@ -88,7 +88,7 @@ FCKConfig.TabSpaces		= 0 ;
 FCKConfig.ShowBorders	= true ;
 FCKConfig.SourcePopup	= false ;
 FCKConfig.ToolbarStartExpanded	= true ;
-FCKConfig.ToolbarCanCollapse	= true ;
+FCKConfig.ToolbarCanCollapse	= false ;
 FCKConfig.IgnoreEmptyParagraphValue = true ;
 FCKConfig.FloatingPanelsZIndex = 10000 ;
 FCKConfig.HtmlEncodeOutput = false ;
@@ -142,7 +142,8 @@ FCKConfig.Keystrokes = [
 	[ SHIFT + 32 /*SPACE*/, 'Nbsp' ]
 ] ;
 
-FCKConfig.ContextMenu = ['Generic','Link','Anchor','Image','Flash','Select','Textarea','Checkbox','Radio','TextField','HiddenField','ImageButton','Button','BulletedList','NumberedList','Table','Form','DivContainer'] ;
+// FCKConfig.ContextMenu = ['Generic','Link','Anchor','Image','Flash','Select','Textarea','Checkbox','Radio','TextField','HiddenField','ImageButton','Button','BulletedList','NumberedList','Table','Form','DivContainer'] ;
+FCKConfig.ContextMenu = [] ;
 FCKConfig.BrowserContextMenuOnCtrl = false ;
 FCKConfig.BrowserContextMenu = false ;
 
