@@ -1177,6 +1177,8 @@ function queue_entry_editor_init()
     queue.editor = new FCKeditor("FCKQueueEntryEditor");
     // _fck.Config["CustomConfigurationsPath"] = "/js/fckconfig.js?t=<?php echo time() ?>";
     queue.editor.Config["CustomConfigurationsPath"] = "/js/fckconfig.js";
+    queue.editor.Config["AutoDetectLanguage"] = false ;
+    queue.editor.Config["DefaultLanguage"] = "<?php echo substr($this->session()->getCulture(), 0, 2) ?>" ;
 }
 
 function queue_updater_callback(r)

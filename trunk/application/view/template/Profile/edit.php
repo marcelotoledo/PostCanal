@@ -7,6 +7,31 @@
         <th><?php echo $this->translation()->name ?>:</th>
         <td><input type="text" id="name" value="<?php echo $this->profile->name ?>"></td>
         </tr>
+
+        <tr>
+        <th><?php echo $this->translation()->territory ?>:</th>
+        <td><select id="local_territory">
+            <?php foreach($this->territory as $k => $v) : ?>
+            <option value="<?php echo $k ?>" <?php if($k==$this->profile->local_territory) : ?>selected<?php endif ?>><?php echo $v ?></option>
+            <?php endforeach ?>
+        </select></td>
+        </tr>
+
+        <tr>
+        <th><?php echo $this->translation()->timezone ?>:</th>
+        <td><select id="local_timezone" disabled>
+        </select></td>
+        </tr>
+
+        <tr>
+        <th><?php echo $this->translation()->language ?>:</th>
+        <td><select id="local_culture">
+            <?php foreach($this->language as $k => $v) : ?>
+            <option value="<?php echo $k ?>" <?php if($k==$this->profile->local_culture) : ?>selected<?php endif ?>><?php echo $v ?></option>
+            <?php endforeach ?>
+        </select></td>
+        </tr>
+
         <tr>
         <th>&nbsp;</th>
         <td class="buttons">

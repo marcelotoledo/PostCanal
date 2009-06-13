@@ -74,4 +74,16 @@ class A_Utility
 
         return $r;
     }
+
+    /**
+     * Get default culture list
+     */
+    public static function getDefaultCulture()
+    {
+        return array
+        (
+            "en_US"
+        );
+    }
+
 }

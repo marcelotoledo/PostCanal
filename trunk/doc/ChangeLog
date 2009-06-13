@@ -92,5 +92,6 @@ HORAS TRABALHADAS: 5h
 - bugfixes
 - inclusao de metodo para persistencia nas alteracoes de um item do queue
 - integração com FCKEditor para edicao de item do queue 
+- inclusão de seletor para territory, timezone e culture no editor de perfil
 
-HORAS TRABALHADAS: 6h
+HORAS TRABALHADAS: 9h

@@ -614,6 +614,40 @@ class C_Profile extends B_Controller
         {
             $this->response()->setRedirect(BASE_URL);
         }
+
+        $culture = $this->session()->getCulture();
+
+        /* territory */
+
+        $territory = array();
+
+        foreach(Zend_Locale::getTranslationList('Territory', $culture) as $k => $v)
+        {
+            if(strlen($k)==2 && $k!='ZZ')
+            {
+                $territory[$k] = $v; 
+            }
+        }
+
+        asort($territory);
+
+        $this->view()->territory = $territory;
+
+        /* culture */
+
+        $dl = A_Utility::getDefaultCulture();
+
+        $language = array();
+
+        foreach(Zend_Locale::getTranslationList('Language', $culture) as $k => $v)
+        {
+            if(in_array($k, $dl))
+            {
+                $language[$k] = ucwords($v);
+            }
+        }
+
+        $this->view()->language = $language;
     }
 
     /**
@@ -648,6 +682,8 @@ class C_Profile extends B_Controller
         try
         {
             $profile->save();
+            $this->session()->setCulture($profile->local_culture);
+            $this->session()->setTimezone($profile->local_timezone);
             $this->view()->saved = true;
             $this->view()->message = $this->translation()->edit_saved;
         }
@@ -694,6 +730,32 @@ class C_Profile extends B_Controller
             $pr = UserProfile::getPreference($id);
             $this->view()->preference = $pr;
         }
+    }
+
+    /**
+     * Get timezone options
+     */
+    public function A_timezone()
+    {
+        $this->authorize();
+
+        $this->response()->setXML(true);
+
+        $territory = $this->request()->territory;
+        $culture = $this->session()->getCulture();
+        $timezone = array();
+
+        foreach(Zend_Locale::getTranslationList('TerritoryToTimezone', $culture) as $k => $v)
+        {
+            if(strlen($territory)>0 ? ($territory==$v) : true)
+            {
+                $timezone[] = $k;
+            }
+        }
+
+        if(count($timezone)==0) $timezone = array("UTC");
+
+        $this->view()->timezone = $timezone;
     }
 
     /**

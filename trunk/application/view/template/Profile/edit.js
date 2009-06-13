@@ -56,7 +56,10 @@ function edit_submit()
         type: "POST",
         url: "<?php B_Helper::url('profile', 'edit') ?>",
         dataType: "xml",
-        data: { name: mytpl.name.val()  },
+        data: { name            : mytpl.name.val(),
+                local_territory : mytpl.territory.val(),
+                local_timezone  : mytpl.timezone.val(),
+                local_culture   : mytpl.culture.val() },
         beforeSend: function () { set_active_request(true); edit_message("");  },
         complete: function ()   { set_active_request(false); },
         success: function (xml) 
@@ -146,6 +149,25 @@ function emlchange_submit()
     });
 }
 
+function timezone_populate(d)
+{
+    var _tz = d.find('timezone').children() ,
+        _i   = 0 ,
+        _j   = "",
+        _l   = Array(),
+        _s   = "";
+
+    for(;_i<_tz.length;_i++)
+    {
+        _j = _tz[_i].firstChild.nodeValue;
+        _s = (_j=="<?php echo $this->profile->local_timezone ?>") ? " selected" : "";
+        _l[_i] = "<option value=\"" + _j + "\"" + _s + ">" + _j.replace('_',' ') + "</option>";
+    }
+
+    mytpl.timezone.html(_l.join("\n"));
+    mytpl.timezone.attr('disabled', false);
+}
+
 
 $(document).ready(function()
 {
@@ -164,9 +186,37 @@ $(document).ready(function()
         pwdchangecancel  : $("#pwdchangecancel"),
         pwdchangemessage : $("#pwdchangemessage"),
         name             : $("#name"),
+        territory        : $("#local_territory"),
+        timezone         : $("#local_timezone"),
+        culture          : $("#local_culture"),
         editmessage      : $("#editmessage"),
         editsubmit       : $("#editsubmit")
     };
+
+    function selected_territory()
+    {
+        return mytpl.territory.find("option:selected").val();
+    }
+
+    function load_timezone()
+    {
+        $.ajax
+        ({
+            type: "GET",
+            url: "<?php B_Helper::url('profile', 'timezone') ?>",
+            dataType: "xml",
+            data: { territory: selected_territory() },
+            beforeSend: function () { set_active_request(true); },
+            complete: function ()   { set_active_request(false); },
+            success: function (xml) 
+            { 
+                timezone_populate($(xml).find('data'));
+            }, 
+            error: function () { server_error(); }
+        });
+    }
+    
+    load_timezone();
 
     /* triggers */
 
@@ -213,5 +263,10 @@ $(document).ready(function()
     mytpl.emlchangecancel.click(function() 
     {
         if(active_request==false) { toggle_email_change(false); }
+    });
+
+    mytpl.territory.change(function()
+    {
+        load_timezone();
     });
 });

@@ -161,7 +161,8 @@ CREATE TABLE model_user_profile
     recovery_allowed TINYINT(1) NOT NULL DEFAULT 0,
     update_email_message_time TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
     -- -------------------------------------------------------------------------
-    local_culture VARCHAR(20) NOT NULL DEFAULT 'en_US',
+    local_territory VARCHAR(2) NOT NULL DEFAULT 'US',
+    local_culture VARCHAR(8) NOT NULL DEFAULT 'en_US',
     local_timezone VARCHAR(50) NOT NULL DEFAULT 'UTC',
     -- -------------------------------------------------------------------------
     created_at TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
