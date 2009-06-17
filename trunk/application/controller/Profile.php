@@ -28,7 +28,7 @@ class C_Profile extends B_Controller
 
         $profile = null;
 
-        if(strlen($email) > 0 && strlen($password) > 0)
+        if(strpos($email, '@') > 0 && strlen($password) > 0)
         {
             $profile = UserProfile::getByLogin($email, md5($password));
         }
@@ -86,7 +86,7 @@ class C_Profile extends B_Controller
         $profile = null;
         $information = null;
 
-        if(strlen($email) > 0 && 
+        if(strpos($email, '@') > 0 && 
            strlen($password) > 0 && strlen($confirm) > 0 && $password == $confirm)
         {
             $profile = UserProfile::getByEmail($email);
@@ -235,7 +235,7 @@ class C_Profile extends B_Controller
 
         $profile = null;
 
-        if(strlen($email) > 0 && strlen($hash) > 0)
+        if(strpos($email, '@') > 0 && strlen($hash) > 0)
         {
             $profile = UserProfile::getByHash($email, $hash);
         }
@@ -286,7 +286,7 @@ class C_Profile extends B_Controller
         $expired = false;
         $profile = null;
 
-        if(strlen($email) > 0 && strlen($hash) > 0)
+        if(strpos($email, '@') > 0 && strlen($hash) > 0)
         {
             $profile = UserProfile::getByHash($email, $hash);
             $expired = is_object($profile) ? $profile->recovery_allowed : true;
@@ -323,7 +323,7 @@ class C_Profile extends B_Controller
  
         /* password change (not authenticated) */
 
-        if(strlen($email) > 0 && strlen($hash) > 0 && 
+        if(strpos($email, '@') > 0 && strlen($hash) > 0 && 
            strlen($password) && strlen($confirm))
         {
             $updated = $this->passwordNotAuthenticated
@@ -446,7 +446,7 @@ class C_Profile extends B_Controller
         $profile = null;
         $new_email = "";
 
-        if(strlen($email) > 0 && strlen($hash) > 0)
+        if(strpos($email, '@') > 0 && strlen($hash) > 0)
         {
             $profile = UserProfile::getByHash($email, $hash);
             $new_email = is_object($profile) ? $profile->update_email_to : "";
@@ -483,7 +483,7 @@ class C_Profile extends B_Controller
         
         /* change save */
 
-        if(strlen($email) > 0 && strlen($hash) > 0 && strlen($password) > 0)
+        if(strpos($email, '@') > 0 && strlen($hash) > 0 && strlen($password) > 0)
         {
             $accepted = $this->emailChangeSave($email, $hash, $password, $message);
         }

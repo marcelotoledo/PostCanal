@@ -95,3 +95,11 @@ HORAS TRABALHADAS: 5h
 - inclusão de seletor para territory, timezone e culture no editor de perfil
 
 HORAS TRABALHADAS: 9h
+
+==========
+16/06/2009
+==========
+
+- inclusão de modulo para obter palavras chaves a partir de um html (htmlcrawler)
+
+HORAS TRABALHADAS: 4h
