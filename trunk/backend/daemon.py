@@ -173,6 +173,17 @@ class Daemon:
                 logging.error(_m % (sys.exc_info()[0].__name__))
                 return None
 
+    def queue_feeding(self):
+        try:
+            self.client.queue_feeding({ 'token': self.token })
+            _m = "queue feeding: webservice call successful"
+            logging.info(_m)
+        except:
+            _m = "queue feeding: webservice call failed; (%s)"
+            logging.error(_m % (sys.exc_info()[0].__name__))
+            return None
+
+
 def start(argv):
     base_path = os.path.abspath("../")
     config_path = base_path + "/config/environment.xml"
@@ -189,6 +200,7 @@ def start(argv):
         time.sleep(TIME_SLEEP)
         daemon.feed_update()
         daemon.blog_publish()
+        daemon.queue_feeding()
 
 def usage(argv):
     print 'PostCanal Daemon %s - Daemon system for postcanal.com' % VERSION

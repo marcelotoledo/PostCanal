@@ -111,5 +111,6 @@ HORAS TRABALHADAS: 4h
 - inclusão de opção para cadastro de palavras-chave no blog
 - remoção do campo "nome" durante o cadastro de blogs
 - registro  palavras-chave no article
+- inclusao de webservice para sugestao de entradas do queue baseada nos keywords
 
-HORAS TRABALHADAS: 2h
+HORAS TRABALHADAS: 4h

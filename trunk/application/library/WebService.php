@@ -210,4 +210,25 @@ class A_WebService
         
         return true;
     }
+
+    /**
+     * Do queue suggestion (blog entry feeding)
+     */
+    public function queue_feeding($args)
+    {
+        if($this->validate_args($args, array()) == false) return null;
+
+        try
+        {
+            BlogEntry::feedingAuto();
+        }
+        catch(B_Exception $_e)
+        {
+            $_m = "trying to do queue feeding failed";
+            $_d = array ('method' => __METHOD__);
+            B_Log::write($_m, E_USER_ERROR, $_d);
+        }
+        
+        return true;
+    }
 }

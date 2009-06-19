@@ -102,8 +102,8 @@
         </form></td></tr></table>
     </div>
 
-    <div id="queuefeeding" style="display:none"><!-- TODO -->
-        <b><?php echo $this->translation()->feeding ?>: </b>
+    <div id="queuefeeding" style="display:none">
+        <b><?php echo $this->translation()->queueing ?>: </b>
 
         <a href="#" id="queuefeedingmanuallnk" style="display:none"><?php echo $this->translation()->manual ?></a>
         <span id="queuefeedingmanuallabel" style="display:none"><?php echo $this->translation()->manual ?></span> | 

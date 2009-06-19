@@ -34,6 +34,7 @@ class BlogEntry extends B_Model
 		'ordering' => array ('type' => 'integer','size' => 0,'required' => false),
 		'created_at' => array ('type' => 'date','size' => 0,'required' => false),
 		'updated_at' => array ('type' => 'date','size' => 0,'required' => false),
+		'suggested' => array ('type' => 'boolean','size' => 0,'required' => false),
 		'deleted' => array ('type' => 'boolean','size' => 0,'required' => false));
 
     /**
@@ -506,5 +507,25 @@ class BlogEntry extends B_Model
         }
 
         return $article;
+    }
+
+    /**
+     * Do queue suggestion (blog entry feeding) when feeding_auto is true
+     */
+    public static function feedingAuto()
+    {
+        /*
+        $sql = "SELECT user_blog_id, keywords 
+                FROM model_user_blog 
+                WHERE feeding_auto=1 AND enabled=1 AND deleted=0 
+                ORDER BY 
+                AND "
+
+
+                select a.user_blog_id, a.keywords, MAX(b.created_at) FROM model_user_blog AS a LEFT JOIN model_user_blog_entry AS b ON (a.user_blog_id = b.user_blog_id) WHERE a.feeding_auto=1 AND a.enabled=1 AND a.deleted=0 AND b.suggested=1 AND b.deleted=0;
+
+                returns NULL NULL NULL :( 
+
+                */
     }
 }

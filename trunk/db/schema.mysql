@@ -218,7 +218,7 @@ CREATE TABLE model_user_blog
         REFERENCES model_blog_type (blog_type_id) ON DELETE RESTRICT
 ) ENGINE=InnoDB DEFAULT CHARSET='utf8' COLLATE='utf8_unicode_ci';
 
-CREATE INDEX m_ubg_idx ON model_user_blog (hash(4), enabled, deleted);
+CREATE INDEX m_ubg_idx ON model_user_blog (hash(4), feeding_auto, enabled, deleted);
 
 CREATE TABLE model_user_blog_feed
 (
@@ -256,6 +256,7 @@ CREATE TABLE model_user_blog_entry
     ordering SMALLINT UNSIGNED NOT NULL DEFAULT 1,
     created_at TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
     updated_at TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
+    suggested TINYINT(1) NOT NULL DEFAULT 0, -- when model_user_blog.feeding_auto==1
     deleted TINYINT(1) NOT NULL DEFAULT 0,
     PRIMARY KEY (user_blog_entry_id),
     CONSTRAINT m_bge_uh UNIQUE (user_blog_id, hash),
@@ -265,6 +266,6 @@ CREATE TABLE model_user_blog_entry
         REFERENCES model_user_blog (user_blog_id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET='utf8';
 
-CREATE INDEX m_bge_idx ON model_user_blog_entry (hash(4), ordering, publication_status, publication_date, updated_at, deleted);
+CREATE INDEX m_bge_idx ON model_user_blog_entry (hash(4), publication_status, publication_date, ordering, created_at, updated_at, suggested, deleted);
 
 COMMIT;
