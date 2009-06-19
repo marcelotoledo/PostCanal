@@ -86,4 +86,28 @@ class A_Utility
         );
     }
 
+    /**
+     * Keywords from string or hypertext
+     */
+    public static function keywords(&$s)
+    {
+        $s = strip_tags($s);
+        $s = preg_replace("/[\t\r\n]+/", "", $s); // new lines and tabs
+        $s = strtolower($s);
+
+        $s = htmlentities($s, ENT_NOQUOTES, 'UTF-8', false);
+        $s = preg_replace("/&(.)(acute|cedil|circ|ring|tilde|uml);/", "$1", $s);
+        $s = preg_replace("/&(.)([\w]+);/", " ", $s);
+        $s = preg_replace("/[^\w]+/", " ", $s);
+
+        $s = preg_replace("/[^\w][\w]{1,2}[^\w]/", " ", $s);
+        $s = preg_replace("/[^\w][\w]{1,2}[^\w]/", " ", $s);
+        $s = preg_replace("/^[\w]{1,2}[^\w]/", " ", $s);
+        $s = preg_replace("/[^\w][\w]{1,2}$/", " ", $s);
+
+        $s = trim($s);
+        $s = preg_replace("/[[:space:]]+/", " ", $s); // extra spaces
+
+        $s = implode(" ", array_unique(explode(" ", $s)));
+    }
 }

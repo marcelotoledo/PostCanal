@@ -73,8 +73,13 @@ class C_Blog extends B_Controller
         $blog = new UserBlog();
         $blog->user_profile_id    = $this->session()->user_profile_id;
         $blog->blog_type_id       = $blog_type->blog_type_id;
-        $blog->name               = $this->request()->blog_name;
         $blog->blog_url           = $this->request()->blog_url;
+
+        $name = $blog->blog_url;
+        $name = preg_replace("/^(http[\w]*[^\w]+)*(www.)*([^\/]+)([\/]*.+)*/", "$3", $name);
+        if(strlen($name)==0) { $name = $this->translation()->my_new_blog; }
+        $blog->name = $name;
+
         $blog->blog_manager_url   = $this->request()->blog_manager_url;
         $blog->blog_username      = $this->request()->blog_username;
         $blog->blog_password      = $this->request()->blog_password;
@@ -172,9 +177,9 @@ class C_Blog extends B_Controller
         $result = array('name'                 =>   "" ,
                         'blog_url'             =>   "" ,
                         'feeding_auto'         =>    0 ,
-                        'feeding_keywords'     =>   "" ,
                         'publication_auto'     =>    0 ,
-                        'publication_interval' => 3600);
+                        'publication_interval' => 3600 ,
+                        'keywords'             =>   "" );
 
         if(is_object(($blog = UserBlog::getByUserAndHash($user, $hash))))
         {

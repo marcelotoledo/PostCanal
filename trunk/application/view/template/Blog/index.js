@@ -44,6 +44,7 @@ function blog_update(blog)
     var _f_name = _f.find("input[name='blog_name']");
     var _f_username = _f.find("input[name='blog_username']");
     var _f_password = _f.find("input[name='blog_password']");
+    var _f_keywords = _f.find("input[name='keywords']");
 
     $.ajax
     ({
@@ -53,7 +54,8 @@ function blog_update(blog)
         data: { blog          : blog,
                 name          : _f_name.val(), 
                 blog_username : _f_username.val(), 
-                blog_password : _f_password.val() },
+                blog_password : _f_password.val(),
+                keywords      : _f_keywords.val() },
         beforeSend: function()
         {
             set_active_request(true);

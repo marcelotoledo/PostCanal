@@ -34,9 +34,9 @@ class UserBlog extends B_Model
 		'blog_username' => array ('type' => 'string','size' => 255,'required' => false),
 		'blog_password' => array ('type' => 'string','size' => 255,'required' => false),
 		'feeding_auto' => array ('type' => 'integer','size' => 0,'required' => false),
-		'feeding_keywords' => array ('type' => 'string','size' => 0,'required' => false),
 		'publication_auto' => array ('type' => 'integer','size' => 0,'required' => false),
 		'publication_interval' => array ('type' => 'integer','size' => 0,'required' => false),
+		'keywords' => array ('type' => 'string','size' => 0,'required' => false),
 		'created_at' => array ('type' => 'date','size' => 0,'required' => false),
 		'updated_at' => array ('type' => 'date','size' => 0,'required' => false),
 		'enabled' => array ('type' => 'boolean','size' => 0,'required' => false));
@@ -130,9 +130,9 @@ class UserBlog extends B_Model
         'blog_username',
         'blog_password',
         'feeding_auto',
-        'feeding_keywords',
         'publication_auto',
-        'publication_interval'
+        'publication_interval',
+        'keywords'
     );
 
     /**

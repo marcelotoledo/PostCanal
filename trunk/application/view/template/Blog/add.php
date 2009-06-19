@@ -4,11 +4,6 @@
 <h1><?php echo $this->translation()->blog_add ?></h1>
 <table>
 
-<tr>
-<th><?php echo $this->translation()->blog_name ?>:</th>
-<td><input type="text" id="blog_name" value="<?php echo $this->blog->name ?>"></td>
-</tr>
-
 <tr id="discover_url_input_row">
 <th><?php echo $this->translation()->blog_url ?>:</th>
 <td>

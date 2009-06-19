@@ -103,3 +103,13 @@ HORAS TRABALHADAS: 9h
 - inclusão de modulo para obter palavras chaves a partir de um html (htmlcrawler)
 
 HORAS TRABALHADAS: 4h
+
+==========
+19/06/2009
+==========
+
+- inclusão de opção para cadastro de palavras-chave no blog
+- remoção do campo "nome" durante o cadastro de blogs
+- registro  palavras-chave no article
+
+HORAS TRABALHADAS: 2h

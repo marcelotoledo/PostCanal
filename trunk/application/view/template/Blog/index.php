@@ -35,6 +35,19 @@
             <th><?php echo $this->translation()->blog_password ?>:</th>
             <td>
                 <input type="password" name="blog_password" value="">
+            </td>
+            </tr>
+
+            <tr>
+            <th><?php echo $this->translation()->keywords ?>:</th>
+            <td>
+                <input type="text" name="keywords" value="<?php echo $b->keywords ?>">
+            </td>
+            </tr>
+
+            <tr>
+            <th>&nbsp;</th>
+            <td>
                 <input type="button" name="blogupdatebtn" value="<?php echo $this->translation()->update ?>" blog="<?php echo $b->hash ?>">
                 <input type="button" name="blogcancelbtn" value="<?php echo $this->translation()->cancel ?>" blog="<?php echo $b->hash ?>">
             </td>

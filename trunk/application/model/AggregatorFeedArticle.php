@@ -31,6 +31,7 @@ class AggregatorFeedArticle extends B_Model
 		'article_title' => array ('type' => 'string','size' => 0,'required' => true),
 		'article_author' => array ('type' => 'string','size' => 200,'required' => true),
 		'article_content' => array ('type' => 'string','size' => 0,'required' => true),
+		'keywords' => array ('type' => 'string','size' => 0,'required' => false),
 		'created_at' => array ('type' => 'date','size' => 0,'required' => false),
 		'updated_at' => array ('type' => 'date','size' => 0,'required' => false));
 
@@ -247,6 +248,9 @@ class AggregatorFeedArticle extends B_Model
             $article->aggregator_feed_id = $feed->aggregator_feed_id;
             $article->populate($entry);
             $article->makeArticleMd5();
+            $keywords = $article->article_content;
+            A_Utility::keywords($keywords);
+            $article->keywords = $keywords;
 
             $is_new = false;
             $is_update = false;
