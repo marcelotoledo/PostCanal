@@ -131,6 +131,9 @@ class BlogEntry extends B_Model
     const STATUS_FAILED    = 'failed';
     const STATUS_PUBLISHED = 'published';
 
+    const FEEDING_AUTO_MAX_ENTRIES = 10;
+
+
     /**
      * Save model
      *
@@ -514,18 +517,85 @@ class BlogEntry extends B_Model
      */
     public static function feedingAuto()
     {
-        /*
-        $sql = "SELECT user_blog_id, keywords 
-                FROM model_user_blog 
-                WHERE feeding_auto=1 AND enabled=1 AND deleted=0 
-                ORDER BY 
-                AND "
+        $sql = "SELECT 
+                    a.user_blog_id AS blog_id, 
+                    keywords AS keywords
+                FROM model_user_blog AS a 
+                LEFT JOIN (
+                    SELECT user_blog_id, COUNT(user_blog_entry_id) AS entries
+                    FROM model_user_blog_entry 
+                    WHERE suggested=1 AND deleted=0
+                    GROUP BY user_blog_id) AS x
+                ON (a.user_blog_id = x.user_blog_id)
+                WHERE feeding_auto=1 AND enabled=1
+                AND (x.entries < " . self::FEEDING_AUTO_MAX_ENTRIES . " OR x.entries IS NULL)
+                ORDER BY feeding_auto_updated_at ASC LIMIT 1";
 
+        $articles = array();
+        $keywords = array();
 
-                select a.user_blog_id, a.keywords, MAX(b.created_at) FROM model_user_blog AS a LEFT JOIN model_user_blog_entry AS b ON (a.user_blog_id = b.user_blog_id) WHERE a.feeding_auto=1 AND a.enabled=1 AND a.deleted=0 AND b.suggested=1 AND b.deleted=0;
+        if(is_object($blog = current(self::select($sql, array(), PDO::FETCH_OBJ))))
+        {
+            $articles = UserBlogFeed::findArticlesToSuggestion($blog->blog_id);
 
-                returns NULL NULL NULL :( 
+            $separator = null;
+            if    (strpos($blog->keywords, ",")>0) $separator = ",";
+            elseif(strpos($blog->keywords, ":")>0) $separator = ":";
+            elseif(strpos($blog->keywords, ";")>0) $separator = ";";
+            elseif(strpos($blog->keywords, "|")>0) $separator = "|";
 
-                */
+            $keywords = array();
+
+            if($separator==null)
+            {
+                if(strpos($blog->keywords, " ")>0)
+                {
+                    $k = $blog->keywords;
+                    A_Utility::keywords($k);
+                    $keywords = explode(" ", $k);
+                }
+            }
+            else
+            {
+                foreach(explode($separator, $blog->keywords) AS $k)
+                {
+                    A_Utility::keywords($k);
+
+                    if(strlen($k)>0)
+                    {
+                        $keywords[] = $k;
+                    }
+                }
+            }
+        }
+
+        if(count($articles)>0)
+        {
+            /* suggestion based on keywords */
+    
+            if(count($keywords)>0)
+            {
+                foreach($articles as $a)
+                {
+                    foreach($keywords as $k)
+                    {
+                        echo $a->article_id . " / " . $k . " = " . strpos($a->keywords, $k) . "\n";
+                    }
+                }
+            }
+
+            /* suggestion based on ? (TODO) */
+            
+            else
+            {
+            }
+
+        }
+        else
+        {
+            // no articles to suggest
+        }
+
+        // print_r($articles);
     }
 }

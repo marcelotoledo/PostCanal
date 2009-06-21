@@ -27,7 +27,7 @@ CREATE TABLE base_log
     data_controller VARCHAR(100) NOT NULL DEFAULT '',
     data_action VARCHAR(100) NOT NULL DEFAULT '',
     data_user_profile_id INTEGER UNSIGNED NOT NULL DEFAULT 0,
-    created_at TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
+    created_at TIMESTAMP NOT NULL DEFAULT '1970-01-01 00:00:00',
     PRIMARY KEY (id)
 ) ENGINE=InnoDB DEFAULT CHARSET='utf8' COLLATE='utf8_unicode_ci';
 
@@ -63,7 +63,7 @@ CREATE TABLE application_mailer_relay
     recipient_email_local VARCHAR(64) NOT NULL,
     recipient_email_domain VARCHAR(255) NOT NULL,
     identifier_md5 VARCHAR(32) DEFAULT NULL,
-    created_at TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
+    created_at TIMESTAMP NOT NULL DEFAULT '1970-01-01 00:00:00',
     PRIMARY KEY (id)
 ) ENGINE=InnoDB DEFAULT CHARSET='utf8' COLLATE='utf8_unicode_ci';
 
@@ -99,8 +99,8 @@ CREATE TABLE model_aggregator_feed
     feed_description TEXT NOT NULL,
     feed_update_time INTEGER UNSIGNED NOT NULL DEFAULT 0,
     feed_status VARCHAR(3) NOT NULL DEFAULT '200',
-    created_at TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
-    updated_at TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
+    created_at TIMESTAMP NOT NULL DEFAULT '1970-01-01 00:00:00',
+    updated_at TIMESTAMP NOT NULL DEFAULT '1970-01-01 00:00:00',
     enabled TINYINT(1) NOT NULL DEFAULT 1,
     PRIMARY KEY (aggregator_feed_id)
 ) ENGINE=InnoDB DEFAULT CHARSET='utf8' COLLATE='utf8_unicode_ci';
@@ -126,14 +126,14 @@ CREATE TABLE model_aggregator_feed_article
     aggregator_feed_article_id INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
     aggregator_feed_id INTEGER UNSIGNED NOT NULL, 
     article_md5 VARCHAR(32) NOT NULL,
-    article_date TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00', 
+    article_date TIMESTAMP NOT NULL DEFAULT '1970-01-01 00:00:00', 
     article_link TEXT NOT NULL, 
     article_title TEXT NOT NULL NOT NULL DEFAULT '',
     article_author VARCHAR(200) NOT NULL DEFAULT '', 
     article_content TEXT NOT NULL NOT NULL DEFAULT '', 
     keywords TEXT NOT NULL DEFAULT '',
-    created_at TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00', 
-    updated_at TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
+    created_at TIMESTAMP NOT NULL DEFAULT '1970-01-01 00:00:00', 
+    updated_at TIMESTAMP NOT NULL DEFAULT '1970-01-01 00:00:00',
     PRIMARY KEY (aggregator_feed_article_id),
     CONSTRAINT m_afa_m_agf_fk FOREIGN KEY (aggregator_feed_id) 
         REFERENCES model_aggregator_feed (aggregator_feed_id) ON DELETE CASCADE
@@ -155,19 +155,19 @@ CREATE TABLE model_user_profile
     -- -------------------------------------------------------------------------
     register_confirmation TINYINT(1) NOT NULL DEFAULT 0,
     update_email_to TEXT NOT NULL DEFAULT '',
-    register_message_time TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
-    register_confirmation_time TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
-    last_login_time TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
-    recovery_message_time TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
+    register_message_time TIMESTAMP NOT NULL DEFAULT '1970-01-01 00:00:00',
+    register_confirmation_time TIMESTAMP NOT NULL DEFAULT '1970-01-01 00:00:00',
+    last_login_time TIMESTAMP NOT NULL DEFAULT '1970-01-01 00:00:00',
+    recovery_message_time TIMESTAMP NOT NULL DEFAULT '1970-01-01 00:00:00',
     recovery_allowed TINYINT(1) NOT NULL DEFAULT 0,
-    update_email_message_time TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
+    update_email_message_time TIMESTAMP NOT NULL DEFAULT '1970-01-01 00:00:00',
     -- -------------------------------------------------------------------------
     local_territory VARCHAR(2) NOT NULL DEFAULT 'US',
     local_culture VARCHAR(8) NOT NULL DEFAULT 'en_US',
     local_timezone VARCHAR(50) NOT NULL DEFAULT 'UTC',
     -- -------------------------------------------------------------------------
-    created_at TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
-    updated_at TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
+    created_at TIMESTAMP NOT NULL DEFAULT '1970-01-01 00:00:00',
+    updated_at TIMESTAMP NOT NULL DEFAULT '1970-01-01 00:00:00',
     enabled TINYINT(1) NOT NULL DEFAULT 1,
     PRIMARY KEY (user_profile_id),
     CONSTRAINT m_upf_uh UNIQUE (hash)
@@ -203,11 +203,12 @@ CREATE TABLE model_user_blog
     blog_username VARCHAR(255),
     blog_password VARCHAR(255),
     feeding_auto TINYINT(1) NOT NULL DEFAULT 0,
+    feeding_auto_updated_at TIMESTAMP NOT NULL DEFAULT '1970-01-01 00:00:00',
     publication_auto TINYINT(1) NOT NULL DEFAULT 0,
     publication_interval INTEGER UNSIGNED NOT NULL DEFAULT 0,
     keywords TEXT NOT NULL DEFAULT '',
-    created_at TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
-    updated_at TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
+    created_at TIMESTAMP NOT NULL DEFAULT '1970-01-01 00:00:00',
+    updated_at TIMESTAMP NOT NULL DEFAULT '1970-01-01 00:00:00',
     enabled TINYINT(1) NOT NULL DEFAULT 1,
     deleted TINYINT(1) NOT NULL DEFAULT 0,
     PRIMARY KEY (user_blog_id),
@@ -218,7 +219,7 @@ CREATE TABLE model_user_blog
         REFERENCES model_blog_type (blog_type_id) ON DELETE RESTRICT
 ) ENGINE=InnoDB DEFAULT CHARSET='utf8' COLLATE='utf8_unicode_ci';
 
-CREATE INDEX m_ubg_idx ON model_user_blog (hash(4), feeding_auto, enabled, deleted);
+CREATE INDEX m_ubg_idx ON model_user_blog (hash(4), feeding_auto, feeding_auto_updated_at, enabled, deleted);
 
 CREATE TABLE model_user_blog_feed
 (
@@ -229,8 +230,8 @@ CREATE TABLE model_user_blog_feed
     feed_title VARCHAR(100) NOT NULL,
     feed_description TEXT NOT NULL,
     ordering SMALLINT UNSIGNED NOT NULL DEFAULT 1,
-    created_at TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
-    updated_at TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
+    created_at TIMESTAMP NOT NULL DEFAULT '1970-01-01 00:00:00',
+    updated_at TIMESTAMP NOT NULL DEFAULT '1970-01-01 00:00:00',
     enabled TINYINT(1) NOT NULL DEFAULT 1,
     deleted TINYINT(1) NOT NULL DEFAULT 0,
     PRIMARY KEY (user_blog_feed_id),
@@ -252,10 +253,10 @@ CREATE TABLE model_user_blog_entry
     entry_title TEXT NOT NULL DEFAULT '', 
     entry_content TEXT NOT NULL DEFAULT '',
     publication_status ENUM('new','waiting','failed','published') NOT NULL DEFAULT 'new',
-    publication_date TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
+    publication_date TIMESTAMP NOT NULL DEFAULT '1970-01-01 00:00:00',
     ordering SMALLINT UNSIGNED NOT NULL DEFAULT 1,
-    created_at TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
-    updated_at TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
+    created_at TIMESTAMP NOT NULL DEFAULT '1970-01-01 00:00:00',
+    updated_at TIMESTAMP NOT NULL DEFAULT '1970-01-01 00:00:00',
     suggested TINYINT(1) NOT NULL DEFAULT 0, -- when model_user_blog.feeding_auto==1
     deleted TINYINT(1) NOT NULL DEFAULT 0,
     PRIMARY KEY (user_blog_entry_id),
@@ -266,6 +267,6 @@ CREATE TABLE model_user_blog_entry
         REFERENCES model_user_blog (user_blog_id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET='utf8';
 
-CREATE INDEX m_bge_idx ON model_user_blog_entry (hash(4), publication_status, publication_date, ordering, created_at, updated_at, suggested, deleted);
+CREATE INDEX m_bge_idx ON model_user_blog_entry (hash(4), publication_status, publication_date, ordering, suggested, deleted);
 
 COMMIT;

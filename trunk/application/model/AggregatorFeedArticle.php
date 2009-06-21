@@ -248,7 +248,8 @@ class AggregatorFeedArticle extends B_Model
             $article->aggregator_feed_id = $feed->aggregator_feed_id;
             $article->populate($entry);
             $article->makeArticleMd5();
-            $keywords = $article->article_content;
+
+            $keywords = $article->article_title . " " . $article->article_content;
             A_Utility::keywords($keywords);
             $article->keywords = $keywords;
 
