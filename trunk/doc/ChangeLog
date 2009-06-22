@@ -114,3 +114,11 @@ HORAS TRABALHADAS: 4h
 - inclusao de webservice para sugestao de entradas do queue baseada nos keywords
 
 HORAS TRABALHADAS: 4h
+
+==========
+22/06/2009
+==========
+
+- inclusao de metodo para inclusao de queue entries baseada em keywords
+
+HORAS TRABALHADAS: 4h

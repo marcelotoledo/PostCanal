@@ -109,5 +109,6 @@ class A_Utility
         $s = preg_replace("/[[:space:]]+/", " ", $s); // extra spaces
 
         $s = implode(" ", array_unique(explode(" ", $s)));
+        $s = strtolower($s);
     }
 }

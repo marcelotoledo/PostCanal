@@ -271,6 +271,36 @@ class BlogEntry extends B_Model
     }
 
     /**
+     * Create entry from feed article Assoc result
+     */
+    protected static function newFromFeedArticleAssoc($result)
+    {
+        $entry = new self();
+
+        if($result['publication_auto']==1)
+        {
+            /* new item start waiting publication */
+
+            $mtime = self::getMaxPublicationTime($result['user_blog_id']);
+            $mtime+= $result['publication_interval'];
+
+            $entry->publication_status = self::STATUS_WAITING;
+            $entry->publication_date = $mtime;
+        }
+
+        $entry->populate($result);
+        $entry->save();
+
+        return array(
+            'entry'              => $entry->hash,
+            'entry_title'        => $entry->entry_title,
+            'entry_content'      => $entry->entry_content,
+            'publication_status' => $entry->publication_status,
+            'publication_date'   => $entry->publication_date
+        );
+    }
+
+    /**
      * Create entry to blog from feed article
      *
      * @param   string  $feed_article_md5
@@ -299,29 +329,32 @@ class BlogEntry extends B_Model
         $args = array($article_md5, $feed_hash, $profile_id, $blog_hash);
         $result = current(self::select($sql, $args, PDO::FETCH_ASSOC));
 
-        $entry = new self();
+        return self::newFromFeedArticleAssoc($result);
+    }
 
-        if($result['publication_auto']==1)
+    /**
+     * Create entry to blog from feed article and Blog ID
+     */
+    public static function newFromArticleBlogId($article_id, $blog_id)
+    {
+        $result = array();
+
+        if(is_object($article = AggregatorFeedArticle::getByPrimaryKey($article_id)) &&
+           is_object($blog = UserBlog::getByPrimaryKey($blog_id)))
         {
-            /* new item start waiting publication */
-
-            $mtime = self::getMaxPublicationTime($result['user_blog_id']);
-            $mtime+= $result['publication_interval'];
-
-            $entry->publication_status = self::STATUS_WAITING;
-            $entry->publication_date = $mtime;
+            $result = array
+            (
+                'aggregator_feed_article_id' => $article->aggregator_feed_article_id,
+                'entry_title'                => $article->article_title,
+                'entry_content'              => $article->article_content,
+                'user_blog_id'               => $blog->user_blog_id,
+                'publication_auto'           => $blog->publication_auto,
+                'publication_interval'       => $blog->publication_interval,
+                'suggested'                  => true
+            );
         }
 
-        $entry->populate(current(self::select($sql, $args, PDO::FETCH_ASSOC)));
-        $entry->save();
-
-        return array(
-            'entry'              => $entry->hash,
-            'entry_title'        => $entry->entry_title,
-            'entry_content'      => $entry->entry_content,
-            'publication_status' => $entry->publication_status,
-            'publication_date'   => $entry->publication_date
-        );
+        return self::newFromFeedArticleAssoc($result);
     }
 
     /**
@@ -534,40 +567,46 @@ class BlogEntry extends B_Model
         $articles = array();
         $keywords = array();
 
-        if(is_object($blog = current(self::select($sql, array(), PDO::FETCH_OBJ))))
+        if(is_object($blog = current(self::select($sql, array(), PDO::FETCH_OBJ)))==false)
         {
-            $articles = UserBlogFeed::findArticlesToSuggestion($blog->blog_id);
+            $_m = "invalid user blog";
+            $_d = array('method' => __METHOD__);
+            throw new B_Exception($_m, E_USER_ERROR, $_d);
+        }
 
-            $separator = null;
-            if    (strpos($blog->keywords, ",")>0) $separator = ",";
-            elseif(strpos($blog->keywords, ":")>0) $separator = ":";
-            elseif(strpos($blog->keywords, ";")>0) $separator = ";";
-            elseif(strpos($blog->keywords, "|")>0) $separator = "|";
+        $articles = UserBlogFeed::findArticlesToSuggestion($blog->blog_id);
 
-            $keywords = array();
+        $separator = null;
+        if    (strpos($blog->keywords, ",")>0) $separator = ",";
+        elseif(strpos($blog->keywords, ":")>0) $separator = ":";
+        elseif(strpos($blog->keywords, ";")>0) $separator = ";";
+        elseif(strpos($blog->keywords, "|")>0) $separator = "|";
 
-            if($separator==null)
+        $keywords = array();
+
+        if($separator==null)
+        {
+            if(strpos($blog->keywords, " ")>0)
             {
-                if(strpos($blog->keywords, " ")>0)
-                {
-                    $k = $blog->keywords;
-                    A_Utility::keywords($k);
-                    $keywords = explode(" ", $k);
-                }
+                $k = $blog->keywords;
+                A_Utility::keywords($k);
+                $keywords = explode(" ", $k);
             }
-            else
+        }
+        else
+        {
+            foreach(explode($separator, $blog->keywords) AS $k)
             {
-                foreach(explode($separator, $blog->keywords) AS $k)
-                {
-                    A_Utility::keywords($k);
+                A_Utility::keywords($k);
 
-                    if(strlen($k)>0)
-                    {
-                        $keywords[] = $k;
-                    }
+                if(strlen($k)>0)
+                {
+                    $keywords[] = $k;
                 }
             }
         }
+
+        $rank = array();
 
         if(count($articles)>0)
         {
@@ -575,11 +614,19 @@ class BlogEntry extends B_Model
     
             if(count($keywords)>0)
             {
+                $nk = count($keywords);
+                $jk = 0;
+
                 foreach($articles as $a)
                 {
-                    foreach($keywords as $k)
+                    for($jk=0;$jk<$nk;$jk++)
                     {
-                        echo $a->article_id . " / " . $k . " = " . strpos($a->keywords, $k) . "\n";
+                        if(strpos($a->keywords, $keywords[$jk])>0)
+                        {
+                            array_key_exists($a->article_id, $rank) ?
+                                $rank[$a->article_id]++ :
+                                $rank[$a->article_id] = 1 ;
+                        }
                     }
                 }
             }
@@ -591,11 +638,24 @@ class BlogEntry extends B_Model
             }
 
         }
-        else
+
+        $ma = 0;
+        $mr = 0;
+
+        foreach($rank as $a=>$r)
         {
-            // no articles to suggest
+            if($r > $mr)
+            {
+                $ma = $a;
+                $mr = $r;
+            }
         }
 
-        // print_r($articles);
+        if($ma>0)
+        {
+            self::newFromArticleBlogId($ma, $blog->blog_id);
+            $_m = "suggestion of article (" . $ma . ") added to blog (" . $blog->blog_id . ")";
+            B_Log::write($_m, E_USER_NOTICE);
+        }
     }
 }
