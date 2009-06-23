@@ -29,6 +29,7 @@ class BlogEntry extends B_Model
 		'hash' => array ('type' => 'string','size' => 8,'required' => true),
 		'entry_title' => array ('type' => 'string','size' => 0,'required' => true),
 		'entry_content' => array ('type' => 'string','size' => 0,'required' => true),
+		'keywords' => array ('type' => 'string','size' => 0,'required' => false),
 		'publication_status' => array ('type' => 'string','size' => 0,'required' => false),
 		'publication_date' => array ('type' => 'date','size' => 0,'required' => false),
 		'ordering' => array ('type' => 'integer','size' => 0,'required' => false),
@@ -131,7 +132,7 @@ class BlogEntry extends B_Model
     const STATUS_FAILED    = 'failed';
     const STATUS_PUBLISHED = 'published';
 
-    const FEEDING_AUTO_MAX_ENTRIES = 10;
+    const ENQUEUEING_AUTO_MAX_ENTRIES = 10;
 
 
     /**
@@ -148,6 +149,12 @@ class BlogEntry extends B_Model
             $this->hash = A_Utility::randomString(8);
             $this->setDefaultOrdering();
         }
+
+        /* generate keywords */
+
+        $keywords = $this->entry_title . " " . $this->entry_content;
+        A_Utility::keywords($keywords);
+        $this->keywords = $keywords;
 
         return parent::save();
     }
@@ -206,6 +213,19 @@ class BlogEntry extends B_Model
 
         return self::select($sql, array($blog_hash, $profile_id, self::STATUS_PUBLISHED), 
                             PDO::FETCH_CLASS, get_class());
+    }
+
+    public static function findLastPublishedKeywords($blog_id, $last=10)
+    {
+        $sql = "SELECT keywords FROM " . self::$table_name . "
+                WHERE user_blog_id = ?
+                AND publication_status = ? AND deleted=0
+                ORDER BY publication_date DESC LIMIT " . intval($last);
+
+        return self::select(
+            $sql, 
+            array($blog_id, self::STATUS_PUBLISHED), 
+            PDO::FETCH_OBJ);
     }
 
     public static function getMaxPublicationTime($blog_id)
@@ -546,10 +566,12 @@ class BlogEntry extends B_Model
     }
 
     /**
-     * Do queue suggestion (blog entry feeding) when feeding_auto is true
+     * Do queue suggestion (blog entry feeding) when enqueueing_auto is true
      */
-    public static function feedingAuto()
+    public static function enqueueingAuto()
     {
+        /* get blog */
+
         $sql = "SELECT 
                     a.user_blog_id AS blog_id, 
                     keywords AS keywords
@@ -557,24 +579,26 @@ class BlogEntry extends B_Model
                 LEFT JOIN (
                     SELECT user_blog_id, COUNT(user_blog_entry_id) AS entries
                     FROM model_user_blog_entry 
-                    WHERE suggested=1 AND deleted=0
+                    WHERE suggested=1 AND deleted=0 AND publication_status != ?
                     GROUP BY user_blog_id) AS x
                 ON (a.user_blog_id = x.user_blog_id)
-                WHERE feeding_auto=1 AND enabled=1
-                AND (x.entries < " . self::FEEDING_AUTO_MAX_ENTRIES . " OR x.entries IS NULL)
-                ORDER BY feeding_auto_updated_at ASC LIMIT 1";
+                WHERE enqueueing_auto=1 AND enabled=1
+                AND (x.entries < " . self::ENQUEUEING_AUTO_MAX_ENTRIES . " OR x.entries IS NULL)
+                ORDER BY enqueueing_auto_updated_at ASC LIMIT 1";
 
         $articles = array();
         $keywords = array();
 
-        if(is_object($blog = current(self::select($sql, array(), PDO::FETCH_OBJ)))==false)
+        if(is_object($blog = current(self::select($sql, 
+            array(self::STATUS_PUBLISHED), 
+            PDO::FETCH_OBJ)))==false)
         {
             $_m = "invalid user blog";
             $_d = array('method' => __METHOD__);
             throw new B_Exception($_m, E_USER_ERROR, $_d);
         }
 
-        $articles = UserBlogFeed::findArticlesToSuggestion($blog->blog_id);
+        /* get blog keywords */
 
         $separator = null;
         if    (strpos($blog->keywords, ",")>0) $separator = ",";
@@ -606,7 +630,41 @@ class BlogEntry extends B_Model
             }
         }
 
+        /* get keywords based on last publications */
+
+        if(count($keywords)==0)
+        {
+            $epub = self::findLastPublishedKeywords($blog->blog_id);
+            $etot = count($epub);
+            $fmin = round($etot * 0.2); // discard low freq keywords
+            $buff = array();
+
+            /* calculate keyword freq */
+
+            foreach($epub as $e)
+            {
+                foreach(explode(" ", $e->keywords) as $k)
+                {
+                    array_key_exists($k, $buff) ? $buff[$k]++ : $buff[$k] = 1;
+                }
+            }
+
+            /* get most popular keywords */
+
+            foreach($buff as $k => $f)
+            {
+                if($f >= $fmin)
+                {
+                    $keywords[] = $k;
+                }
+            }
+        }
+
+        /* rank articles */
+
         $rank = array();
+
+        $articles = UserBlogFeed::findArticlesToSuggestion($blog->blog_id);
 
         if(count($articles)>0)
         {
@@ -621,23 +679,35 @@ class BlogEntry extends B_Model
                 {
                     for($jk=0;$jk<$nk;$jk++)
                     {
-                        if(strpos($a->keywords, $keywords[$jk])>0)
+                        if(strpos(" " . $a->keywords, $keywords[$jk])>0)
                         {
                             array_key_exists($a->article_id, $rank) ?
                                 $rank[$a->article_id]++ :
                                 $rank[$a->article_id] = 1 ;
                         }
                     }
+
+                    /* feed ordering ponderation */
+
+                    if($a->feed_ordering > 0)
+                    {
+                        array_key_exists($a->article_id, $rank) ?
+                            $rank[$a->article_id] *= (1 / $a->feed_ordering) :
+                            $rank[$a->article_id] = 0 ;
+                    }
                 }
             }
 
-            /* suggestion based on ? (TODO) */
+            /* suggestion based on top article */
             
             else
             {
+                $rank = array($articles[0]->article_id => 1);
             }
 
         }
+
+        /* get top ranked article */
 
         $ma = 0;
         $mr = 0;
@@ -650,6 +720,8 @@ class BlogEntry extends B_Model
                 $mr = $r;
             }
         }
+
+        /* enqueue */
 
         if($ma>0)
         {

@@ -173,13 +173,13 @@ class Daemon:
                 logging.error(_m % (sys.exc_info()[0].__name__))
                 return None
 
-    def queue_feeding(self):
+    def auto_enqueue(self):
         try:
-            self.client.queue_feeding({ 'token': self.token })
-            _m = "queue feeding: webservice call successful"
+            self.client.auto_enqueue({ 'token': self.token })
+            _m = "auto enqueue: webservice call successful"
             logging.info(_m)
         except:
-            _m = "queue feeding: webservice call failed; (%s)"
+            _m = "auto enqueue: webservice call failed; (%s)"
             logging.error(_m % (sys.exc_info()[0].__name__))
             return None
 
@@ -200,7 +200,7 @@ def start(argv):
         time.sleep(TIME_SLEEP)
         daemon.feed_update()
         daemon.blog_publish()
-        daemon.queue_feeding()
+        daemon.auto_enqueue()
 
 def usage(argv):
     print 'PostCanal Daemon %s - Daemon system for postcanal.com' % VERSION

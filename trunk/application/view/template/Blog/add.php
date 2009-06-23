@@ -58,6 +58,12 @@
 </table>
 
 <table id="blog_buttons_table" style="display:none">
+
+<tr>
+<th><?php echo $this->translation()->keywords ?>:</th>
+<td><input type="text" id="keywords_input"></td>
+</tr>
+
 <tr>
 <th>&nbsp;</th>
 <td class="buttons">

@@ -214,13 +214,13 @@ class A_WebService
     /**
      * Do queue suggestion (blog entry feeding)
      */
-    public function queue_feeding($args)
+    public function auto_enqueue($args)
     {
         if($this->validate_args($args, array()) == false) return null;
 
         try
         {
-            BlogEntry::feedingAuto();
+            BlogEntry::enqueueingAuto();
         }
         catch(B_Exception $_e)
         {

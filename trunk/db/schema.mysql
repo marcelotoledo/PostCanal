@@ -202,8 +202,8 @@ CREATE TABLE model_user_blog
     blog_manager_url TEXT NOT NULL,
     blog_username VARCHAR(255),
     blog_password VARCHAR(255),
-    feeding_auto TINYINT(1) NOT NULL DEFAULT 0,
-    feeding_auto_updated_at TIMESTAMP NOT NULL DEFAULT '1970-01-01 00:00:00',
+    enqueueing_auto TINYINT(1) NOT NULL DEFAULT 0,
+    enqueueing_auto_updated_at TIMESTAMP NOT NULL DEFAULT '1970-01-01 00:00:00',
     publication_auto TINYINT(1) NOT NULL DEFAULT 0,
     publication_interval INTEGER UNSIGNED NOT NULL DEFAULT 0,
     keywords TEXT NOT NULL DEFAULT '',
@@ -219,7 +219,7 @@ CREATE TABLE model_user_blog
         REFERENCES model_blog_type (blog_type_id) ON DELETE RESTRICT
 ) ENGINE=InnoDB DEFAULT CHARSET='utf8' COLLATE='utf8_unicode_ci';
 
-CREATE INDEX m_ubg_idx ON model_user_blog (hash(4), feeding_auto, feeding_auto_updated_at, enabled, deleted);
+CREATE INDEX m_ubg_idx ON model_user_blog (hash(4), enqueueing_auto, enqueueing_auto_updated_at, enabled, deleted);
 
 CREATE TABLE model_user_blog_feed
 (
@@ -252,12 +252,13 @@ CREATE TABLE model_user_blog_entry
     hash VARCHAR(8) COLLATE 'utf8_bin' NOT NULL,
     entry_title TEXT NOT NULL DEFAULT '', 
     entry_content TEXT NOT NULL DEFAULT '',
+    keywords TEXT NOT NULL DEFAULT '',
     publication_status ENUM('new','waiting','failed','published') NOT NULL DEFAULT 'new',
     publication_date TIMESTAMP NOT NULL DEFAULT '1970-01-01 00:00:00',
     ordering SMALLINT UNSIGNED NOT NULL DEFAULT 1,
     created_at TIMESTAMP NOT NULL DEFAULT '1970-01-01 00:00:00',
     updated_at TIMESTAMP NOT NULL DEFAULT '1970-01-01 00:00:00',
-    suggested TINYINT(1) NOT NULL DEFAULT 0, -- when model_user_blog.feeding_auto==1
+    suggested TINYINT(1) NOT NULL DEFAULT 0, -- when model_user_blog.enqueueing_auto==1
     deleted TINYINT(1) NOT NULL DEFAULT 0,
     PRIMARY KEY (user_blog_entry_id),
     CONSTRAINT m_bge_uh UNIQUE (user_blog_id, hash),

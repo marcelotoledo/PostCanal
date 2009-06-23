@@ -102,13 +102,13 @@
         </form></td></tr></table>
     </div>
 
-    <div id="queuefeeding" style="display:none">
-        <b><?php echo $this->translation()->queueing ?>: </b>
+    <div id="enqueueing" style="display:none">
+        <b><?php echo $this->translation()->enqueue ?>: </b>
 
-        <a href="#" id="queuefeedingmanuallnk" style="display:none"><?php echo $this->translation()->manual ?></a>
-        <span id="queuefeedingmanuallabel" style="display:none"><?php echo $this->translation()->manual ?></span> | 
-        <a href="#" id="queuefeedingautomaticlnk" style="display:none"><?php echo $this->translation()->automatic ?></a>
-        <span id="queuefeedingautomaticlabel" style="display:none"><?php echo $this->translation()->automatic ?></span>
+        <a href="#" id="enqueueingmanuallnk" style="display:none"><?php echo $this->translation()->manual ?></a>
+        <span id="enqueueingmanuallabel" style="display:none"><?php echo $this->translation()->manual ?></span> | 
+        <a href="#" id="enqueueingautomaticlnk" style="display:none"><?php echo $this->translation()->automatic ?></a>
+        <span id="enqueueingautomaticlabel" style="display:none"><?php echo $this->translation()->automatic ?></span>
     </div>
 
     <div id="queueheightlnks">

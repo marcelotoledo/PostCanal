@@ -83,6 +83,7 @@ class C_Blog extends B_Controller
         $blog->blog_manager_url   = $this->request()->blog_manager_url;
         $blog->blog_username      = $this->request()->blog_username;
         $blog->blog_password      = $this->request()->blog_password;
+        $blog->keywords           = $this->request()->blog_keywords;
         $blog->blog_type_revision = $this->request()->blog_revision;
 
         try
@@ -176,7 +177,7 @@ class C_Blog extends B_Controller
         $user = $this->session()->user_profile_id;
         $result = array('name'                 =>   "" ,
                         'blog_url'             =>   "" ,
-                        'feeding_auto'         =>    0 ,
+                        'enqueueing_auto'      =>    0 ,
                         'publication_auto'     =>    0 ,
                         'publication_interval' => 3600 ,
                         'keywords'             =>   "" );

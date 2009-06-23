@@ -122,3 +122,12 @@ HORAS TRABALHADAS: 4h
 - inclusao de metodo para inclusao de queue entries baseada em keywords
 
 HORAS TRABALHADAS: 4h
+
+==========
+23/06/2009
+==========
+
+- exibicao e atualizacao automatica do auto enqueue no dashboard
+- inclusao de cadastro de keywords ao adicionar um novo blog
+
+HORAS TRABALHADAS: 4h

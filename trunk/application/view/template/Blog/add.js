@@ -235,6 +235,7 @@ function add_submit()
     bdisc.name     = mytpl.blog_name.val();
     bdisc.username = mytpl.login_username_input.val();
     bdisc.password = mytpl.login_password_input.val();
+    bdisc.keywords = mytpl.keywords_input.val();
 
     if(bdisc.name     == "" || 
        bdisc.username == "" || 
@@ -254,6 +255,7 @@ function add_submit()
                 blog_manager_url : bdisc.manager_url,
                 blog_username    : bdisc.username,
                 blog_password    : bdisc.password,
+                blog_keywords    : bdisc.keywords,
                 blog_type        : bdisc.type,
                 blog_version     : bdisc.version,
                 blog_revision    : bdisc.revision },
@@ -300,6 +302,7 @@ $(document).ready(function()
         login_table             : $("#login_table"),
         login_username_input    : $("#username_input"),
         login_password_input    : $("#password_input"),
+        keywords_input          : $("#keywords_input"),
         // login_check_lnk         : $("#login_check_lnk"), // TODO
         buttons_table           : $("#blog_buttons_table"),
         button_submit           : $("#add_submit_button"),

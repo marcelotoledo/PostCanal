@@ -346,11 +346,13 @@ class UserBlogFeed extends B_Model
     public static function findArticlesToSuggestion($blog_id, $limit=self::ARTICLES_MAX)
     {
         $sql = "SELECT d.aggregator_feed_article_id AS article_id,
-                       d.keywords AS keywords
+                       d.keywords AS keywords,
+                       x.feed_ordering AS feed_ordering
                 FROM (
 
                     SELECT a.aggregator_feed_article_id AS article_id, 
-                           c.user_blog_entry_id AS entry_id
+                           c.user_blog_entry_id AS entry_id,
+                           b.ordering AS feed_ordering
                     FROM model_aggregator_feed_article AS a
 
                     LEFT JOIN model_user_blog_feed AS b 
@@ -362,8 +364,7 @@ class UserBlogFeed extends B_Model
 
                     WHERE b.enabled=1 AND b.deleted=0 AND b.user_blog_id = ?
 
-                    ORDER BY b.ordering, 
-                             a.created_at DESC, 
+                    ORDER BY a.created_at DESC, 
                              a.article_date DESC, 
                              a.aggregator_feed_article_id DESC
 

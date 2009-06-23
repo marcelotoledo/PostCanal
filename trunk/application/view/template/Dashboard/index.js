@@ -17,7 +17,7 @@ var queue =
     height         : <?php echo $this->settings->queue->height ?>, // 0 minimum | 1 half | 2 maximum
     publication    : null ,
     interval       :    0 ,
-    feeding        : null ,
+    enqueueing     : null ,
     data           : Array(),
     active_request : false,
     entry          : null,
@@ -643,26 +643,26 @@ function set_queue_publication_auto()
     });
 }
 
-function set_queue_feeding()
+function set_auto_enqueue()
 {
-    if(queue.feeding==null)
+    if(queue.enqueueing==null)
     {
-        queue.feeding = (blog.info['feeding_auto']==1);
+        queue.enqueueing = (blog.info['enqueueing_auto']==1);
     }
 
-    if(queue.feeding)
+    if(queue.enqueueing)
     {
-        mytpl.queue_feeding_manual_label.hide();
-        mytpl.queue_feeding_manual_lnk.show();
-        mytpl.queue_feeding_automatic_lnk.hide();
-        mytpl.queue_feeding_automatic_label.show();
+        mytpl.auto_enqueue_manual_label.hide();
+        mytpl.auto_enqueue_manual_lnk.show();
+        mytpl.enqueueing_automatic_lnk.hide();
+        mytpl.enqueueing_automatic_label.show();
     }
     else
     {
-        mytpl.queue_feeding_manual_lnk.hide();
-        mytpl.queue_feeding_manual_label.show();
-        mytpl.queue_feeding_automatic_label.hide();
-        mytpl.queue_feeding_automatic_lnk.show();
+        mytpl.auto_enqueue_manual_lnk.hide();
+        mytpl.auto_enqueue_manual_label.show();
+        mytpl.enqueueing_automatic_label.hide();
+        mytpl.enqueueing_automatic_lnk.show();
     }
 }
 
@@ -1199,6 +1199,39 @@ function queue_entry_editor_init()
     queue.editor.Config["DefaultLanguage"] = "<?php echo substr($this->session()->getCulture(), 0, 2) ?>" ;
 }
 
+function auto_enqueue_updater()
+{
+    if(queue.enqueueing!=true) { return false; }
+    if(queue.active_request==true) { return false; }
+
+    $.ajax
+    ({
+        type: "GET",
+        url: "<?php B_Helper::url('queue', 'list') ?>",
+        dataType: "xml",
+        data: { blog : blog.current },
+        beforeSend: function()
+        {
+            queue.active_request = true;
+        },
+        complete: function()
+        {
+            queue.active_request = false;
+        },
+        success: function (xml)
+        {
+            $(xml).find('data').find('result').find('queue').children().each(function()
+            {
+                if(queue.data[($(this).find('entry').text())]==undefined)
+                {
+                    queue_populate($(this));
+                }
+            });
+        },
+        error: function () { /* void */ }
+    });
+}
+
 function queue_updater_callback(r)
 {
     r.each(function()
@@ -1233,6 +1266,7 @@ function queue_updater()
                 complete: function()
                 {
                     queue.active_request = false;
+                    auto_enqueue_updater();
                 },
                 success: function (xml)
                 {
@@ -1240,7 +1274,7 @@ function queue_updater()
                                                  .find('result')
                                                  .children());
                 },
-                error: function () { /* server_error(); */ }
+                error: function () { /* void */ }
             });
         }
     }
@@ -1294,11 +1328,11 @@ $(document).ready(function()
         queue_publication_automatic_label : $("#queuepublicationautomaticlabel"),
         queue_interval                    : $("#queueinterval"),
         queue_interval_sel                : $("#queueintervalsel"),
-        queue_feeding                     : $("#queuefeeding"),
-        queue_feeding_manual_lnk          : $("#queuefeedingmanuallnk"),
-        queue_feeding_manual_label        : $("#queuefeedingmanuallabel"),
-        queue_feeding_automatic_lnk       : $("#queuefeedingautomaticlnk"),
-        queue_feeding_automatic_label     : $("#queuefeedingautomaticlabel"),
+        auto_enqueue                      : $("#enqueueing"),
+        auto_enqueue_manual_lnk           : $("#enqueueingmanuallnk"),
+        auto_enqueue_manual_label         : $("#enqueueingmanuallabel"),
+        enqueueing_automatic_lnk    : $("#enqueueingautomaticlnk"),
+        enqueueing_automatic_label  : $("#enqueueingautomaticlabel"),
         queue_height_lnks                 : $("#queueheightlnks"),
         queue_height_min                  : $("#queueheightmin"),
         queue_height_med                  : $("#queueheightmed"),
@@ -1346,8 +1380,8 @@ $(document).ready(function()
         set_queue_interval();
         mytpl.queue_interval.show();
 
-        set_queue_feeding();
-        mytpl.queue_feeding.show();
+        set_auto_enqueue();
+        mytpl.auto_enqueue.show();
 
         window_update();
         queue_list();
@@ -1476,16 +1510,16 @@ $(document).ready(function()
         set_queue_publication_auto();
     });
 
-    mytpl.queue_feeding.find('a').click(function()
+    mytpl.auto_enqueue.find('a').click(function()
     {
-        queue.feeding = ($(this).attr('id')==mytpl.queue_feeding_automatic_lnk.attr('id'));
-        blog_update('feeding_auto', (queue.feeding ? 1 : 0));
+        queue.enqueueing = ($(this).attr('id')==mytpl.enqueueing_automatic_lnk.attr('id'));
+        blog_update('enqueueing_auto', (queue.enqueueing ? 1 : 0));
         return false;
     });
 
-    $(document).bind('blog_feeding_auto_updated' , function(e)
+    $(document).bind('blog_enqueueing_auto_updated' , function(e)
     {
-        set_queue_feeding();
+        set_auto_enqueue();
     });
 
     mytpl.queue_height_lnks.find('a').click(function()
