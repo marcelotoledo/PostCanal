@@ -1199,6 +1199,53 @@ function queue_entry_editor_init()
     queue.editor.Config["DefaultLanguage"] = "<?php echo substr($this->session()->getCulture(), 0, 2) ?>" ;
 }
 
+function queue_publication_updater_callback(r)
+{
+    r.each(function()
+    {
+        queue_entry_set_status($(this).find('entry').text(),
+                               $(this).find('status').text());
+    });
+}
+
+function queue_publication_updater()
+{
+    var _wdom = mytpl.queue_list_area.find("div.entry[status='waiting']");
+    var _wpar = Array();
+
+    if(_wdom.length > 0)
+    {
+        if(queue.active_request == false)
+        {
+            _wdom.each(function() { _wpar.push($(this).attr('entry')); });
+
+            $.ajax
+            ({
+                type: "GET",
+                url: "<?php B_Helper::url('queue', 'check') ?>",
+                dataType: "xml",
+                data: { blog    : blog.current ,
+                        waiting : _wpar.join(',') },
+                beforeSend: function()
+                {
+                    queue.active_request = true;
+                },
+                complete: function()
+                {
+                    queue.active_request = false;
+                },
+                success: function (xml)
+                {
+                    queue_publication_updater_callback($(xml).find('data')
+                                                 .find('result')
+                                                 .children());
+                },
+                error: function () { /* void */ }
+            });
+        }
+    }
+}
+
 function auto_enqueue_updater()
 {
     if(queue.enqueueing!=true) { return false; }
@@ -1232,57 +1279,11 @@ function auto_enqueue_updater()
     });
 }
 
-function queue_updater_callback(r)
-{
-    r.each(function()
-    {
-        queue_entry_set_status($(this).find('entry').text(),
-                               $(this).find('status').text());
-    });
-}
-
-function queue_updater()
-{
-    var _wdom = mytpl.queue_list_area.find("div.entry[status='waiting']");
-    var _wpar = Array();
-
-    if(_wdom.length > 0)
-    {
-        if(queue.active_request == false)
-        {
-            _wdom.each(function() { _wpar.push($(this).attr('entry')); });
-
-            $.ajax
-            ({
-                type: "GET",
-                url: "<?php B_Helper::url('queue', 'check') ?>",
-                dataType: "xml",
-                data: { blog    : blog.current ,
-                        waiting : _wpar.join(',') },
-                beforeSend: function()
-                {
-                    queue.active_request = true;
-                },
-                complete: function()
-                {
-                    queue.active_request = false;
-                    auto_enqueue_updater();
-                },
-                success: function (xml)
-                {
-                    queue_updater_callback($(xml).find('data')
-                                                 .find('result')
-                                                 .children());
-                },
-                error: function () { /* void */ }
-            });
-        }
-    }
-}
-
 function updater_run()
 {
-    queue_updater();
+    var _i = updater_interval / 3;
+    setTimeout("queue_publication_updater()", _i * 1);
+    setTimeout("auto_enqueue_updater()", _i * 2);
     updater_init();
 }
 
@@ -1331,8 +1332,8 @@ $(document).ready(function()
         auto_enqueue                      : $("#enqueueing"),
         auto_enqueue_manual_lnk           : $("#enqueueingmanuallnk"),
         auto_enqueue_manual_label         : $("#enqueueingmanuallabel"),
-        enqueueing_automatic_lnk    : $("#enqueueingautomaticlnk"),
-        enqueueing_automatic_label  : $("#enqueueingautomaticlabel"),
+        enqueueing_automatic_lnk          : $("#enqueueingautomaticlnk"),
+        enqueueing_automatic_label        : $("#enqueueingautomaticlabel"),
         queue_height_lnks                 : $("#queueheightlnks"),
         queue_height_min                  : $("#queueheightmin"),
         queue_height_med                  : $("#queueheightmed"),
@@ -1533,4 +1534,16 @@ $(document).ready(function()
     {
         window_update();
     });
+
+
+    $(document).bind('setting_queue_height_saved' , function(e)
+    {
+        window_update();
+    });
+
+    $(document).bind('setting_queue_height_saved' , function(e)
+    {
+        window_update();
+    });
+
 });

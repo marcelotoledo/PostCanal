@@ -199,7 +199,7 @@ class BlogEntry extends B_Model
 
         $sql = str_replace('{status}', 'IN (' . $_in . ')', $sql);
 
-        return self::select($sql, array($blog_hash, $profile_id), PDO::FETCH_CLASS, get_class());
+        return self::select($sql, array($blog_hash, $profile_id), PDO::FETCH_OBJ);
     }
 
     public static function findQueuePublished($profile_id, $blog_hash, $last=10)
@@ -677,9 +677,11 @@ class BlogEntry extends B_Model
 
                 foreach($articles as $a)
                 {
+                    $a->keywords = " " . $a->keywords; // fix for strpos==0
+
                     for($jk=0;$jk<$nk;$jk++)
                     {
-                        if(strpos(" " . $a->keywords, $keywords[$jk])>0)
+                        if(strpos($a->keywords, $keywords[$jk])>0)
                         {
                             array_key_exists($a->article_id, $rank) ?
                                 $rank[$a->article_id]++ :

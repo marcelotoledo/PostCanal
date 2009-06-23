@@ -39,7 +39,7 @@ class C_Queue extends B_Controller
 
         foreach($queue as $o)
         {
-            $zd->setTimestamp($o->publication_date);
+            $zd->setTimestamp(strtotime($o->publication_date));
 
             $results['queue'][] = array
             (
@@ -55,7 +55,7 @@ class C_Queue extends B_Controller
 
         foreach($published as $o)
         {
-            $zd->setTimestamp($o->publication_date);
+            $zd->setTimestamp(strtotime($o->publication_date));
 
             $results['published'][] = array
             (
