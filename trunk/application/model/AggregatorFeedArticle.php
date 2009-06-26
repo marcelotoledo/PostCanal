@@ -134,7 +134,7 @@ class AggregatorFeedArticle extends B_Model
         }
         if(strlen($this->article_md5) == 0)
         {
-            $this->article_md5 = md5(A_Utility::randomString(8));
+            $this->article_md5 = md5(L_Utility::randomString(8));
         }
     }
 
@@ -250,7 +250,7 @@ class AggregatorFeedArticle extends B_Model
             $article->makeArticleMd5();
 
             $keywords = $article->article_title . " " . $article->article_content;
-            A_Utility::keywords($keywords);
+            L_Utility::keywords($keywords);
             $article->keywords = $keywords;
 
             $is_new = false;

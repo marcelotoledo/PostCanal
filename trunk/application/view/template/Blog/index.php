@@ -4,7 +4,7 @@
 <h1><?php echo $this->translation()->blogs ?></h1>
 
 <div id="blogaddlnkdiv">
-    <?php B_Helper::a($this->translation()->blog_add, 'blog', 'add') ?>
+    <a href="/blog/add"><?php echo $this->translation()->blog_add ?></a>
 </div>
 
 <div id="bloglistarea">

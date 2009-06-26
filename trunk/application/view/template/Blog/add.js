@@ -114,7 +114,7 @@ function discover_url()
     $.ajax
     ({
         type: "POST",
-        url: "<?php B_Helper::url('blog', 'discover') ?>",
+        url: "/blog/discover",
         dataType: "xml",
         data: { url: bdisc.url },
         beforeSend: function () { set_active_request(true); form_message(""); },
@@ -195,7 +195,7 @@ function check_manager_url()
     $.ajax
     ({
         type: "POST",
-        url: "<?php B_Helper::url('blog', 'check') ?>",
+        url: "/blog/check",
         dataType: "xml",
         data: { url:     bdisc.manager_url, 
                 type:    bdisc.type, 
@@ -248,7 +248,7 @@ function add_submit()
     $.ajax
     ({
         type: "POST",
-        url: "<?php B_Helper::url('blog', 'add') ?>",
+        url: "/blog/add",
         dataType: "xml",
         data: { blog_name        : bdisc.name, 
                 blog_url         : bdisc.url,
@@ -387,7 +387,7 @@ $(document).ready(function()
 
     $(document).bind('setting_blog_current_saved', function(e)
     {
-        document.location="<?php B_Helper::url('feed') ?>";
+        document.location="/feed";
     });
 
     mytpl.blog_name.focus();

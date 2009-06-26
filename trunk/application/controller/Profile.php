@@ -248,7 +248,7 @@ class C_Profile extends B_Controller
             }
             else
             {
-                $profile->hash = A_Utility::randomString(8);
+                $profile->hash = L_Utility::randomString(8);
                 $profile->register_confirmation = true;
                 $profile->register_confirmation_time = time();
                 $profile->save();
@@ -401,7 +401,7 @@ class C_Profile extends B_Controller
             }
             else
             {
-                $profile->hash = A_Utility::randomString(8);
+                $profile->hash = L_Utility::randomString(8);
                 $profile->login_password_md5 = md5($password);
                 $profile->recovery_allowed = false;
                 $profile->save();
@@ -567,7 +567,7 @@ class C_Profile extends B_Controller
                 {
                     $profile->login_email = $new_email;
                     $profile->update_email_to = "";
-                    $profile->hash = A_Utility::randomString(8);
+                    $profile->hash = L_Utility::randomString(8);
                     $profile->save();
 
                     $accepted = true;
@@ -635,7 +635,7 @@ class C_Profile extends B_Controller
 
         /* culture */
 
-        $dl = A_Utility::getDefaultCulture();
+        $dl = L_Utility::getDefaultCulture();
 
         $language = array();
 
@@ -768,7 +768,7 @@ class C_Profile extends B_Controller
      */
     private function notify($email, $template, $profile=null)
     {
-        $mailer = new A_Mailer();
+        $mailer = new L_Mailer();
 
         $subject = "mail_" . $template . "_subject";
         $mailer->setSubject($this->translation()->{$subject});

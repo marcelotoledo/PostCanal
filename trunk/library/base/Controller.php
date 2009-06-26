@@ -102,11 +102,6 @@ class B_Controller
         {
             if($redirect == null)
             {
-                $redirect = $this->registry()->session()->unauthorized()->redirect;
-            }
-
-            if($redirect == null)
-            {
                 $redirect = BASE_URL;
             }
 

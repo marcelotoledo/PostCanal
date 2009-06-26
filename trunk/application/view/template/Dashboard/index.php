@@ -161,7 +161,7 @@
 <?php endif ?>
 
 <div id="noblogmsg" class="b-dialog" style="display:none">
-<?php echo $this->translation()->no_blog ?>. <?php B_Helper::a(ucfirst($this->translation()->click_here), 'blog', 'add') ?> <?php echo $this->translation()->new_blog_instruction ?>.
+<?php echo $this->translation()->no_blog ?>. <a href="/blog/add"><?php echo ucfirst($this->translation()->click_here) ?></a> <?php echo $this->translation()->new_blog_instruction ?>.
 <hr>
 <div class="b-dialog-buttons">
 <a class="b-dialog-close"><?php echo $this->translation()->close ?></a>

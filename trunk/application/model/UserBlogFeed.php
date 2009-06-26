@@ -138,7 +138,7 @@ class UserBlogFeed extends B_Model
 
         if($this->isNew()) 
         {
-            $this->hash = A_Utility::randomString(8);
+            $this->hash = L_Utility::randomString(8);
             $this->setDefaultOrdering();
         }
 

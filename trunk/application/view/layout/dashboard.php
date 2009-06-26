@@ -8,12 +8,12 @@
 <?php if($this->request()->getAction()=='index') : ?>
 <script type="text/javascript" src="/fckeditor/fckeditor.js"></script>
 <?php endif ?>
-<?php B_Helper::style("application.css") ?>
-<?php B_Helper::script("application.js") ?>
-<?php $this->renderLayout('css', true) ?>
+<script type="text/javascript" src="/js/application.js"></script>
+<link rel="stylesheet" href="/css/application.css" type="text/css" media="screen"/>
 <?php $this->renderLayout('js', true) ?>
-<?php $this->renderTemplate('css', false) ?>
+<?php $this->renderLayout('css', true) ?>
 <?php $this->renderTemplate('js', false) ?>
+<?php $this->renderTemplate('css', false) ?>
 </head>
 <body>
 
@@ -22,10 +22,10 @@
 
 <?php $bc = count($this->blogs) ?>
 
-<li><?php B_Helper::a($this->translation()->dashboard, "dashboard") ?></li>
-<li><?php B_Helper::a($this->translation()->profile, "profile", "edit") ?></li>
-<li><?php B_Helper::a($this->translation()->blogs, "blog") ?></li>
-<li><?php B_Helper::a($this->translation()->feeds, "feed") ?></li>
+<li><a href="/dashboard"><?php echo $this->translation()->dashboard ?></a></li>
+<li><a href="/profile/edit"><?php echo $this->translation()->profile ?></a></li>
+<li><a href="/blog"><?php echo $this->translation()->blogs ?></a></li>
+<li><a href="/feed"><?php echo $this->translation()->feeds ?></a></li>
 
 <li id="bloglstbar">
 <?php if($bc==1) : ?>
@@ -45,7 +45,7 @@
 <div id="toprightbar"><nobr><ul>
 
 <li id="profilebar"><b><?php echo $this->translation()->profile ?>: </b><?php echo $this->session()->user_profile_login_email ?></li>
-<li><?php B_Helper::a($this->translation()->logout, "profile", "logout") ?></li>
+<li><a href="/profile/logout"><?php echo $this->translation()->logout ?></a></li>
 
 </ul></nobr></div>
 </div>

@@ -30,7 +30,7 @@ function password_recovery()
     $.ajax
     ({
         type: "POST",
-        url: "<?php B_Helper::url('profile', 'recovery') ?>",
+        url: "/profile/recovery",
         dataType: "xml",
         data: { email: mytpl.email.val() },
         beforeSend: function() { set_active_request(true); },
@@ -69,7 +69,7 @@ function register_submit()
     $.ajax
     ({
         type: "post",
-        url: "<?php b_helper::url('profile', 'register') ?>",
+        url: "/profile/register",
         datatype: "xml",
         data: { email     : mytpl.email.val(), 
                 password  : mytpl.password.val(), 
@@ -99,7 +99,7 @@ function login_submit()
     $.ajax
     ({
         type: "post",
-        url: "<?php b_helper::url('profile', 'login') ?>",
+        url: "/profile/login",
         datatype: "xml",
         data: { email    : mytpl.email.val(), 
                 password : mytpl.password.val() },
@@ -111,7 +111,7 @@ function login_submit()
             if(_data.length==0) { server_error(); return null; }
             if(_data.find('login').text()=="true") 
             {
-                window.location="<?php B_Helper::url('dashboard') ?>";
+                window.location="/dashboard";
             }
             form_message(_data.find('message').text());
         }, 

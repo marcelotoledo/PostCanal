@@ -1,7 +1,7 @@
 <?php if ($this->accepted == true) : ?>
 
 <p><?php echo $this->message ?></p>
-<p><?php B_Helper::a($this->translation()->main_page, null) ?></p>
+<p><a href="/"><?php echo $this->translation()->main_page ?></a></p>
 
 <?php else : ?>
 

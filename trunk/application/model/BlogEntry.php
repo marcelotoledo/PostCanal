@@ -146,14 +146,14 @@ class BlogEntry extends B_Model
 
         if($this->isNew()) 
         {
-            $this->hash = A_Utility::randomString(8);
+            $this->hash = L_Utility::randomString(8);
             $this->setDefaultOrdering();
         }
 
         /* generate keywords */
 
         $keywords = $this->entry_title . " " . $this->entry_content;
-        A_Utility::keywords($keywords);
+        L_Utility::keywords($keywords);
         $this->keywords = $keywords;
 
         return parent::save();
@@ -613,7 +613,7 @@ class BlogEntry extends B_Model
             if(strpos($blog->keywords, " ")>0)
             {
                 $k = $blog->keywords;
-                A_Utility::keywords($k);
+                L_Utility::keywords($k);
                 $keywords = explode(" ", $k);
             }
         }
@@ -621,7 +621,7 @@ class BlogEntry extends B_Model
         {
             foreach(explode($separator, $blog->keywords) AS $k)
             {
-                A_Utility::keywords($k);
+                L_Utility::keywords($k);
 
                 if(strlen($k)>0)
                 {
@@ -704,7 +704,13 @@ class BlogEntry extends B_Model
             
             else
             {
-                $rank = array($articles[0]->article_id => 1);
+                foreach($articles as $a)
+                {
+                    if($a->feed_ordering > 0)
+                    {
+                        $rank[$a->article_id] = (1 / $a->feed_ordering);
+                    }
+                }
             }
 
         }

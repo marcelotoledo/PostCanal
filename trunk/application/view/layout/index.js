@@ -18,7 +18,7 @@ function spinner_init()
 {
     $.b_spinner
     ({
-        image: "<?php B_Helper::img_src('spinner.gif') ?>", 
+        image: "/image/spinner.gif", 
         message: "... <?php echo $this->translation()->loading ?>"
     });
 }

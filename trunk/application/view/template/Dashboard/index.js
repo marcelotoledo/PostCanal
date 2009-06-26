@@ -14,7 +14,7 @@ var article =
 
 var queue = 
 {
-    height         : <?php echo $this->settings->queue->height ?>, // 0 minimum | 1 half | 2 maximum
+    height         : parseInt("<?php echo $this->settings->queue->height ?>"), // 0 minimum | 1 half | 2 maximum
     publication    : null ,
     interval       :    0 ,
     enqueueing     : null ,
@@ -194,7 +194,7 @@ function feed_list()
     $.ajax
     ({
         type: "GET",
-        url: "<?php B_Helper::url('feed', 'list') ?>",
+        url: "/feed/list",
         dataType: "xml",
         data: { blog    : blog.current , 
                 enabled : true },
@@ -383,8 +383,8 @@ function article_populate(a, container, append)
 function __article_load(container, append, older)
 {
     url = (feed.display == 'threaded') ? 
-                "<?php B_Helper::url('article', 'threaded') ?>" : 
-                "<?php B_Helper::url('article', 'all') ?>";
+                "/article/threaded" : 
+                "/article/all";
 
     $.ajax
     ({
@@ -625,7 +625,7 @@ function set_queue_publication_auto()
     $.ajax
     ({
         type: "POST",
-        url: "<?php B_Helper::url('queue','auto') ?>",
+        url: "/queue/auto",
         dataType: "xml",
         data: { blog        : blog.current,
                 interval    : queue.interval,
@@ -686,7 +686,7 @@ function queue_entry_set_status(e, s)
         if(s=='failed')
         {
             e.find('div.entrypublish')
-                .html("<nobr><input type=\"checkbox\"/><img src=\"<?php B_Helper::img_src('warning.png') ?>\"/></nobr>");
+                .html("<nobr><input type=\"checkbox\"/><img src=\"/image/warning.png\"/></nobr>");
         }
         if(s=='published')
         {
@@ -972,7 +972,7 @@ function entry_content_update()
     $.ajax
     ({
         type: "POST",
-        url: "<?php B_Helper::url('queue', 'update') ?>",
+        url: "/queue/update",
         dataType: "xml",
         data: { blog    : blog.current , 
                 entry   : queue.entry.attr('entry'), 
@@ -1049,7 +1049,7 @@ function queue_position(entry, position)
     $.ajax
     ({
         type: "POST",
-        url: "<?php B_Helper::url('queue', 'position') ?>",
+        url: "/queue/position",
         dataType: "xml",
         data: { blog     : blog.current , 
                 entry    : entry, 
@@ -1080,7 +1080,7 @@ function queue_list()
     $.ajax
     ({
         type: "GET",
-        url: "<?php B_Helper::url('queue', 'list') ?>",
+        url: "/queue/list",
         dataType: "xml",
         data: { blog : blog.current },
         beforeSend: function()
@@ -1109,7 +1109,7 @@ function queue_add(c)
     $.ajax
     ({
         type: "POST",
-        url: "<?php B_Helper::url('queue', 'add') ?>",
+        url: "/queue/add",
         dataType: "xml",
         data: { blog    : blog.current ,
                 feed    : _i.attr('feed') , 
@@ -1145,7 +1145,7 @@ function queue_delete(e)
     $.ajax
     ({
         type: "POST",
-        url: "<?php B_Helper::url('queue','delete') ?>",
+        url: "/queue/delete",
         dataType: "xml",
         data: { blog  : blog.current ,
                 entry : e },
@@ -1170,7 +1170,7 @@ function queue_publish(e)
     $.ajax
     ({
         type: "POST",
-        url: "<?php B_Helper::url('queue', 'publish') ?>",
+        url: "/queue/publish",
         dataType: "xml",
         data: { blog  : blog.current ,
                 entry : e.attr('entry') },
@@ -1222,7 +1222,7 @@ function queue_publication_updater()
             $.ajax
             ({
                 type: "GET",
-                url: "<?php B_Helper::url('queue', 'check') ?>",
+                url: "/queue/check",
                 dataType: "xml",
                 data: { blog    : blog.current ,
                         waiting : _wpar.join(',') },
@@ -1254,7 +1254,7 @@ function auto_enqueue_updater()
     $.ajax
     ({
         type: "GET",
-        url: "<?php B_Helper::url('queue', 'list') ?>",
+        url: "/queue/list",
         dataType: "xml",
         data: { blog : blog.current },
         beforeSend: function()

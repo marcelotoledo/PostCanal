@@ -49,7 +49,7 @@ function blog_update(blog)
     $.ajax
     ({
         type: "POST",
-        url: "<?php B_Helper::url('blog','update') ?>",
+        url: "/blog/update",
         dataType: "xml",
         data: { blog          : blog,
                 name          : _f_name.val(), 
@@ -89,7 +89,7 @@ function blog_delete(blog)
     $.ajax
     ({
         type: "POST",
-        url: "<?php B_Helper::url('blog','delete') ?>",
+        url: "/blog/delete",
         dataType: "xml",
         data: { blog: blog },
         beforeSend: function()

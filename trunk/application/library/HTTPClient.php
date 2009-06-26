@@ -8,7 +8,7 @@
  * @author      Rafael Castilho <rafael@castilho.biz>
  */
 
-class A_HTTPClient
+class L_HTTPClient
 {
     /**
      * Status constants 

@@ -8,7 +8,7 @@
  * @author      Rafael Castilho <rafael@castilho.biz>
  */
 
-class A_Mailer
+class L_Mailer
 {
     /**
      * From

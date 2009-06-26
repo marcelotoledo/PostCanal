@@ -222,30 +222,6 @@ class B_Response
     }
 
     /**
-     * Set headers from registry
-     *
-     * @param   integer     $status
-     */
-    private function setHeadersFromRegistry($status)
-    {
-        $registry = B_Registry::singleton();
-
-        if(is_array($registry->response()->headers))
-        {
-            if(array_key_exists($status, $registry->response()->headers))
-            {
-                if(is_array($headers = $registry->response()->headers[$status]))
-                {
-                    foreach($headers as $name => $value)
-                    {
-                        $this->setHeader($name, $value);
-                    }
-                }
-            }
-        }
-    }
-
-    /**
      * Send response headers
      *
      * @return  void
@@ -258,9 +234,9 @@ class B_Response
 
         if($headers_sent == false)
         {
-            $this->setHeadersFromRegistry($this->status);
-
             header('HTTP/1.1 ' . $this->status);
+            header('Cache-Control: no-store, no-cache, must-revalidate');
+            header('Last-Modified: ' . gmdate("D, d M Y H:i:s") . ' GMT');
 
             foreach($this->headers as $name => $header)
             {

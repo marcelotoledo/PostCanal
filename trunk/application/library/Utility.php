@@ -8,7 +8,7 @@
  * @author      Rafael Castilho <rafael@castilho.biz>
  */
 
-class A_Utility
+class L_Utility
 {
     /**
      * Fix URL

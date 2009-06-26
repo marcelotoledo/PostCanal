@@ -32,10 +32,10 @@
 </form>
 </div>
 
-<p id="changenotice" style="display:none"><?php echo $this->translation()->password_change_msg_1 ?>. <?php B_Helper::a($this->translation()->click_here) ?> <?php echo $this->translation()->password_change_msg_2 ?></p>
+<p id="changenotice" style="display:none"><?php echo $this->translation()->password_change_msg_1 ?>. <a href="/"><?php echo $this->translation()->click_here ?></a> <?php echo $this->translation()->password_change_msg_2 ?></p>
 
 <?php else : ?>
 
-<p><?php echo $this->translation()->link_expired_1 ?> <?php B_Helper::a($this->translation()->main_page) ?> <?php echo $this->translation()->link_expired_2 ?>.</p>
+<p><?php echo $this->translation()->link_expired_1 ?> <a href="/"><?php echo $this->translation()->main_page ?></a> <?php echo $this->translation()->link_expired_2 ?>.</p>
 
 <?php endif ?>

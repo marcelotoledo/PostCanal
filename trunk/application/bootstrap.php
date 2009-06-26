@@ -37,17 +37,6 @@ $registry = B_Registry::singleton(BASE_PATH . '/config/environment.xml');
 
 define('BASE_URL', $registry->base()->url);
 
-$registry->response()->headers = array
-(
-    B_Response::STATUS_OK => array
-    (
-        'Cache-Control' => "no-store, no-cache, must-revalidate",
-        'Last-Modified' => gmdate("D, d M Y H:i:s") . " GMT",
-    )
-);
-
-$registry->session()->unauthorized()->redirect = BASE_URL;
-
 
 /* configure and run bootstrap */
 

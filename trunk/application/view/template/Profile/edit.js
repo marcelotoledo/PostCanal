@@ -54,7 +54,7 @@ function edit_submit()
     $.ajax
     ({
         type: "POST",
-        url: "<?php B_Helper::url('profile', 'edit') ?>",
+        url: "/profile/edit",
         dataType: "xml",
         data: { name            : mytpl.name.val(),
                 local_territory : mytpl.territory.val(),
@@ -98,7 +98,7 @@ function pwdchange_submit()
     $.ajax
     ({
         type: "POST",
-        url: "<?php B_Helper::url('profile', 'password') ?>",
+        url: "/profile/password",
         dataType: "xml",
         data: { current   : mytpl.currentpwd.val(),
                 password  : mytpl.newpwd.val(), 
@@ -134,7 +134,7 @@ function emlchange_submit()
     $.ajax
     ({
         type: "POST",
-        url: "<?php B_Helper::url('profile', 'email') ?>",
+        url: "/profile/email",
         dataType: "xml",
         data: { new_email: mytpl.neweml.val() },
         beforeSend: function () { set_active_request(true); emlchange_message(""); },
@@ -203,7 +203,7 @@ $(document).ready(function()
         $.ajax
         ({
             type: "GET",
-            url: "<?php B_Helper::url('profile', 'timezone') ?>",
+            url: "/profile/timezone",
             dataType: "xml",
             data: { territory: selected_territory() },
             beforeSend: function () { set_active_request(true); },

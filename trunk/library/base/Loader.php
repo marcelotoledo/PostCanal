@@ -30,7 +30,7 @@ class B_Loader
     {
         if(class_exists($name) == false)
         {
-            if    (strpos($name, "A_") === 0)    self::application($name);
+            if    (strpos($name, "L_") === 0)    self::library($name);
             elseif(strpos($name, "C_") === 0)    self::controller($name);
             elseif(strpos($name, "H_") === 0)    self::helper($name);
             elseif(strpos($name, "Zend_") === 0) self::zend($name);
@@ -39,12 +39,12 @@ class B_Loader
     }
 
     /**
-     * Application library loader
+     * Application Library loader
      *
      * @param   string  $name   Class name
      * @return  void
      */
-    public static function application($name)
+    public static function library($name)
     {
         $path = APPLICATION_PATH . "/library/" . substr($name, 2) . ".php";
 

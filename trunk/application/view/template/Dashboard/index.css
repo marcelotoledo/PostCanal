@@ -137,7 +137,7 @@ div.articlelabel
     width: 70%;
     cursor: pointer;
     cursor: hand;
-    background-image: url("<?php B_Helper::img_src('transparent.png') ?>"); /* fix div hover IE bug */
+    background-image: url("/image/transparent.png"); /* fix div hover IE bug */
 }
 /*"**/
 div.articlefeed
@@ -156,7 +156,7 @@ div.articleinfo
     float: left;
     text-align: right;
     margin-right: 15px;
-    background-image: url("<?php B_Helper::img_src('transparent.png') ?>"); /* fix div hover IE bug */
+    background-image: url("/image/transparent.png"); /* fix div hover IE bug */
 }
 /*"**/
 div.articlebuttons
@@ -164,7 +164,7 @@ div.articlebuttons
     float: right;
     text-align: right;
     margin-right: 15px;
-    background-image: url("<?php B_Helper::img_src('transparent.png') ?>"); /* fix div hover IE bug */
+    background-image: url("/image/transparent.png"); /* fix div hover IE bug */
 }
 /*"**/
 div.articlebuttons a
@@ -177,7 +177,7 @@ div.articlecontent
     padding: 15px;
     border: 2px solid dimgray;
     border-top: 0;
-    background-image: url("<?php B_Helper::img_src('transparent.png') ?>"); /* fix div hover IE bug */
+    background-image: url("/image/transparent.png"); /* fix div hover IE bug */
 }
 /*"**/
 div.articlecontent h1
@@ -287,7 +287,7 @@ div.entrylabel
     width: 70%;
     cursor: pointer;
     cursor: hand;
-    background-image: url("<?php B_Helper::img_src('transparent.png') ?>"); /* fix div hover IE bug */
+    background-image: url("/image/transparent.png"); /* fix div hover IE bug */
 }
 /*"**/
 div.entrytitle
@@ -299,7 +299,7 @@ div.entryinfo
     float: left;
     text-align: right;
     margin-right: 15px;
-    background-image: url("<?php B_Helper::img_src('transparent.png') ?>"); /* fix div hover IE bug */
+    background-image: url("/image/transparent.png"); /* fix div hover IE bug */
 }
 /*"**/
 div.entrybuttons
@@ -307,7 +307,7 @@ div.entrybuttons
     float: right;
     text-align: right;
     margin-right: 15px;
-    background-image: url("<?php B_Helper::img_src('transparent.png') ?>"); /* fix div hover IE bug */
+    background-image: url("/image/transparent.png"); /* fix div hover IE bug */
 }
 /*"**/
 div.entrybuttons a
@@ -319,7 +319,7 @@ div.entrycontent
     padding: 15px;
     border: 2px solid dimgray;
     border-top: 0;
-    background-image: url("<?php B_Helper::img_src('transparent.png') ?>"); /* fix div hover IE bug */
+    background-image: url("/image/transparent.png"); /* fix div hover IE bug */
 }
 /*"**/
 div.entrycontent h1

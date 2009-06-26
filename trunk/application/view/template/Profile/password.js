@@ -26,7 +26,7 @@ function password_recovery()
     $.ajax
     ({
         type: "POST",
-        url: "<?php B_Helper::url('profile','password') ?>",
+        url: "/profile/password",
         dataType: "xml",
         data: { email     : mytpl.email.val(), 
                 user      : mytpl.user.val(),

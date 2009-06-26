@@ -154,7 +154,7 @@ class UserDashboard extends B_Model
             $results[$d->context][$d->name] = $d->value;
         }
 
-        return A_Utility::array2Object($results);
+        return L_Utility::array2Object($results);
     }
 
     /**

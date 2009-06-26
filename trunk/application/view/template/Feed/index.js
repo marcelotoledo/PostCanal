@@ -67,7 +67,7 @@ function feed_discover(url)
     $.ajax
     ({
         type: "GET",
-        url: "<?php B_Helper::url('feed', 'discover') ?>",
+        url: "/feed/discover",
         dataType: "xml",
         data: { url: url },
         beforeSend: function()
@@ -121,7 +121,7 @@ function feed_add(url)
     $.ajax
     ({
         type: "POST",
-        url: "<?php B_Helper::url('feed', 'add') ?>",
+        url: "/feed/add",
         dataType: "xml",
         data: { url: url, blog: blog.current },
         beforeSend: function()
@@ -258,7 +258,7 @@ function feed_list()
     $.ajax
     ({
         type: "GET",
-        url: "<?php B_Helper::url('feed', 'list') ?>",
+        url: "/feed/list",
         dataType: "xml",
         data: { blog: blog.current },
         beforeSend: function()
@@ -293,7 +293,7 @@ function feed_position(feed, position)
     $.ajax
     ({
         type: "POST",
-        url: "<?php B_Helper::url('feed', 'position') ?>",
+        url: "/feed/position",
         dataType: "xml",
         data: { blog     : blog.current , 
                 feed     : feed, 
@@ -388,7 +388,7 @@ function feed_update(feed, k, v)
     $.ajax
     ({
         type: "POST",
-        url: "<?php B_Helper::url('feed', 'update') ?>",
+        url: "/feed/update",
         dataType: "xml",
         data: { feed             : feed,
                 blog             : blog.current,
@@ -425,7 +425,7 @@ function feed_delete(feed)
     $.ajax
     ({
         type: "POST",
-        url: "<?php B_Helper::url('feed', 'delete') ?>",
+        url: "/feed/delete",
         dataType: "xml",
         data: { blog: blog.current, 
                 feed: feed },
@@ -471,7 +471,7 @@ function feed_toggle(feed)
     $.ajax
     ({
         type: "POST",
-        url: "<?php B_Helper::url('feed', 'toggle') ?>",
+        url: "/feed/toggle",
         dataType: "xml",
         data: { blog   : blog.current, 
                 feed   : feed, 

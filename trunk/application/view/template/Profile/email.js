@@ -19,7 +19,7 @@ function email_change()
     $.ajax
     ({
         type: "POST",
-        url: "<?php B_Helper::url('profile','email') ?>",
+        url: "/profile/email",
         dataType: "xml",
         data: { email    : mytpl.email.val(), 
                 password : mytpl.password.val(),

@@ -24,7 +24,7 @@ function spinner_init()
 {
     $.b_spinner
     ({
-        image: "<?php B_Helper::img_src('spinner.gif') ?>", 
+        image: "/image/spinner.gif", 
         message: "... <?php echo $this->translation()->loading ?>"
     });
 }
@@ -34,7 +34,7 @@ function save_setting(c, n, v)
     $.ajax
     ({
         type: "POST",
-        url: "<?php B_Helper::url('dashboard', 'setting') ?>",
+        url: "/dashboard/setting",
         dataType: "xml",
         data: { context : c , 
                 name    : n ,
@@ -62,7 +62,7 @@ function blog_load()
     $.ajax
     ({
         type: "GET",
-        url: "<?php B_Helper::url('blog', 'load') ?>",
+        url: "/blog/load",
         dataType: "xml",
         data: { blog: blog.current },
         beforeSend: function()
@@ -94,7 +94,7 @@ function blog_update(k, v)
     $.ajax
     ({
         type: "POST",
-        url: "<?php B_Helper::url('blog', 'update') ?>",
+        url: "/blog/update",
         dataType: "xml",
         data: _par,
         beforeSend: function()
