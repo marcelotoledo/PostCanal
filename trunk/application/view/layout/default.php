@@ -1,1 +1,1 @@
-<?php $this->renderTemplate() ?>
+<?php $this->includeTemplate() ?>

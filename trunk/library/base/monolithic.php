@@ -2478,114 +2478,40 @@ class B_View
      */
     public function render()
     {
-        $this->renderLayout();
-    }
-
-    /**
-     * Layout render
-     *
-     * @param   string  $type
-     * @param   string  $required
-     * @throws  B_Exception
-     * @return  void
-     */
-    public function renderLayout($type='php', $required=true)
-    {
-        if(strlen($this->layout) == 0)
-        {
-            if(strlen($this->template) == 0)
-            {
-                echo $this->__toXML(); /* render view data as xml */
-            }
-
-            /* render view template */
-
-            else
-            {
-                $this->renderTemplate();
-            }
-        }
-
         /* render layout */
 
+        if(strlen($this->layout) > 0)
+        {
+            $this->includeLayout();
+        }
+
+        /* render view data as xml */
+
         else
         {
-            if(($path = self::getLayoutPath($this->layout, $type)))
-            {
-                if($type == 'js')  echo "<script type=\"text/javascript\">\n";
-                if($type == 'css') echo "<style type=\"text/css\">\n";
-
-                include $path;
-
-                if($type == 'js')  echo "</script>\n";
-                if($type == 'css') echo "</style>\n";
-            }
-            else
-            {
-                if($required == true)
-                {
-                    $_m = "layout (" . $this->layout . "." . $type . ") not found";
-                    $_d = array('method' => __METHOD__);
-                    throw new B_Exception($_m, E_USER_ERROR, $_d);
-                }
-            }
+            echo $this->__toXML();
         }
     }
 
     /**
-     * Template render
+     * include layout file
      *
-     * @param   string          $type
-     * @param   string          $required
-     * @throws  B_Exception
-     * @return  void
-     */
-    private function renderTemplate($type='php', $required=true)
-    {
-        if(($path = self::getTemplatePath($this->template, $type)))
-        {
-            if($type == 'js')  echo "<script type=\"text/javascript\">\n";
-            if($type == 'css') echo "<style type=\"text/css\">\n";
-
-            include $path;
-
-            if($type == 'js')  echo "</script>\n";
-            if($type == 'css') echo "</style>\n";
-        }
-        else
-        {
-            if($required == true)
-            {
-                $_m = "template (" . $this->template . "." . $type . ") not found";
-                $_d = array('method' => __METHOD__);
-                throw new B_Exception($_m, E_USER_ERROR, $_d);
-            }
-        }
-    }
-
-    /**
-     * get layout path
-     *
-     * @param   string  $layout
      * @param   string  $type
-     * @return  boolean
      */
-    public static function getLayoutPath($layout, $type='php')
+    public function includeLayout($type='php')
     {
-        $path = APPLICATION_PATH . "/view/layout/" . $layout . "." . $type;
-        return file_exists($path) ? $path : null;
+        $path = APPLICATION_PATH . "/view/layout/" . $this->layout . "." . $type;
+        if(file_exists($path)) include $path;
     }
 
     /**
-     * get template path
+     * include template file
      *
-     * @param   string  $template
      * @param   string  $type
-     * @return  boolean
      */
-    public static function getTemplatePath($template, $type='php')
+    public function includeTemplate($type='php')
     {
-        $path = APPLICATION_PATH . "/view/template/" . $template . "." . $type;
-        return file_exists($path) ? $path : null;
+        $path = APPLICATION_PATH . "/view/template/" . $this->template . "." . $type;
+        if(file_exists($path)) include $path;
     }
 }
