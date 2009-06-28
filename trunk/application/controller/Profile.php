@@ -775,7 +775,7 @@ class C_Profile extends B_Controller
         $template = ucfirst($this->request()->getController()) . "/mail_" . $template;
 
         ob_start();
-        include B_View::getTemplatePath($template);
+        include APPLICATION_PATH . "/view/template/" . $template . ".php";
         $mailer->setBody(ob_get_clean());
 
         return $mailer->send($email, $template);

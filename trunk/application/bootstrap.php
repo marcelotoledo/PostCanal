@@ -36,6 +36,7 @@ B_Session::register();
 $registry = B_Registry::singleton(BASE_PATH . '/config/environment.xml');
 
 define('BASE_URL', $registry->base()->url);
+define('VIEW_COMPRESSION', false);
 
 
 /* configure and run bootstrap */

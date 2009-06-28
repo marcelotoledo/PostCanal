@@ -5,13 +5,21 @@
     line-height: 150px;
     border-right: 1px solid silver;
 }
-#logo h1
+#logo span
 {
     font-size: 44px;
     color: silver;
 }
-#form
+div.rightform
 {
     float: left;
-    padding: 50px;
+    padding-left: 50px;
+}
+div.formcontainer
+{
+    width: 160px;
+    height: 180px;
+}
+div.bottomlnk
+{
 }

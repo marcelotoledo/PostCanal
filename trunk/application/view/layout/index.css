@@ -4,3 +4,33 @@
     display: none;
     padding-top: 50px;
 }
+
+/* input (form) */
+
+div.inputcontainer
+{
+    /* void */
+}
+div.inputlabel
+{
+    line-height: 25px;
+    font-weight: bold;
+    text-transform: capitalize;
+}
+div.inputlinks
+{
+    padding-top: 5px;
+}
+div.inputbuttons
+{
+    padding-top: 10px;
+    text-align: center;
+    margin: 0 auto;
+}
+div.inputmessage
+{
+    line-height: 35px;
+    font-style: italic;
+    text-align: center;
+    color: red;
+}

@@ -180,7 +180,14 @@ class B_View
 
         if(strlen($this->layout) > 0)
         {
-            $this->includeLayout();
+            if(VIEW_COMPRESSION && strlen($this->template) > 0)
+            {
+                $this->includeCache();
+            }
+            else
+            {
+                $this->includeLayout();
+            }
         }
 
         /* render view data as xml */
@@ -189,6 +196,18 @@ class B_View
         {
             echo $this->__toXML();
         }
+    }
+
+    /**
+     * include cache file
+     *
+     * @param   string  $type
+     */
+    public function includeCache()
+    {
+        $path = APPLICATION_PATH . '/view/cache/' . $this->layout . '-' .
+                strtolower(str_replace('/', '-', $this->template)) . '.php';
+        if(file_exists($path)) include $path;
     }
 
     /**

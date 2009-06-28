@@ -1,30 +1,43 @@
 var mytpl = null;
 
-
-function toggle_register()
+function toggle_form()
 {
-    mytpl.ftitlog.toggle();
-    mytpl.ftitreg.toggle();
-    mytpl.lnkrow.toggle();
-    mytpl.confirmrow.toggle();
-    mytpl.regcancel.toggle();
-    mytpl.msgcontainer.hide();
-    mytpl.register = mytpl.register ^ true;
-}
+    mytpl.loginform.toggle();
+    mytpl.recoveryform.toggle();
+    mytpl.recovery = mytpl.recovery ^ true;
 
-function form_message(m)
-{
-    (m=="") ? 
-        mytpl.msgcontainer.hide().find("td").html("") :
-        mytpl.msgcontainer.show().find("td").html(m) ;
-}
-
-function password_recovery()
-{
-    if(mytpl.email.val()=="")
+    if(mytpl.recovery==true)
     {
-        form_message("<?php echo $this->translation()->enter_an_email ?>");
-        return null;
+        mytpl.recoveryemail.val(mytpl.loginemail.val());
+        mytpl.recoveryemail.focus();
+    }
+    else
+    {
+        mytpl.loginemail.val(mytpl.recoveryemail.val());
+        mytpl.loginemail.focus();
+    }
+
+    login_msg('');
+    recovery_msg('');
+}
+
+function recovery_msg(m)
+{
+    mytpl.recoverymsg.text(m);
+}
+
+function recovery_submit_cb(d)
+{
+    if(d.length==0) { server_error(); return false; }
+    recovery_msg(d.find('message').text());
+}
+
+function recovery_submit()
+{
+    if(mytpl.recoveryemail.val()=="")
+    {
+        recovery_msg("<?php echo $this->translation()->enter_an_email ?>");
+        return false;
     }
 
     $.ajax
@@ -32,68 +45,35 @@ function password_recovery()
         type: "POST",
         url: "/profile/recovery",
         dataType: "xml",
-        data: { email: mytpl.email.val() },
+        data: { email: mytpl.recoveryemail.val() },
         beforeSend: function() { set_active_request(true); },
         complete: function() { set_active_request(false); },
-        success: function (xml) 
-        { 
-            var _data = $(xml).find('data');
-            if(_data.length==0) { server_error(); return null; }
-            form_message(_data.find('message').text());
-        }, 
-        error: function () { server_error(); } 
+        success: function (xml) { recovery_submit_cb($(xml).find('data')); },
+        error: function () { server_error(); }
     });
 }
 
-function form_submit()
+function login_msg(m)
 {
-    (mytpl.register==true) ? register_submit() : login_submit();
+    mytpl.loginmsg.text(m);
 }
 
-function register_submit()
+function login_submit_cb(d)
 {
-    if(mytpl.email.val()     == "" || 
-       mytpl.password.val()  == "" || 
-       mytpl.passwordc.val() == "")
+    if(d.length==0) { server_error(); return null; }
+    if(d.find('login').text()=="true") 
     {
-        form_message("<?php echo $this->translation()->form_incomplete ?>");
-        return null;
+        window.location="./dashboard";
     }
-
-    if(mytpl.password.val() != mytpl.passwordc.val())
-    {
-        form_message("<?php echo $this->translation()->password_not_match ?>");
-        return null;
-    }
-
-    $.ajax
-    ({
-        type: "post",
-        url: "/profile/register",
-        datatype: "xml",
-        data: { email     : mytpl.email.val(), 
-                password  : mytpl.password.val(), 
-                passwordc : mytpl.passwordc.val() },
-        beforeSend: function () { set_active_request(true); },
-        complete: function() { set_active_request(false); },
-        success: function (xml) 
-        { 
-            var _data = $(xml).find('data');
-            if(_data.length==0) { server_error(); return null; }
-            if(_data.find('register').text()=="true") { toggle_register(); }
-            form_message(_data.find('message').text());
-        }, 
-        error: function () { server_error(); } 
-    });
+    login_msg(d.find('message').text());
 }
 
 function login_submit()
 {
-    if(mytpl.email.val()    == "" || 
-       mytpl.password.val() == "")
+    if(mytpl.loginemail.val() == "" || mytpl.loginpassword.val() == "")
     {
-        form_message("<?php echo $this->translation()->form_incomplete ?>");
-        return null;
+        login_msg("<?php echo $this->translation()->form_incomplete ?>");
+        return false;
     }
 
     $.ajax
@@ -101,24 +81,14 @@ function login_submit()
         type: "post",
         url: "/profile/login",
         datatype: "xml",
-        data: { email    : mytpl.email.val(), 
-                password : mytpl.password.val() },
+        data: { email    : mytpl.loginemail.val(), 
+                password : mytpl.loginpassword.val() },
         beforeSend: function () { set_active_request(true); },
         complete: function() { set_active_request(false); },
-        success: function (xml) 
-        { 
-            var _data = $(xml).find('data');
-            if(_data.length==0) { server_error(); return null; }
-            if(_data.find('login').text()=="true") 
-            {
-                window.location="/dashboard";
-            }
-            form_message(_data.find('message').text());
-        }, 
-        error: function () { server_error(); return null } 
+        success: function (xml) { login_submit_cb($(xml).find('data')); },
+        error: function () { server_error(); } 
     });
 }
-
 
 $(document).ready(function()
 {
@@ -126,61 +96,58 @@ $(document).ready(function()
 
     mytpl = 
     {
-        register     : false,
+        recovery         : false,
 
-        ftitlog      : $("#ftitlog"),
-        ftitreg      : $("#ftitreg"),
-        email        : $("#email"),
-        password     : $("#password"),
-        passwordc    : $("#passwordc"),
-        lnkrow       : $("#lnkrow"),
-        confirmrow   : $("#confirmrow"),
-        regcancel    : $("#regcancel"),
-        frmsubmit    : $("#frmsubmit"),
-        msgcontainer : $("#message"),
-        reglnk       : $("#reglnk"),
-        pwdlnk       : $("#pwdlnk")
+        loginform        : $("#loginform"),
+        loginemail       : $("#loginform").find("input[name='email']"),
+        loginpassword    : $("#loginform").find("input[name='password']"),
+        loginmsg         : $("#loginform").find("div.inputmessage"),
+        loginsubmit      : $("#loginsubmit"),
+
+        recoveryform     : $("#recoveryform"),
+        recoveryemail    : $("#recoveryform").find("input[name='email']"),
+        recoverypassword : $("#recoveryform").find("input[name='password']"),
+        recoverymsg      : $("#recoveryform").find("div.inputmessage"),
+        recoverysubmit   : $("#recoverysubmit"),
+
+        pwdlnk           : $("#pwdlnk"),
+        siglnk           : $("#siglnk"),
+        signinsubmit     : $("#signinsubmit"),
+        retrievesubmit   : $("#retrievesubmit"),
+        msgcontainer     : $("#message")
     };
 
     /* triggers */
 
-    mytpl.reglnk.click(function()
-    {
-        if(active_request==false) { toggle_register(); }
-        return false;
-    });
-   
-    mytpl.regcancel.click(function() 
-    {
-        if(active_request==false) { toggle_register(); }
-    });
-
     mytpl.pwdlnk.click(function()
     {
-        if(active_request==false) { password_recovery(); }
+        if(active_request==false) { toggle_form(); }
         return false;
     });
 
-    mytpl.frmsubmit.click(function() 
+    mytpl.siglnk.click(function()
     {
-        if(active_request==false) { form_submit(); }
+        if(active_request==false) { toggle_form(); }
+        return false;
     });
 
-    mytpl.password.keypress(function(e) 
+    mytpl.loginsubmit.click(function() 
+    {
+        if(active_request==false) { login_submit(); }
+    });
+
+    mytpl.recoverysubmit.click(function() 
+    {
+        if(active_request==false) { recovery_submit(); }
+    });
+
+    mytpl.loginform.find("input[name='password']").keypress(function(e) 
     {
         if((e.which && e.which == 13) || (e.keyCode && e.keyCode == 13))
         {
-            mytpl.frmsubmit.click();
+            mytpl.signinsubmit.click();
         }
     });
 
-    mytpl.passwordc.keypress(function(e) 
-    {
-        if((e.which && e.which == 13) || (e.keyCode && e.keyCode == 13))
-        {
-            mytpl.frmsubmit.click();
-        }
-    });
-
-    mytpl.email.focus();
+    mytpl.loginform.find("input[name='email']").focus();
 });

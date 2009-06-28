@@ -65,7 +65,7 @@ class B_Translation
 
         if($value == null)
         {
-            $value = $name;
+            $value = str_replace('_', ' ', $name);
         }
 
         return $value;

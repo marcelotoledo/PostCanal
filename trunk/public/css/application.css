@@ -2,7 +2,7 @@
 
 *
 {
-    font-size: small;
+    font-size: 10pt;
     font-family: sans-serif;
 }
 
@@ -11,6 +11,7 @@ html, body
     margin: 0;
     padding: 0;
     overflow: hidden; /* avoid unwanted scrollbars */
+    background-color: white;
 }
 
 div, form
@@ -33,12 +34,14 @@ a:hover
 
 h1
 {
-    font-size: x-large;
+    font-size: 16pt;
+    text-transform: capitalize;
 }
 
 h2
 {
-    font-size: large;
+    font-size: 14pt;
+    text-transform: capitalize;
 }
 
 /* spinner */
@@ -96,38 +99,4 @@ h2
 .b-dialog-buttons
 {
     float: right;
-}
-
-/* form */
-
-form h1
-{
-    margin-bottom: 25px;
-    font-size: x-large;
-    text-transform: capitalize;
-    text-decoration: underline;
-}
-form th
-{
-    width: 150px;
-    padding-right: 5px;
-    line-height: 25px;
-    font-weight: bold;
-    text-align: right;
-    vertical-align: top;
-    text-transform: capitalize;
-}
-form td
-{
-    /* void */
-}
-form .buttons
-{
-    padding-top: 15px;
-}
-form .message
-{
-    padding-top: 5px;
-    font-weight: bold;
-    color: purple;
 }
