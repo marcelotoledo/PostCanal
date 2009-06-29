@@ -23,3 +23,11 @@ div.formcontainer
 div.bottomlnk
 {
 }
+span.msgbig
+{
+    font-size: 14pt;
+}
+span.msgsmall
+{
+    font-size: 10pt;
+}

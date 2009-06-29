@@ -2,6 +2,7 @@ var mytpl = null;
 
 function toggle_form()
 {
+    mytpl.recoverysent.hide();
     mytpl.loginform.toggle();
     mytpl.recoveryform.toggle();
     mytpl.recovery = mytpl.recovery ^ true;
@@ -21,6 +22,18 @@ function toggle_form()
     recovery_msg('');
 }
 
+function reset_form()
+{
+    mytpl.recoverysent.hide();
+    mytpl.loginform.show();
+    mytpl.recoveryform.hide();
+    mytpl.recovery = false;
+    mytpl.loginemail.val(mytpl.recoveryemail.val());
+    mytpl.loginemail.focus();
+    login_msg('');
+    recovery_msg('');
+}
+
 function recovery_msg(m)
 {
     mytpl.recoverymsg.text(m);
@@ -29,7 +42,9 @@ function recovery_msg(m)
 function recovery_submit_cb(d)
 {
     if(d.length==0) { server_error(); return false; }
-    recovery_msg(d.find('message').text());
+
+    mytpl.recoveryform.hide();
+    mytpl.recoverysent.show();
 }
 
 function recovery_submit()
@@ -110,8 +125,11 @@ $(document).ready(function()
         recoverymsg      : $("#recoveryform").find("div.inputmessage"),
         recoverysubmit   : $("#recoverysubmit"),
 
+        recoverysent     : $("#recoverysent"),
+
         pwdlnk           : $("#pwdlnk"),
         siglnk           : $("#siglnk"),
+        siglnk2          : $("#siglnk2"),
         signinsubmit     : $("#signinsubmit"),
         retrievesubmit   : $("#retrievesubmit"),
         msgcontainer     : $("#message")
@@ -131,6 +149,12 @@ $(document).ready(function()
         return false;
     });
 
+    mytpl.siglnk2.click(function()
+    {
+        if(active_request==false) { reset_form(); }
+        return false;
+    });
+
     mytpl.loginsubmit.click(function() 
     {
         if(active_request==false) { login_submit(); }
@@ -145,7 +169,15 @@ $(document).ready(function()
     {
         if((e.which && e.which == 13) || (e.keyCode && e.keyCode == 13))
         {
-            mytpl.signinsubmit.click();
+            mytpl.loginsubmit.click();
+        }
+    });
+
+    mytpl.recoveryform.find("input[name='email']").keypress(function(e) 
+    {
+        if((e.which && e.which == 13) || (e.keyCode && e.keyCode == 13))
+        {
+            mytpl.recoverysubmit.click();
         }
     });
 

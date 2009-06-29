@@ -1,1 +1,17 @@
 DELETE FROM base_translation WHERE 1=1;
+INSERT INTO base_translation VALUES (NULL, 'application', 'en_US', 'loading', "loading");
+INSERT INTO base_translation VALUES (NULL, 'application', 'en_US', 'server_error', "server_error");
+INSERT INTO base_translation VALUES (NULL, 'index/index', 'en_US', 'email', "e-mail");
+INSERT INTO base_translation VALUES (NULL, 'index/index', 'en_US', 'enter_an_email', "enter an e-mail");
+INSERT INTO base_translation VALUES (NULL, 'index/index', 'en_US', 'forgot_password', "forgot password?");
+INSERT INTO base_translation VALUES (NULL, 'index/index', 'en_US', 'form_incomplete', "form incomplete");
+INSERT INTO base_translation VALUES (NULL, 'index/index', 'en_US', 'not_a_member', "not a member? learn more");
+INSERT INTO base_translation VALUES (NULL, 'index/index', 'en_US', 'password', "password");
+INSERT INTO base_translation VALUES (NULL, 'index/index', 'en_US', 'remembered_let_me_sign_in', "remembered, let me sign in");
+INSERT INTO base_translation VALUES (NULL, 'index/index', 'en_US', 'retrieved', "retrieved");
+INSERT INTO base_translation VALUES (NULL, 'index/index', 'en_US', 'retrieved_let_me_sign_in', "retrieved, let me sign in");
+INSERT INTO base_translation VALUES (NULL, 'index/index', 'en_US', 'retrieved_msg_big', "shortly you'll receive an e-mail with instructions to change your password");
+INSERT INTO base_translation VALUES (NULL, 'index/index', 'en_US', 'retrieved_msg_small', "remember to check your spam folder");
+INSERT INTO base_translation VALUES (NULL, 'index/index', 'en_US', 'retrieved_password', "retrieved password");
+INSERT INTO base_translation VALUES (NULL, 'index/index', 'en_US', 'sign_in', "sign in");
+INSERT INTO base_translation VALUES (NULL, 'index/index', 'en_US', 'submit', "submit");
