@@ -58,7 +58,7 @@ function recovery_submit()
     $.ajax
     ({
         type: "POST",
-        url: "/profile/recovery",
+        url: "./profile/recovery",
         dataType: "xml",
         data: { email: mytpl.recoveryemail.val() },
         beforeSend: function() { set_active_request(true); },
@@ -94,7 +94,7 @@ function login_submit()
     $.ajax
     ({
         type: "post",
-        url: "/profile/login",
+        url: "./profile/login",
         datatype: "xml",
         data: { email    : mytpl.loginemail.val(), 
                 password : mytpl.loginpassword.val() },

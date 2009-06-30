@@ -67,7 +67,7 @@ class C_Blog extends B_Controller
                   "type (" . $_type. ") and " .
                   "version (" . $_version . ")";
             $_d = array ('method' => __METHOD__);
-            throw new B_Exception($_m, E_USER_WARNING, $_d);
+            throw new B_Exception($_m, E_WARNING, $_d);
         }
 
         $blog = new UserBlog();
@@ -94,7 +94,7 @@ class C_Blog extends B_Controller
         {
             $_m = "failed to add new blog";
             $_d = array('method' => __METHOD__);
-            B_Exception::forward($_m, E_USER_WARNING, $exception, $_d);
+            B_Exception::forward($_m, E_WARNING, $exception, $_d);
         }
 
         $this->view()->blog = $blog->hash;

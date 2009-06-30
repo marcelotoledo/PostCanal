@@ -108,7 +108,7 @@ class B_Controller
             $this->response()->setRedirect($redirect, B_Response::STATUS_UNAUTHORIZED);
             $_m = "session unauthorized";
             $_d = array('method' => __METHOD__);
-            throw new B_Exception($_m, E_USER_NOTICE, $_d);
+            throw new B_Exception($_m, E_NOTICE, $_d);
         }
 
         return $active;

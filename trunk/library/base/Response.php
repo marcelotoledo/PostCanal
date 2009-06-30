@@ -235,8 +235,12 @@ class B_Response
         if($headers_sent == false)
         {
             header('HTTP/1.1 ' . $this->status);
-            header('Cache-Control: no-store, no-cache, must-revalidate');
-            header('Last-Modified: ' . gmdate("D, d M Y H:i:s") . ' GMT');
+
+            if($this->status == self::STATUS_OK)
+            {
+                header('Cache-Control: no-store, no-cache, must-revalidate');
+                header('Last-Modified: ' . gmdate("D, d M Y H:i:s") . ' GMT');
+            }
 
             foreach($this->headers as $name => $header)
             {

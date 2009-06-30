@@ -141,7 +141,7 @@ class B_Bootstrap
 
                     /* set response status */
 
-                    if($exception->getCode() == E_USER_ERROR)
+                    if($exception->getCode() == E_ERROR)
                     {
                         $response->setStatus(B_Response::STATUS_ERROR);
                     }
@@ -171,7 +171,7 @@ class B_Bootstrap
                     $_d = array ('method' => __METHOD__, 
                                  'controller' => $controller_name, 
                                  'action' => $action_name);
-                    B_Log::write($message, E_USER_ERROR, $_d);
+                    B_Log::write($message, E_ERROR, $_d);
                 }
             }
         }
@@ -348,7 +348,7 @@ class B_Controller
             $this->response()->setRedirect($redirect, B_Response::STATUS_UNAUTHORIZED);
             $_m = "session unauthorized";
             $_d = array('method' => __METHOD__);
-            throw new B_Exception($_m, E_USER_NOTICE, $_d);
+            throw new B_Exception($_m, E_NOTICE, $_d);
         }
 
         return $active;
@@ -381,13 +381,13 @@ class B_Exception extends Exception
      * @param   array   $data
      * @return void
      */
-    public function __construct($message, $code=E_USER_NOTICE, $data=array())
+    public function __construct($message, $code=E_NOTICE, $data=array())
     {
         /* force use of predefined codes */
 
-        if(!in_array($code, array(E_USER_NOTICE, E_USER_WARNING, E_USER_ERROR)))
+        if(!in_array($code, array(E_NOTICE, E_WARNING, E_ERROR)))
         {
-            $code = E_USER_ERROR;
+            $code = E_ERROR;
         }
 
         $this->data = $data;
@@ -407,9 +407,9 @@ class B_Exception extends Exception
 
         switch($this->getCode())
         {
-            case E_USER_ERROR:   $priority = "ERROR";   break;
-            case E_USER_WARNING: $priority = "WARNING"; break;
-            case E_USER_NOTICE:  $priority = "NOTICE";  break;
+            case E_ERROR:   $priority = "ERROR";   break;
+            case E_WARNING: $priority = "WARNING"; break;
+            case E_NOTICE:  $priority = "NOTICE";  break;
             default:             $priority = "ERROR";
         }
 
@@ -496,7 +496,7 @@ class B_Exception extends Exception
             {
                 $message.= ";\n" . $exception->getMessage();
 
-                /* E_USER_ERROR < E_USER_WARNING < E_USER_NOTICE */
+                /* E_ERROR < E_WARNING < E_NOTICE */
 
                 if($exception->getCode() < $code)
                 {
@@ -646,7 +646,7 @@ class B_Loader
         {
             $_m = "class (Zend_Loader) not found";
             $_d = array('method' => __METHOD__);
-            throw new B_Exception($_m, E_USER_ERROR, $_d);
+            throw new B_Exception($_m, E_ERROR, $_d);
         }
     }
 }
@@ -1057,7 +1057,7 @@ abstract class B_Model
                 {
                     $_m= "column (" . $column . ") is required";
                     $_d = array('method' => __METHOD__);
-                    throw new B_Exception($_m, E_USER_WARNING, $_d);
+                    throw new B_Exception($_m, E_WARNING, $_d);
                 }
             }
         }
@@ -1086,7 +1086,7 @@ abstract class B_Model
             {
                 $_m = "execute sql (" . $sql . ") failed";
                 $_d = array ('method' => __METHOD__);
-                B_Exception::forward($_m, E_USER_ERROR, $exception, $_d);
+                B_Exception::forward($_m, E_ERROR, $exception, $_d);
             }
         }
         else
@@ -1099,7 +1099,7 @@ abstract class B_Model
             {
                 $_m = "execute sql (" . $sql . ") failed";
                 $_d = array ('method' => __METHOD__);
-                B_Exception::forward($_m, E_USER_ERROR, $exception, $_d);
+                B_Exception::forward($_m, E_ERROR, $exception, $_d);
             }
         }
 
@@ -1160,7 +1160,7 @@ abstract class B_Model
             {
                 $_m = "select sql (" . $sql . ") failed";
                 $_d = array ('method' => __METHOD__);
-                B_Exception::forward($_m, E_USER_ERROR, $exception, $_d);
+                B_Exception::forward($_m, E_ERROR, $exception, $_d);
             }
         }
         else
@@ -1173,7 +1173,7 @@ abstract class B_Model
             {
                 $_m = "select sql (" . $sql . ") failed";
                 $_d = array ('method' => __METHOD__);
-                B_Exception::forward($_m, E_USER_ERROR, $exception, $_d);
+                B_Exception::forward($_m, E_ERROR, $exception, $_d);
             }
         }
 
@@ -1198,7 +1198,7 @@ abstract class B_Model
         {
             $_m = "database (" . $database . ") does not exists in registry";
             $_d = array('method' => __METHOD__);
-            throw new B_Exception($_m, E_USER_ERROR, $_d);
+            throw new B_Exception($_m, E_ERROR, $_d);
         }
         
         if($db->connection == null) self::setupConnection($db);
@@ -1590,7 +1590,7 @@ class B_Request
         {
             $_m = "request uri is empty";
             $_d = array('method' => __METHOD__);
-            throw new B_Exception($_m, E_USER_ERROR, $_d);
+            throw new B_Exception($_m, E_ERROR, $_d);
         }
 
         $path = $request_uri;
@@ -1642,7 +1642,7 @@ class B_Request
         {
             $_m  = "request method is empty";
             $_d = array('method' => __METHOD__);
-            throw new B_Exception($_m, E_USER_ERROR, $_d);
+            throw new B_Exception($_m, E_ERROR, $_d);
         }
 
         return $request_method;
@@ -1884,8 +1884,12 @@ class B_Response
         if($headers_sent == false)
         {
             header('HTTP/1.1 ' . $this->status);
-            header('Cache-Control: no-store, no-cache, must-revalidate');
-            header('Last-Modified: ' . gmdate("D, d M Y H:i:s") . ' GMT');
+
+            if($this->status == self::STATUS_OK)
+            {
+                header('Cache-Control: no-store, no-cache, must-revalidate');
+                header('Last-Modified: ' . gmdate("D, d M Y H:i:s") . ' GMT');
+            }
 
             foreach($this->headers as $name => $header)
             {
@@ -2089,7 +2093,7 @@ class B_Session
         {
             $_m = "session expiration value must be greater than zero";
             $_d = array('method' => __METHOD__);
-            throw new B_Exception($_m, E_USER_ERROR, $_d);
+            throw new B_Exception($_m, E_ERROR, $_d);
         }
 
         return B_Model::execute("DELETE FROM " . self::$table_name . " " .

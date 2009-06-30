@@ -347,7 +347,7 @@ abstract class B_Model
                 {
                     $_m= "column (" . $column . ") is required";
                     $_d = array('method' => __METHOD__);
-                    throw new B_Exception($_m, E_USER_WARNING, $_d);
+                    throw new B_Exception($_m, E_WARNING, $_d);
                 }
             }
         }
@@ -376,7 +376,7 @@ abstract class B_Model
             {
                 $_m = "execute sql (" . $sql . ") failed";
                 $_d = array ('method' => __METHOD__);
-                B_Exception::forward($_m, E_USER_ERROR, $exception, $_d);
+                B_Exception::forward($_m, E_ERROR, $exception, $_d);
             }
         }
         else
@@ -389,7 +389,7 @@ abstract class B_Model
             {
                 $_m = "execute sql (" . $sql . ") failed";
                 $_d = array ('method' => __METHOD__);
-                B_Exception::forward($_m, E_USER_ERROR, $exception, $_d);
+                B_Exception::forward($_m, E_ERROR, $exception, $_d);
             }
         }
 
@@ -450,7 +450,7 @@ abstract class B_Model
             {
                 $_m = "select sql (" . $sql . ") failed";
                 $_d = array ('method' => __METHOD__);
-                B_Exception::forward($_m, E_USER_ERROR, $exception, $_d);
+                B_Exception::forward($_m, E_ERROR, $exception, $_d);
             }
         }
         else
@@ -463,7 +463,7 @@ abstract class B_Model
             {
                 $_m = "select sql (" . $sql . ") failed";
                 $_d = array ('method' => __METHOD__);
-                B_Exception::forward($_m, E_USER_ERROR, $exception, $_d);
+                B_Exception::forward($_m, E_ERROR, $exception, $_d);
             }
         }
 
@@ -488,7 +488,7 @@ abstract class B_Model
         {
             $_m = "database (" . $database . ") does not exists in registry";
             $_d = array('method' => __METHOD__);
-            throw new B_Exception($_m, E_USER_ERROR, $_d);
+            throw new B_Exception($_m, E_ERROR, $_d);
         }
         
         if($db->connection == null) self::setupConnection($db);

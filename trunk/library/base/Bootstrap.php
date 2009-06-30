@@ -141,7 +141,7 @@ class B_Bootstrap
 
                     /* set response status */
 
-                    if($exception->getCode() == E_USER_ERROR)
+                    if($exception->getCode() == E_ERROR)
                     {
                         $response->setStatus(B_Response::STATUS_ERROR);
                     }
@@ -171,7 +171,7 @@ class B_Bootstrap
                     $_d = array ('method' => __METHOD__, 
                                  'controller' => $controller_name, 
                                  'action' => $action_name);
-                    B_Log::write($message, E_USER_ERROR, $_d);
+                    B_Log::write($message, E_ERROR, $_d);
                 }
             }
         }

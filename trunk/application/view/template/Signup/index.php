@@ -37,29 +37,23 @@
             <div class="inputlabel"><?php echo $this->translation()->country ?></div>
             <select name="country" style="width:275px">
                 <option></option>
+                <?php foreach($this->territory as $k => $v) : ?>
+                <option value="<?php echo $k ?>"><?php echo $v ?></option>
+                <?php endforeach ?>
             </select>
         </div>
-        </div>
-        <div class="inputclear"></div>
-        </div>
-
-        <div id="persinfo2">
-        <div class="inputleft">
         <div class="inputcontainer">
             <div class="inputlabel"><?php echo $this->translation()->time_zone ?></div>
-            <select name="timezone" style="width:275px">
+            <select name="timezone" style="width:275px" disabled>
                 <option></option>
             </select>
         </div>
-        </div>
-        <div class="inputright">
-            &nbsp;
         </div>
         <div class="inputclear"></div>
         </div>
 
         <div id="formbottom">
-            <input type="button" value="<?php echo $this->translation()->create_account ?>">
+            <input id="signup_button" type="button" value="<?php echo $this->translation()->create_account ?>">
         </div>
         
         <div id="formmessage" class="inputmessage">

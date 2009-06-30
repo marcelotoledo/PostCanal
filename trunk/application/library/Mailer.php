@@ -147,13 +147,13 @@ class L_Mailer
                 $message = "sending mail to recipient (" . $recipient . ") failed. " .
                            "Zend_Exception (" . get_class($exception) . ")";
                 $data = array('method' => __METHOD__);
-                B_Exception::forward($message, E_USER_WARNING, $exception, $data);
+                B_Exception::forward($message, E_WARNING, $exception, $data);
             }
             catch(Exception $exception)
             {
                 $message = "sending mail to recipient (" . $recipient . ") failed";
                 $data = array('method' => __METHOD__);
-                B_Exception::forward($message, E_USER_ERROR, $exception, $data);
+                B_Exception::forward($message, E_ERROR, $exception, $data);
             }
         }
 
@@ -225,7 +225,7 @@ class L_Mailer
             $message = "mailer relay denied to recipient (" . $recipient . ") " .
                        "and identifier (" . $identifier . ")";
             $data = array('method' => __METHOD__);
-            throw new B_Exception($message, E_USER_WARNING, $data);
+            throw new B_Exception($message, E_WARNING, $data);
         }
 
         return $deny ^ true;

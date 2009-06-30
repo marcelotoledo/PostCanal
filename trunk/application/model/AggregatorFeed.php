@@ -214,7 +214,7 @@ class AggregatorFeed extends B_Model
                 self::rollback();
                 $_m = "new aggregator feed failed";
                 $_d = array ('method' => __METHOD__);
-                B_Exception::forward($_m, E_USER_ERROR, $_e, $_d);
+                B_Exception::forward($_m, E_ERROR, $_e, $_d);
             }
 
             self::commit();
@@ -254,7 +254,7 @@ class AggregatorFeed extends B_Model
                 self::rollback();
                 $_m = "aggregator feed update failed";
                 $_d = array ('method' => __METHOD__);
-                B_Exception::forward($_m, E_USER_ERROR, $_e, $_d);
+                B_Exception::forward($_m, E_ERROR, $_e, $_d);
             }
         }
 

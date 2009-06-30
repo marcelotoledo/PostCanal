@@ -440,7 +440,7 @@ class UserBlogFeed extends B_Model
                 $m = "user blog feed ordering update failed for blog (" . $blog_hash . ") " .
                      ", feed (" . $f['feed'] . ") and ordering (" . $i . ");\n" . 
                      $e->getMessage();
-                B_Log::write($m, E_USER_ERROR);
+                B_Log::write($m, E_ERROR);
             }
         }
 

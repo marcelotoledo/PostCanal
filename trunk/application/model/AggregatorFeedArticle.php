@@ -284,7 +284,7 @@ class AggregatorFeedArticle extends B_Model
                 $_m = "new aggregator feed article failed from " .
                       "article link (" . $article->article_link . ")";
                 $_d = array ('method' => __METHOD__);
-                B_Exception::forward($_m, E_USER_ERROR, $_e, $_d);
+                B_Exception::forward($_m, E_ERROR, $_e, $_d);
             }
         }
 
@@ -297,7 +297,7 @@ class AggregatorFeedArticle extends B_Model
               "inserted (" . $inserted . ") " .
               "and updated (" . $updated . ")";
         $_d = array ('method' => __METHOD__);
-        B_Log::write($_m, E_USER_NOTICE);
+        B_Log::write($_m, E_NOTICE);
 
         return ($inserted + $updated);
     }

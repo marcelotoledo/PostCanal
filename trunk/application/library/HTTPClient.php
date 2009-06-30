@@ -72,7 +72,7 @@ class L_HTTPClient
             {
                 $message = "failed to get response from url (" . $url . ")";
                 $data = array('method' => __METHOD__);
-                B_Exception::forward($message, E_USER_NOTICE, $exception, $data);
+                B_Exception::forward($message, E_NOTICE, $exception, $data);
             }
         }
 
@@ -139,7 +139,7 @@ class L_HTTPClient
             $_m= "the response has a total of (" . $total . ") headers " .
                  "and was reduced to (" . $max . ") headers";
             $_d = array('method' => __METHOD__);
-            B_Log::write($_m, E_USER_WARNING, $_d);
+            B_Log::write($_m, E_WARNING, $_d);
         }
 
         return $headers;
@@ -167,7 +167,7 @@ class L_HTTPClient
                 $_m = "the response body has a size of (" . $lenght . ") bytes " .
                       "and was truncated to (" . $max . ") bytes";
                 $_d = array('method' => __METHOD__);
-                B_Log::write($_m, E_USER_WARNING, $_d);
+                B_Log::write($_m, E_WARNING, $_d);
             }
         }
 

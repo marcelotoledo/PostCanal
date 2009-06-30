@@ -78,6 +78,10 @@ class C_Profile extends B_Controller
         $email = $this->request()->email;
         $password = $this->request()->password;
         $confirm = $this->request()->passwordc;
+        $name = $this->request()->name;
+        $territory = $this->request()->country;
+        $timezone = $this->request()->timezone;
+
         $this->view()->register = false;
         $this->view()->message = $this->translation()->registration_invalid;
 
@@ -98,6 +102,9 @@ class C_Profile extends B_Controller
                 $profile = new UserProfile();
                 $profile->login_email = $email;
                 $profile->login_password_md5 = md5($password);
+                $profile->name = $name;
+                $profile->local_territory = $territory;
+                $profile->local_timezone = $timezone;
                 $profile->save();
 
                 $id = intval($profile->user_profile_id);
@@ -668,7 +675,7 @@ class C_Profile extends B_Controller
         {
             $_m = "invalid user profile";
             $_d = array('method' => __METHOD__, 'user_profile_id' => $id);
-            throw new B_Exception($_m, E_USER_WARNING, $_d);
+            throw new B_Exception($_m, E_WARNING, $_d);
         }
 
         foreach(UserProfile::$allow_write as $k)
@@ -691,7 +698,7 @@ class C_Profile extends B_Controller
         {
             $_m = "failed to save information after editing";
             $_d = array('method' => __METHOD__, 'user_profile_id' => $id);
-            B_Exception::forward($_m, E_USER_WARNING, $exception, $_d);
+            B_Exception::forward($_m, E_WARNING, $exception, $_d);
         }
     }
 
@@ -737,7 +744,7 @@ class C_Profile extends B_Controller
      */
     public function A_timezone()
     {
-        $this->authorize();
+        // $this->authorize();
 
         $this->response()->setXML(true);
 
@@ -800,6 +807,6 @@ class C_Profile extends B_Controller
             }
         }
 
-        B_Log::write($_m, E_USER_NOTICE, $_d);
+        B_Log::write($_m, E_NOTICE, $_d);
     }
 }

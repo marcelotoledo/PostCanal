@@ -131,7 +131,7 @@ class B_Loader
         {
             $_m = "class (Zend_Loader) not found";
             $_d = array('method' => __METHOD__);
-            throw new B_Exception($_m, E_USER_ERROR, $_d);
+            throw new B_Exception($_m, E_ERROR, $_d);
         }
     }
 }

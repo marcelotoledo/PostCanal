@@ -77,7 +77,7 @@ class C_Feed extends B_Controller
             {
                 $_m = "invalid user blog from hash (" . $blog_hash . ")";
                 $_d = array('method' => __METHOD__, 'user_profile_id' => $user_id);
-                throw new B_Exception($_m, E_USER_WARNING, $_d);
+                throw new B_Exception($_m, E_WARNING, $_d);
             }
 
             if(is_object($blog_feed) == true)

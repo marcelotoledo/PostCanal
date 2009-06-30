@@ -200,7 +200,7 @@ class B_Request
         {
             $_m = "request uri is empty";
             $_d = array('method' => __METHOD__);
-            throw new B_Exception($_m, E_USER_ERROR, $_d);
+            throw new B_Exception($_m, E_ERROR, $_d);
         }
 
         $path = $request_uri;
@@ -252,7 +252,7 @@ class B_Request
         {
             $_m  = "request method is empty";
             $_d = array('method' => __METHOD__);
-            throw new B_Exception($_m, E_USER_ERROR, $_d);
+            throw new B_Exception($_m, E_ERROR, $_d);
         }
 
         return $request_method;

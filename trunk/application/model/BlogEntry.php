@@ -498,7 +498,7 @@ class BlogEntry extends B_Model
                 $m = "user blog entry ordering update failed for blog (" . $blog_hash . ") " .
                      ", entry (" . $o->hash . ") and ordering (" . $j . ");\n" . 
                      $e->getMessage();
-                B_Log::write($m, E_USER_ERROR);
+                B_Log::write($m, E_ERROR);
             }
         }
 
@@ -595,7 +595,7 @@ class BlogEntry extends B_Model
         {
             $_m = "invalid user blog";
             $_d = array('method' => __METHOD__);
-            throw new B_Exception($_m, E_USER_ERROR, $_d);
+            throw new B_Exception($_m, E_ERROR, $_d);
         }
 
         /* get blog keywords */
@@ -735,7 +735,7 @@ class BlogEntry extends B_Model
         {
             self::newFromArticleBlogId($ma, $blog->blog_id);
             $_m = "suggestion of article (" . $ma . ") added to blog (" . $blog->blog_id . ")";
-            B_Log::write($_m, E_USER_NOTICE);
+            B_Log::write($_m, E_NOTICE);
         }
     }
 }
