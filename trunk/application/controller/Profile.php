@@ -101,6 +101,7 @@ class C_Profile extends B_Controller
             {
                 $profile = new UserProfile();
                 $profile->login_email = $email;
+                $profile->update_email_to = $email;
                 $profile->login_password_md5 = md5($password);
                 $profile->name = $name;
                 $profile->local_territory = $territory;
@@ -495,12 +496,12 @@ class C_Profile extends B_Controller
             $accepted = $this->emailChangeSave($email, $hash, $password, $message);
         }
 
-        /* disable session */
-
-        if($accepted == true)
-        {
-            $this->session()->setActive(false);
-        }
+        // /* disable session */
+        // 
+        // if($accepted == true)
+        // {
+        //     $this->session()->setActive(false);
+        // }
 
         $this->view()->accepted = $accepted;
         $this->view()->message = $message;
@@ -520,29 +521,34 @@ class C_Profile extends B_Controller
 
         if(is_object($profile = UserProfile::getByPrimaryKey($id)))
         {
-            if($profile->login_email == $new_email)
+            try
             {
-                $message = $this->translation()->email_unchanged;
-            }
-            else
-            {
-                try
+                $profile->update_email_to = $new_email;
+                $profile->update_email_message_time = time();
+                $profile->save();
+ 
+                $current_email = $profile->login_email_local . '@';
+                $current_email.= $profile->login_email_domain;
+ 
+                if($profile->update_email_to != $current_email)
                 {
-                    $profile->update_email_to = $new_email;
-                    $profile->update_email_message_time = time();
-                    $profile->save();
                     $this->notify($new_email, "email_change", $profile);
                     $message = $this->translation()->email_change_accepted;
-                    $accepted = true;
                 }
-                catch(B_Exception $exception)
+                else
                 {
-                    $_m = "failed to send email change instructions " . 
-                          "to email (" . $new_email . ");\n";
-                    $_m.= $exception->getMessage();
-                    $_d = array('method' => __METHOD__);
-                    B_Log::write($_m, $exception->getCode(), $_d);
+                    $message = $this->translation()->email_unchanged;
                 }
+ 
+                $accepted = true;
+            }
+            catch(B_Exception $exception)
+            {
+                $_m = "failed to send email change instructions " . 
+                      "to email (" . $new_email . ");\n";
+                $_m.= $exception->getMessage();
+                $_d = array('method' => __METHOD__);
+                B_Log::write($_m, $exception->getCode(), $_d);
             }
         }
 
@@ -573,7 +579,6 @@ class C_Profile extends B_Controller
                 if(strlen(($new_email = $profile->update_email_to)) > 0)
                 {
                     $profile->login_email = $new_email;
-                    $profile->update_email_to = "";
                     $profile->hash = L_Utility::randomString(8);
                     $profile->save();
 
@@ -689,7 +694,7 @@ class C_Profile extends B_Controller
         try
         {
             $profile->save();
-            $this->session()->setCulture($profile->local_culture);
+            // $this->session()->setCulture($profile->local_culture); // not implemented
             $this->session()->setTimezone($profile->local_timezone);
             $this->view()->saved = true;
             $this->view()->message = $this->translation()->edit_saved;

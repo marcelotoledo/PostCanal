@@ -1,0 +1,36 @@
+div.formcontainer
+{
+    padding: 10px;
+    width: 720px;
+    background-color: ghostwhite;
+}
+#emlnpasswd
+{
+}
+div.inputleft
+{
+    float: left;
+    width: 350px;
+}
+div.inputright
+{
+    float: right;
+    width: 350px;
+}
+div.inputclear
+{
+    clear: both;
+}
+#formbottom
+{
+    text-align: center;
+    margin-top: 25px;
+}
+div.formclear
+{
+    clear: both;
+}
+small
+{
+    font-size: 8pt;
+}

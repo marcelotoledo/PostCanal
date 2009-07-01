@@ -78,7 +78,7 @@ function login_submit_cb(d)
     if(d.length==0) { server_error(); return null; }
     if(d.find('login').text()=="true") 
     {
-        window.location="./dashboard";
+        window.location="./profile/edit";
     }
     login_msg(d.find('message').text());
 }

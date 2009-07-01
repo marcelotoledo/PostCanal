@@ -19,6 +19,15 @@ class C_Queue extends B_Controller
     }
 
     /**
+     * Default action
+     *
+     * @return void
+     */
+    public function A_index()
+    {
+    }
+
+    /**
      * List blog entries
      *
      * @return void

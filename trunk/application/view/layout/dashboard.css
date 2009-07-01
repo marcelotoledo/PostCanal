@@ -63,16 +63,54 @@
     top: 41px;
     overflow: auto;
 }
-#subcontainer
+#maincontainer h1
 {
-    margin-top: -15px;
-    padding-left: 15px;
-    padding-bottom: 25px;
+    line-height: 25px;
+    margin: 0;
+    padding: 0;
 }
-#subcontainer h1
+
+/* flash message */
+
+#flashmessage
 {
-    font-size: x-large;
+    position: absolute;
+    top: 10%;
+    left: 5%;
+    width: 86%;
+    padding: 2%;
+    font-size: 22pt;
+    background-color: gold;
+    text-align: center;
+}
+
+/* input (form) */
+
+div.inputcontainer
+{
+    /* void */
+    margin-bottom: 15px;
+}
+div.inputlabel
+{
+    line-height: 25px;
+    font-weight: bold;
     text-transform: capitalize;
-    text-decoration: underline;
-    padding-bottom: 15px;
+}
+div.inputlinks
+{
+    padding-top: 5px;
+}
+div.inputbuttons
+{
+    padding-top: 10px;
+    text-align: center;
+    margin: 0 auto;
+}
+div.inputmessage
+{
+    line-height: 35px;
+    font-style: italic;
+    text-align: center;
+    color: red;
 }

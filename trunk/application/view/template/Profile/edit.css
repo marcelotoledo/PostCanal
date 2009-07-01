@@ -1,1 +1,8 @@
-
+#maincontainer
+{
+    padding: 25px;
+}
+div.inputmessage
+{
+    text-align: left;
+}

@@ -1,105 +1,70 @@
-<br/>
-<div id="subcontainer">
-<form id="editform">
-    <h1><?php echo $this->translation()->profile ?></h1>
-    <table>
-        <tr>
-        <th><?php echo $this->translation()->name ?>:</th>
-        <td><input type="text" id="name" value="<?php echo $this->profile->name ?>"></td>
-        </tr>
+<h1><?php echo $this->translation()->edit_settings ?></h1>
 
-        <tr>
-        <th><?php echo $this->translation()->territory ?>:</th>
-        <td><select id="local_territory">
-            <?php foreach($this->territory as $k => $v) : ?>
-            <option value="<?php echo $k ?>" <?php if($k==$this->profile->local_territory) : ?>selected<?php endif ?>><?php echo $v ?></option>
-            <?php endforeach ?>
-        </select></td>
-        </tr>
+<div class="tabhead" id="edittab">
+    <div class="tabitem tabitem-selected" related="tabpersonal"><?php echo $this->translation()->tab_personal_information ?></div>
+    <div class="tabitem" related="tabpassword"><?php echo $this->translation()->tab_password ?></div>
+    <div class="tabitem" related="tabemail"><?php echo $this->translation()->tab_email ?></div>
+</div>
 
-        <tr>
-        <th><?php echo $this->translation()->timezone ?>:</th>
-        <td><select id="local_timezone" disabled>
-        </select></td>
-        </tr>
+<div class="tabgroup" id="edittabgroup">
+<div class="tabcontainer" id="tabpersonal" style="display:block">
+    <div class="inputcontainer">
+        <div class="inputlabel"><?php echo $this->translation()->name ?></div>
+        <input type="text" id="name" value="<?php echo $this->profile->name ?>" size="40">
+    </div>
+    <div class="inputcontainer">
+        <div class="inputlabel"><?php echo $this->translation()->country ?></div>
+        <select id="local_territory" style="width:350px">
+        <?php foreach($this->territory as $k => $v) : ?>
+        <option value="<?php echo $k ?>" <?php if($k==$this->profile->local_territory) : ?>selected<?php endif ?>><?php echo $v ?></option>
+        <?php endforeach ?>
+        </select>
+    </div>
+    <div class="inputcontainer">
+        <div class="inputlabel"><?php echo $this->translation()->time_zone ?></div>
+        <select id="local_timezone" disabled style="width:350px">
+        </select>
+    </div>
+    <br/>
+    <div class="inputcontainer">
+        <input id="editsubmit" type="button" value="<?php echo $this->translation()->save ?>">
+    </div>
+    <div class="inputmessage" id="editmessage"></div>
+</div>
 
-        <tr>
-        <th><?php echo $this->translation()->language ?>:</th>
-        <td><select id="local_culture">
-            <?php foreach($this->language as $k => $v) : ?>
-            <option value="<?php echo $k ?>" <?php if($k==$this->profile->local_culture) : ?>selected<?php endif ?>><?php echo $v ?></option>
-            <?php endforeach ?>
-        </select></td>
-        </tr>
+<div class="tabcontainer" id="tabpassword" style="display:none">
+    <div class="inputcontainer">
+        <div class="inputlabel"><?php echo $this->translation()->current_password ?></div>
+        <input type="password" id="currentpwd" size="40">
+    </div>
+    <div class="inputcontainer">
+        <div class="inputlabel"><?php echo $this->translation()->new_password ?></div>
+        <input type="password" id="newpwd" size="40">
+    </div>
+    <div class="inputcontainer">
+        <div class="inputlabel"><?php echo $this->translation()->retype_new_password ?></div>
+        <input type="password" id="confirmpwd" size="40">
+    </div>
+    <div class="inputcontainer">
+        <input id="pwdchangesubmit" type="button" value="<?php echo $this->translation()->save ?>">
+    </div>
+    <div class="inputmessage" id="pwdchangemessage"></div>
+</div>
 
-        <tr>
-        <th>&nbsp;</th>
-        <td class="buttons">
-            <input id="editsubmit" type="button" value="<?php echo $this->translation()->submit ?>">
-        </td>
-        </tr>
-        <tr id="editmessage" style="display:none">
-        <th>&nbsp;</th>
-        <td class="message"></td>
-        </tr>
-    </table>
-</form>
-<br>
-<form id="pwdchangeform">
-    <table>
-        <tr>
-        <th>&nbsp;</th>
-        <td><a href="#" id="pwdchangelnk"><?php echo $this->translation()->update_password ?></a></td>
-        </tr>
-        <tr>
-        <th><?php echo $this->translation()->current_password ?>:</th>
-        <td><input type="password" id="currentpwd" disabled></td>
-        </tr>
-        <tr>
-        <th><?php echo $this->translation()->new_password ?>:</th>
-        <td><input type="password" id="newpwd" disabled></td>
-        </tr>
-        <tr>
-        <th><?php echo $this->translation()->confirm_password ?>:</th>
-        <td><input type="password" id="confirmpwd" disabled></td>
-        </tr>
-        <tr>
-        <th>&nbsp;</th>
-        <td class="buttons">
-            <input id="pwdchangecancel" type="button" value="<?php echo $this->translation()->cancel ?>" disabled>
-            <input id="pwdchangesubmit" type="button" value="<?php echo $this->translation()->submit ?>" disabled>
-        </td>
-        </tr>
-        </tr>
-        <tr id="pwdchangemessage" style="display:none">
-        <th>&nbsp;</th>
-        <td class="message"></td>
-        </tr>
-    </table>
-</form>
-<br>
-<form id="emlchangeform">
-    <table>
-        <tr>
-        <th>&nbsp;</th>
-        <td><a href="#" id="emlchangelnk"><?php echo $this->translation()->update_email ?></a></td>
-        </tr>
-        <tr>
-        <th><?php echo $this->translation()->email ?>:</th>
-        <td><input type="text" id="neweml" value="<?php echo $this->profile->login_email ?>" disabled></td>
-        </tr>
-        <tr>
-        <th>&nbsp;</th>
-        <td class="buttons">
-            <input id="emlchangecancel" type="button" value="<?php echo $this->translation()->cancel ?>" disabled>
-            <input id="emlchangesubmit" type="button" value="<?php echo $this->translation()->submit ?>" disabled>
-        </td>
-        </tr>
-        </tr>
-        <tr id="emlchangemessage" style="display:none">
-        <th>&nbsp;</th>
-        <td class="message"></td>
-        </tr>
-    </table>
-</form>
+<div class="tabcontainer" id="tabemail" style="display:none">
+    <div class="inputcontainer">
+        <div class="inputlabel"><?php echo $this->translation()->email ?></div>
+        <input type="text" id="neweml" size="40" value="<?php echo $this->profile->update_email_to ?>">
+        &nbsp;&nbsp;&nbsp;
+        <?php if($this->profile->update_email_to==($this->profile->login_email_local . '@' . $this->profile->login_email_domain)) : ?>
+        <?php echo $this->translation()->verified ?>
+        <?php else : ?>
+        <?php echo $this->translation()->not_verified ?>
+        <?php endif ?>
+    </div>
+    <div class="inputcontainer">
+        <input id="emlchangesubmit" type="button" value="<?php echo $this->translation()->save ?>">
+    </div>
+    <div class="inputmessage" id="emlchangemessage"></div>
+</div>
 </div>

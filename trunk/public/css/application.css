@@ -100,3 +100,30 @@ h2
 {
     float: right;
 }
+
+/* tab panel */
+
+div.tabhead
+{
+}
+div.tabitem
+{
+    float: left;
+    padding: 10px;
+    border: 1px solid silver;
+    border-top: 2px solid silver;
+    margin-right: 25px;
+    cursor: pointer;
+    cursor: hand;
+    margin-top: 25px;
+    margin-bottom: 20px;
+}
+div.tabitem-selected
+{
+    border-top: 2px solid orange;
+    background-color: moccasin;
+}
+div.tabcontainer
+{
+    clear: left;
+}

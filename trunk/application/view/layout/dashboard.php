@@ -28,10 +28,11 @@
 
 <?php $bc = count($this->blogs) ?>
 
-<li><a href="./dashboard"><?php echo $this->translation()->dashboard ?></a></li>
-<li><a href="./profile/edit"><?php echo $this->translation()->profile ?></a></li>
-<li><a href="./blog"><?php echo $this->translation()->blogs ?></a></li>
-<li><a href="./feed"><?php echo $this->translation()->feeds ?></a></li>
+<li><a href="./blog"><?php echo $this->translation()->manage_blogs ?></a></li>
+<li><a href="./feed"><?php echo $this->translation()->manage_feeds ?></a></li>
+<li><a href="./reader"><?php echo $this->translation()->reader ?></a></li>
+<li><a href="./queue"><?php echo $this->translation()->queue ?></a></li>
+<li><a href="./profile/edit"><?php echo $this->translation()->edit_settings ?></a></li>
 
 <li id="bloglstbar">
 <?php if($bc==1) : ?>
@@ -51,12 +52,14 @@
 <div id="toprightbar"><nobr><ul>
 
 <li id="profilebar"><b><?php echo $this->translation()->profile ?>: </b><?php echo $this->session()->user_profile_login_email ?></li>
-<li><a href="./profile/logout"><?php echo $this->translation()->logout ?></a></li>
+<li><a href="./profile/logout"><?php echo $this->translation()->sign_out ?></a></li>
 
 </ul></nobr></div>
 </div>
 
-<div id="maincontainer"><?php $this->includeTemplate() ?></div>
+<div id="maincontainer" style="display:none"><?php $this->includeTemplate() ?></div>
+
+<div id="flashmessage" style="display:none"></div>
 
 </body>
 </html>

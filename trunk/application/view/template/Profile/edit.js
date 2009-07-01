@@ -1,52 +1,16 @@
 var mytpl = null;
 
-
-function toggle_email_change(b)
+function set_tab(i)
 {
-    if(b)
-    {
-        mytpl.neweml.attr('disabled', false);
-        mytpl.emlchangecancel.attr('disabled', false);
-        mytpl.emlchangesubmit.attr('disabled', false);
-        mytpl.neweml.focus();
-    }
-    else
-    {
-        mytpl.neweml.attr('disabled', true);
-        mytpl.emlchangecancel.attr('disabled', true);
-        mytpl.emlchangesubmit.attr('disabled', true);
-    }
-}
-
-function toggle_password_change(b)
-{
-    if(b)
-    {
-        mytpl.currentpwd.attr('disabled', false);
-        mytpl.newpwd.attr('disabled', false);
-        mytpl.confirmpwd.attr('disabled', false);
-        mytpl.pwdchangecancel.attr('disabled', false);
-        mytpl.pwdchangesubmit.attr('disabled', false);
-        mytpl.currentpwd.focus();
-    }
-    else
-    {
-        mytpl.currentpwd.val("");
-        mytpl.currentpwd.attr('disabled', true);
-        mytpl.newpwd.val("");
-        mytpl.newpwd.attr('disabled', true);
-        mytpl.confirmpwd.val("");
-        mytpl.confirmpwd.attr('disabled', true);
-        mytpl.pwdchangecancel.attr('disabled', true);
-        mytpl.pwdchangesubmit.attr('disabled', true);
-    }
+    mytpl.tabhead.find("div.tabitem").removeClass('tabitem-selected');
+    mytpl.tabgroup.find("div.tabcontainer").hide();
+    mytpl.tabhead.find("div.tabitem[related='" + i + "']").addClass('tabitem-selected');
+    mytpl.tabgroup.find("#" + i).show();
 }
 
 function edit_message(m)
 {
-    (m=="") ?
-        mytpl.editmessage.hide().find("td").html("") :
-        mytpl.editmessage.show().find("td").html(m) ;
+    mytpl.editmessage.text(m);
 }
 
 function edit_submit()
@@ -58,15 +22,16 @@ function edit_submit()
         dataType: "xml",
         data: { name            : mytpl.name.val(),
                 local_territory : mytpl.territory.val(),
-                local_timezone  : mytpl.timezone.val(),
-                local_culture   : mytpl.culture.val() },
+                local_timezone  : mytpl.timezone.val() // ,
+                /* local_culture   : mytpl.culture.val() */ },
         beforeSend: function () { set_active_request(true); edit_message("");  },
         complete: function ()   { set_active_request(false); },
         success: function (xml) 
         { 
             var _data = $(xml).find('data');
             if(_data.length==0) { server_error(); return null; }
-            edit_message(_data.find('message').text());
+            if(_data.find('saved').text()=="true") { flash_message("<?php echo $this->translation()->saved ?>"); } else { /* void */ }
+            // flash_message(_data.find('message').text());
         }, 
         error: function () { server_error(); }
     });
@@ -74,9 +39,14 @@ function edit_submit()
 
 function pwdchange_message(m)
 {
-    (m=="") ?
-        mytpl.pwdchangemessage.hide().find("td").html("") :
-        mytpl.pwdchangemessage.show().find("td").html(m) ;
+    mytpl.pwdchangemessage.text(m);
+}
+
+function pwdchange_after()
+{
+    mytpl.currentpwd.val('');
+    mytpl.newpwd.val('');
+    mytpl.confirmpwd.val('');
 }
 
 function pwdchange_submit()
@@ -109,8 +79,7 @@ function pwdchange_submit()
         { 
             var _data = $(xml).find('data');
             if(_data.length==0) { server_error(); return null; }
-            pwdchange_message(_data.find('message').text());
-            if(_data.find('updated').text()=="true") { toggle_password_change(false); }
+            if(_data.find('updated').text()=="true") { flash_message("<?php echo $this->translation()->saved ?>"); pwdchange_after(); } else { pwdchange_message(_data.find('message').text()); }
         }, 
         error: function () { server_error(); }
     });
@@ -118,9 +87,7 @@ function pwdchange_submit()
 
 function emlchange_message(m)
 {
-    (m=="") ?
-        mytpl.emlchangemessage.hide().find("td").html("") :
-        mytpl.emlchangemessage.show().find("td").html(m) ;
+    mytpl.emlchangemessage.text(m);
 }
 
 function emlchange_submit()
@@ -138,12 +105,12 @@ function emlchange_submit()
         dataType: "xml",
         data: { new_email: mytpl.neweml.val() },
         beforeSend: function () { set_active_request(true); emlchange_message(""); },
-        complete: function ()   { set_active_request(false); toggle_email_change(false); },
+        complete: function ()   { set_active_request(false); },
         success: function (xml) 
         { 
             var _data = $(xml).find('data');
             if(_data.length==0) { server_error(); return null; }
-            emlchange_message(_data.find('message').text());
+            if(_data.find('accepted').text()=="true") { flash_message("<?php echo $this->translation()->saved ?><br><small><?php echo $this->translation()->check_your_inbox_to_validate ?></small>"); } else { pwdchange_message(_data.find('message').text()); }
         }, 
         error: function () { server_error(); }
     });
@@ -173,6 +140,8 @@ $(document).ready(function()
 {
     mytpl =
     {
+        tabhead          : $("#edittab"),
+        tabgroup         : $("#edittabgroup"),
         neweml           : $("#neweml"),
         emlchangelnk     : $("#emlchangelnk"),
         emlchangesubmit  : $("#emlchangesubmit"),
@@ -225,26 +194,9 @@ $(document).ready(function()
         if(active_request==false) { edit_submit(); }
     });
 
-    mytpl.pwdchangelnk.click(function()
-    {
-        if(active_request==false) { toggle_password_change(true); }
-        return false;
-    });
-
     mytpl.pwdchangesubmit.click(function()
     {
         if(active_request==false) { pwdchange_submit(); }
-    });
-
-    mytpl.pwdchangecancel.click(function() 
-    {
-        if(active_request==false) { toggle_password_change(false); }
-    });
-
-    mytpl.emlchangelnk.click(function()
-    {
-        if(active_request==false) { toggle_email_change(true); }
-        return false;
     });
 
     mytpl.neweml.keypress(function(e) 
@@ -260,13 +212,19 @@ $(document).ready(function()
         if(active_request==false) { emlchange_submit(); }
     });
 
-    mytpl.emlchangecancel.click(function() 
-    {
-        if(active_request==false) { toggle_email_change(false); }
-    });
-
     mytpl.territory.change(function()
     {
         load_timezone();
+        $(this).blur();
+    });
+
+    mytpl.timezone.change(function()
+    {
+        $(this).blur();
+    });
+
+    mytpl.tabhead.find("div.tabitem").click(function()
+    {
+        set_tab($(this).attr('related'));
     });
 });

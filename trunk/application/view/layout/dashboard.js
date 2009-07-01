@@ -15,6 +15,12 @@ function set_active_request(b)
     (active_request > 0) ? $.b_spinner_start() : $.b_spinner_stop();
 }
 
+function flash_message(m)
+{
+    $("#flashmessage").html(m).show();
+    setTimeout("$(\"#flashmessage\").fadeOut(1900)", 100); // IE fix
+}
+
 function server_error()
 {
     alert("<?php echo $this->translation()->server_error ?>");
@@ -34,7 +40,7 @@ function save_setting(c, n, v)
     $.ajax
     ({
         type: "POST",
-        url: "/dashboard/setting",
+        url: "./dashboard/setting",
         dataType: "xml",
         data: { context : c , 
                 name    : n ,
@@ -62,7 +68,7 @@ function blog_load()
     $.ajax
     ({
         type: "GET",
-        url: "/blog/load",
+        url: "./blog/load",
         dataType: "xml",
         data: { blog: blog.current },
         beforeSend: function()
@@ -94,7 +100,7 @@ function blog_update(k, v)
     $.ajax
     ({
         type: "POST",
-        url: "/blog/update",
+        url: "./blog/update",
         dataType: "xml",
         data: _par,
         beforeSend: function()
@@ -183,4 +189,8 @@ $(document).ready(function()
             }
         });
     }
+
+    /* avoid showing partial loaded content */
+
+    mylyt.main_container.show();
 });
