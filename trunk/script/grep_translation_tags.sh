@@ -1,6 +1,15 @@
 #!/bin/bash
 
-for file in $(find ../application/view -type f | \
+dir=""
+
+if [ "$1" == "" ]
+then
+    dir="../application/view"
+else
+    dir=$1
+fi
+
+for file in $(find $dir -type f | \
               grep -v ".svn" | \
               grep -v "cache" | \
               sort)

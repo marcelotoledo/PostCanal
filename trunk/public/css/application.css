@@ -105,11 +105,18 @@ h2
 
 div.tabhead
 {
+    height: 57px;
+    margin-bottom: 15px;
+    border-bottom: 1px solid silver;
+    width: 50%;
+    border-collapse: collapse;
 }
 div.tabitem
 {
     float: left;
-    padding: 10px;
+    padding-left: 10px;
+    padding-right: 10px;
+    line-height: 30px;
     border: 1px solid silver;
     border-top: 2px solid silver;
     margin-right: 25px;
@@ -121,7 +128,8 @@ div.tabitem
 div.tabitem-selected
 {
     border-top: 2px solid orange;
-    background-color: moccasin;
+    border-bottom: 1px solid white;
+    /* background-color: moccasin; */
 }
 div.tabcontainer
 {

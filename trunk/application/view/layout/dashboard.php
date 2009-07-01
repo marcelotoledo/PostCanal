@@ -51,7 +51,7 @@
 </ul></nobr></div>
 <div id="toprightbar"><nobr><ul>
 
-<li id="profilebar"><b><?php echo $this->translation()->profile ?>: </b><?php echo $this->session()->user_profile_login_email ?></li>
+<li id="profilebar"><?php echo $this->session()->user_profile_login_email ?></li>
 <li><a href="./profile/logout"><?php echo $this->translation()->sign_out ?></a></li>
 
 </ul></nobr></div>
