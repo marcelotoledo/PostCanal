@@ -1,6 +1,23 @@
+#maincontainer
+{
+    padding: 25px;
+}
+#addnewblogbtn
+{
+    cursor: pointer;
+    cursor: hand;
+    margin-top: 25px;
+    margin-bottom: 15px;
+    width: 200px;
+}
+div.inputmessage
+{
+    text-align: left;
+}
+
 #bloglistarea
 {
-    padding-top: 25px;
+    padding-top: 15px;
 }
 
 div.blogitem
@@ -39,4 +56,38 @@ div.blogitemeditform
     padding: 15px;
     background-color: lightyellow;
     border-bottom: 2px solid silver;
+}
+div.blogdeletemsg
+{
+    width: 570px;
+    padding: 15px;
+    background-color: lightyellow;
+    border-bottom: 2px solid silver;
+}
+span.deletemsgbig
+{
+    font-size: 18pt;
+    line-height: 50px;
+}
+span.deletemsgmed
+{
+    font-size: 14pt;
+}
+span.deletemsgask
+{
+    font-weight: bold;
+    line-height: 50px;
+}
+input.blogdeletey
+{
+    background-color: lightgreen;
+}
+input.blogdeleten
+{
+    background-color: tomato;
+}
+#blogtypefailedmsg
+{
+    font-size: 14pt;
+    line-height: 40px;
 }

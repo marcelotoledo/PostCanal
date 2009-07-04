@@ -32,6 +32,7 @@ class WordPress:
     revision             = 0
     url                  = None
     url_accepted         = False
+    title                = None
     manager_url          = None
     manager_url_accepted = False
     username             = None
@@ -73,6 +74,7 @@ class WordPress:
             self.client.request("GET", self.url_spl.path if self.url_spl.path else "/")
             response = self.client.getresponse()
             self.url_accepted = True if response.status == 200 else False
+            self.title = self.url_spl.netloc
         except:
             self.url_accepted = False
 

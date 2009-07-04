@@ -11,6 +11,17 @@
 class C_Blog extends B_Controller
 {
     /**
+     * Discover status
+     */
+    const DISCOVER_STATUS_OK          = 'ok';
+    const DISCOVER_STATUS_FAILED      = 'failed';
+    const DISCOVER_STATUS_TIMEOUT     = 'timeout';
+    const DISCOVER_STATUS_URL_FAILED  = 'url_failed';
+    const DISCOVER_STATUS_TYPE_FAILED = 'type_failed';
+    const DISCOVER_STATUS_MAINTENANCE = 'maintenance';
+
+
+    /**
      * Before action
      */
     public function before()
@@ -24,8 +35,41 @@ class C_Blog extends B_Controller
     public function A_index()
     {
         $this->view()->setLayout('dashboard');
+    }
+
+    /**
+     * Format blog object for ajax response
+     */
+    private static function objResponse($blog)
+    {
+        return array
+        (
+            'blog'     => $blog->hash,
+            'name'     => $blog->name,
+            'url'      => $blog->blog_url,
+            'username' => $blog->blog_username,
+            'keywords' => $blog->keywords
+        );
+    }
+
+    /**
+     * List blogs
+     */
+    public function A_list()
+    {
+        $this->response()->setXML(true);
+
+        $this->view()->setLayout('dashboard');
         $user_id = $this->session()->user_profile_id;
-        $this->view()->blogs_ = UserBlog::findByUser($user_id, true);
+
+        $blogs = array();
+
+        foreach(UserBlog::findByUser($user_id, true) as $b)
+        {
+            $blogs[] = self::objResponse($b);
+        }
+
+        $this->view()->blogs = $blogs;
     }
 
     /**
@@ -35,69 +79,72 @@ class C_Blog extends B_Controller
      */
     public function A_add()
     {
-        $this->request()->getMethod() == B_Request::METHOD_POST ?
-            $this->P_add() :
-            $this->G_add();
-    }
-
-    /**
-     * Add action, method GET
-     */
-    private function G_add()
-    {
-        $this->view()->setLayout('dashboard');
-        $this->view()->blog = new UserBlog();
-    }
-
-    /**
-     * Add action, method POST (save)
-     *
-     * @return void
-     */
-    private function P_add()
-    {
         $this->response()->setXML(true);
+        $status = self::DISCOVER_STATUS_FAILED;
+        $url = $this->request()->url;
+        $profile_id = $this->session()->user_profile_id;
+        $blog = null;
 
-        $_type     = $this->request()->blog_type;
-        $_version  = $this->request()->blog_version;
+        /* discover blog type */
 
-        if(!is_object($blog_type = BlogType::getByName($_type, $_version)))
+        if(!is_object(($discover = BlogType::discover($url))))
         {
-            $_m = "blog type not found using " .
-                  "type (" . $_type. ") and " .
-                  "version (" . $_version . ")";
-            $_d = array ('method' => __METHOD__);
-            throw new B_Exception($_m, E_WARNING, $_d);
+            $status = self::DISCOVER_STATUS_TIMEOUT;
+            return false;
         }
 
-        $blog = new UserBlog();
-        $blog->user_profile_id    = $this->session()->user_profile_id;
-        $blog->blog_type_id       = $blog_type->blog_type_id;
-        $blog->blog_url           = $this->request()->blog_url;
-
-        $name = $blog->blog_url;
-        $name = preg_replace("/^(http[\w]*[^\w]+)*(www.)*([^\/]+)([\/]*.+)*/", "$3", $name);
-        if(strlen($name)==0) { $name = $this->translation()->my_new_blog; }
-        $blog->name = $name;
-
-        $blog->blog_manager_url   = $this->request()->blog_manager_url;
-        $blog->blog_username      = $this->request()->blog_username;
-        $blog->blog_password      = $this->request()->blog_password;
-        $blog->keywords           = $this->request()->blog_keywords;
-        $blog->blog_type_revision = $this->request()->blog_revision;
-
-        try
+        if($discover->url_accepted == false)
         {
-            $blog->save();
+            $status = self::DISCOVER_STATUS_URL_FAILED;
         }
-        catch(B_Exception $exception)
+        elseif($discover->type_accepted == false)
         {
-            $_m = "failed to add new blog";
-            $_d = array('method' => __METHOD__);
-            B_Exception::forward($_m, E_WARNING, $exception, $_d);
+            $status = self::DISCOVER_STATUS_TYPE_FAILED;
+            $_m = sprintf('unsuported blog type for url (%s)', $url);
+            $_d = array('method' => __METHOD__, 'user_profile_id' => $profile_id);
+            B_Log::write($_m, E_NOTICE, $_d);
+        }
+        elseif($discover->maintenance == true)
+        {
+            $status = self::DISCOVER_STATUS_MAINTENANCE;
+        }
+        else
+        {
+            $status = self::DISCOVER_STATUS_OK;
+
+            $blog = new UserBlog();
+            $blog->user_profile_id = $this->session()->user_profile_id;
+            $blog->blog_type_id    = $discover->blog_type_id;
+            $blog->blog_url        = $discover->url;
+            $blog->name            = $discover->title;
+
+            if(strlen($blog->name)==0)
+            {
+                $blog->name = $this->translation()->my_new_blog;
+            }
+
+            $blog->blog_manager_url = $discover->manager_url;
+            $blog->blog_type_revision = $discover->revision;
+            $blog->blog_username = $discover->username;
+
+            try
+            {
+                $blog->save();
+            }
+            catch(B_Exception $exception)
+            {
+                $_m = "failed to add new blog";
+                $_d = array('method' => __METHOD__);
+                B_Exception::forward($_m, E_WARNING, $exception, $_d);
+            } 
         }
 
-        $this->view()->blog = $blog->hash;
+        $this->view()->status = $status;
+
+        if(is_object($blog))
+        {
+            $this->view()->result = self::objResponse($blog);
+        }
     }
 
     /**
@@ -108,18 +155,6 @@ class C_Blog extends B_Controller
         $this->response()->setXML(true);
         $url = $this->request()->url;
         $this->view()->result = BlogType::discover($url);
-    }
-
-    /**
-     * check URL admin
-     */
-    public function A_check()
-    {
-        $this->response()->setXML(true);
-        $url = $this->request()->url;
-        $blog_type = $this->request()->type;
-        $blog_version = $this->request()->version;
-        $this->view()->result = BlogType::checkManagerUrl($url, $blog_type, $blog_version);
     }
 
     /**
@@ -136,13 +171,14 @@ class C_Blog extends B_Controller
         {
             foreach(UserBlog::$allow_write as $k)
             {
-                if(strlen($this->request()->{$k})>0)
+                if(array_key_exists($k, $_REQUEST))
                 {
                     $blog->{$k} = $this->request()->{$k};
                     $updated = array_merge($updated, array($k => $blog->{$k}));
                 }
             }
             $blog->save();
+            $updated = array_merge($updated, array('blog' => $hash));
         }
         $this->view()->updated = $updated;
     }
@@ -157,12 +193,7 @@ class C_Blog extends B_Controller
         $user = $this->session()->user_profile_id;
         $result = "";
 
-        if(is_object(($blog = UserBlog::getByUserAndHash($user, $hash))))
-        {
-            $blog->deleted = true;
-            $blog->save();
-            $result = $hash;
-        }
+        if(UserBlog::deleteByUserAndHash($user, $hash)) $result = $hash;
 
         $this->view()->result = $result;
     }

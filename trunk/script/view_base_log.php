@@ -26,18 +26,18 @@ $prior = @$options['p'];
 $email = @$options['u'];
 $width = intval(@$options['w'] ? $options['w'] : 80);
 
-if($prior == "N") $sql.= " AND a.priority = " . E_USER_NOTICE;
-if($prior == "W") $sql.= " AND a.priority = " . E_USER_WARNING;
-if($prior == "E") $sql.= " AND a.priority = " . E_USER_ERROR;
+if($prior == "N") $sql.= " AND a.priority = " . E_NOTICE;
+if($prior == "W") $sql.= " AND a.priority = " . E_WARNING;
+if($prior == "E") $sql.= " AND a.priority = " . E_ERROR;
 if($email) $sql.= " AND b.login_email = \"" . $email . "\"";
 
 foreach(B_Model::select($sql . " ORDER BY a.id DESC LIMIT " . $limit) AS $l)
 {
     $id = $l->id;
     $priority = $l->priority;
-    if($priority == E_USER_NOTICE)  $priority = "N";
-    if($priority == E_USER_WARNING) $priority = "W";
-    if($priority == E_USER_ERROR)   $priority = "E";
+    if($priority == E_NOTICE)  $priority = "N";
+    if($priority == E_WARNING) $priority = "W";
+    if($priority == E_ERROR)   $priority = "E";
     $message = $l->message;
     $email = $l->login_email;
     $created = $l->created_at;

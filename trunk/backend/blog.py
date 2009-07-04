@@ -33,6 +33,13 @@ def init_type(name, version_id, client=None):
         type = wordpress.WordPress(client)
         type.set_version(version_id)
 
+    ### unsuported ###
+
+    if name == config.UNSUPORTED:
+        from blogtype import unsuported
+        type = unsuported.Unsuported(client)
+        type.set_version(version_id)
+
     return type
 
 def url_fix(url):
@@ -59,6 +66,7 @@ def guess_type(url):
     # 
 
     body = None
+    response = None
 
     if type == None:
         try:
@@ -67,7 +75,7 @@ def guess_type(url):
             if response.status == 200:
                 body = BeautifulSoup(response.read())
         except:
-            pass
+            None
 
     ### wordpress / wordpress.com | wordpress domain ###
 
@@ -80,8 +88,16 @@ def guess_type(url):
 
     ### etc... ###
 
-    if type == None and body:
-        pass
+    # if type == None and body:
+    #     TODO
+    
+    ### unsuported ###
+
+    if type == None and response:
+        if response.status == 200:
+            type = init_type(config.UNSUPORTED, config.UNSUPORTED_VERSION_UNSUPORTED)
+            type.url_accepted = True
+
 
     return type
 
@@ -110,11 +126,12 @@ def publication_check(manager_url, type_name, version_name, username, password):
 def type_dump(type):
     result = {}
 
-    result['type']                 = type.type                 if type else ""
-    result['version']              = type.version              if type else ""
+    result['type_name']            = type.type                 if type else ""
+    result['version_name']         = type.version              if type else ""
     result['revision']             = type.revision             if type else 0
     result['url']                  = type.url                  if type else ""
     result['url_accepted']         = type.url_accepted         if type else False
+    result['title']                = type.title                if type else ""
     result['manager_url']          = type.manager_url          if type else ""
     result['manager_url_accepted'] = type.manager_url_accepted if type else False
     result['username']             = type.username             if type else ""
@@ -128,12 +145,13 @@ def type_dump(type):
 if __name__ == '__main__':
 
     #url = "http://test.wordpress.com/"
-    url = "http://blog100nexo.com/"
+    #url = "http://www.test.wordpress.com/"
+    #url = "http://blog100nexo.com/"
     #url = "http://asdqwezxcwer.wordpress.com/"
-    #url = "http://www.cnn.com/"
-    #url = "http://www.uol.com.br/"
+    #url = "http://www.terra.com.br/"
+    url = "http://www.uol.com.br/"
 
     d = type_dump(guess_type(url))
     print d
-    m = type_dump(manager_url_check(d['manager_url'], d['type'], d['version']))
-    print m
+    #m = type_dump(manager_url_check(d['manager_url'], d['type_name'], d['version_name']))
+    #print m

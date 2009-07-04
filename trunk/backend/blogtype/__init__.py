@@ -1,3 +1,3 @@
 import config
 
-__all__ = [config.WORDPRESS]
+__all__ = [config.WORDPRESS, config.UNSUPORTED]

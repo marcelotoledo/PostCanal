@@ -78,7 +78,6 @@ CREATE TABLE model_blog_type
     type_label VARCHAR(50) NOT NULL,
     version_name VARCHAR(50) COLLATE 'utf8_bin' NOT NULL,
     version_label VARCHAR(50) NOT NULL,
-    current_revision SMALLINT UNSIGNED NOT NULL DEFAULT 0,
     maintenance TINYINT(1) NOT NULL DEFAULT 0,
     enabled TINYINT(1) NOT NULL DEFAULT 0,
     PRIMARY KEY (blog_type_id),
@@ -199,6 +198,7 @@ CREATE TABLE model_user_blog
     hash VARCHAR(8) COLLATE 'utf8_bin' NOT NULL,
     name VARCHAR(200) NOT NULL,
     blog_url TEXT NOT NULL,
+    blog_url_md5 VARCHAR(32) NOT NULL,
     blog_manager_url TEXT NOT NULL,
     blog_username VARCHAR(255),
     blog_password VARCHAR(255),
@@ -219,7 +219,7 @@ CREATE TABLE model_user_blog
         REFERENCES model_blog_type (blog_type_id) ON DELETE RESTRICT
 ) ENGINE=InnoDB DEFAULT CHARSET='utf8' COLLATE='utf8_unicode_ci';
 
-CREATE INDEX m_ubg_idx ON model_user_blog (hash(4), enqueueing_auto, enqueueing_auto_updated_at, enabled, deleted);
+CREATE INDEX m_ubg_idx ON model_user_blog (hash(4), blog_url_md5(4), enqueueing_auto, enqueueing_auto_updated_at, enabled, deleted);
 
 CREATE TABLE model_user_blog_feed
 (

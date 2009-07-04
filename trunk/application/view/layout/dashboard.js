@@ -147,12 +147,16 @@ $(document).ready(function()
     {
         var ww = $(window).width(),
             wh = $(window).height(),
-            th = mylyt.top_bar.outerHeight();
+            th = mylyt.top_bar.outerHeight(),
+            ph = parseInt(mylyt.main_container.css('padding-left')) +
+                 parseInt(mylyt.main_container.css('padding-right')),
+            pv = parseInt(mylyt.main_container.css('padding-top')) +
+                 parseInt(mylyt.main_container.css('padding-bottom'));
 
         mylyt.main_container.css('top', th);
-        mylyt.main_container.css('left');
-        mylyt.main_container.width(ww);
-        mylyt.main_container.height(wh - th);
+        mylyt.main_container.css('left', 0);
+        mylyt.main_container.width(ww - ph);
+        mylyt.main_container.height(wh - th - pv);
     }
 
     function selected_blog()

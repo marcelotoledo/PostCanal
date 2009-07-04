@@ -483,7 +483,7 @@ class C_Profile extends B_Controller
 
         /* change request (authenticated) */
 
-        if(strlen($new_email) > 0 && ($id = intval($this->session()->user_profile_id)) > 0)
+        if(strpos($new_email, '@') > 0 && ($id = intval($this->session()->user_profile_id)) > 0)
         {
             $this->authorize();
             $accepted = $this->emailChangeRequest($id, $new_email, $message);
@@ -534,13 +534,12 @@ class C_Profile extends B_Controller
                 {
                     $this->notify($new_email, "email_change", $profile);
                     $message = $this->translation()->email_change_accepted;
+                    $accepted = true;
                 }
                 else
                 {
                     $message = $this->translation()->email_unchanged;
                 }
- 
-                $accepted = true;
             }
             catch(B_Exception $exception)
             {
@@ -685,7 +684,7 @@ class C_Profile extends B_Controller
 
         foreach(UserProfile::$allow_write as $k)
         {
-            if(strlen($this->request()->{$k})>0)
+            if(array_key_exists($k, $_REQUEST))
             {
                 $profile->{$k} = $this->request()->{$k};
             }

@@ -110,7 +110,7 @@ function emlchange_submit()
         { 
             var _data = $(xml).find('data');
             if(_data.length==0) { server_error(); return null; }
-            if(_data.find('accepted').text()=="true") { flash_message("<?php echo $this->translation()->saved ?><br><small><?php echo $this->translation()->check_your_inbox_to_validate ?></small>"); } else { pwdchange_message(_data.find('message').text()); }
+            if(_data.find('accepted').text()=="true") { flash_message("<?php echo $this->translation()->saved ?><br><small><?php echo $this->translation()->check_your_inbox_to_validate ?></small>"); } else { emlchange_message(_data.find('message').text()); }
         }, 
         error: function () { server_error(); }
     });

@@ -8,7 +8,7 @@
  * @author      Rafael Castilho <rafael@castilho.biz>
  */
 
-class A_WebService
+class L_WebService
 {
     /**
      * Web Service token

@@ -28,7 +28,6 @@ class BlogType extends B_Model
 		'type_label' => array ('type' => 'string','size' => 50,'required' => true),
 		'version_name' => array ('type' => 'string','size' => 50,'required' => true),
 		'version_label' => array ('type' => 'string','size' => 50,'required' => true),
-		'current_revision' => array ('type' => 'integer','size' => 0,'required' => false),
 		'maintenance' => array ('type' => 'boolean','size' => 0,'required' => false),
 		'enabled' => array ('type' => 'boolean','size' => 0,'required' => false));
 
@@ -141,35 +140,38 @@ class BlogType extends B_Model
      */ 
     public static function discover($url)
     {
-        $client = new A_WebService();
+        $client = new L_WebService();
         $args = array('url' => $url);
+
+        $discover = null;
 
         if(count($result = ((array) $client->blog_discover($args)))==0)
         {
             $_m = "blog discover timeout for url (" . $url . ")";
             $_d = array('method' => __METHOD__);
             B_Log::write($_m, E_WARNING, $_d);
-            $result = array();
         }
         else
         {
-            $result['type_accepted'] = false;
-            $result['maintenance'] = false;
+            $discover = ((object) $result);
 
-            if(strlen($result['type']) > 0 && strlen($result['version']) > 0)
+            if(is_object(($blog_type = self::getByName($discover->type_name, 
+                                                       $discover->version_name))))
             {
-                if(is_object(($blog_type = self::getByName($result['type'], 
-                                                           $result['version']))))
+                foreach($blog_type->dump() as $k => $v)
                 {
-                    $result['type_label']    = $blog_type->type_label;
-                    $result['version_label'] = $blog_type->version_label;
-                    $result['type_accepted'] = true;
-                    $result['maintenance']   = $blog_type->maintenance;
+                    $discover->{$k} = $v;
                 }
+
+                $discover->type_accepted = true;
+            }
+            else
+            {
+                $discover->type_accepted = false;
             }
         }
 
-        return $result;
+        return $discover;
     }
 
     /**
@@ -180,7 +182,7 @@ class BlogType extends B_Model
      */ 
     public static function checkManagerUrl($url, $blog_type, $blog_version)
     {
-        $client = new A_WebService();
+        $client = new L_WebService();
         $args = array('url' => $url, 'type' => $blog_type, 'version' => $blog_version);
         return $client->blog_manager_url_check($args);
     } 
@@ -197,7 +199,7 @@ class BlogType extends B_Model
                                       $username, 
                                       $password)
     {
-        $client = new A_WebService();
+        $client = new L_WebService();
         $args = array('url'      => $url, 
                       'type'     => $blog_type, 
                       'version'  => $blog_version,
@@ -218,7 +220,7 @@ class BlogType extends B_Model
                                             $username, 
                                             $password)
     {
-        $client = new A_WebService();
+        $client = new L_WebService();
         $args = array('url'      => $url, 
                       'type'     => $blog_type, 
                       'version'  => $blog_version,

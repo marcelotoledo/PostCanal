@@ -192,4 +192,12 @@ class UserBlog extends B_Model
             " WHERE user_profile_id = ? AND hash = ?", 
             array($user_id, $hash), PDO::FETCH_CLASS, get_class()));
     }
+
+    /**
+     * Delete (deleted=1) blog by user and hash
+     */
+    public static function deleteByUserAndHash($user_id, $hash)
+    {
+        return self::execute('UPDATE ' . self::$table_name . ' SET deleted=1 WHERE user_profile_id=? AND hash=?', array($user_id, $hash));
+    }
 }

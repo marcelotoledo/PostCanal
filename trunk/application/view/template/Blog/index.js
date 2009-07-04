@@ -1,150 +1,306 @@
 var mytpl = null;
 
-
-function blog_set(blog)
+function toggle_blog_add()
 {
-    mytpl.bloglistarea
-        .find("div.blogitem[blog='" + blog + "']")
-        .find("div.blogitemleft").addClass('blogitemleftbold');
+    if(mytpl.new_blog_form.toggle().css('display')=='block')
+    {
+        mytpl.new_blog_url.val('');
+        mytpl.new_blog_url.focus();
+    }
+
+    mytpl.blog_type_failed.hide();
 }
 
-function blog_unset(blog)
+function add_message(m)
 {
-    mytpl.bloglistarea
-        .find("div.blogitem[blog='" + blog + "']")
-        .find("div.blogitemleft").removeClass('blogitemleftbold');
+    mytpl.new_blog_message.text(m);
 }
 
-function blog_edit_show(blog)
+function blog_populate(b)
 {
-    blog_set(blog);
-    mytpl.bloglistarea
-        .find("div.blogitemeditform[blog='" + blog +  "']").show();
+    var _blog = 
+    {
+        blog     : b.find('blog').text(),
+        name     : b.find('name').text(),
+        url      : b.find('url').text(),
+        username : b.find('username').text(),
+        keywords : b.find('keywords').text()
+    };
+
+    var _item = mytpl.blog_item_blank.clone();
+
+    _item.find('div.blogitem').attr('blog', _blog.blog);
+    _item.find('div.blogitemeditform').attr('blog', _blog.blog);
+
+    mytpl.blog_list_area.prepend(_item.html());
+
+    mytpl.blog_list_ref[_blog.blog] = 
+    {
+        item : mytpl.blog_list_area.find("div.blogitem[blog='" + _blog.blog + "']"),
+        form : mytpl.blog_list_area.find("div.blogitemeditform[blog='" + _blog.blog + "']")
+    };
+
+    mytpl.blog_list_ref[_blog.blog].item.find('span.blogitemname').text(_blog.name);
+    mytpl.blog_list_ref[_blog.blog].item.find('span.blogitemurl').text(_blog.url);
+    mytpl.blog_list_ref[_blog.blog].form.find("input[name='name']").val(_blog.name);
+    mytpl.blog_list_ref[_blog.blog].form.find("input[name='username']").val(_blog.username);
+    mytpl.blog_list_ref[_blog.blog].form.find("input[name='keywords']").val(_blog.keywords);
 }
 
-function blog_edit_hide(blog)
+function blog_add_callback(d)
 {
-    blog_unset(blog);
-    mytpl.bloglistarea
-        .find("div.blogitemeditform[blog='" + blog +  "']").hide();
+    var _status = d.find('status').text();
+
+    if(_status=="<?php echo C_Blog::DISCOVER_STATUS_OK ?>")
+    {
+        blog_populate(d.find('result'));
+        toggle_blog_add();
+        blog_edit_show(d.find('result').find('blog').text());
+    }
+    if(_status=="<?php echo C_Blog::DISCOVER_STATUS_FAILED ?>")
+    {
+        add_message("<?php echo $this->translation()->discover_failed ?>");
+    }
+    if(_status=="<?php echo C_Blog::DISCOVER_STATUS_TIMEOUT ?>")
+    {
+        add_message("<?php echo $this->translation()->discover_timeout ?>");
+    }
+    if(_status=="<?php echo C_Blog::DISCOVER_STATUS_URL_FAILED ?>")
+    {
+        add_message("<?php echo $this->translation()->url_failed ?>");
+    }
+    if(_status=="<?php echo C_Blog::DISCOVER_STATUS_TYPE_FAILED ?>")
+    {
+        // add_message("<?php echo $this->translation()->blog_type_failed ?>");
+        mytpl.blog_type_failed.show();
+    }
+    if(_status=="<?php echo C_Blog::DISCOVER_STATUS_MAINTENANCE ?>")
+    {
+        add_message("<?php echo $this->translation()->blog_type_maintenance ?>");
+    }
 }
 
-function blog_update_callback(blog, updated)
+function blog_add()
 {
-    mytpl.bloglistarea
-        .find("div.blogitem[blog='" + blog + "']")
-        .find("div.blogitemleft")
-        .find("span.blogitemname").text(updated.find('name').text());
-    blog_edit_hide(blog);
-}
-
-function blog_update(blog)
-{
-    var _f = mytpl.bloglistarea.find("div.blogitemeditform[blog='" + blog +  "']");
-    var _f_name = _f.find("input[name='blog_name']");
-    var _f_username = _f.find("input[name='blog_username']");
-    var _f_password = _f.find("input[name='blog_password']");
-    var _f_keywords = _f.find("input[name='keywords']");
+    if(mytpl.new_blog_url.val() == "")
+    {
+        add_message("<?php echo $this->translation()->form_incomplete ?>");
+        return null;
+    }
 
     $.ajax
     ({
         type: "POST",
-        url: "/blog/update",
+        url: "./blog/add",
         dataType: "xml",
-        data: { blog          : blog,
-                name          : _f_name.val(), 
-                blog_username : _f_username.val(), 
-                blog_password : _f_password.val(),
-                keywords      : _f_keywords.val() },
-        beforeSend: function()
-        {
-            set_active_request(true);
-        },
-        complete: function()
-        {
-            set_active_request(false);
-        },
-        success: function (xml)
-        {
-            var _d = $(xml).find('data');
-            var _u = null;
-            if((_u = _d.find('updated')))
-            {
-                blog_update_callback(blog, _u);
-            }
-        },
+        data: { url: mytpl.new_blog_url.val() },
+        beforeSend: function () { set_active_request(true); add_message(''); },
+        complete: function ()   { set_active_request(false); },
+        success: function (xml) { blog_add_callback($(xml).find('data')); },
         error: function () { server_error(); }
     });
-
-    _f_password.val("");
 }
 
-function blog_remove_from_list(blog)
+function blog_list_callback(d)
 {
-    mytpl.bloglistarea.find("div.blogitem[blog='" + blog + "']").remove();
+    d.find('blogs').children().each(function()
+    {
+        blog_populate($(this));
+    })
 }
 
-function blog_delete(blog)
+function blog_list()
+{
+    $.ajax
+    ({
+        type: "GET",
+        url: "./blog/list",
+        dataType: "xml",
+        beforeSend: function () { set_active_request(true); },
+        complete: function ()   { set_active_request(false); },
+        success: function (xml) { blog_list_callback($(xml).find('data')); },
+        error: function () { server_error(); }
+    });
+}
+
+function blog_edit_show(b)
+{
+    mytpl.blog_list_ref[b].item.find('a.blogeditlnk').hide();
+    mytpl.blog_list_ref[b].item.find('a.blogdeletelnk').show();
+    mytpl.blog_list_ref[b].form.show();
+}
+
+function blog_edit_hide(b)
+{
+    mytpl.blog_list_ref[b].form.hide();
+    mytpl.blog_list_ref[b].item.find('a.blogdeletelnk').hide();
+    mytpl.blog_list_ref[b].item.find('a.blogeditlnk').show();
+}
+
+function blog_remove_from_list(b)
+{
+    mytpl.blog_list_ref[b].item.next('div.blogdeletemsg').remove();
+    mytpl.blog_list_ref[b].item.remove();
+    mytpl.blog_list_ref[b].form.remove();
+    mytpl.blog_list_ref[b] = null;
+    flash_message("<?php echo $this->translation()->deleted ?>");
+}
+
+function blog_delete_confirm_show(b)
+{
+    blog_edit_hide(b);
+    mytpl.blog_list_ref[b].item.find('a.blogeditlnk').hide();
+    mytpl.blog_list_ref[b].item.after(mytpl.blog_delete_blank.clone().html());
+}
+
+function blog_delete_confirm_hide(b)
+{
+    mytpl.blog_list_ref[b].item.next('div.blogdeletemsg').remove();
+    mytpl.blog_list_ref[b].item.find('a.blogeditlnk').show();
+}
+
+function blog_delete_callback(d)
+{
+    blog_remove_from_list(d.find('result').text());
+}
+
+function blog_delete(b)
 {
     $.ajax
     ({
         type: "POST",
-        url: "/blog/delete",
+        url: "./blog/delete",
         dataType: "xml",
-        data: { blog: blog },
-        beforeSend: function()
-        {
-            set_active_request(true);
-        },
-        complete: function()
-        {
-            set_active_request(false);
-        },
-        success: function (xml)
-        {
-            var _d = $(xml).find('data');
-            blog_remove_from_list(_d.find('result').text());
-        },
+        data: { blog: b },
+        beforeSend: function() { set_active_request(true); },
+        complete: function() { set_active_request(false); },
+        success: function (xml) { blog_delete_callback($(xml).find('data')); },
         error: function () { server_error(); }
     });
 }
 
+function blog_update_callback(d)
+{
+    var _updated = null;
+
+    if((_updated = d.find('updated'))!=undefined)
+    {
+        var _blog = _updated.find('blog').text();
+        var _name = _updated.find('name').text();
+        mytpl.blog_list_ref[_blog].item.find('span.blogitemname').text(_name);
+        flash_message("<?php echo $this->translation()->saved ?>");
+        blog_edit_hide(_blog);
+    }
+}
+
+function blog_update(b)
+{
+    var _up = 
+    {
+        blog          : b,
+        name          : mytpl.blog_list_ref[b].form.find("input[name='name']").val(),
+        blog_username : mytpl.blog_list_ref[b].form.find("input[name='username']").val(),
+        blog_password : mytpl.blog_list_ref[b].form.find("input[name='password']").val(),
+        keywords      : mytpl.blog_list_ref[b].form.find("input[name='keywords']").val()
+    }
+
+    $.ajax
+    ({
+        type: "POST",
+        url: "./blog/update",
+        dataType: "xml",
+        data: _up,
+        beforeSend: function() { set_active_request(true); },
+        complete: function() { set_active_request(false); },
+        success: function (xml) { blog_update_callback($(xml).find('data')); },
+        error: function () { server_error(); }
+    });
+}
 
 $(document).ready(function()
 {
     mytpl =
     {
-        bloglistarea : $("#bloglistarea")
-    };
-
-    /* triggers */
-
-    mytpl.bloglistarea.find("a.blogeditlnk").click(function()
+        new_blog_button   : $("#addnewblogbtn"),
+        new_blog_form     : $("#addnewblogform"),
+        new_blog_url      : $("#blogurl"),
+        new_blog_submit   : $("#addsubmit"),
+        new_blog_message  : $("#addmessage"),
+        blog_list_area    : $("#bloglistarea"),
+        blog_item_blank   : $("#blogitemblank"),
+        blog_delete_blank : $("#blogdeleteblank"),
+        blog_type_failed  : $("#blogtypefailedmsg"),
+        blog_list_ref     : Array()
+    }; 
+    
+    mytpl.new_blog_button.click(function()
     {
-        blog_edit_show($(this).attr('blog'));
+        if(active_request==false) { toggle_blog_add(); }
     });
 
-    mytpl.bloglistarea.find("a.blogdeletelnk").click(function()
+    mytpl.new_blog_url.keypress(function(e)
     {
-        blog = $(this).attr('blog');
-        blog_set(blog);
-        if(confirm("<?php echo $this->translation()->are_you_sure ?>"))
+        if((e.which && e.which == 13) || (e.keyCode && e.keyCode == 13))
         {
-            blog_delete(blog);
-        }
-        else
-        {
-            blog_unset(blog);
+            if(active_request==false) { blog_add(); }
         }
     });
 
-    mytpl.bloglistarea.find("input[name='blogupdatebtn']").click(function()
+    mytpl.new_blog_submit.click(function()
     {
-        blog_update($(this).attr('blog'));
+        if(active_request==false) { blog_add(); }
     });
 
-    mytpl.bloglistarea.find("input[name='blogcancelbtn']").click(function()
+    function blog_item_getid(i)
     {
-        blog_edit_hide($(this).attr('blog'));
+        return i.parent().parent().attr('blog')
+    }
+
+    mytpl.blog_list_area.find('a.blogeditlnk').live('click', function()
+    {
+        blog_edit_show(blog_item_getid($(this)));
+        return false;
     });
+
+    mytpl.blog_list_area.find('a.blogdeletelnk').live('click', function()
+    {
+        blog_delete_confirm_show(blog_item_getid($(this)));
+        return false;
+    });
+
+    function blog_update_getid(i)
+    {
+        return i.parent().parent().parent().attr('blog')
+    }
+
+    mytpl.blog_list_area.find("input[name='blogupdatebtn']").live('click', function()
+    {
+        blog_update(blog_update_getid($(this)));
+        return false;
+    });
+
+    mytpl.blog_list_area.find("input[name='blogcancelbtn']").live('click', function()
+    {
+        blog_edit_hide(blog_update_getid($(this)));
+        return false;
+    });
+
+    function blog_delete_getid(i)
+    {
+        return i.parent().parent().parent().prev('div.blogitem').attr('blog');
+    }
+
+    mytpl.blog_list_area.find("input[name='blogdeletebtn']").live('click', function()
+    {
+        blog_delete(blog_delete_getid($(this)));
+        return false;
+    });
+
+    mytpl.blog_list_area.find("input[name='blognodelbtn']").live('click', function()
+    {
+        blog_delete_confirm_hide(blog_delete_getid($(this)));
+        return false;
+    });
+
+    blog_list();
 });
