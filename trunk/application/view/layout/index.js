@@ -11,7 +11,8 @@ function set_active_request(b)
 
 function server_error()
 {
-    alert("<?php echo $this->translation()->server_error ?>");
+    // alert("<?php echo $this->translation()->server_error ?>");
+    console.error('server error');
 }
 
 function spinner_init()
@@ -23,6 +24,19 @@ function spinner_init()
     });
 }
 
+function disable_submit()
+{
+    $("form").each(function()
+    {
+        if($(this).attr('action')=="")
+        {
+            $(this).submit(function()
+            {
+                return false;
+            });
+        }
+    });
+}
 
 $(document).ready(function()
 {
@@ -30,20 +44,6 @@ $(document).ready(function()
     {
         container: $("#container")
     };
-
-    function disable_submit()
-    {
-        $("form").each(function()
-        {
-            if($(this).attr('action')=="")
-            {
-                $(this).submit(function()
-                {
-                    return false;
-                });
-            }
-        });
-    }
 
     function container_update()
     {

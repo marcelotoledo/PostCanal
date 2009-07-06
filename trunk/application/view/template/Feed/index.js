@@ -1,294 +1,296 @@
 var mytpl = null;
 
-
-function on_blog_change()
+function feed_add_show()
 {
-    toggle_feed_add_form(false);
-    feed_list(); 
+    mytpl.feed_type_failed.hide();
+    mytpl.new_feed_form.show();
+    mytpl.new_feed_url.val('');
+    mytpl.new_feed_url.focus();
 }
 
-function form_message(m)
+function feed_add_hide()
 {
-    (m=="") ? 
-        mytpl.feed_add_msg.hide().find("td").html("") :
-        mytpl.feed_add_msg.show().find("td").html(m) ;
+    mytpl.new_feed_form.hide();
+    mytpl.feed_type_failed.hide();
+    mytpl.feed_options_form.hide();
 }
 
-function toggle_feed_add_form(s)
+function feed_add_toggle()
 {
-    if(s == true)
+    (mytpl.new_feed_form.css('display')=='block') ?
+        feed_add_hide() :
+        feed_add_show() ;
+}
+
+function add_message(m)
+{
+    mytpl.new_feed_message.text(m);
+}
+
+function feed_populate(b, app)
+{
+    if(b==undefined) { return false; }
+
+    var _feed = 
     {
-        mytpl.feed_lnk_div.hide();
-        mytpl.feed_add_form.show();
+        feed    : b.find('feed').text(),
+        ord     : b.find('ordering').text(),
+        url     : b.find('feed_url').text(),
+        title   : b.find('feed_title').text(),
+        enabled : b.find('enabled').text()
+    };
+
+    if(mytpl.feed_list_ref[_feed.feed]!=undefined) // avoid dupl
+    {
+        return false;
+    }
+
+    var _item = mytpl.feed_item_blank.clone();
+
+    _item.find('div.feeditem')
+        .attr('feed', _feed.feed)
+        .attr('ord', _feed.ord);
+    _item.find('div.feeditemeditform').attr('feed', _feed.feed);
+
+    (app==true) ? mytpl.feed_list_area.append(_item.html()) : 
+                  mytpl.feed_list_area.prepend(_item.html()) ; 
+
+    mytpl.feed_list_ref[_feed.feed] = 
+    {
+        item : mytpl.feed_list_area.find("div.feeditem[feed='" + _feed.feed + "']"),
+        form : mytpl.feed_list_area.find("div.feeditemeditform[feed='" + _feed.feed + "']")
+    };
+
+    mytpl.feed_list_ref[_feed.feed].item.find('span.feeditemname').text(_feed.title);
+    mytpl.feed_list_ref[_feed.feed].item.find('span.feeditemurl').text(_feed.url);
+    mytpl.feed_list_ref[_feed.feed].form.find("input[name='title']").val(_feed.title);
+}
+
+function feed_options(r)
+{
+    var _option = null;
+    var _url    = '';
+    var _title  = '';
+    var _output = Array();
+    var _i = 0;
+
+    r.each(function()
+    {
+        _url = $(this).find('feed_url').text();
+        _title = $(this).find('feed_title').text();
+        _option = mytpl.feed_option_blank.clone();
+        _option.find(mytpl.feed_option_selector)
+            .attr('url', _url)
+            .after(((_title.length>0) ? _title : _url));
+        _output[_i] = _option.html(); _i++;
+    });
+
+    mytpl.feed_options_form.find('div.inputfeedoption').remove();
+    mytpl.feed_options_form.find('form').prepend(_output.join(''));
+    mytpl.feed_options_form.find(mytpl.feed_option_selector + ":first").attr('checked', true);
+
+    feed_add_hide();
+    mytpl.feed_options_form.show();
+}
+
+function feed_discover_callback(d)
+{
+    var _results = d.find('results').find('item');
+
+    if(_results.length == 0)
+    {
+        add_message("<?php echo $this->translation()->feed_not_found ?>");
+        return false;
+    }
+
+    if(_results.length > 1)
+    {
+        feed_options(_results);
+        return false;
+    }
+
+    var _status = _results.find('feed_status').text();
+        
+    if(_status=="200")
+    {
+        feed_add(_results.find('feed_url').text());
+        feed_add_hide();
     }
     else
     {
-        mytpl.feed_lnk_div.show();
-        mytpl.feed_add_form.hide();
-        mytpl.feed_add_url.val("");
-        mytpl.feed_add_url_row.show();
-        mytpl.feed_add_options.find(".feedoption").remove();
-        form_message("");
+        add_message("<?php echo $this->translation()->feed_error ?>");
     }
 }
 
-function feedaddform_options(feeds)
+function feed_discover()
 {
-    mytpl.feed_add_url_row.hide();
-
-    var _lscontent = "";
-    var _data = null;
-    var _opt = null;
-
-    feeds.each(function()
+    if(mytpl.new_feed_url.val() == "")
     {
-        _data =
-        {
-            url         : $(this).find('feed_url').text(),
-            title       : $(this).find('feed_title').text(),
-            description : $(this).find('feed_description').text()
-        };
+        add_message("<?php echo $this->translation()->form_incomplete ?>");
+        return null;
+    }
 
-        _opt = mytpl.feed_option_blank.clone();
-        _opt.find("input[name='feedaddoption']").attr('url', _data.url);
-        _opt.find("div.feedoptiontitle").html((_data.title.length > 0) ? 
-            _data.title + "<br/><small>" + _data.url + "</small>" :
-            _data.url);
-
-        _lscontent += "<div class=\"feedoption\">" + _opt.html() + "</div>\n";
-    });
-
-    mytpl.feed_add_options.append(_lscontent);
-    mytpl.feed_add_options.find("input[name='feedaddoption']:first").attr('checked', true);
-}
-
-function feed_discover(url)
-{
     $.ajax
     ({
-        type: "GET",
-        url: "/feed/discover",
+        type: "POST",
+        url: "./feed/discover",
         dataType: "xml",
-        data: { url: url },
-        beforeSend: function()
-        {
-            set_active_request(true);
-            form_message("");
-        },
-        complete: function()
-        {
-            set_active_request(false);
-        },
-        success: function (xml)
-        {
-            var _d = $(xml).find('data');
-            var _r = _d.find('results')
-
-            if(_r.length > 0) _r = _r.children();
-
-            if(_r.length == 1)
-            {
-                var _s = _r.find('feed_status').text();
-                
-                if(_s=="200")
-                {
-                    feed_add(_r.find('feed_url').text());
-                }
-                if(_s=="404")
-                {
-                    form_message("<?php echo $this->translation()->feed_not_found ?>");
-                }
-                if(_s=="500")
-                {
-                    form_message("<?php echo $this->translation()->feed_error ?>");
-                }
-            }
-            else if(_r.length >  1)
-            {
-                feedaddform_options(_r);
-            }
-            else
-            {
-                form_message("<?php echo $this->translation()->feed_not_found ?>");
-            }
-        },
+        data: { url: mytpl.new_feed_url.val() },
+        beforeSend: function () { set_active_request(true); add_message(''); },
+        complete: function ()   { set_active_request(false); },
+        success: function (xml) { feed_discover_callback($(xml).find('data')); },
         error: function () { server_error(); }
     });
 }
 
-function feed_add(url)
+function feed_add_callback(d)
+{
+    feed_populate(d.find('feed'), false);
+}
+
+function feed_add(u)
 {
     $.ajax
     ({
         type: "POST",
-        url: "/feed/add",
+        url: "./feed/add",
         dataType: "xml",
-        data: { url: url, blog: blog.current },
-        beforeSend: function()
-        {
-            set_active_request(true);
-            form_message("");
-        },
-        complete: function()
-        {
-            set_active_request(false);
-            toggle_feed_add_form(false);
-        },
-        success: function (xml)
-        {
-            var _d = $(xml).find('data');
-            var _f = _d.find('feed').text();
-
-            if(_f.length > 0)
-            {
-                feed_list();
-            }
-            else
-            {
-                server_error();
-            }
-        },
+        data: { url  : u ,
+                blog : blog.current },
+        beforeSend: function () { set_active_request(true); add_message(''); },
+        complete: function ()   { set_active_request(false); },
+        success: function (xml) { feed_add_callback($(xml).find('data')); },
         error: function () { server_error(); }
     });
 }
 
-function feedaddform_submit()
+function feed_list_callback(d)
 {
-    var _url = mytpl.feed_add_options.find("input[name='feedaddoption']:checked").attr('url');
-
-    if(_url!="" && _url!=undefined)
+    d.find('feeds').children().each(function()
     {
-        feed_discover(_url);
-    }
-    else
-    {
-        if((_url = mytpl.feed_add_url.val()) != "")
-        {
-            feed_discover(_url);
-        }
-        else
-        {
-            form_message("<?php echo $this->translation()->blank_url ?>");
-        }
-    }
-}
-
-function feed_populate(feeds)
-{
-    mytpl.feed_list_area.html("");
-
-    if(feeds.length==0) { return null; }
-
-    var _lscontent = "";
-    var _item = null;
-    var _data = null;
-    var _left = null;
-    var _toggle = null;
-
-    feeds.each(function()
-    {
-        _data =
-        {
-            feed    : $(this).find('feed').text(),
-            ord     : $(this).find('ordering').text(),
-            url     : $(this).find('feed_url').text(),
-            title   : $(this).find('feed_title').text(),
-            enabled : ($(this).find('enabled').text() == 1)
-        };
-
-        _item = mytpl.feed_item_blank.clone();
-
-        _left = _item.find("div.feeditemleft")
-        _left.find("div.feeditemtitle").html(_data.title);
-        _left.find("div.feeditemurl").html(_data.url);
-        _toggle = _item.find("div.feeditemright").find("a.feedtogglelnk")
-
-        if(_data.enabled)
-        {
-            _toggle.text("<?php echo $this->translation()->disable ?>");
-        }
-        else
-        {
-            _toggle.text("<?php echo $this->translation()->enable ?>");
-        }
-
-        _lscontent += "<div class=\"feeditem" + ((_data.enabled) ? "" : " feeditemdisabled") + 
-                      "\" feed=\"" + _data.feed + "\" ord=\"" + _data.ord + "\">" + 
-                      _item.html() + "</div>\n";
-    });
-
-    mytpl.feed_list_area.html(_lscontent);
-
-    /* add events */
-
-    var _feed = null;
-
-    mytpl.feed_list_area.find('.feeditem').each(function()
-    {
-        $(this).find('a.feedrenamelnk').click(function()
-        {
-            feed_rename_show($(this).parent().parent().attr('feed'));
-            return false;
-        });
-        $(this).find('a.feedtogglelnk').click(function()
-        {
-            feed_toggle($(this).parent().parent().attr('feed'));
-            return false;
-        });
-        $(this).find('a.feeddeletelnk').click(function()
-        {
-            feed_set((_feed = $(this).parent().parent().attr('feed')));
-            if(confirm("<?php echo $this->translation()->are_you_sure ?>"))
-            {   
-                feed_delete(_feed);
-            }
-            else
-            {
-                feed_unset(_feed);
-            }
-            return false;
-        });
-    });
+        feed_populate($(this), true);
+    })
 }
 
 function feed_list()
 {
-    if(blog.current==undefined) return null;
-
     $.ajax
     ({
         type: "GET",
-        url: "/feed/list",
+        url: "./feed/list",
         dataType: "xml",
         data: { blog: blog.current },
-        beforeSend: function()
-        {
-            set_active_request(true);
-        },
-        complete: function()
-        {
-            set_active_request(false);
-            $(document).trigger('after_feed_list');
-        },
-        success: function (xml)
-        {
-            var _d = $(xml).find('data').find('feeds').children();
-            
-            if(_d.length > 0)
-            {
-                feed_populate(_d);
-            }
-            else
-            {
-                $.b_dialog({ selector: "#nofeedmsg", modal: false });
-                $.b_dialog_show();
-            }
-        },
+        beforeSend: function () { set_active_request(true); },
+        complete: function ()   { set_active_request(false); 
+                                  $(document).trigger('after_feed_list'); },
+        success: function (xml) { feed_list_callback($(xml).find('data')); },
         error: function () { server_error(); }
     });
 }
 
-function feed_position(feed, position)
+function feed_edit_show(b)
+{
+    mytpl.feed_list_ref[b].item.find('a.feededitlnk').hide();
+    mytpl.feed_list_ref[b].item.find('a.feeddeletelnk').show();
+    disable_submit(); // form have only one input, disable submit from this
+    mytpl.feed_list_ref[b].form.show();
+}
+
+function feed_edit_hide(b)
+{
+    mytpl.feed_list_ref[b].form.hide();
+    mytpl.feed_list_ref[b].item.find('a.feeddeletelnk').hide();
+    mytpl.feed_list_ref[b].item.find('a.feededitlnk').show();
+}
+
+function feed_remove_from_list(b)
+{
+    mytpl.feed_list_ref[b].item.next('div.feeddeletemsg').remove();
+    mytpl.feed_list_ref[b].item.remove();
+    mytpl.feed_list_ref[b].form.remove();
+    mytpl.feed_list_ref[b] = null;
+    flash_message("<?php echo $this->translation()->deleted ?>");
+}
+
+function feed_delete_confirm_show(b)
+{
+    feed_edit_hide(b);
+    mytpl.feed_list_ref[b].item.find('a.feededitlnk').hide();
+    mytpl.feed_list_ref[b].item.after(mytpl.feed_delete_blank.clone().html());
+}
+
+function feed_delete_confirm_hide(b)
+{
+    mytpl.feed_list_ref[b].item.next('div.feeddeletemsg').remove();
+    mytpl.feed_list_ref[b].item.find('a.feededitlnk').show();
+}
+
+function feed_delete_callback(d)
+{
+    feed_remove_from_list(d.find('result').text());
+}
+
+function feed_delete(f)
+{
+    $.ajax
+    ({
+        type: "POST",
+        url: "./feed/delete",
+        dataType: "xml",
+        data: { blog: blog.current,
+                feed: f },
+        beforeSend: function() { set_active_request(true); },
+        complete: function() { set_active_request(false); },
+        success: function (xml) { feed_delete_callback($(xml).find('data')); },
+        error: function () { server_error(); }
+    });
+}
+
+function feed_update_callback(d)
+{
+    var _updated = null;
+
+    if((_updated = d.find('updated'))!=undefined)
+    {
+        var _feed = _updated.find('feed').text();
+        var _title = _updated.find('feed_title').text();
+        mytpl.feed_list_ref[_feed].item.find('span.feeditemname').text(_title);
+        flash_message("<?php echo $this->translation()->saved ?>");
+        feed_edit_hide(_feed);
+    }
+}
+
+function feed_update(f)
+{
+    var _up = 
+    {
+        feed       : f,
+        blog       : blog.current,
+        feed_title : mytpl.feed_list_ref[f].form.find("input[name='title']").val(),
+    }
+
+    $.ajax
+    ({
+        type: "POST",
+        url: "./feed/update",
+        dataType: "xml",
+        data: _up,
+        beforeSend: function() { set_active_request(true); },
+        complete: function() { set_active_request(false); },
+        success: function (xml) { feed_update_callback($(xml).find('data')); },
+        error: function () { server_error(); }
+    });
+}
+
+function feed_position_callback(d)
+{
+    if((d.find('updated').text()=="true")!=true)
+    {
+        feed_list();
+    }
+}
+
+function feed_position(f, p)
 {
     $.ajax
     ({
@@ -296,25 +298,11 @@ function feed_position(feed, position)
         url: "/feed/position",
         dataType: "xml",
         data: { blog     : blog.current , 
-                feed     : feed, 
-                position : position },
-        beforeSend: function()
-        {
-            set_active_request(true);
-        },
-        complete: function()
-        {
-            set_active_request(false);
-        },
-        success: function (xml)
-        {
-            var _d = $(xml).find('data');
-
-            if((_d.find('updated').text()=="true")!=true)
-            {
-                feed_list();
-            }
-        },
+                feed     : f , 
+                position : p },
+        beforeSend: function() { set_active_request(true); },
+        complete: function() { set_active_request(false); },
+        success: function (xml) { feed_position_callback($(xml).find('data')); },
         error: function () { server_error(); }
     });
 }
@@ -348,214 +336,108 @@ function feed_sortable_init()
     mytpl.feed_list_area.disableSelection();
 }
 
-function feed_set(feed)
+function on_blog_change()
 {
-    mytpl.feed_list_area.find("div.feeditem[feed='" + feed + "']")
-        .find("div.feeditemleft").addClass('feeditemleftbold');
+    feed_add_hide();
+    feed_list(); 
 }
-
-function feed_unset(feed)
-{
-    mytpl.feed_list_area.find("div.feeditem[feed='" + feed + "']")
-        .find("div.feeditemleft").removeClass('feeditemleftbold');
-}
-
-function feed_rename_show(feed)
-{
-    feed_set(feed);
-    var _f = $("div.feeditem[feed='" + feed + "']").find("div.feeditemtitle").text();
-    var _n = null;
-    if(_n = prompt("<?php echo $this->translation()->feed_rename ?>", _f))
-    {
-        feed_update(feed, 'feed_title', _n);
-    }
-    feed_unset(feed);
-}
-
-function feed_update_callback(feed, updated)
-{
-    var _i = mytpl.feed_list_area.find("div.feeditem[feed='" + feed + "']");
-    var _f = null;
-    if((_f = updated.find('feed_title')))
-    {
-        _i.find("div.feeditemtitle").text(_f.text());
-    }
-    feed_unset(feed);
-}
-
-function feed_update(feed, k, v)
-{
-    $.ajax
-    ({
-        type: "POST",
-        url: "/feed/update",
-        dataType: "xml",
-        data: { feed             : feed,
-                blog             : blog.current,
-                feed_title       : ((k=='feed_title') ? v : null),
-                feed_description : ((k=='feed_description') ? v : null) },
-        beforeSend: function()
-        {
-            set_active_request(true);
-        },
-        complete: function()
-        {
-            set_active_request(false);
-        },
-        success: function (xml)
-        {
-            var _d = $(xml).find('data');
-            var _u = null;
-            if((_u = _d.find('updated')))
-            {
-                feed_update_callback(feed, _u);
-            }
-        },
-        error: function () { server_error(); }
-    });
-}
-
-function feed_remove_from_list(feed)
-{
-    mytpl.feed_list_area.find("div.feeditem[feed='" + feed + "']").remove();
-}
-
-function feed_delete(feed)
-{
-    $.ajax
-    ({
-        type: "POST",
-        url: "/feed/delete",
-        dataType: "xml",
-        data: { blog: blog.current, 
-                feed: feed },
-        beforeSend: function()
-        {
-            set_active_request(true);
-        },
-        complete: function()
-        {
-            set_active_request(false);
-        },
-        success: function (xml)
-        {
-            var _d = $(xml).find('data');
-            feed_remove_from_list(_d.find('result').text());
-        },
-        error: function () { server_error(); }
-    });
-}
-
-function feed_toggle_callback(feed, _e)
-{
-    var _i = mytpl.feed_list_area.find("div.feeditem[feed='" + feed + "']");
-    var _t = _i.find("div.feeditemright").find("a.feedtogglelnk");
-
-    if(_e == 1)
-    {
-        _i.removeClass('feeditemdisabled');
-        _t.text("<?php echo $this->translation()->disable ?>");
-    }
-    else
-    {
-        _i.addClass('feeditemdisabled');
-        _t.text("<?php echo $this->translation()->enable ?>");
-    }
-}
-
-function feed_toggle(feed)
-{
-    var _i = mytpl.feed_list_area.find("div.feeditem[feed='" + feed + "']");
-    var _e = _i.hasClass('feeditemdisabled') ? 1 : 0;
-
-    $.ajax
-    ({
-        type: "POST",
-        url: "/feed/toggle",
-        dataType: "xml",
-        data: { blog   : blog.current, 
-                feed   : feed, 
-                enable : _e },
-        beforeSend: function()
-        {
-            set_active_request(true);
-        },
-        complete: function()
-        {
-            set_active_request(false);
-        },
-        success: function (xml)
-        {
-            var _d = $(xml).find('data');
-            feed_toggle_callback(_d.find('result').text(), _e);
-        },
-        error: function () { server_error(); }
-    });
-}
-
 
 $(document).ready(function()
 {
     mytpl =
     {
-        blog_list             : $("#bloglstsel"),
-        feed_lnk_div          : $("#feedlnkdiv"),
-        feed_add_form         : $("#feedaddform"),
-        feed_add_options      : $("#feedaddoptions").find("td"),
-        feed_add_option_blank : $("#feedaddoptionblank"),
-        feed_add_lnk          : $("#feedaddlnk"),
-        feed_add_cancel       : $("#feedaddcancel"),
-        feed_add_submit       : $("#feedaddsubmit"),
-        feed_add_url          : $("#feedaddurl"),
-        feed_add_url_row      : $("#feedaddurlrow"),
-        feed_add_msg          : $("#feedaddmessage"),
-        feed_option_blank     : $("#feedoptionblank"),
-        feed_list_area        : $("#feedlistarea"),
-        feed_item_blank       : $("#feeditemblank")
-    };
-
-    /* triggers */
-
-    mytpl.feed_add_lnk.click(function()
+        new_feed_button      : $("#addnewfeedbtn"),
+        new_feed_form        : $("#addnewfeedform"),
+        feed_options_form    : $("#feedoptionsform"),
+        feed_options_submit  : $("#optsubmit"),
+        feed_options_message : $("#optmessage"),
+        feed_option_blank    : $("#feedoptionblank"),
+        feed_option_selector : "input[name='inputfeedoption']",
+        new_feed_url         : $("#feedurl"),
+        new_feed_submit      : $("#addsubmit"),
+        new_feed_message     : $("#addmessage"),
+        feed_list_area       : $("#feedlistarea"),
+        feed_item_blank      : $("#feeditemblank"),
+        feed_delete_blank    : $("#feeddeleteblank"),
+        feed_type_failed     : $("#feedtypefailedmsg"),
+        feed_list_ref        : Array()
+    }; 
+    
+    mytpl.new_feed_button.click(function()
     {
-        if(active_request == false)
-        {
-            toggle_feed_add_form(true);
-        }
-        return false;
+        if(active_request==false) { feed_add_toggle(); }
     });
 
-    mytpl.feed_add_cancel.click(function()
-    {
-        if(active_request == false)
-        {
-            toggle_feed_add_form(false);
-        }
-    });
-
-    mytpl.feed_add_url.keypress(function(e)
+    mytpl.new_feed_url.keypress(function(e)
     {
         if((e.which && e.which == 13) || (e.keyCode && e.keyCode == 13))
         {
-            mytpl.feed_add_submit.click();
+            if(active_request==false) { feed_discover(); }
         }
     });
 
-    mytpl.feed_add_submit.click(function()
+    mytpl.new_feed_submit.click(function()
     {
-        if(active_request == false)
-        {
-            feedaddform_submit();
-        }
+        if(active_request==false) { feed_discover(); }
     });
 
+    function feed_item_getid(i)
+    {
+        return i.parent().parent().attr('feed')
+    }
 
-    /*<?php if(count($this->blogs)==0) : ?>**/
+    mytpl.feed_list_area.find('a.feededitlnk').live('click', function()
+    {
+        feed_edit_show(feed_item_getid($(this)));
+        return false;
+    });
 
-    $.b_dialog({ selector: "#noblogmsg", modal: false });
-    $.b_dialog_show();
+    mytpl.feed_list_area.find('a.feeddeletelnk').live('click', function()
+    {
+        feed_delete_confirm_show(feed_item_getid($(this)));
+        return false;
+    });
 
-    /*<?php endif ?>**/
+    function feed_update_getid(i)
+    {
+        return i.parent().parent().parent().attr('feed')
+    }
+
+    mytpl.feed_list_area.find("input[name='feedupdatebtn']").live('click', function()
+    {
+        feed_update(feed_update_getid($(this)));
+        return false;
+    });
+
+    mytpl.feed_list_area.find("input[name='feedcancelbtn']").live('click', function()
+    {
+        feed_edit_hide(feed_update_getid($(this)));
+        return false;
+    });
+
+    function feed_delete_getid(i)
+    {
+        return i.parent().parent().parent().prev('div.feeditem').attr('feed');
+    }
+
+    mytpl.feed_list_area.find("input[name='feeddeletebtn']").live('click', function()
+    {
+        feed_delete(feed_delete_getid($(this)));
+        return false;
+    });
+
+    mytpl.feed_list_area.find("input[name='feednodelbtn']").live('click', function()
+    {
+        feed_delete_confirm_hide(feed_delete_getid($(this)));
+        return false;
+    });
+
+    mytpl.feed_options_submit.live('click', function()
+    {
+        mytpl.new_feed_url.val(mytpl.feed_options_form
+            .find(mytpl.feed_option_selector + ":checked").attr('url'));
+        feed_discover();
+    });
 
     feed_list();
 

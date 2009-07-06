@@ -1,67 +1,80 @@
-<?php if(count($this->blogs) > 0) : ?>
+<h1><?php echo $this->translation()->manage_feeds ?></h1>
 
-<br/>
-<div id="subcontainer">
+<div id="addnewfeedbtn"><h2><?php echo $this->translation()->add_new_feed ?></h2></div>
 
-<h1><?php echo $this->translation()->feeds ?></h1>
-<div id="feedlnkdiv">
-    <a href="#" id="feedaddlnk"><?php echo $this->translation()->feed_add ?></a>
+<div id="addnewfeedform" style="display:none">
+<form>
+    <div class="inputcontainer">
+        <div class="inputlabel"><?php echo $this->translation()->url ?></div>
+        <input type="text" id="feedurl" size="40">
+    </div>
+    <div class="inputcontainer">
+        <input id="addsubmit" type="button" value="<?php echo $this->translation()->continue ?>">
+    </div>
+    <div class="inputmessage" id="addmessage"></div>
+</form>
 </div>
 
-<form id="feedaddform" style="display:none">
-    <table>
-        <tr id="feedaddurlrow">
-        <th><?php echo $this->translation()->feed_add_url ?>:</th>
-        <td><input type="text" id="feedaddurl" value=""></td>
-        </tr>
-        <tr id="feedaddoptions"><td colspan="2">
-        </td></tr>
-        <tr id="feedaddmessage" style="display:none">
-        <th>&nbsp;</th>
-        <td class="message"></td>
-        </tr>
-        <tr>
-        <th>&nbsp;</th>
-        <td class="buttons">
-            <input id="feedaddcancel" type="button" value="<?php echo $this->translation()->cancel ?>">
-            <input id="feedaddsubmit" type="button" value="<?php echo $this->translation()->submit ?>">
-        </td>
-        </tr>
-    </table>
+<div id="feedtypefailedmsg" style="display:none">
+    <?php echo $this->translation()->feed_type_failed ?>
+</div>
+
+<div id="feedoptionsform" style="display:none">
+<form>
+    <div class="inputcontainer">
+        <input id="optsubmit" type="button" value="<?php echo $this->translation()->save ?>">
+    </div>
+    <div class="inputmessage" id="optmessage"></div>
 </form>
+</div>
 
 <div id="feedoptionblank" style="display:none">
-    <div class="feedoptionbutton">
-        <input name="feedaddoption" type="radio" url="">
+    <div class="inputcontainer inputfeedoption">
+        <input name="inputfeedoption" type="radio" url="">
     </div>
-    <div class="feedoptiontitle">
-    </div>
-    <div style="clear:left"></div>
 </div>
 
-<div id="feedlistarea">
-    <div id="feeditemblank" style="display:none">
+
+
+<div id="feedlistarea"></div>
+
+<div id="feeditemblank" style="display:none">
+    <div class="feeditem" feed="" ord="">
         <div class="feeditemleft">
-            <div class="feeditemtitle"></div>
-            <div class="feeditemurl"></div>
+        <span class="feeditemname"></span><br/>
+        <small><span class="feeditemurl"></span></small>
         </div>
         <div class="feeditemright">
-            <a href="#" class="feedrenamelnk" feed="blank"><?php echo $this->translation()->rename ?></a>
-            <a href="#" class="feedtogglelnk" feed="blank"><?php echo $this->translation()->disable ?></a>
-            <a href="#" class="feeddeletelnk" feed="blank"><?php echo $this->translation()->delete ?></a>
+        <a class="feededitlnk"><?php echo $this->translation()->edit ?></a>
+        <a class="feeddeletelnk" style="display:none"><?php echo $this->translation()->delete ?></a>
         </div>
         <div style="clear:both"></div>
     </div>
+    <div class="feeditemeditform" feed="" style="display:none">
+        <form>
+        <div class="inputcontainer">
+            <div class="inputlabel"><?php echo $this->translation()->title ?></div>
+            <input type="text" name="title" size="40" value="">
+        </div>
+        <div class="inputcontainer">
+            <input type="button" name="feedupdatebtn" value="<?php echo $this->translation()->save ?>">
+            <input type="button" name="feedcancelbtn" value="<?php echo $this->translation()->cancel ?>">
+        </div>
+        <div class="inputmessage"></div>
+        </form>
+    </div>
 </div>
 
+<div id="feeddeleteblank" style="display:none">
+    <div class="feeddeletemsg">
+        <span class="deletemsgbig"><?php echo $this->translation()->deleting ?></span><br/>
+        <span class="deletemsgask"><?php echo $this->translation()->are_you_sure ?></span><br/>
+        <form>
+        <div class="inputcontainer">
+            <input type="button" class="feeddeletey" name="feeddeletebtn" value="<?php echo $this->translation()->yes_delete ?>">
+            <input type="button" class="feeddeleten" name="feednodelbtn" value="<?php echo $this->translation()->dont_delete ?>">
+        </div>
+        </form>
+    </div>
 </div>
 
-<?php endif ?>
-
-<div id="nofeedmsg" class="b-dialog" style="display:none">
-<?php echo $this->translation()->new_feed_instruction ?>.
-<hr>
-<div class="b-dialog-buttons">
-<a class="b-dialog-close"><?php echo $this->translation()->close ?></a>
-</div>
-</div>

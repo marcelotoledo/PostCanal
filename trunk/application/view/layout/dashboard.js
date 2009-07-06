@@ -23,7 +23,8 @@ function flash_message(m)
 
 function server_error()
 {
-    alert("<?php echo $this->translation()->server_error ?>");
+    // alert("<?php echo $this->translation()->server_error ?>");
+    console.error('server error');
 }
 
 function spinner_init()
@@ -119,6 +120,20 @@ function blog_update(k, v)
     });
 }
 
+function disable_submit()
+{
+    $("form").each(function()
+    {
+        if($(this).attr('action')=="")
+        {
+            $(this).submit(function()
+            {
+                return false;
+            });
+        }
+    });
+}
+
 $(document).ready(function()
 {
     var mylyt =
@@ -128,20 +143,6 @@ $(document).ready(function()
         current_blog   : $("#currentblog"),
         blog_list      : $("#bloglstsel")
     };
-
-    function disable_submit()
-    {
-        $("form").each(function()
-        {
-            if($(this).attr('action')=="")
-            {
-                $(this).submit(function()
-                {
-                    return false;
-                });
-            }
-        });
-    }
 
     function container_update()
     {

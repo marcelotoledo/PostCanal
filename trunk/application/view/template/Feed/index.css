@@ -1,62 +1,46 @@
-#feedlnkdiv a
+#maincontainer
 {
-    padding-right: 25px;
+    padding: 25px;
 }
-div.feedoption
+#addnewfeedbtn
 {
-    padding-bottom: 2px;
-    padding-top: 2px;
+    cursor: pointer;
+    cursor: hand;
+    margin-top: 25px;
+    margin-bottom: 15px;
+    width: 200px;
 }
-div.feedoptionbutton
+div.inputmessage
 {
-    float: left;
-    padding-right: 10px;
+    text-align: left;
 }
-div.feedoptiontitle
-{
-    float: left;
-    height: 2.4em;
-}
-div.feedoptiontitle small
-{
-    color: gray;
-    font-size: x-small;
-}
+
 #feedlistarea
 {
-    padding-top: 25px;
+    padding-top: 15px;
 }
+
 div.feeditem
 {
     padding-top: 5px;
     padding-bottom: 5px;
     width: 600px;
     border-bottom: 1px solid silver;
-    background-color: ghostwhite;
-}
-div.feeditemdisabled
-{
-    background-color: lightgray;
-    color: slategray;
 }
 div.feeditemleft
 {
     float: left;
-    cursor: move;
     width: 400px;
-}
-div.feeditemtitle
-{
-    /* void */
-}
-div.feeditemurl
-{
-    color: gray;
-    font-size: x-small;
+    cursor: move;
 }
 div.feeditemleftbold
 {
     font-weight: bold;
+}
+div.feeditemleft small
+{
+    color: gray;
+    font-size: x-small;
 }
 div.feeditemright
 {
@@ -66,4 +50,45 @@ div.feeditemright
 div.feeditemright a
 {
     padding-left: 10px;
+}
+div.feeditemeditform
+{
+    width: 570px;
+    padding: 15px;
+    background-color: lightyellow;
+    border-bottom: 2px solid silver;
+}
+div.feeddeletemsg
+{
+    width: 570px;
+    padding: 15px;
+    background-color: lightyellow;
+    border-bottom: 2px solid silver;
+}
+span.deletemsgbig
+{
+    font-size: 18pt;
+    line-height: 50px;
+}
+span.deletemsgmed
+{
+    font-size: 14pt;
+}
+span.deletemsgask
+{
+    font-weight: bold;
+    line-height: 50px;
+}
+input.feeddeletey
+{
+    background-color: lightgreen;
+}
+input.feeddeleten
+{
+    background-color: tomato;
+}
+#feedtypefailedmsg
+{
+    font-size: 14pt;
+    line-height: 40px;
 }

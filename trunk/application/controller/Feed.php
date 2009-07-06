@@ -107,7 +107,18 @@ class C_Feed extends B_Controller
         $title = $this->request()->title;
         $blog_hash = $this->request()->blog;
         $blog_feed = $this->feedAdd($url, $title, $blog_hash);
-        $this->view()->feed = is_object($blog_feed) ? $blog_feed->hash : '';
+        
+        if(is_object($blog_feed))
+        {
+            $this->view()->feed = array
+            (
+                'feed'       => $blog_feed->hash,
+                'ordering'   => $blog_feed->ordering,
+                'feed_url'   => $url,
+                'feed_title' => $blog_feed->feed_title,
+                'enabled'    => $blog_feed->enabled
+            );
+        }
     }
 
     /**
@@ -159,11 +170,11 @@ class C_Feed extends B_Controller
     {
         $this->response()->setXML(true);
         $blog = $this->request()->blog;
-        $feed = $this->request()->feed;
+        $hash = $this->request()->feed;
         $user = $this->session()->user_profile_id;
         $updated = array();
 
-        if(is_object(($feed = UserBlogFeed::getByBlogAndFeedHash($user, $blog, $feed))))
+        if(is_object(($feed = UserBlogFeed::getByBlogAndFeedHash($user, $blog, $hash))))
         {
             foreach(UserBlogFeed::$allow_write as $k)
             {
@@ -174,6 +185,7 @@ class C_Feed extends B_Controller
                 }
             }
             $feed->save();
+            $updated = array_merge($updated, array('feed' => $hash));
         }
         $this->view()->updated = $updated;
     }
