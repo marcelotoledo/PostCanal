@@ -166,6 +166,9 @@ function feed_add(u)
 
 function feed_list_callback(d)
 {
+    mytpl.feed_list_area.html(''); 
+    mytpl.feed_list_ref = Array();
+
     d.find('feeds').children().each(function()
     {
         feed_populate($(this), true);
