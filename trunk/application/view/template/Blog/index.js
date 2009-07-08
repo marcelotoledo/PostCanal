@@ -71,7 +71,6 @@ function blog_add_callback(d)
     }
     if(_status=="<?php echo C_Blog::DISCOVER_STATUS_TYPE_FAILED ?>")
     {
-        // add_message("<?php echo $this->translation()->blog_type_failed ?>");
         mytpl.blog_type_failed.show();
     }
     if(_status=="<?php echo C_Blog::DISCOVER_STATUS_MAINTENANCE ?>")
@@ -82,23 +81,15 @@ function blog_add_callback(d)
 
 function blog_add()
 {
-    if(mytpl.new_blog_url.val() == "")
+    var _u = null;
+
+    if((_u = mytpl.new_blog_url.val())=="")
     {
         add_message("<?php echo $this->translation()->form_incomplete ?>");
         return null;
     }
 
-    $.ajax
-    ({
-        type: "POST",
-        url: "./blog/add",
-        dataType: "xml",
-        data: { url: mytpl.new_blog_url.val() },
-        beforeSend: function () { set_active_request(true); add_message(''); },
-        complete: function ()   { set_active_request(false); },
-        success: function (xml) { blog_add_callback($(xml).find('data')); },
-        error: function () { server_error(); }
-    });
+    do_request('POST', './blog/add', { url: _u }, blog_add_callback);
 }
 
 function blog_list_callback(d)
@@ -111,16 +102,7 @@ function blog_list_callback(d)
 
 function blog_list()
 {
-    $.ajax
-    ({
-        type: "GET",
-        url: "./blog/list",
-        dataType: "xml",
-        beforeSend: function () { set_active_request(true); },
-        complete: function ()   { set_active_request(false); },
-        success: function (xml) { blog_list_callback($(xml).find('data')); },
-        error: function () { server_error(); }
-    });
+    do_request('GET', './blog/list', { }, blog_list_callback);
 }
 
 function blog_edit_show(b)
@@ -166,17 +148,7 @@ function blog_delete_callback(d)
 
 function blog_delete(b)
 {
-    $.ajax
-    ({
-        type: "POST",
-        url: "./blog/delete",
-        dataType: "xml",
-        data: { blog: b },
-        beforeSend: function() { set_active_request(true); },
-        complete: function() { set_active_request(false); },
-        success: function (xml) { blog_delete_callback($(xml).find('data')); },
-        error: function () { server_error(); }
-    });
+    do_request('POST', './blog/delete', { blog: b }, blog_delete_callback);
 }
 
 function blog_update_callback(d)
@@ -204,17 +176,7 @@ function blog_update(b)
         keywords      : mytpl.blog_list_ref[b].form.find("input[name='keywords']").val()
     }
 
-    $.ajax
-    ({
-        type: "POST",
-        url: "./blog/update",
-        dataType: "xml",
-        data: _up,
-        beforeSend: function() { set_active_request(true); },
-        complete: function() { set_active_request(false); },
-        success: function (xml) { blog_update_callback($(xml).find('data')); },
-        error: function () { server_error(); }
-    });
+    do_request('POST', './blog/update', _up, blog_update_callback);
 }
 
 $(document).ready(function()
@@ -242,13 +204,13 @@ $(document).ready(function()
     {
         if((e.which && e.which == 13) || (e.keyCode && e.keyCode == 13))
         {
-            if(active_request==false) { blog_add(); }
+            if(active_request==false) { add_message(''); blog_add(); }
         }
     });
 
     mytpl.new_blog_submit.click(function()
     {
-        if(active_request==false) { blog_add(); }
+        if(active_request==false) { add_message(''); blog_add(); }
     });
 
     function blog_item_getid(i)

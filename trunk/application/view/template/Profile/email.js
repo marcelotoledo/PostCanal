@@ -8,41 +8,34 @@ function form_message(m)
         mytpl.msgcontainer.show().find("td").html(m) ;
 }
 
+function email_change_callback(d)
+{
+    if(d.length==0) { server_error(); return false; }
+
+    if(d.find('accepted').text()=="true") 
+    {
+        mytpl.emlform.toggle();
+        mytpl.changenotice.toggle();
+    }
+    else
+    {
+        form_message(d.find('message').text());
+    }
+}
+
 function email_change()
 {
-    if(mytpl.password.val() == "")
+    var _data: { email    : mytpl.email.val(), 
+                 password : mytpl.password.val(),
+                 user     : mytpl.user.val() };
+
+    if(_data.password=="")
     {
         form_message("<?php echo $this->translation()->form_incomplete ?>");
-        return null;
+        return false;
     }
 
-    $.ajax
-    ({
-        type: "POST",
-        url: "/profile/email",
-        dataType: "xml",
-        data: { email    : mytpl.email.val(), 
-                password : mytpl.password.val(),
-                user     : mytpl.user.val() },
-        beforeSend: function() { set_active_request(true);  },
-        complete: function()   { set_active_request(false); },
-        success: function (xml) 
-        { 
-            var _data = $(xml).find('data');
-            if(_data.length==0) { server_error(); return null; }
-
-            if(_data.find('accepted').text()=="true") 
-            {
-                mytpl.emlform.toggle();
-                mytpl.changenotice.toggle();
-            }
-            else
-            {
-                form_message(_data.find('message').text());
-            }
-        }, 
-        error: function (data) { error_message(); }
-    });
+    do_request('POST', './profile/email', _data, email_change_callback);
 }
 
 

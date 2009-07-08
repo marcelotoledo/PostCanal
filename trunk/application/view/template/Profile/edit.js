@@ -13,28 +13,20 @@ function edit_message(m)
     mytpl.editmessage.text(m);
 }
 
+function edit_submit_callback(d)
+{
+    if(d.length==0) { server_error(); return false; }
+    if(d.find('saved').text()=="true") { flash_message("<?php echo $this->translation()->saved ?>"); } else { /* void */ }
+}
+
 function edit_submit()
 {
-    $.ajax
-    ({
-        type: "POST",
-        url: "/profile/edit",
-        dataType: "xml",
-        data: { name            : mytpl.name.val(),
-                local_territory : mytpl.territory.val(),
-                local_timezone  : mytpl.timezone.val() // ,
-                /* local_culture   : mytpl.culture.val() */ },
-        beforeSend: function () { set_active_request(true); edit_message("");  },
-        complete: function ()   { set_active_request(false); },
-        success: function (xml) 
-        { 
-            var _data = $(xml).find('data');
-            if(_data.length==0) { server_error(); return null; }
-            if(_data.find('saved').text()=="true") { flash_message("<?php echo $this->translation()->saved ?>"); } else { /* void */ }
-            // flash_message(_data.find('message').text());
-        }, 
-        error: function () { server_error(); }
-    });
+    var _data = { name            : mytpl.name.val(),
+                  local_territory : mytpl.territory.val(),
+                  local_timezone  : mytpl.timezone.val() // ,
+               /* local_culture   : mytpl.culture.val() */ };
+
+    do_request('POST', './profile/edit', _data, edit_submit_callback);
 }
 
 function pwdchange_message(m)
@@ -49,40 +41,32 @@ function pwdchange_after()
     mytpl.confirmpwd.val('');
 }
 
+function pwdchange_submit_callback(d)
+{
+    if(d.length==0) { server_error(); return false; }
+    if(d.find('updated').text()=="true") { flash_message("<?php echo $this->translation()->saved ?>"); pwdchange_after(); } else { pwdchange_message(d.find('message').text()); }
+
+}
+
 function pwdchange_submit()
 {
-    if((mytpl.currentpwd.val() == "" || 
-        mytpl.newpwd.val()     == "" || 
-        mytpl.confirmpwd.val() == ""))
+    var _data = { current   : mytpl.currentpwd.val(),
+                  password  : mytpl.newpwd.val(), 
+                  passwordc : mytpl.confirmpwd.val() };
+
+    if(_data.current   == "" || _data.password  == "" || _data.passwordc == "")
     {
         pwdchange_message("<?php echo $this->translation()->form_incomplete ?>");
-        return null;
+        return false;
     }
 
-    if(mytpl.newpwd.val() != mytpl.confirmpwd.val())
+    if(_data.password != _data.passwordc)
     {
         pwdchange_message("<?php echo $this->translation()->password_not_match ?>");
-        return null;
+        return false;
     }
 
-    $.ajax
-    ({
-        type: "POST",
-        url: "/profile/password",
-        dataType: "xml",
-        data: { current   : mytpl.currentpwd.val(),
-                password  : mytpl.newpwd.val(), 
-                passwordc : mytpl.confirmpwd.val() },
-        beforeSend: function () { set_active_request(true); pwdchange_message(""); },
-        complete: function ()   { set_active_request(false); },
-        success: function (xml) 
-        { 
-            var _data = $(xml).find('data');
-            if(_data.length==0) { server_error(); return null; }
-            if(_data.find('updated').text()=="true") { flash_message("<?php echo $this->translation()->saved ?>"); pwdchange_after(); } else { pwdchange_message(_data.find('message').text()); }
-        }, 
-        error: function () { server_error(); }
-    });
+    do_request('POST', './profile/password', _data, pwdchange_submit_callback);
 }
 
 function emlchange_message(m)
@@ -90,30 +74,23 @@ function emlchange_message(m)
     mytpl.emlchangemessage.text(m);
 }
 
+function emlchange_submit_callback(d)
+{
+    if(d.length==0) { server_error(); return false; }
+    if(d.find('accepted').text()=="true") { flash_message("<?php echo $this->translation()->saved ?><br><small><?php echo $this->translation()->check_your_inbox_to_validate ?></small>"); } else { emlchange_message(d.find('message').text()); }
+}
+
 function emlchange_submit()
 {
-    if(mytpl.neweml.val()=="")
+    var _data = { new_email : mytpl.neweml.val() };
+
+    if(_data.new_email=="")
     {
         emlchange_message("<?php echo $this->translation()->form_incomplete ?>");
-        return null;
+        return false;
     }
 
-    $.ajax
-    ({
-        type: "POST",
-        url: "/profile/email",
-        dataType: "xml",
-        data: { new_email: mytpl.neweml.val() },
-        beforeSend: function () { set_active_request(true); emlchange_message(""); },
-        complete: function ()   { set_active_request(false); },
-        success: function (xml) 
-        { 
-            var _data = $(xml).find('data');
-            if(_data.length==0) { server_error(); return null; }
-            if(_data.find('accepted').text()=="true") { flash_message("<?php echo $this->translation()->saved ?><br><small><?php echo $this->translation()->check_your_inbox_to_validate ?></small>"); } else { emlchange_message(_data.find('message').text()); }
-        }, 
-        error: function () { server_error(); }
-    });
+    do_request('POST', './profile/email', _data, emlchange_submit_callback);
 }
 
 function timezone_populate(d)
@@ -169,20 +146,7 @@ $(document).ready(function()
 
     function load_timezone()
     {
-        $.ajax
-        ({
-            type: "GET",
-            url: "/profile/timezone",
-            dataType: "xml",
-            data: { territory: selected_territory() },
-            beforeSend: function () { set_active_request(true); },
-            complete: function ()   { set_active_request(false); },
-            success: function (xml) 
-            { 
-                timezone_populate($(xml).find('data'));
-            }, 
-            error: function () { server_error(); }
-        });
+        do_request('GET', './profile/timezone', { territory: selected_territory() }, timezone_populate);
     }
     
     load_timezone();
@@ -191,12 +155,12 @@ $(document).ready(function()
 
     mytpl.editsubmit.click(function()
     {
-        if(active_request==false) { edit_submit(); }
+        if(active_request==false) { edit_message(''); edit_submit(); }
     });
 
     mytpl.pwdchangesubmit.click(function()
     {
-        if(active_request==false) { pwdchange_submit(); }
+        if(active_request==false) { pwdchange_message(''); pwdchange_submit(); }
     });
 
     mytpl.neweml.keypress(function(e) 
@@ -209,7 +173,7 @@ $(document).ready(function()
 
     mytpl.emlchangesubmit.click(function()
     {
-        if(active_request==false) { emlchange_submit(); }
+        if(active_request==false) { emlchange_message(''); emlchange_submit(); }
     });
 
     mytpl.territory.change(function()

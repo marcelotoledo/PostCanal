@@ -200,8 +200,6 @@ class B_View
 
     /**
      * include cache file
-     *
-     * @param   string  $type
      */
     public function includeCache()
     {
@@ -213,12 +211,12 @@ class B_View
     /**
      * include layout file
      *
-     * @param   string  $type
+     * @param   string  $name
      */
-    public function includeLayout($type='php')
+    public function includeLayout($name=null)
     {
-        $path = APPLICATION_PATH . "/view/layout/" . $this->layout . "." . $type;
-        if(file_exists($path)) include $path;
+        if($name==null) $name = $this->layout . '.php';
+        if(file_exists(($path = APPLICATION_PATH . '/view/layout/' . $name))) include $path;
     }
 
     /**
@@ -228,7 +226,6 @@ class B_View
      */
     public function includeTemplate($type='php')
     {
-        $path = APPLICATION_PATH . "/view/template/" . $this->template . "." . $type;
-        if(file_exists($path)) include $path;
+        if(file_exists(($path = APPLICATION_PATH . '/view/template/' . $this->template  . '.' . $type))) include $path;
     }
 }

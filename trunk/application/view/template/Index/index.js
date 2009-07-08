@@ -49,23 +49,15 @@ function recovery_submit_cb(d)
 
 function recovery_submit()
 {
-    if(mytpl.recoveryemail.val()=="")
+    var _eml = null;
+
+    if((_eml = mytpl.recoveryemail.val())=="")
     {
         recovery_msg("<?php echo $this->translation()->enter_an_email ?>");
         return false;
     }
 
-    $.ajax
-    ({
-        type: "POST",
-        url: "./profile/recovery",
-        dataType: "xml",
-        data: { email: mytpl.recoveryemail.val() },
-        beforeSend: function() { set_active_request(true); },
-        complete: function() { set_active_request(false); },
-        success: function (xml) { recovery_submit_cb($(xml).find('data')); },
-        error: function () { server_error(); }
-    });
+    do_request('POST', './profile/recovery', { email: _eml }, recovery_submit_cb);
 }
 
 function login_msg(m)
@@ -85,24 +77,16 @@ function login_submit_cb(d)
 
 function login_submit()
 {
-    if(mytpl.loginemail.val() == "" || mytpl.loginpassword.val() == "")
+    var _ld = { email    : mytpl.loginemail.val() ,
+                password : mytpl.loginpassword.val() }
+
+    if(_ld.email == "" || _ld.password == "")
     {
         login_msg("<?php echo $this->translation()->form_incomplete ?>");
         return false;
     }
 
-    $.ajax
-    ({
-        type: "post",
-        url: "./profile/login",
-        datatype: "xml",
-        data: { email    : mytpl.loginemail.val(), 
-                password : mytpl.loginpassword.val() },
-        beforeSend: function () { set_active_request(true); },
-        complete: function() { set_active_request(false); },
-        success: function (xml) { login_submit_cb($(xml).find('data')); },
-        error: function () { server_error(); } 
-    });
+    do_request('POST', './profile/login', _ld, login_submit_cb);
 }
 
 $(document).ready(function()

@@ -8,49 +8,41 @@ function form_message(m)
         mytpl.msgcontainer.show().find("td").html(m) ;
 }
 
+function password_recovery_callback(d)
+{
+    if(d.length==0) { server_error(); return false; }
+
+    if(d.find('updated').text()=="true") 
+    {
+        mytpl.pwdform.toggle();
+        mytpl.changenotice.toggle();
+    }
+    else
+    {
+        form_message(d.find('message').text());
+    }
+}
+
 function password_recovery()
 {
-    if(mytpl.password.val() == "" || 
-       mytpl.passwordc.val() == "")
+    var _data = { email     : mytpl.email.val(), 
+                  user      : mytpl.user.val(),
+                  password  : mytpl.password.val(), 
+                  passwordc : mytpl.passwordc.val() };
+
+    if(_data.password=="" || _data.passwordc=="")
     {
         form_message("<?php echo $this->translation()->form_incomplete ?>");
-        return null;
+        return false;
     }
 
-    if(mytpl.password.val() != mytpl.passwordc.val())
+    if(_data.password != _data.passwordc)
     {
         form_message("<?php echo $this->translation()->password_not_match ?>");
-        return null;
+        return false;
     }
 
-    $.ajax
-    ({
-        type: "POST",
-        url: "/profile/password",
-        dataType: "xml",
-        data: { email     : mytpl.email.val(), 
-                user      : mytpl.user.val(),
-                password  : mytpl.password.val(), 
-                passwordc : mytpl.passwordc.val() },
-        beforeSend: function () { set_active_request(true); },
-        complete: function() { set_active_request(false); },
-        success: function (xml) 
-        { 
-            var _data = $(xml).find('data');
-            if(_data.length==0) { server_error(); return null; }
-
-            if(_data.find('updated').text()=="true") 
-            {
-                mytpl.pwdform.toggle();
-                mytpl.changenotice.toggle();
-            }
-            else
-            {
-                form_message(_data.find('message').text());
-            }
-        }, 
-        error: function (data) { server_error(); }
-    });
+    do_request('POST', './profile/password', _data, password_recovery_callback);
 };
 
 

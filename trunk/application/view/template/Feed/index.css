@@ -26,6 +26,7 @@ div.feeditem
     padding-bottom: 5px;
     width: 600px;
     border-bottom: 1px solid silver;
+    background-color: white;
 }
 div.feeditemleft
 {

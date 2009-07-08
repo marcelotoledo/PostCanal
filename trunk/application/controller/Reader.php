@@ -20,10 +20,9 @@ class C_Reader extends B_Controller
 
     /**
      * Default action
-     *
-     * @return void
      */
     public function A_index()
     {
+        $this->view()->setLayout('dashboard');
     }
 }

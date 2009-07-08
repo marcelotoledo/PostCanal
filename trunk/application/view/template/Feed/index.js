@@ -124,23 +124,16 @@ function feed_discover_callback(d)
 
 function feed_discover()
 {
-    if(mytpl.new_feed_url.val() == "")
+    var _data = { url: mytpl.new_feed_url.val() };
+
+    if(_data.url=="")
     {
         add_message("<?php echo $this->translation()->form_incomplete ?>");
-        return null;
+        return false;
     }
 
-    $.ajax
-    ({
-        type: "POST",
-        url: "./feed/discover",
-        dataType: "xml",
-        data: { url: mytpl.new_feed_url.val() },
-        beforeSend: function () { set_active_request(true); add_message(''); },
-        complete: function ()   { set_active_request(false); },
-        success: function (xml) { feed_discover_callback($(xml).find('data')); },
-        error: function () { server_error(); }
-    });
+    add_message(''); 
+    do_request('POST', './feed/discover', _data, feed_discover_callback);
 }
 
 function feed_add_callback(d)
@@ -150,18 +143,9 @@ function feed_add_callback(d)
 
 function feed_add(u)
 {
-    $.ajax
-    ({
-        type: "POST",
-        url: "./feed/add",
-        dataType: "xml",
-        data: { url  : u ,
-                blog : blog.current },
-        beforeSend: function () { set_active_request(true); add_message(''); },
-        complete: function ()   { set_active_request(false); },
-        success: function (xml) { feed_add_callback($(xml).find('data')); },
-        error: function () { server_error(); }
-    });
+    var _data = { url : u, blog: blog.current };
+    add_message(''); 
+    do_request('POST', './feed/add', _data, feed_add_callback);
 }
 
 function feed_list_callback(d)
@@ -235,18 +219,8 @@ function feed_delete_callback(d)
 
 function feed_delete(f)
 {
-    $.ajax
-    ({
-        type: "POST",
-        url: "./feed/delete",
-        dataType: "xml",
-        data: { blog: blog.current,
-                feed: f },
-        beforeSend: function() { set_active_request(true); },
-        complete: function() { set_active_request(false); },
-        success: function (xml) { feed_delete_callback($(xml).find('data')); },
-        error: function () { server_error(); }
-    });
+    var _data = { blog: blog.current, feed: f };
+    do_request('POST', './feed/delete', _data, feed_delete_callback);
 }
 
 function feed_update_callback(d)
@@ -272,17 +246,7 @@ function feed_update(f)
         feed_title : mytpl.feed_list_ref[f].form.find("input[name='title']").val(),
     }
 
-    $.ajax
-    ({
-        type: "POST",
-        url: "./feed/update",
-        dataType: "xml",
-        data: _up,
-        beforeSend: function() { set_active_request(true); },
-        complete: function() { set_active_request(false); },
-        success: function (xml) { feed_update_callback($(xml).find('data')); },
-        error: function () { server_error(); }
-    });
+    do_request('POST', './feed/update', _up, feed_update_callback);
 }
 
 function feed_position_callback(d)
@@ -295,19 +259,8 @@ function feed_position_callback(d)
 
 function feed_position(f, p)
 {
-    $.ajax
-    ({
-        type: "POST",
-        url: "/feed/position",
-        dataType: "xml",
-        data: { blog     : blog.current , 
-                feed     : f , 
-                position : p },
-        beforeSend: function() { set_active_request(true); },
-        complete: function() { set_active_request(false); },
-        success: function (xml) { feed_position_callback($(xml).find('data')); },
-        error: function () { server_error(); }
-    });
+    var _data = { blog : blog.current, feed : f, position : p };
+    do_request('POST', './feed/position', _data, feed_position_callback);
 }
 
 function sortable_callback(feed)

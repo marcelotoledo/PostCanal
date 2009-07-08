@@ -1,0 +1,192 @@
+#maincontainer
+{
+    overflow: hidden; /* avoid scrollbars */
+}
+
+#leftcontainer
+{
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    width: 300px;
+    height: 500px;
+}
+div.leftgrouptitle
+{
+    height: 30px;
+    line-height: 30px;
+    padding-left: 15px;
+    border: 1px solid gray;
+    border-collapse: collapse;
+    margin-top: -1px;
+    background-color: silver;
+    font-size: 14px;
+    font-weight: bold;
+    text-transform: capitalize;
+}
+div.cursorpointer
+{
+    cursor: pointer;
+    cursor: hand;
+}
+div.leftgroupcontainer
+{
+    padding: 10px 15px 0px 10px;
+    overflow: auto;
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+div.feeditem
+{
+    padding-top: 3px;
+    text-align: right;
+}
+a.feeditemlnk
+{
+    font-size: 15px;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+#rightcontainer
+{
+    position: absolute;
+    top: 0px;
+    left: 300px;
+    width: 600px;
+    height: 500px;
+    margin-left: -1px;
+    border: 1px solid gray;
+}
+#rightheader
+{
+    height: 61px;
+    line-height: 61px;
+    background-color: lightgray;
+    border-bottom: 1px solid gray;
+    margin-top: -1px;
+}
+#rightheadertitle
+{
+    float: left;
+    padding-left: 15px;
+    font-size: 22px;
+}
+#rightheaderbuttons
+{
+    float: right;
+    padding-right: 15px;
+    text-transform: capitalize;
+}
+#rightheaderclear
+{
+    clear: both;
+}
+#rightmiddle
+{
+    height: 398px;
+    overflow: auto;
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+#rightfooter
+{
+    height: 40px;
+    line-height: 40px;
+    background-color: lightgray;
+    border-top: 1px solid gray;
+    padding-left: 15px;
+}
+button.articlenavbutton
+{
+    width: 120px;
+    line-height: 18px;
+    margin-right: 10px;
+}
+
+/* ARTICLE */
+
+div.article
+{
+    line-height: 30px;
+    padding-top: 3px;
+}
+div.articleclosed
+{
+    border: 2px solid white;
+    border-bottom: 1px solid gray;
+}
+div.articleopen
+{
+    border: 2px solid navy;
+    border-bottom: 1px solid white;
+}
+div.articlebutton
+{
+    float: left;
+    width: 40px;
+    margin-right: 5px;
+    margin-top: -3px;
+    line-height: 40px;
+    text-align: center;
+}
+div.articlehead
+{
+    float: left;
+}
+div.articlesource
+{
+    color: gray;
+    font-size: small;
+    line-height: 15px;
+}
+div.articletitle
+{
+    font-size: 14pt;
+    line-height: 20px;
+}
+div.articletitle a
+{
+    text-decoration: none;
+}
+div.articletitle a:hover
+{
+}
+div.articleinfo
+{
+    float: right;
+    padding-top: 3px;
+    font-size: small;
+    text-align: center;
+}
+div.articlelinks
+{
+    float: right;
+    width: 100px;
+    padding-top: 1px;
+    margin: 0px 20px 0px 10px;
+    text-align: right;
+}
+div.articleclear
+{
+    clear: both;
+}
+
+/* CONTENT */
+
+div.content
+{
+    border: 2px solid navy;
+    border-top: 0;
+    padding: 0px 15px 15px 15px;
+}
+div.contentauthor
+{
+    color: gray;
+    font-size: small;
+    padding-bottom: 10px;
+}
+div.contentbody
+{
+    padding: 5px 0px 5px 0px;
+}

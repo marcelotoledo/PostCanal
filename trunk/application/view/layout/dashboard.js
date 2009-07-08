@@ -1,4 +1,3 @@
-var active_request = 0;
 var mylyt = null;
 
 var blog =
@@ -7,33 +6,9 @@ var blog =
     info    : Array()
 };
 
-
-function set_active_request(b)
+function save_setting_callback(c, n)
 {
-    active_request+= b ? 1 : -1;
-    if(active_request<0) { active_request = 0; }
-    (active_request > 0) ? $.b_spinner_start() : $.b_spinner_stop();
-}
-
-function flash_message(m)
-{
-    $("#flashmessage").html(m).show();
-    setTimeout("$(\"#flashmessage\").fadeOut(1900)", 100); // IE fix
-}
-
-function server_error()
-{
-    // alert("<?php echo $this->translation()->server_error ?>");
-    console.error('server error');
-}
-
-function spinner_init()
-{
-    $.b_spinner
-    ({
-        image: "/image/spinner.gif", 
-        message: "... <?php echo $this->translation()->loading ?>"
-    });
+    $(document).trigger('setting_' + c + '_' + n + '_saved');
 }
 
 function save_setting(c, n, v)
@@ -43,53 +18,17 @@ function save_setting(c, n, v)
         type: "POST",
         url: "./dashboard/setting",
         dataType: "xml",
-        data: { context : c , 
-                name    : n ,
-                value   : v },
-        beforeSend: function()
-        {
-            set_active_request(true);
-        },
-        complete: function()
-        {
-            set_active_request(false);
-        },
-        success: function (xml)
-        {
-            $(document).trigger('setting_' + c + '_' + n + '_saved');
-        },
+        data: { context : c , name : n , value : v },
+        beforeSend: function() { set_active_request(true); },
+        complete: function() { set_active_request(false); },
+        success: function (xml) { save_setting_callback(c, n); },
         error: function () { server_error(); }
     });
 }
 
-function blog_load()
+function blog_update_callback(k)
 {
-    if(blog.current==undefined) { return false; }
-
-    $.ajax
-    ({
-        type: "GET",
-        url: "./blog/load",
-        dataType: "xml",
-        data: { blog: blog.current },
-        beforeSend: function()
-        {
-            set_active_request(true);
-        },
-        complete: function()
-        {
-            set_active_request(false);
-        },
-        success: function (xml)
-        {
-            $(xml).find('data').find('result').children().each(function()
-            {
-                blog.info[($(this).context.nodeName)] = $(this).text();
-            });
-            $(document).trigger('blog_loaded');
-        },
-        error: function () { server_error(); }
-    });
+    $(document).trigger('blog_' + k + '_updated');
 }
 
 function blog_update(k, v)
@@ -104,34 +43,26 @@ function blog_update(k, v)
         url: "./blog/update",
         dataType: "xml",
         data: _par,
-        beforeSend: function()
-        {
-            set_active_request(true);
-        },
-        complete: function()
-        {
-            set_active_request(false);
-        },
-        success: function (xml)
-        {
-            $(document).trigger('blog_' + k + '_updated');
-        },
+        beforeSend: function() { set_active_request(true); },
+        complete: function() { set_active_request(false); },
+        success: function (xml) { blog_update_callback(k); },
         error: function () { server_error(); }
     });
 }
 
-function disable_submit()
+function blog_load_callback(d)
 {
-    $("form").each(function()
+    d.find('result').children().each(function()
     {
-        if($(this).attr('action')=="")
-        {
-            $(this).submit(function()
-            {
-                return false;
-            });
-        }
+        blog.info[($(this).context.nodeName)] = $(this).text();
     });
+    $(document).trigger('blog_loaded');
+}
+
+function blog_load()
+{
+    if(blog.current==undefined) { return false; }
+    do_request('GET', './blog/load', { blog: blog.current }, blog_load_callback);
 }
 
 $(document).ready(function()
