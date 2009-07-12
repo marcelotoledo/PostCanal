@@ -105,7 +105,13 @@ class C_Queue extends B_Controller
         $zd->setTimestamp($entry['publication_date']);
         $entry['publication_date_local'] = $zd->toString();
 
-        $this->view->result = $entry;
+        // $this->view->result = $entry;
+
+        if($entry)
+        {
+            $this->view()->result = array('feed'    => $feed_hash,
+                                          'article' => $article_md5);
+        }
     }
 
     /**

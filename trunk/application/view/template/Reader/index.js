@@ -149,6 +149,7 @@ function article_populate(d, append)
         {
             _item  = mytpl.article_blank.clone();
             _inner = _item.find('div.article');
+            _inner.attr('feed', _data.feed);
             _inner.attr('article', _data.article);
 
             if(_data.publication_status.length>0)
@@ -204,18 +205,23 @@ function article_scroll_top()
         mytpl.article_list.scrollTop(
             article.current.position().top -
             mytpl.article_list.position().top +
-            mytpl.article_list.scrollTop()
+            mytpl.article_list.scrollTop() - 2
         );
     }
 }
 
 function article_show_fix_vertical()
 {
-    mytpl.article_list.scrollTop(
-        mytpl.article_list.scrollTop() +
-        article.current.position().top -
-        (mytpl.right_middle_area.h / 2)
-    );
+    var _rmh = mytpl.right_middle_area.h / 2;
+    var _rmt = mytpl.right_middle_area.y;
+    var _apt = article.current.position().top;
+    var _coh = article.current.next('div.content').outerHeight();
+
+    var _scr = mytpl.article_list.scrollTop() + 
+               _apt -
+               ((_coh > _rmh) ? _rmt : _rmh);
+
+    mytpl.article_list.scrollTop(_scr);
 }
 
 function article_hide(a)
@@ -297,6 +303,32 @@ function article_next()
         article_show(_next);
         article_scroll_top();
     }
+}
+
+/* QUEUE */
+
+function queue_add_callback(d)
+{
+    var _sel = "div.article" +
+               "[feed='" + d.find('feed').text() + "']" + 
+               "[article='" + d.find('article').text() + "']";
+
+    mytpl.article_list
+        .find(_sel)
+        .find('div.articlebutton')
+        .find('input')
+        .attr('checked', true)
+        .attr('disabled', true)
+        .blur();
+}
+
+function queue_add(f, a)
+{
+    var _data = { blog    : blog.current ,
+                  feed    : f,
+                  article : a };
+
+    do_request('GET', './queue/add', _data, queue_add_callback);
 }
 
 function on_blog_change()
@@ -469,6 +501,15 @@ $(document).ready(function()
             article_show_fix_vertical();
         }
         $(this).blur();
+        return false;
+    });
+
+    mytpl.article_list.find('div.article')
+        .find('div.articlebutton')
+        .find('input').live('change', function()
+    {
+        var _i = $(this).parent().parent();
+        queue_add(_i.attr('feed'), _i.attr('article'));
         return false;
     });
 
