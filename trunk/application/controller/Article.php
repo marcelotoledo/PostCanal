@@ -30,10 +30,12 @@ class C_Article extends B_Controller
 
         foreach($results as $a)
         {
-            $zd->setTimestamp(strtotime($a['article_date']));
+            $ts = strtotime($a['article_date']);
+            $zd->setTimestamp($ts);
 
             $articles[] = array_merge($a, array
             (
+                'article_time' => $ts,
                 'article_date_local' => $zd->toString()
             ));
         }
@@ -49,11 +51,13 @@ class C_Article extends B_Controller
     {
         $blog_hash = $this->request()->blog;
         $feed_hash = $this->request()->feed;
-        $older = strtotime($this->request()->older);
+        $older = intval($this->request()->older);
         $user_id = $this->session()->user_profile_id;
 
         $this->view()->articles = $this->formatArticles(
             UserBlogFeed::findArticlesThreaded($blog_hash, $user_id, $feed_hash, $older));
+
+        if($older>0) { $this->view()->append = true; }
 
         $this->session()->user_blog_hash = $blog_hash;
     }
@@ -65,11 +69,13 @@ class C_Article extends B_Controller
     public function A_all()
     {
         $blog_hash = $this->request()->blog;
-        $older = strtotime($this->request()->older);
+        $older = intval($this->request()->older);
         $user_id = $this->session()->user_profile_id;
 
         $this->view()->articles = $this->formatArticles(
             UserBlogFeed::findArticlesAll($blog_hash, $user_id, $older));
+
+        if($older>0) { $this->view()->append = true; }
 
         $this->session()->user_blog_hash = $blog_hash;
     }

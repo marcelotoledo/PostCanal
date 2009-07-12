@@ -10,7 +10,8 @@ var article =
     display : "<?php echo $this->settings->article->display ?>",
     data    : Array(),
     current : null,
-    older   : 0
+    older   : 0,
+    bottom  : 0
 };
 
 var magic_slh = 10;
@@ -121,7 +122,11 @@ function article_populate(d, append)
         article.older = 0;
     }
 
-    if(d.length==0) { return false; }
+    if(d.length==0)
+    { 
+        if(append==true) { article.older = 0; }
+        return false; 
+    }
 
     var _data   = null;
     var _item   = null;
@@ -139,6 +144,7 @@ function article_populate(d, append)
             article_title      : $(this).find('article_title').text(),
             article_link       : $(this).find('article_link').text(),
             article_date       : $(this).find('article_date').text(),
+            article_time       : $(this).find('article_time').text(),
             article_date_local : $(this).find('article_date_local').text(),
             article_author     : $(this).find('article_author').text(),
             article_content    : $(this).find('article_content').text(),
@@ -175,16 +181,17 @@ function article_populate(d, append)
     });
 
     mytpl.article_list.append(_lsdata.join("\n"));
-    article.older = _data.article_date;
+    article.older = _data.article_time;
 
     if(article.display=='expanded') { article_show_all(); }
+    if(append==false) { mytpl.article_list.scrollTop(0); }
 
-    mytpl.article_list.scrollTop(0);
+    article.bottom += mytpl.article_list.find('div.article:last').position().top;
 }
 
 function article_list_callback(d)
 {
-    article_populate(d.find('articles').children(), (d.find('append')=="true"));
+    article_populate(d.find('articles').children(), (d.find('append').text()=="true"));
 }
 
 function article_list(older)
@@ -449,6 +456,15 @@ $(document).ready(function()
     });
 
     window.onmousewheel = document.onmousewheel = on_mouse_wheel; /* IE */
+
+    mytpl.right_middle.scroll(function()
+    {
+        if(mytpl.article_list.scrollTop() > (article.bottom * 2/3) &&
+           article.older > 0 && active_request==false)
+        {
+            article_list(article.older);
+        }
+    });
 
     function mouse_is_over_area(x, y, a)
     {
