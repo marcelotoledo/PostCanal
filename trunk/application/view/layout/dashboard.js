@@ -50,6 +50,8 @@ function blog_update(k, v)
     });
 }
 
+/* blog load (for queue) */
+
 function blog_load_callback(d)
 {
     d.find('result').children().each(function()

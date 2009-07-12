@@ -38,7 +38,7 @@ div.leftgroupcontainer
 }
 div.feeditem
 {
-    padding-top: 3px;
+    padding: 3px 0px 3px 0px;
     text-align: right;
 }
 a.feeditemlnk
@@ -110,16 +110,19 @@ div.article
 {
     line-height: 30px;
     padding-top: 3px;
+    background-color: whitesmoke;
 }
 div.articleclosed
 {
     border: 2px solid white;
-    border-bottom: 1px solid gray;
+    border-bottom: 1px solid lightgray;
 }
 div.articleopen
 {
     border: 2px solid navy;
     border-bottom: 1px solid white;
+    border-collapse: collapse;
+    margin-top: -2px;
 }
 div.articlebutton
 {
@@ -132,7 +135,12 @@ div.articlebutton
 }
 div.articlehead
 {
-    float: left;
+    margin-right: 240px;
+    overflow: hidden;
+    -o-text-overflow: ellipsis;
+    -ms-text-overflow: ellipsis;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 div.articlesource
 {
@@ -148,24 +156,24 @@ div.articletitle
 div.articletitle a
 {
     text-decoration: none;
-}
-div.articletitle a:hover
-{
+    font-weight: bold;
 }
 div.articleinfo
 {
     float: right;
-    padding-top: 3px;
-    font-size: small;
-    text-align: center;
+    margin-top: -33px;
+    margin-right: 50px;
 }
 div.articlelinks
 {
     float: right;
-    width: 100px;
-    padding-top: 1px;
-    margin: 0px 20px 0px 10px;
-    text-align: right;
+    margin-top: -33px;
+    margin-right: 15px;
+}
+a.articleview
+{
+    text-decoration: none;
+    font-weight: bold;
 }
 div.articleclear
 {
@@ -177,14 +185,23 @@ div.articleclear
 div.content
 {
     border: 2px solid navy;
-    border-top: 0;
+    border-top: 2px solid white;
     padding: 0px 15px 15px 15px;
+    border-collapse: collapse;
+    margin-top: -3px;
 }
 div.contentauthor
 {
     color: gray;
     font-size: small;
     padding-bottom: 10px;
+}
+div.contenttitle
+{
+    color: #404040;
+    font-size: 20px;
+    font-weight: bold;
+    padding: 10px 0px 10px 0px;
 }
 div.contentbody
 {
