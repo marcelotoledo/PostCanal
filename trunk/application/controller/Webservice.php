@@ -23,6 +23,6 @@ class C_Webservice extends B_Controller
      */
     public function A_index()
     {
-        new A_WebService($is_server=true);
+        new L_WebService($is_server=true);
     }
 }

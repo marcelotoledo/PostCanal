@@ -63,3 +63,13 @@ HORAS TRABALHADAS: 2h
 - inclusao de listagem de itens do queue
 
 HORAS TRABALHADAS: 8h
+
+==========
+13/07/2009
+==========
+
+- reader (bugfixes)
+- implementacoes de layout do queue
+- correcao de bug com webservice backend > aplicacao web
+
+HORAS TRABALHADAS: 4h

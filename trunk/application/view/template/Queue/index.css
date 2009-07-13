@@ -39,6 +39,7 @@ div.headerlabel
     float: left;
     padding-left: 15px;
     font-size: 22px;
+    font-weight: bold;
     text-transform: capitalize;
 }
 div.queuepubbtn
@@ -114,10 +115,24 @@ div.entryclosed
 }
 div.entryopen
 {
-    border: 2px solid navy;
+    border: 2px solid brown;
     border-bottom: 1px solid white;
     border-collapse: collapse;
     margin-top: -2px;
+}
+div.entrydndhdr
+{
+    float: left;
+    width: 25px;
+    line-height: 5px;
+    margin-left: 10px;
+    margin-right: 5px;
+    cursor: move;
+    background-color: white;
+}
+div.entrydndhdrdec
+{
+    border-bottom: 1px solid silver;
 }
 div.entrybutton
 {
@@ -125,12 +140,12 @@ div.entrybutton
     width: 40px;
     margin-right: 5px;
     margin-top: -3px;
-    line-height: 40px;
+    line-height: 30px;
     text-align: center;
 }
 div.entryhead
 {
-    margin-right: 240px;
+    margin-right: 280px;
     overflow: hidden;
     -o-text-overflow: ellipsis;
     -ms-text-overflow: ellipsis;
@@ -156,13 +171,13 @@ div.entrytitle a
 div.entryinfo
 {
     float: right;
-    margin-top: -33px;
+    margin-top: -25px;
     margin-right: 50px;
 }
 div.entrylinks
 {
     float: right;
-    margin-top: -33px;
+    margin-top: -25px;
     margin-right: 15px;
 }
 a.entryview
@@ -179,17 +194,11 @@ div.entryclear
 
 div.content
 {
-    border: 2px solid navy;
+    border: 2px solid brown;
     border-top: 2px solid white;
     padding: 0px 15px 15px 15px;
     border-collapse: collapse;
     margin-top: -3px;
-}
-div.contentauthor
-{
-    color: gray;
-    font-size: small;
-    padding-bottom: 10px;
 }
 div.contenttitle
 {
@@ -199,6 +208,28 @@ div.contenttitle
     padding: 10px 0px 10px 0px;
 }
 div.contentbody
+{
+    padding: 5px 0px 5px 0px;
+}
+
+/* EDIT FORM */
+
+div.editform
+{
+    border: 2px solid brown;
+    border-top: 2px solid white;
+    padding: 0px 15px 15px 15px;
+    border-collapse: collapse;
+    margin-top: -3px;
+}
+div.editformtitle
+{
+    color: #404040;
+    font-size: 20px;
+    font-weight: bold;
+    padding: 10px 0px 10px 0px;
+}
+div.editformbody
 {
     padding: 5px 0px 5px 0px;
 }

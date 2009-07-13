@@ -44,15 +44,19 @@
 
 <div id="entryblank" style="display:none">
     <div class="entry entryclosed" entry="" ord="" status="">
+        <div class="entrydndhdr">
+            <div class="entrydndhdrdec">&nbsp;</div>
+            <div class="entrydndhdrdec">&nbsp;</div>
+            <div class="entrydndhdrdec">&nbsp;</div>
+        </div>
         <div class="entrybutton">
             <input type="checkbox">
         </div>
         <div class="entryhead">
-            <div class="entrysource"><!-- feed --></div>
             <div class="entrytitle"><a href="#"><!-- title --></a></div>
         </div>
         <div class="entrylinks">
-            <a class="entryview" href="#" target="_blank">&gt;&gt;</a>
+            <a class="entrydelete" href="#" target="_blank" style="display:none"><?php echo $this->translation()->delete ?></a>
         </div>
         <div class="entryinfo">
             <div class="entrydate"><!-- date --></div>
@@ -63,8 +67,16 @@
 
 <div id="contentblank" style="display:none">
     <div class="content">
-        <div class="contentauthor" style="display:none"><!-- author --></div>
         <div class="contenttitle"><!-- title --></div>
         <div class="contentbody"><!-- body --></div>
     </div>
+</div>
+
+<div id="editformblank" style="display:none">
+    <div class="editform"><form>
+        <div class="inputcontainer">
+            <div class="inputlabel"><?php echo $this->translation()->title ?></div>
+            <input type="text" name="entrytitle" value="" size="50">
+        </div>
+    </form></div>
 </div>

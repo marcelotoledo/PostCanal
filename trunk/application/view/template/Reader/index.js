@@ -120,6 +120,7 @@ function article_populate(d, append)
         article.data = Array();
         article.current = null;
         article.older = 0;
+        article.bottom = 0;
     }
 
     if(d.length==0)
@@ -459,7 +460,8 @@ $(document).ready(function()
 
     mytpl.right_middle.scroll(function()
     {
-        if(mytpl.article_list.scrollTop() > (article.bottom * 2/3) &&
+        // if(mytpl.article_list.scrollTop() > (article.bottom * 2/3) && /* fails when threaded */
+        if(mytpl.article_list.scrollTop() > (article.bottom / 2) &&
            article.older > 0 && active_request==false)
         {
             article_list(article.older);
@@ -489,6 +491,8 @@ $(document).ready(function()
     }); 
 
     window.onmousemove = document.onmousemove = on_mouse_move; /* IE */
+
+    /* controls */
 
     mytpl.all_items.click(function()
     {
