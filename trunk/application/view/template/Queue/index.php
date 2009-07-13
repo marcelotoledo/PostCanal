@@ -4,10 +4,17 @@
 
         <div id="intervalcontainer">
             <table><tr><td>
-                <div class="headerlabel"><?php echo $this->translation()->publication_interval ?></div>
+                <b><?php echo $this->translation()->publication_interval ?></b>
             </td></tr><tr><td>
                 <select id="pubinterval">
-                    <option></option>
+                    <option value="0"><?php echo $this->translation()->as_soon_as_possible ?></option>
+                    <option value="300"><?php echo $this->translation()->_05_minutes ?></option>
+                    <option value="900"><?php echo $this->translation()->_15_minutes ?></option>
+                    <option value="1800"><?php echo $this->translation()->_30_minutes ?></option>
+                    <option value="3600"><?php echo $this->translation()->_01_hour ?></option>
+                    <option value="10800"><?php echo $this->translation()->_03_hours ?></option>
+                    <option value="43200"><?php echo $this->translation()->_12_hours ?></option>
+                    <option value="86400"><?php echo $this->translation()->_01_day ?></option>
                 </select>
             </td></tr></table>
         </div>
@@ -15,7 +22,7 @@
         <div class="headersep">&nbsp;</div>
         <div id="enqueuecontainer">
             <table><tr><td>
-                <div class="headerlabel"><?php echo $this->translation()->auto_enqueue ?></div>
+                <b><?php echo $this->translation()->auto_enqueue ?></b>
             </td></tr><tr><td>
                 <div id="enqueuelnkno" style="display:block"><a href="#">yes</a> - no</div>
                 <div id="enqueuelnkyes" style="display:none">yes - <a href="#">no</a></div>
@@ -30,27 +37,27 @@
         <div id="queueheaderclear"></div>
     </div>
     <div id="queuemiddle">
-        <!-- articles -->
+        <!-- entries -->
     </div>
 </div>
 
 
-<div id="articleblank" style="display:none">
-    <div class="article articleclosed" feed="" article="">
-        <div class="articlebutton">
+<div id="entryblank" style="display:none">
+    <div class="entry entryclosed" entry="" ord="" status="">
+        <div class="entrybutton">
             <input type="checkbox">
         </div>
-        <div class="articlehead">
-            <div class="articlesource"><!-- feed --></div>
-            <div class="articletitle"><a href="#"><!-- title --></a></div>
+        <div class="entryhead">
+            <div class="entrysource"><!-- feed --></div>
+            <div class="entrytitle"><a href="#"><!-- title --></a></div>
         </div>
-        <div class="articlelinks">
-            <a class="articleview" href="#" target="_blank">&gt;&gt;</a>
+        <div class="entrylinks">
+            <a class="entryview" href="#" target="_blank">&gt;&gt;</a>
         </div>
-        <div class="articleinfo">
-            <div class="articledate"><!-- date --></div>
+        <div class="entryinfo">
+            <div class="entrydate"><!-- date --></div>
         </div>
-        <div class="articleclear"></div>
+        <div class="entryclear"></div>
     </div>
 </div>
 
