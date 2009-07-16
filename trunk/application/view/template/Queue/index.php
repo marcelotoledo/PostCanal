@@ -50,7 +50,7 @@
             <div class="entrydndhdrdec">&nbsp;</div>
         </div>
         <div class="entrybutton">
-            <input type="checkbox">
+            <input type="checkbox" checked>
         </div>
         <div class="entryhead">
             <div class="entrytitle"><a href="#"><!-- title --></a></div>
@@ -73,10 +73,18 @@
 </div>
 
 <div id="editformblank" style="display:none">
-    <div class="editform"><form>
+    <div class="editform">
+    <form>
         <div class="inputcontainer">
-            <div class="inputlabel"><?php echo $this->translation()->title ?></div>
-            <input type="text" name="entrytitle" value="" size="50">
+            <input type="text" name="entrytitle" value="" class="editformtitle">
         </div>
-    </form></div>
+        <div class="inputcontainer">
+            <textarea name="entrybody" class="editformbody"></textarea>
+        </div>
+        <div class="inputcontainer">
+            <input type="button" name="editformsave" value="<?php echo $this->translation()->save ?>" class="editformbutton">
+            <input type="button" name="editformcancel" value="<?php echo $this->translation()->cancel ?>" class="editformbutton">
+        </div>
+    </form>
+    </div>
 </div>

@@ -73,3 +73,20 @@ HORAS TRABALHADAS: 8h
 - correcao de bug com webservice backend > aplicacao web
 
 HORAS TRABALHADAS: 4h
+
+==========
+14/07/2009
+==========
+
+- queue editable
+
+HORAS TRABALHADAS: 2h
+
+==========
+15/07/2009
+==========
+
+- queue deletable
+- queue sortable
+
+HORAS TRABALHADAS: 4h

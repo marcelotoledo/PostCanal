@@ -221,6 +221,8 @@ div.editform
     padding: 0px 15px 15px 15px;
     border-collapse: collapse;
     margin-top: -3px;
+    padding-top: 15px;
+    padding-left: 53px;
 }
 div.editformtitle
 {
@@ -232,4 +234,30 @@ div.editformtitle
 div.editformbody
 {
     padding: 5px 0px 5px 0px;
+}
+input.editformtitle
+{
+    width: 600px;
+    color: #404040;
+    font-size: 14px;
+    font-weight: bold;
+    border: 1px solid gray;
+    padding: 5px 2px 5px 2px;
+}
+textarea.editformbody
+{
+    width: 602px;
+    height: 180px;
+    color: #404040;
+    font-family: monospace;
+    font-size: 14px;
+    font-weight: bold;
+    border: 1px solid gray;
+    padding: 0px 0px 0px 2px;
+}
+input.editformbutton
+{
+    width: 80px;
+    line-height: 18px;
+    margin-right: 10px;
 }

@@ -2,7 +2,7 @@ var mytpl = null;
 
 var entry = 
 {
-    data    : Array(),
+    data    : Array() ,
     current : null
 };
 
@@ -95,6 +95,7 @@ function entry_populate(d)
         mytpl.entry_list.append(_lsdata.join("\n"));
     }
 
+    entry_sortable_init();
     mytpl.entry_list.scrollTop(0);
 }
 
@@ -170,22 +171,96 @@ function entry_edit(e)
     {
         var _form = mytpl.edit_form_blank.clone();
 
-        _form.find("div.editform")
-             .find("input[name='entrytitle']").val(entry.data[e].title);
-
-        /*
-        _form.find('div.editformtitle').html(entry.data[e].title);
-        _form.find('div.editformbody').html(entry.data[e].content);
-        */
-
         entry.current = mytpl.entry_list.find("div.entry[entry='" + e + "']");
         entry.current.after(_form.html()).addClass('entryopen');
+
+        _form = entry.current.next('div.editform');
+
+        _form.find("input[name='entrytitle']").val(entry.data[e].title).focus();
+        _form.find("textarea[name='entrybody']").val(entry.data[e].content);
     }
 }
 
-function entry_publish(e)
+function entry_save_callback(d)
 {
-    alert(e);
+    var _e = d.find('entry').text();
+    entry.data[_e].title = d.find('title').text();
+    entry.data[_e].content = d.find('content').text();
+    entry.current.find('div.entrytitle > a').text(entry.data[_e].title);
+    entry_hide_current();
+    flash_message("<?php echo $this->translation()->saved ?>");
+}
+
+function entry_save_current()
+{
+    var _data = 
+    { 
+        blog    : blog.current , 
+        entry   : entry.current.attr('entry'),
+        title   : entry.current.next('div.editform').find("input[name='entrytitle']").val(),
+        content : entry.current.next('div.editform').find("textarea[name='entrybody']").val()
+    };
+
+    do_request('POST', './queue/update', _data, entry_save_callback);
+}
+
+function entry_delete_callback(d)
+{
+    mytpl.entry_list.find("div.entry[entry='" + d.find('entry').text() + "']").remove();
+}
+
+function entry_delete(e)
+{
+    var _data = { blog  : blog.current , entry : e };
+    entry_hide_current();
+    do_request('POST', './queue/delete', _data, entry_delete_callback);
+}
+
+function entry_position_callback(d)
+{
+    if((d.find('updated').text()=='true')!=true) { entry_list(); }
+}
+
+function entry_position(e, p)
+{
+    var _data = { blog  : blog.current , entry : e, position: p };
+    do_request('POST', './queue/position', _data, entry_position_callback);
+}
+
+function entry_sortable_callback(e)
+{
+    var _p = 1;
+
+    mytpl.entry_list.find('div.entry').each(function()
+    {
+        if(e==$(this).attr('entry') && _p != $(this).attr('ord'))
+        {
+            entry_position(e, _p);
+        }
+
+        _p++;
+    });
+}
+
+function entry_sortable_init()
+{
+    mytpl.entry_list.sortable(
+    {
+        handle : "div.entrydndhdr",
+        items : "div.entry[status!='published']",
+        cancel : "div.entryopen",
+        distance : 10,
+        start: function(e,u)
+        {
+            entry_hide_current();
+            entry.sorting = true;
+        },
+        update: function (e,u)
+        {
+            entry_sortable_callback(u.item.attr('entry'));
+        }
+    });
+    mytpl.entry_list.disableSelection();
 }
 
 function on_blog_change()
@@ -323,7 +398,32 @@ $(document).ready(function()
         .find('div.entrybutton')
         .find('input').live('change', function()
     {
-        entry_publish($(this).parent().parent().attr('entry'));
+        entry_delete($(this).parent().parent().attr('entry'));
+        $(this).attr('checked', false).attr('disabled' , true).blur();
+        return false;
+    });
+
+    mytpl.entry_list.find('div.editform')
+        .find("input[name='editformsave']")
+        .live('click', function()
+    {
+        entry_save_current();
+    });
+
+    mytpl.entry_list.find('div.editform')
+        .find("input[name='editformcancel']")
+        .live('click', function()
+    {
+        entry_hide_current();
+    });
+
+    mytpl.entry_list.find('div.entry')
+        .find('div.entrybutton')
+        .find('input')
+        .live('change', function()
+    {
+        entry_delete($(this).parent().parent().attr('entry'));
+        $(this).attr('checked', false).attr('disabled' , true).blur();
         return false;
     });
 
