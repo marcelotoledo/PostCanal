@@ -7,8 +7,15 @@ var queue =
     sorting     : false   ,
     publication : null    ,
     interval    : 0       ,
-    enqueueing  : null
+    enqueueing  : null    ,
+    request     : false
 };
+
+var updater =
+{
+    interval : 15000,
+    request  : false
+}
 
 
 function entry_set_status(e, s)
@@ -339,6 +346,61 @@ function set_queue_interval()
     });
 }
 
+function publication_updater_callback(d)
+{
+    d.find('result').children().each(function()
+    {
+        entry_set_status($(this).find('entry').text(), 
+                         $(this).find('status').text());
+    });
+}
+
+function publication_updater()
+{
+    if(updater.request==true) { return false; }
+
+    var _wdom = mytpl.entry_list.find("div.entry[status='waiting']");
+    var _wpar = Array();
+    var _data = null;
+
+    if(_wdom.length>0)
+    {
+        _wdom.each(function() { _wpar.push($(this).attr('entry')); });
+        _data = { blog : blog.current, waiting : _wpar.join(',') };
+        do_request('GET', './queue/check', _data, publication_updater_callback);
+    }
+}
+
+function enqueue_updater_callback(d)
+{
+    d.find('result').find('queue').children().each(function()
+    {
+        if(queue.data[($(this).find('entry').text())]==undefined)
+        {
+            queue_populate($(this));
+        }
+    });
+}
+
+function enqueue_updater()
+{
+    if(queue.enqueueing!=true || updater.request==true) { return false; }
+    _data = { blog : blog.current };
+    do_request('GET', './queue/list', _data, publication_updater_callback);
+}
+
+function updater_run()
+{
+    var _i = updater.interval / 3;
+    setTimeout('publication_updater()', _i * 1);
+    setTimeout('enqueue_updater()', _i * 2);
+    updater_init();
+}
+
+function updater_init()
+{
+    setTimeout('updater_run()', updater.interval);
+}
 
 function initialize()
 {
@@ -347,12 +409,14 @@ function initialize()
     queue.sorting     = false;
     queue.publication = null;
     queue.interval    = 0;
+    queue.enqueueing  = null;
 
     set_queue_publication();
     set_queue_enqueueing();
     set_queue_interval();
 
     entry_list();
+    updater_init();
 }
 
 function on_blog_change()
