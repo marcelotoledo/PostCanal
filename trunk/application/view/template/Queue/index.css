@@ -42,22 +42,15 @@ div.headerlabel
     font-weight: bold;
     text-transform: capitalize;
 }
-div.queuepubbtn
+button.queuepubbtn
 {
     float: right;
     width: 36px;
-    height: 32px;
-    line-height: 10px;
-    padding-top: 5px;
+    height: 36px;
     font-size: 9px;
     font-weight: bolder;
-    text-align: center;
     margin-top: 12px;
     margin-left: 5px;
-    color: white;
-    background-color: gray;
-    cursor: pointer;
-    cursor: hand;
 }
 #enqueuecontainer
 {

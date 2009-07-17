@@ -1,9 +1,13 @@
 var mytpl = null;
 
-var entry = 
+var queue = 
 {
-    data    : Array() ,
-    current : null
+    data        : Array() ,
+    current     : null    ,
+    sorting     : false   ,
+    publication : null    ,
+    interval    : 0       ,
+    enqueueing  : null
 };
 
 
@@ -57,7 +61,7 @@ function entry_populate(d)
             ordering               : $(this).find('ordering').text()
         };
 
-        if(entry.data[_data.entry]==undefined) // avoid dupl
+        if(queue.data[_data.entry]==undefined) // avoid dupl
         {
             _item  = mytpl.entry_blank.clone();
             _inner = _item.find('div.entry');
@@ -77,7 +81,7 @@ function entry_populate(d)
             _lsdata[_i] = _item.html(); _i++;
         }
 
-        entry.data[_data.entry] =
+        queue.data[_data.entry] =
         {
             title   : _data.entry_title,
             content : _data.entry_content
@@ -101,8 +105,8 @@ function entry_populate(d)
 
 function entry_list_callback(d)
 {
-    entry.data = Array();
-    entry.current = null;
+    queue.data = Array();
+    queue.current = null;
     mytpl.entry_list.html('');
     entry_populate(d.find('result').find('queue').children());
     entry_populate(d.find('result').find('published').children());
@@ -115,10 +119,10 @@ function entry_list()
 
 function entry_scroll_top()
 {
-    if(entry.current)
+    if(queue.current)
     {
         mytpl.entry_list.scrollTop(
-            entry.current.position().top -
+            queue.current.position().top -
             mytpl.entry_list.position().top +
             mytpl.entry_list.scrollTop() - 2
         );
@@ -129,8 +133,8 @@ function entry_show_fix_vertical()
 {
     var _rmh = mytpl.queue_middle_area.h / 2;
     var _rmt = mytpl.queue_middle_area.y;
-    var _apt = entry.current.position().top;
-    var _coh = entry.current.next('div.content').outerHeight();
+    var _apt = queue.current.position().top;
+    var _coh = queue.current.next('div.content').outerHeight();
 
     var _scr = mytpl.entry_list.scrollTop() + 
                _apt -
@@ -147,46 +151,46 @@ function entry_hide(e)
 
 function entry_hide_current()
 {
-    if(entry.current) { entry_hide(entry.current); }
-    entry.current = null;
+    if(queue.current) { entry_hide(queue.current); }
+    queue.current = null;
 }
 
 function entry_show(e)
 {
-    if(entry.data[e])
+    if(queue.data[e])
     {
         var _content = mytpl.content_blank.clone();
 
-        _content.find('div.contenttitle').html(entry.data[e].title);
-        _content.find('div.contentbody').html(entry.data[e].content);
+        _content.find('div.contenttitle').html(queue.data[e].title);
+        _content.find('div.contentbody').html(queue.data[e].content);
 
-        entry.current = mytpl.entry_list.find("div.entry[entry='" + e + "']");
-        entry.current.after(_content.html()).addClass('entryopen');
+        queue.current = mytpl.entry_list.find("div.entry[entry='" + e + "']");
+        queue.current.after(_content.html()).addClass('entryopen');
     }
 }
 
 function entry_edit(e)
 {
-    if(entry.data[e])
+    if(queue.data[e])
     {
         var _form = mytpl.edit_form_blank.clone();
 
-        entry.current = mytpl.entry_list.find("div.entry[entry='" + e + "']");
-        entry.current.after(_form.html()).addClass('entryopen');
+        queue.current = mytpl.entry_list.find("div.entry[entry='" + e + "']");
+        queue.current.after(_form.html()).addClass('entryopen');
 
-        _form = entry.current.next('div.editform');
+        _form = queue.current.next('div.editform');
 
-        _form.find("input[name='entrytitle']").val(entry.data[e].title).focus();
-        _form.find("textarea[name='entrybody']").val(entry.data[e].content);
+        _form.find("input[name='entrytitle']").val(queue.data[e].title).focus();
+        _form.find("textarea[name='entrybody']").val(queue.data[e].content);
     }
 }
 
 function entry_save_callback(d)
 {
     var _e = d.find('entry').text();
-    entry.data[_e].title = d.find('title').text();
-    entry.data[_e].content = d.find('content').text();
-    entry.current.find('div.entrytitle > a').text(entry.data[_e].title);
+    queue.data[_e].title = d.find('title').text();
+    queue.data[_e].content = d.find('content').text();
+    queue.current.find('div.entrytitle > a').text(queue.data[_e].title);
     entry_hide_current();
     flash_message("<?php echo $this->translation()->saved ?>");
 }
@@ -196,9 +200,9 @@ function entry_save_current()
     var _data = 
     { 
         blog    : blog.current , 
-        entry   : entry.current.attr('entry'),
-        title   : entry.current.next('div.editform').find("input[name='entrytitle']").val(),
-        content : entry.current.next('div.editform').find("textarea[name='entrybody']").val()
+        entry   : queue.current.attr('entry'),
+        title   : queue.current.next('div.editform').find("input[name='entrytitle']").val(),
+        content : queue.current.next('div.editform').find("textarea[name='entrybody']").val()
     };
 
     do_request('POST', './queue/update', _data, entry_save_callback);
@@ -253,7 +257,7 @@ function entry_sortable_init()
         start: function(e,u)
         {
             entry_hide_current();
-            entry.sorting = true;
+            queue.sorting = true;
         },
         update: function (e,u)
         {
@@ -263,9 +267,102 @@ function entry_sortable_init()
     mytpl.entry_list.disableSelection();
 }
 
+function toggle_queue_publication()
+{
+    queue.publication = queue.publication ^ true;
+    blog_update('publication_auto', (queue.publication ? 1 : 0));
+}
+
+function set_queue_publication()
+{
+    if(queue.publication==null)
+    {
+        queue.publication = (blog.info['publication_auto']==1);
+    }
+
+    if(queue.publication)
+    {
+        mytpl.queue_pub_play.hide();
+        mytpl.queue_pub_pause.show();
+    }
+    else
+    {
+        mytpl.queue_pub_pause.hide();
+        mytpl.queue_pub_play.show();
+    }
+}
+
+function set_queue_publication_auto()
+{
+    var _data = { blog        : blog.current   ,
+                  interval    : queue.interval ,
+                  publication : (queue.publication ? 1 : 0) };
+
+    do_request('POST', './queue/auto', _data, function() { entry_list(); });
+}
+
+function toggle_queue_enqueueing()
+{
+    queue.enqueueing = queue.enqueueing ^ true;
+    blog_update('enqueueing_auto', (queue.enqueueing ? 1 : 0));
+}
+
+function set_queue_enqueueing()
+{
+    if(queue.enqueueing==null)
+    {
+        queue.enqueueing = (blog.info['enqueueing_auto']==1);
+    }
+
+    if(queue.enqueueing)
+    {
+        mytpl.enqueue_no.hide();
+        mytpl.enqueue_yes.show();
+    }
+    else
+    {
+        mytpl.enqueue_yes.hide();
+        mytpl.enqueue_no.show();
+    }
+}
+
+function set_queue_interval()
+{
+    queue.interval = parseInt(blog.info['publication_interval']);
+
+    mytpl.queue_interval_sel.find('option').each(function()
+    {
+        if($(this).val()==queue.interval)
+        {
+            $(this).attr('selected', true);
+        }
+    });
+}
+
+
+function initialize()
+{
+    queue.data        = Array();
+    queue.current     = null;
+    queue.sorting     = false;
+    queue.publication = null;
+    queue.interval    = 0;
+
+    set_queue_publication();
+    set_queue_enqueueing();
+    set_queue_interval();
+
+    entry_list();
+}
+
 function on_blog_change()
 {
-    entry_list();
+    blog_load();
+}
+
+function on_blog_load()
+{
+    initialize();
 }
 
 $(document).ready(function()
@@ -274,7 +371,7 @@ $(document).ready(function()
     {
         main_container     : $("#maincontainer"),
         queue_container    : $("#queuecontainer"),
-        queue_header_title : $("#queueheadertitle"),
+        queue_header       : $("#queueheader"),
         queue_middle       : $("#queuemiddle"),
         entry_list         : $("#queuemiddle"),
         entry_blank        : $("#entryblank"),
@@ -282,13 +379,11 @@ $(document).ready(function()
         edit_form_blank    : $("#editformblank"),
         queue_middle_area  : { x : 0 , y : 0 , w : 0 , h : 0 },
         queue_middle_hover : false,
-        queue_footer       : $("#queuefooter"),
-        entry_expanded_lnk : $("#entryexpandedlnk"),
-        entry_expanded_lab : $("#entryexpandedlab"),
-        entry_list_lnk     : $("#entrylistlnk"),
-        entry_list_lab     : $("#entrylistlab"),
-        entry_next         : $("#entrynext"),
-        entry_prev         : $("#entryprev")
+        queue_pub_play     : $("#queuepubplay"),
+        queue_pub_pause    : $("#queuepubpause"),
+        enqueue_yes        : $("#enqueuelnkyes"),
+        enqueue_no         : $("#enqueuelnkno"),
+        queue_interval_sel : $("#pubinterval")
     }; 
     
     function window_update()
@@ -305,12 +400,6 @@ $(document).ready(function()
         mytpl.queue_middle_area.y = mytpl.queue_middle.offset().top;
         mytpl.queue_middle_area.w = mytpl.queue_middle.width();
         mytpl.queue_middle_area.h = mytpl.queue_middle.height();
-    }
-
-    function initialize()
-    {
-        entry_list();
-        window_update();
     }
 
     /* events */
@@ -427,6 +516,47 @@ $(document).ready(function()
         return false;
     });
 
+    mytpl.queue_header
+        .find('button.queuepubbtn')
+        .live('click', function()
+    {
+        toggle_queue_publication();
+    });
+
+    $(document).bind('blog_publication_auto_updated', function()
+    {
+        set_queue_publication();
+        set_queue_publication_auto();
+    });
+
+    mytpl.queue_header
+        .find('div.enqueuelnk')
+        .find('a')
+        .live('click', function()
+    {
+        toggle_queue_enqueueing();
+        return false;
+    });
+
+    $(document).bind('blog_enqueueing_auto_updated', function()
+    {
+        set_queue_enqueueing();
+    });
+
+    mytpl.queue_interval_sel.change(function()
+    {
+        if((queue.interval = $(this).find('option:selected').val()))
+        {
+            $(this).blur();
+            blog_update('publication_interval', queue.interval);
+        }
+    });
+
+    $(document).bind('blog_publication_interval_updated', function()
+    {
+        set_queue_publication_auto();
+    });
+
     /* initialize */
 
     $(document).bind('blog_changed' , function(e)
@@ -434,5 +564,11 @@ $(document).ready(function()
         on_blog_change();
     });
 
-    initialize();
+    $(document).bind('blog_loaded' , function(e)
+    {
+        on_blog_load();
+    });
+
+    blog_load();
+    window_update();
 });

@@ -24,14 +24,14 @@
             <table><tr><td>
                 <b><?php echo $this->translation()->auto_enqueue ?></b>
             </td></tr><tr><td>
-                <div id="enqueuelnkno" style="display:block"><a href="#">yes</a> - no</div>
-                <div id="enqueuelnkyes" style="display:none">yes - <a href="#">no</a></div>
+                <div class="enqueuelnk" id="enqueuelnkno" style="display:block"><a href="#">yes</a> - no</div>
+                <div class="enqueuelnk" id="enqueuelnkyes" style="display:none">yes - <a href="#">no</a></div>
             </td></tr></table>
         </div>
 
         <div class="headersep">&nbsp;</div>
-        <div class="queuepubbtn" id="queuepubplay" style="display:block">&#9835;<br/>play</div>
-        <div class="queuepubbtn" id="queuepubpaused" style="display:none">||<br/>pause</div>
+        <button class="queuepubbtn" id="queuepubplay" style="display:block">&#9835;<br/>play</button>
+        <button class="queuepubbtn" id="queuepubpause" style="display:none">||<br/>pause</button>
         <div class="headerlabel"><?php echo $this->translation()->publication ?>:</div>
 
         <div id="queueheaderclear"></div>
