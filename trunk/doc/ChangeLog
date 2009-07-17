@@ -90,3 +90,14 @@ HORAS TRABALHADAS: 2h
 - queue sortable
 
 HORAS TRABALHADAS: 4h
+
+==========
+16/07/2009
+==========
+
+- publicacao automatica ok
+- queue automatico ok
+- intervalo de publicacao ok
+- updater de publicacao automatica e auto enqueue
+
+HORAS TRABALHADAS: 5h
