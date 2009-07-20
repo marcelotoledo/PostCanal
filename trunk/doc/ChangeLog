@@ -120,5 +120,6 @@ HORAS TRABALHADAS: 3h
 - correcao na gravacao e atualizacao do intervalo de publicacao
 - inclusao de intervalo de tempo (margem) para a data de publicacao no
 configuration.xml
+- correcao na atualizacao da data de publicacao durante ordering
 
 HORAS TRABALHADAS: 3h

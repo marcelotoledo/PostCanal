@@ -504,6 +504,14 @@ class BlogEntry extends B_Model
         }
 
         self::commit();
+
+        /* update publication interval */
+
+        $_b = UserBlog::getByUserAndHash($profile_id, $blog_hash);
+        $_a = $_b->publication_auto;
+        $_i = $_b->publication_interval;
+
+        self::updateAutoPublication($blog_hash, $profile_id, $_a, $_i);
     }
 
     /**

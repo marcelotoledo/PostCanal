@@ -224,7 +224,8 @@ function entry_delete(e)
 
 function entry_position_callback(d)
 {
-    if((d.find('updated').text()=='true')!=true) { entry_list(); }
+    // if((d.find('updated').text()=='true')!=true) { entry_list(); }
+    entry_list();
 }
 
 function entry_position(e, p)
