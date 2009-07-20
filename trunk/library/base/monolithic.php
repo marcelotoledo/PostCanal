@@ -72,10 +72,6 @@ class B_Bootstrap
         }
         else
         {
-            /* assign registry to controller */
-
-            $controller->registry = $registry;
-
             /* check action */
 
             $action_name = $request->getAction();
@@ -96,7 +92,6 @@ class B_Bootstrap
                 /* initialize view */
 
                 $view = new B_View();
-                $view->registry = $registry;
                 $layout = strtolower($controller_name);
                 $view->setLayout($layout);
                 $template = ucfirst($controller_name) . "/" . $action_name;
@@ -251,13 +246,6 @@ class B_Bootstrap
 class B_Controller
 {
     /**
-     * Registry
-     *
-     * @var B_Registry
-     */
-    public $registry;
-
-    /**
      * View
      *
      * @var B_View
@@ -274,8 +262,8 @@ class B_Controller
     public function __call ($name, $arguments)
     {
         if($name == "view")     return $this->view;
-        if($name == "registry") return $this->registry;
-        else                    return $this->registry->{$name}()->object;
+        if($name == "registry") return B_Registry::singleton();
+        else                    return B_Registry::get($name)->object;
     }
 
     /**
@@ -1129,7 +1117,10 @@ abstract class B_Model
         return $id;
     }
 
-    abstract protected static function insert ($sql, $data=array());
+    protected static function insert ($sql, $data=array())
+    {
+        // abstract
+    }
 
     /**
      * Execute a SQL select query and returns array of (assoc, obj, class, etc.)
@@ -1192,9 +1183,7 @@ abstract class B_Model
      */
     public static function connection($database='default')
     {
-        $registry = B_Registry::singleton();
-
-        if(($db = $registry->database()->{$database}()) == null)
+        if(($db = B_Registry::get('database')->{$database}()) == null)
         {
             $_m = "database (" . $database . ") does not exists in registry";
             $_d = array('method' => __METHOD__);
@@ -1334,6 +1323,30 @@ class B_Registry
     }
 
     /**
+     * Set static
+     *
+     * @param   mixed   $name/$hash
+     * @param   mixed   $value
+     * @return  void
+     */
+    public static function set ($arg, $value=null)
+    {
+        $registry = self::singleton();
+
+        if(is_array($arg))
+        {
+            foreach($arg as $k => $v)
+            {
+                $registry->__set($k, $v);
+            }
+        }
+        else
+        {
+            $registry->__set($arg, $value);
+        }
+    }
+
+    /**
      * Get overloading
      * 
      * @param   string  $name
@@ -1349,6 +1362,34 @@ class B_Registry
         }
 
         return $value;
+    }
+
+    /**
+     * Get static
+     *
+     * @param   mixed   $name/$names
+     * @return  mixed
+     */
+    public static function get ($arg)
+    {
+        $result = null;
+        $registry = self::singleton();
+
+        if(is_array($arg))
+        {
+            $result = Array();
+
+            foreach($arg as $k)
+            {
+                $result[$k] = $registry->__get($k);
+            }
+        }
+        else
+        {
+            $result = $registry->__get($arg);
+        }
+
+        return $result;
     }
 
     /**
@@ -2086,10 +2127,7 @@ class B_Session
      */
     public static function gc ($max) 
     {
-        $registry = B_Registry::singleton();
-        $expiration = intval($registry->session()->expiration);
-
-        if(($expiration = intval($registry->session()->expiration)) <= 0)
+        if(($expiration = intval(B_Registry::get('session')->expiration)) <= 0)
         {
             $_m = "session expiration value must be greater than zero";
             $_d = array('method' => __METHOD__);
@@ -2337,13 +2375,6 @@ class B_View
      */
     private $template;
 
-    /**
-     * Registry
-     *
-     * @var B_Registry
-     */
-    public $registry;
-
 
     /**
      * Access to registry data
@@ -2353,8 +2384,8 @@ class B_View
      */
     public function __call($name, $arguments)
     {
-        if($name == "registry") return $this->registry;
-        else                    return $this->registry->{$name}()->object;
+        if($name == "registry") return B_Registry::singleton();
+        else                    return B_Registry::get($name)->object;
     }
 
     /**
@@ -2486,7 +2517,8 @@ class B_View
 
         if(strlen($this->layout) > 0)
         {
-            if(VIEW_COMPRESSION && strlen($this->template) > 0)
+            if(B_Registry::get('view')->compression=='true' && 
+               strlen($this->template) > 0)
             {
                 $this->includeCache();
             }
@@ -2511,7 +2543,16 @@ class B_View
     {
         $path = APPLICATION_PATH . '/view/cache/' . $this->layout . '-' .
                 strtolower(str_replace('/', '-', $this->template)) . '.php';
-        if(file_exists($path)) include $path;
+
+        if(file_exists($path))
+        {
+            include $path;
+        }
+        else
+        {
+            $_m = 'cache not found in path (' . $path . ')';
+            throw new B_Exception($_m, E_ERROR);
+        }
     }
 
     /**

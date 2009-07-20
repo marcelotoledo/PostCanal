@@ -232,11 +232,11 @@ class BlogEntry extends B_Model
     {
         $sql = "SELECT MAX(publication_date) as maxpub
                 FROM " . self::$table_name . "
-                WHERE user_blog_id = ? AND publication_status = ? AND deleted=0"; 
+                WHERE user_blog_id = ? AND publication_status != ? AND deleted=0"; 
         $result = current(self::select($sql, 
-                                       array($blog_id, self::STATUS_WAITING), 
+                                       array($blog_id, self::STATUS_PUBLISHED), 
                                        PDO::FETCH_ASSOC));
-        return $result['maxpub'] ? strtotime($result['maxpub']) : time();
+        return intval($result['maxpub'])>0 ? strtotime($result['maxpub']) : time();
     }
 
     /**
@@ -301,12 +301,13 @@ class BlogEntry extends B_Model
         {
             /* new item start waiting publication */
 
-            $mtime = self::getMaxPublicationTime($result['user_blog_id']);
-            $mtime+= $result['publication_interval'];
-
             $entry->publication_status = self::STATUS_WAITING;
-            $entry->publication_date = $mtime;
         }
+
+        $mtime = self::getMaxPublicationTime($result['user_blog_id']);
+        $mtime+= intval(B_Registry::get('application')->queue()->publicationMargin);
+        $mtime+= $result['publication_interval'];
+        $entry->publication_date = $mtime;
 
         $entry->populate($result);
         $entry->save();
@@ -515,21 +516,27 @@ class BlogEntry extends B_Model
      */
     public static function updateAutoPublication($blog, $user, $publication, $interval)
     {
-        if($interval<0) { $interval=0; }
+        if($interval<=0)
+        {
+            $margin = B_Registry::get('application')->queue()->publicationMargin;
+            $interval = intval($margin);
+        }
+
         $t = time();
+
+        /* save blog publication interval */
+
+        $_b = UserBlog::getByUserAndHash($user, $blog);
+        $_b->publication_interval = $interval;
+        $_b->save();
+
+        /* update entries */
 
         foreach($queue = self::findQueue($user, $blog) as $o)
         {
-            if($publication==true)
-            {
-                $o->publication_status = self::STATUS_WAITING;
-                $o->publication_date = ($t+=$interval);
-            }
-            else
-            {
-                $o->publication_status = self::STATUS_NEW;
-            }
-            
+            $o->publication_status = ($publication==true) ? self::STATUS_WAITING :
+                                                            self::STATUS_NEW ;
+            $o->publication_date = ($t+=$interval);
             $o->save();
         }
     }

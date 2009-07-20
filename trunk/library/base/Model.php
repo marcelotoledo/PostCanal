@@ -419,7 +419,10 @@ abstract class B_Model
         return $id;
     }
 
-    abstract protected static function insert ($sql, $data=array());
+    protected static function insert ($sql, $data=array())
+    {
+        // abstract
+    }
 
     /**
      * Execute a SQL select query and returns array of (assoc, obj, class, etc.)
@@ -482,9 +485,7 @@ abstract class B_Model
      */
     public static function connection($database='default')
     {
-        $registry = B_Registry::singleton();
-
-        if(($db = $registry->database()->{$database}()) == null)
+        if(($db = B_Registry::get('database')->{$database}()) == null)
         {
             $_m = "database (" . $database . ") does not exists in registry";
             $_d = array('method' => __METHOD__);

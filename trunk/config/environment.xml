@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <environment>
     <base>
-        <url>http://192.168.56.101</url>
+        <url>http://localhost:82</url>
     </base>
     <database>
         <default>
@@ -16,6 +16,9 @@
         <name>postcanal</name>
         <expiration>43200</expiration>
     </session>
+    <view>
+        <compression>false</compression>
+    </view>
     <mailer>
         <default>
             <transport>smtp</transport>
@@ -63,4 +66,20 @@
         <backendUrl>/backend.py</backendUrl>
         <frontendUrl>/webservice</frontendUrl>
     </webservice>
+    <application>
+        <feed>
+            <!-- discover life time (feed cache) -->
+            <discoverLife>1296000</discoverLife>
+        </feed>
+        <queue>
+            <!-- queue publication date margin from current time -->
+            <publicationMargin>300</publicationMargin>
+        </queue>
+    </application>
+    <zend>
+        <date>
+            <formatShort>hh:mm a</formatShort>
+            <formatLong>MMM dd - hh:mm a</formatLong>
+        </date>
+    </zend>
 </environment>

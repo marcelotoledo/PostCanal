@@ -27,16 +27,22 @@ class C_Article extends B_Controller
 
         $zd = new Zend_Date(time(), false, $this->session()->getCulture());
         $zd->setTimezone($this->session()->getTimezone());
+        $ct = $zd->toString('YYYMMMdd');
+        $zd_cfg = B_Registry::get('zend')->date;
 
         foreach($results as $a)
         {
             $ts = strtotime($a['article_date']);
             $zd->setTimestamp($ts);
 
+            $local = $zd->toString($zd->toString('YYYMMMdd')==$ct ? 
+                $zd_cfg->formatShort : 
+                $zd_cfg->formatLong);
+
             $articles[] = array_merge($a, array
             (
                 'article_time' => $ts,
-                'article_date_local' => $zd->toString()
+                'article_date_local' => $local
             ));
         }
 

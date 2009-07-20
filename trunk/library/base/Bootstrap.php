@@ -72,10 +72,6 @@ class B_Bootstrap
         }
         else
         {
-            /* assign registry to controller */
-
-            $controller->registry = $registry;
-
             /* check action */
 
             $action_name = $request->getAction();
@@ -96,7 +92,6 @@ class B_Bootstrap
                 /* initialize view */
 
                 $view = new B_View();
-                $view->registry = $registry;
                 $layout = strtolower($controller_name);
                 $view->setLayout($layout);
                 $template = ucfirst($controller_name) . "/" . $action_name;

@@ -8,7 +8,8 @@
  * @author      Rafael Castilho <rafael@castilho.biz>
  */
 
-error_reporting (E_ALL);
+//error_reporting (E_ALL);
+error_reporting (E_STRICT);
 date_default_timezone_set('UTC');
 
 /* configure path */
@@ -31,12 +32,11 @@ B_Loader::register();
 B_Session::register();
 
 
-/* load registry and configuration */
+/* initialize registry and configuration */
 
 $registry = B_Registry::singleton(BASE_PATH . '/config/environment.xml');
 
 define('BASE_URL', $registry->base()->url);
-define('VIEW_COMPRESSION', false);
 
 
 /* configure and run bootstrap */

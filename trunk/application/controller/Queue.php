@@ -51,10 +51,16 @@ class C_Queue extends B_Controller
 
         $zd = new Zend_Date(time(), false, $this->session()->getCulture());
         $zd->setTimezone($this->session()->getTimezone());
+        $ct = $zd->toString('YYYMMMdd');
+        $zd_cfg = B_Registry::get('zend')->date;
 
         foreach($queue as $o)
         {
             $zd->setTimestamp($o->publication_date);
+
+            $local = $zd->toString($zd->toString('YYYMMMdd')==$ct ? 
+                $zd_cfg->formatShort : 
+                $zd_cfg->formatLong);
 
             $results['queue'][] = array
             (
@@ -63,7 +69,7 @@ class C_Queue extends B_Controller
                 'entry_content'          => $o->entry_content,
                 'publication_status'     => $o->publication_status,
                 'publication_date'       => $o->publication_date,
-                'publication_date_local' => $zd->toString(),
+                'publication_date_local' => $local,
                 'ordering'               => $o->ordering
             );
         }
@@ -109,8 +115,7 @@ class C_Queue extends B_Controller
         $zd = new Zend_Date(time(), false, $this->session()->getCulture());
         $zd->setTimezone($this->session()->getTimezone());
         $zd->setTimestamp($entry['publication_date']);
-        $entry['publication_date_local'] = $zd->toString();
-
+        // $entry['publication_date_local'] = $zd->toString();
         // $this->view->result = $entry;
 
         if($entry)

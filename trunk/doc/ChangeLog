@@ -101,3 +101,24 @@ HORAS TRABALHADAS: 4h
 - updater de publicacao automatica e auto enqueue
 
 HORAS TRABALHADAS: 5h
+
+==========
+19/07/2009
+==========
+
+- correcoes no registry e configuration.xml
+- inclusao do tempo de cache do feed no configuration.xml
+- correcao da url do feed para melhorar a consultado cache de feed
+
+HORAS TRABALHADAS: 3h
+
+==========
+20/07/2009
+==========
+
+- correcao na exibicao de data (simplificada e completa) do reader e queue
+- correcao na gravacao e atualizacao do intervalo de publicacao
+- inclusao de intervalo de tempo (margem) para a data de publicacao no
+configuration.xml
+
+HORAS TRABALHADAS: 3h

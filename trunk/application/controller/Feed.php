@@ -50,8 +50,7 @@ class C_Feed extends B_Controller
     public function A_discover()
     {
         $this->response()->setXML(true);
-        $url = $this->request()->url;
-        $this->view->results = AggregatorFeed::discover($url);
+        $this->view->results = AggregatorFeed::discover($this->request()->url);
     }
 
     /**

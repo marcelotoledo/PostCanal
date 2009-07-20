@@ -80,6 +80,30 @@ class B_Registry
     }
 
     /**
+     * Set static
+     *
+     * @param   mixed   $name/$hash
+     * @param   mixed   $value
+     * @return  void
+     */
+    public static function set ($arg, $value=null)
+    {
+        $registry = self::singleton();
+
+        if(is_array($arg))
+        {
+            foreach($arg as $k => $v)
+            {
+                $registry->__set($k, $v);
+            }
+        }
+        else
+        {
+            $registry->__set($arg, $value);
+        }
+    }
+
+    /**
      * Get overloading
      * 
      * @param   string  $name
@@ -95,6 +119,34 @@ class B_Registry
         }
 
         return $value;
+    }
+
+    /**
+     * Get static
+     *
+     * @param   mixed   $name/$names
+     * @return  mixed
+     */
+    public static function get ($arg)
+    {
+        $result = null;
+        $registry = self::singleton();
+
+        if(is_array($arg))
+        {
+            $result = Array();
+
+            foreach($arg as $k)
+            {
+                $result[$k] = $registry->__get($k);
+            }
+        }
+        else
+        {
+            $result = $registry->__get($arg);
+        }
+
+        return $result;
     }
 
     /**

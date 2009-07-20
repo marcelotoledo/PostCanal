@@ -78,12 +78,7 @@ function entry_populate(d)
             entry_set_status(_inner, _data.publication_status);
 
             _inner.find('div.entrytitle > a').text(_data.entry_title);
-
-            if(_data.publication_status=='waiting' ||
-               _data.publication_status=='published')
-            {
-                _inner.find('div.entrydate').text(_data.publication_date_local);
-            }
+            _inner.find('div.entrydate').text(_data.publication_date_local);
 
             _lsdata[_i] = _item.html(); _i++;
         }
@@ -612,13 +607,8 @@ $(document).ready(function()
         if((queue.interval = $(this).find('option:selected').val()))
         {
             $(this).blur();
-            blog_update('publication_interval', queue.interval);
+            set_queue_publication_auto();
         }
-    });
-
-    $(document).bind('blog_publication_interval_updated', function()
-    {
-        set_queue_publication_auto();
     });
 
     /* initialize */

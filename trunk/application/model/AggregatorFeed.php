@@ -140,7 +140,6 @@ class AggregatorFeed extends B_Model
      * Find by URL
      *
      * @param   string  $url
-     * @param   integer $lifetime   feed url lifetime
      * @return  array
      */
     public static function findAssocByURL($url, $lifetime=86400)
@@ -152,7 +151,7 @@ class AggregatorFeed extends B_Model
                ON (a.feed_url_md5 = b.feed_url_md5)
                WHERE a.url_md5 = ? AND (UNIX_TIMESTAMP(a.updated_at) + ?) > 
                UNIX_TIMESTAMP(UTC_TIMESTAMP())";
-        $_d = array(md5($url), $lifetime);
+        $_d = array(md5($url), B_Registry::get('application')->feed()->discoverLife);
         return self::select($_s, $_d, PDO::FETCH_ASSOC);
     }
 
@@ -276,6 +275,9 @@ class AggregatorFeed extends B_Model
      */
     public static function discover($url)
     {
+        /* fix url */
+        if(strpos($url, 'http')!==0) $url = 'http://' . $url;
+
         if(count(($feeds = self::findAssocByURL($url))) == 0)
         {
             /* request feeds to webservice */

@@ -31,13 +31,6 @@ class B_View
      */
     private $template;
 
-    /**
-     * Registry
-     *
-     * @var B_Registry
-     */
-    public $registry;
-
 
     /**
      * Access to registry data
@@ -47,8 +40,8 @@ class B_View
      */
     public function __call($name, $arguments)
     {
-        if($name == "registry") return $this->registry;
-        else                    return $this->registry->{$name}()->object;
+        if($name == "registry") return B_Registry::singleton();
+        else                    return B_Registry::get($name)->object;
     }
 
     /**
@@ -180,7 +173,8 @@ class B_View
 
         if(strlen($this->layout) > 0)
         {
-            if(VIEW_COMPRESSION && strlen($this->template) > 0)
+            if(B_Registry::get('view')->compression=='true' && 
+               strlen($this->template) > 0)
             {
                 $this->includeCache();
             }
@@ -205,7 +199,16 @@ class B_View
     {
         $path = APPLICATION_PATH . '/view/cache/' . $this->layout . '-' .
                 strtolower(str_replace('/', '-', $this->template)) . '.php';
-        if(file_exists($path)) include $path;
+
+        if(file_exists($path))
+        {
+            include $path;
+        }
+        else
+        {
+            $_m = 'cache not found in path (' . $path . ')';
+            throw new B_Exception($_m, E_ERROR);
+        }
     }
 
     /**
