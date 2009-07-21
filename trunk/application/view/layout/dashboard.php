@@ -10,8 +10,9 @@
 
 <script type="text/javascript" src="./jquery/jquery-1.3.2.min.js"></script>
 <script type="text/javascript" src="./jquery/jquery-ui-1.7.1.custom.min.js"></script>
-<?php if($this->request()->getAction()=='index') : ?>
-<script type="text/javascript" src="./fckeditor/fckeditor.js"></script>
+<?php if($this->request()->getController()=='queue' &&
+         $this->request()->getAction()=='index') : ?>
+<script type="text/javascript" src="./tiny_mce/jquery.tinymce.js"></script>
 <?php endif ?>
 <script type="text/javascript" src="./js/application.js"></script>
 <link rel="stylesheet" href="./css/application.css" type="text/css" media="screen"/>

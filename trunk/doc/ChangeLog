@@ -121,5 +121,7 @@ HORAS TRABALHADAS: 3h
 - inclusao de intervalo de tempo (margem) para a data de publicacao no
 configuration.xml
 - correcao na atualizacao da data de publicacao durante ordering
+- correcao bugzID: 25 (toggle remover do queue no reader)
+- implementacao de editor wysiwyg
 
-HORAS TRABALHADAS: 3h
+HORAS TRABALHADAS: 8h

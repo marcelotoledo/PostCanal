@@ -1,5 +1,8 @@
 <?php
 
+echo 'deprecated';
+exit(1);
+
 /**
  * Dashboard controller class
  * 

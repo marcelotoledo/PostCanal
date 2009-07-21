@@ -183,7 +183,13 @@ function entry_edit(e)
         _form = queue.current.next('div.editform');
 
         _form.find("input[name='entrytitle']").val(queue.data[e].title).focus();
-        _form.find("textarea[name='entrybody']").val(queue.data[e].content);
+        _form.find("textarea[name='entrybody']")
+            .val(queue.data[e].content)
+            .tinymce(
+            {
+                script_url : './tiny_mce/tiny_mce.js',
+                theme      : 'postcanal'
+            });
     }
 }
 
