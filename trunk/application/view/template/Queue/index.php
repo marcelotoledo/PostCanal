@@ -78,6 +78,16 @@
         <div class="inputcontainer">
             <input type="text" name="entrytitle" value="" class="editformtitle">
         </div>
+        <div class="editformbodymode bodymodetext" style="display:none">
+            <b><?php echo $this->translation()->show ?></b>: 
+            <?php echo $this->translation()->text ?> - 
+            <a href="#" class="html"><?php echo $this->translation()->html ?></a>
+        </div>
+        <div class="editformbodymode bodymodehtml" style="display:none">
+            <b><?php echo $this->translation()->show ?></b>: 
+            <a href="#" class="text"><?php echo $this->translation()->text ?></a> - 
+            <?php echo $this->translation()->html ?> 
+        </div>
         <div class="inputcontainer">
             <textarea name="entrybody" class="editformbody"></textarea>
         </div>

@@ -183,14 +183,32 @@ function entry_edit(e)
         _form = queue.current.next('div.editform');
 
         _form.find("input[name='entrytitle']").val(queue.data[e].title).focus();
-        _form.find("textarea[name='entrybody']")
-            .val(queue.data[e].content)
-            .tinymce(
-            {
-                script_url : './tiny_mce/tiny_mce.js',
-                theme      : 'postcanal'
-            });
+        _form.find("textarea[name='entrybody']").val(queue.data[e].content);
+
+        body_mode_html();
     }
+}
+
+function body_mode_text()
+{
+    var _txa = queue.current.next('div.editform').find("textarea[name='entrybody']");
+    var _src = tinyMCE.activeEditor.getContent();
+    _txa.next('span.mceEditor').remove();
+    _txa.replaceWith('<textarea name="entrybody" class="editformbody">');
+    queue.current.next('div.editform').find("textarea[name='entrybody']").val(_src);
+}
+
+function body_mode_html()
+{
+    var _txa = queue.current.next('div.editform').find("textarea[name='entrybody']");
+
+    queue.current.next('div.editform')
+        .find("textarea[name='entrybody']")
+        .tinymce(
+        {
+            script_url : './tiny_mce/tiny_mce.js',
+            theme : 'postcanal'
+        });
 }
 
 function entry_save_callback(d)
@@ -563,6 +581,17 @@ $(document).ready(function()
     {
         entry_delete($(this).parent().parent().attr('entry'));
         $(this).attr('checked', false).attr('disabled' , true).blur();
+        return false;
+    });
+
+    mytpl.entry_list.find('div.editform')
+        .find("div.editformbodymode:visible")
+        .find('a')
+        .live('click', function()
+    {
+        $(this).hasClass('html') ? body_mode_html() : body_mode_text();
+        queue.current.next('div.editform').find('div.editformbodymode').toggle();
+        $(this).blur();
         return false;
     });
 

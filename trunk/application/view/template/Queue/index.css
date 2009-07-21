@@ -224,6 +224,10 @@ div.editformtitle
     font-weight: bold;
     padding: 10px 0px 10px 0px;
 }
+div.editformbodymode
+{
+    padding-bottom: 5px;
+}
 div.editformbody
 {
     padding: 5px 0px 5px 0px;
