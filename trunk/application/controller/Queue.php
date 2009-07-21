@@ -115,13 +115,12 @@ class C_Queue extends B_Controller
         $zd = new Zend_Date(time(), false, $this->session()->getCulture());
         $zd->setTimezone($this->session()->getTimezone());
         $zd->setTimestamp($entry['publication_date']);
-        // $entry['publication_date_local'] = $zd->toString();
-        // $this->view->result = $entry;
 
         if($entry)
         {
             $this->view()->result = array('feed'    => $feed_hash,
-                                          'article' => $article_md5);
+                                          'article' => $article_md5,
+                                          'entry'   => $entry['entry']);
         }
     }
 

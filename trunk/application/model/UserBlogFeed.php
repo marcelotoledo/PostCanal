@@ -271,7 +271,8 @@ class UserBlogFeed extends B_Model
                        b.article_md5 AS article, b.article_title AS article_title, 
                        b.article_link AS article_link, b.created_at AS article_date, 
                        b.article_author AS article_author, b.article_content AS article_content,
-                       c.publication_status AS publication_status
+                       c.publication_status AS publication_status,
+                       c.hash AS entry
                 FROM model_user_blog_feed AS a
                 LEFT JOIN model_aggregator_feed_article AS b
                     ON (a.aggregator_feed_id = b.aggregator_feed_id)
@@ -314,7 +315,8 @@ class UserBlogFeed extends B_Model
                        b.article_md5 AS article, b.article_title AS article_title, 
                        b.article_link AS article_link, b.created_at AS article_date, 
                        b.article_author AS article_author, b.article_content AS article_content,
-                       c.publication_status AS publication_status
+                       c.publication_status AS publication_status,
+                       c.hash AS entry
                 FROM model_user_blog_feed AS a 
                 LEFT JOIN model_aggregator_feed_article AS b 
                     ON (a.aggregator_feed_id = b.aggregator_feed_id) 

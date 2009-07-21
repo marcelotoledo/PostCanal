@@ -149,7 +149,8 @@ function article_populate(d, append)
             article_date_local : $(this).find('article_date_local').text(),
             article_author     : $(this).find('article_author').text(),
             article_content    : $(this).find('article_content').text(),
-            publication_status : $(this).find('publication_status').text()
+            publication_status : $(this).find('publication_status').text(),
+            entry              : $(this).find('entry').text()
         };
 
         if(article.data[_data.article]==undefined) // avoid dupl
@@ -158,11 +159,12 @@ function article_populate(d, append)
             _inner = _item.find('div.article');
             _inner.attr('feed', _data.feed);
             _inner.attr('article', _data.article);
+            _inner.attr('entry', _data.entry);
 
             if(_data.publication_status.length>0)
             {
                 _inner.find('div.articlebutton')
-                    .html('<input type="checkbox" checked disabled/>');
+                    .html('<input type="checkbox" checked/>');
             }
 
             _inner.find('div.articlesource').text(_data.feed_title);
@@ -323,10 +325,10 @@ function queue_add_callback(d)
 
     mytpl.article_list
         .find(_sel)
+        .attr('entry', d.find('entry').text())
         .find('div.articlebutton')
         .find('input')
         .attr('checked', true)
-        .attr('disabled', true)
         .blur();
 }
 
@@ -337,6 +339,22 @@ function queue_add(f, a)
                   article : a };
 
     do_request('GET', './queue/add', _data, queue_add_callback);
+}
+
+function queue_delete_callback(d)
+{
+    var _sel = "div.article[entry='" + d.find('entry').text() + "']";
+
+    mytpl.article_list.find(_sel)
+        .find('div.articlebutton')
+        .find('input')
+        .attr('checked', false);
+}
+
+function queue_delete(e)
+{
+    var _data = { blog  : blog.current , entry : e };
+    do_request('POST', './queue/delete', _data, queue_delete_callback);
 }
 
 function on_blog_change()
@@ -514,12 +532,22 @@ $(document).ready(function()
         .find('div.articletitle')
         .find('a').live('click', function()
     {
+        var _pt = $(this).parent().parent().parent();
+
+        if(_pt.hasClass('articleopen'))
+        {
+            article_hide_current();
+            $(this).blur();
+            return false; 
+        }
+
         if(article.display=='list')
         {
             article_hide_current();
-            article_show($(this).parent().parent().parent().attr('article'));
+            article_show(_pt.attr('article'));
             article_show_fix_vertical();
         }
+
         $(this).blur();
         return false;
     });
@@ -528,8 +556,18 @@ $(document).ready(function()
         .find('div.articlebutton')
         .find('input').live('change', function()
     {
-        var _i = $(this).parent().parent();
-        queue_add(_i.attr('feed'), _i.attr('article'));
+        if($(this).attr('checked'))
+        {
+            var _i = $(this).parent().parent();
+            queue_add(_i.attr('feed'), _i.attr('article'));
+        }
+        else
+        {
+            var _i = $(this).parent().parent();
+            queue_delete(_i.attr('entry'));
+        }
+
+        $(this).blur();
         return false;
     });
 

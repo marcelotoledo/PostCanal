@@ -38,7 +38,7 @@
 
 
 <div id="articleblank" style="display:none">
-    <div class="article articleclosed" feed="" article="">
+    <div class="article articleclosed" feed="" article="" entry="">
         <div class="articlebutton">
             <input type="checkbox">
         </div>

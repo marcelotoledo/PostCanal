@@ -524,18 +524,26 @@ $(document).ready(function()
         .find('div.entrytitle')
         .find('a').live('click', function()
     {
-        var _st = $(this).parent().parent().parent().attr('status')
+        var _pt = $(this).parent().parent().parent();
+        var _st = _pt.attr('status')
+
+        if(_pt.hasClass('entryopen'))
+        { 
+            entry_hide_current();
+            $(this).blur();
+            return false; 
+        }
 
         if(_st=='waiting' || _st=='published')
         {
             entry_hide_current();
-            entry_show($(this).parent().parent().parent().attr('entry'));
+            entry_show(_pt.attr('entry'));
             entry_show_fix_vertical();
         }
         else
         {
             entry_hide_current();
-            entry_edit($(this).parent().parent().parent().attr('entry'));
+            entry_edit(_pt.attr('entry'));
             entry_scroll_top();
         }
 
