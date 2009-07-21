@@ -64,7 +64,7 @@
 			t.settings = s = extend({
 				theme_postcanal_path : true,
 				theme_postcanal_toolbar_location : 'top',
-				theme_postcanal_buttons1 : "formatselect,|,bold,italic,underline,strikethrough,removeformat,|,bullist,numlist,|,sub,sup,|,justifyleft,justifycenter,justifyright,justifyfull,|,outdent,indent,|,undo,redo,|,code",
+				theme_postcanal_buttons1 : "formatselect,|,bold,italic,underline,strikethrough,removeformat,|,bullist,numlist,|,sub,sup,|,justifyleft,justifycenter,justifyright,justifyfull,|,outdent,indent,|,undo,redo",
 				theme_postcanal_blockformats : "p,address,pre,h1,h2,h3,h4,h5,h6",
 				theme_postcanal_toolbar_align : "left",
 				theme_postcanal_more_colors : 1,
