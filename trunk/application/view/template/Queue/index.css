@@ -224,14 +224,6 @@ div.editformtitle
     font-weight: bold;
     padding: 10px 0px 10px 0px;
 }
-div.editformbodymode
-{
-    padding-bottom: 5px;
-}
-div.editformbody
-{
-    padding: 5px 0px 5px 0px;
-}
 input.editformtitle
 {
     width: 600px;
@@ -243,7 +235,7 @@ input.editformtitle
 }
 textarea.editformbody
 {
-    width: 602px;
+    width: 700px;
     height: 180px;
     color: #404040;
     font-family: monospace;

@@ -4,6 +4,7 @@ var queue =
 {
     data        : Array() ,
     current     : null    ,
+    editor      : null    ,
     sorting     : false   ,
     publication : null    ,
     interval    : 0       ,
@@ -16,6 +17,8 @@ var updater =
     interval : 15000,
     request  : false
 }
+
+var magic_fck_position = { l: 150, t: 280, h: 750, v: 120 };
 
 
 function entry_set_status(e, s)
@@ -149,6 +152,7 @@ function entry_hide(e)
 {
     e.removeClass('entryopen').next('div.content').remove();
     e.removeClass('entryopen').next('div.editform').remove();
+    $("#my_source_editor").remove();
 }
 
 function entry_hide_current()
@@ -171,6 +175,11 @@ function entry_show(e)
     }
 }
 
+function FCKeditor_OnComplete(i)
+{
+    i.SetData(queue.data[queue.current.attr('entry')].content);
+}
+
 function entry_edit(e)
 {
     if(queue.data[e])
@@ -181,34 +190,9 @@ function entry_edit(e)
         queue.current.after(_form.html()).addClass('entryopen');
 
         _form = queue.current.next('div.editform');
-
         _form.find("input[name='entrytitle']").val(queue.data[e].title).focus();
-        _form.find("textarea[name='entrybody']").val(queue.data[e].content);
-
-        body_mode_html();
+        _form.find("textarea[name='entrybody']").replaceWith(queue.editor.CreateHtml());
     }
-}
-
-function body_mode_text()
-{
-    var _txa = queue.current.next('div.editform').find("textarea[name='entrybody']");
-    var _src = tinyMCE.activeEditor.getContent();
-    _txa.next('span.mceEditor').remove();
-    _txa.replaceWith('<textarea name="entrybody" class="editformbody">');
-    queue.current.next('div.editform').find("textarea[name='entrybody']").val(_src);
-}
-
-function body_mode_html()
-{
-    var _txa = queue.current.next('div.editform').find("textarea[name='entrybody']");
-
-    queue.current.next('div.editform')
-        .find("textarea[name='entrybody']")
-        .tinymce(
-        {
-            script_url : './tiny_mce/tiny_mce.js',
-            theme : 'postcanal'
-        });
 }
 
 function entry_save_callback(d)
@@ -228,7 +212,7 @@ function entry_save_current()
         blog    : blog.current , 
         entry   : queue.current.attr('entry'),
         title   : queue.current.next('div.editform').find("input[name='entrytitle']").val(),
-        content : queue.current.next('div.editform').find("textarea[name='entrybody']").val()
+        content : FCKeditorAPI.GetInstance("FCKQueueEntryEditor").GetData()
     };
 
     do_request('POST', './queue/update', _data, entry_save_callback);
@@ -449,6 +433,21 @@ function on_blog_load()
     initialize();
 }
 
+function queue_editor_init()
+{
+    var _size = { w : $(window).width() - magic_fck_position.l ,
+                  h : $(window).height() - magic_fck_position.t };
+
+    if(_size.w < magic_fck_position.h) { _size.w = magic_fck_position.h; }
+    if(_size.h < magic_fck_position.v) { _size.h = magic_fck_position.v; }
+    
+    queue.editor = new FCKeditor("FCKQueueEntryEditor", _size.w, _size.h);
+    queue.editor.Config["CustomConfigurationsPath"] = "../../js/fckconfig.js?t=<?php echo time() ?>";
+    queue.editor.Config["EditorAreaCSS"] = "../../css/fck_editorarea.css?t=<?php echo time() ?>";
+    queue.editor.Config["AutoDetectLanguage"] = false;
+    queue.editor.Config["DefaultLanguage"] = "<?php echo substr($this->session()->getCulture(), 0, 2) ?>";
+}
+
 $(document).ready(function()
 {
     mytpl =
@@ -585,17 +584,6 @@ $(document).ready(function()
     });
 
     mytpl.entry_list.find('div.editform')
-        .find("div.editformbodymode:visible")
-        .find('a')
-        .live('click', function()
-    {
-        $(this).hasClass('html') ? body_mode_html() : body_mode_text();
-        queue.current.next('div.editform').find('div.editformbodymode').toggle();
-        $(this).blur();
-        return false;
-    });
-
-    mytpl.entry_list.find('div.editform')
         .find("input[name='editformsave']")
         .live('click', function()
     {
@@ -669,4 +657,5 @@ $(document).ready(function()
 
     blog_load();
     window_update();
+    queue_editor_init();
 });
