@@ -171,7 +171,7 @@ class C_Blog extends B_Controller
         {
             foreach(UserBlog::$allow_write as $k)
             {
-                if(array_key_exists($k, $_REQUEST))
+                if(array_key_exists($k, $_REQUEST) && strlen($_REQUEST[$k])>0)
                 {
                     $blog->{$k} = $this->request()->{$k};
                     $updated = array_merge($updated, array($k => $blog->{$k}));

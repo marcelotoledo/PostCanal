@@ -45,7 +45,8 @@
         </div>
         <div class="inputcontainer">
             <div class="inputlabel"><?php echo $this->translation()->password ?></div>
-            <input type="password" name="password" size="40" value="">
+            <input type="password" name="password" size="40" value="" style="display:none">
+            <div class="donotchangepwd"><input type="checkbox" name="donotchangepwd" checked><?php echo $this->translation()->keep_unchanged ?></div>
         </div>
         <div class="inputcontainer">
             <div class="inputlabel"><?php echo $this->translation()->keywords ?></div>

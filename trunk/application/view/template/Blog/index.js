@@ -114,6 +114,8 @@ function blog_edit_show(b)
 
 function blog_edit_hide(b)
 {
+    mytpl.blog_list_ref[b].form.find('div.donotchangepwd').show();
+    mytpl.blog_list_ref[b].form.find('input[name="password"]').hide();
     mytpl.blog_list_ref[b].form.hide();
     mytpl.blog_list_ref[b].item.find('a.blogdeletelnk').hide();
     mytpl.blog_list_ref[b].item.find('a.blogeditlnk').show();
@@ -228,6 +230,15 @@ $(document).ready(function()
     {
         blog_delete_confirm_show(blog_item_getid($(this)));
         return false;
+    });
+
+    mytpl.blog_list_area.find("div.donotchangepwd")
+        .find('input')
+        .live('change', function()
+    {
+        $(this).attr('checked', true);
+        $(this).parent().toggle();
+        mytpl.blog_list_area.find("input[name='password']").toggle().focus();
     });
 
     function blog_update_getid(i)
