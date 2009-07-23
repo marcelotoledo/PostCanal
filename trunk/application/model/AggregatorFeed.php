@@ -176,7 +176,7 @@ class AggregatorFeed extends B_Model
      */
     public static function findOutdated($limit=10)
     {
-        $sql = "SELECT aggregator_feed_id, feed_url
+        $sql = "SELECT aggregator_feed_id AS id, feed_url
                 FROM " . self::$table_name . "
                 WHERE (feed_update_time + UNIX_TIMESTAMP(updated_at)) < 
                        UNIX_TIMESTAMP(UTC_TIMESTAMP())

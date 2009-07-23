@@ -61,7 +61,7 @@ class L_WebService
     }
 
     /**
-     * Call Web Service Method (Client only)
+     * Call Web Service Method (Client)
      */
     public function __call($method, $args)
     {
@@ -148,7 +148,8 @@ class L_WebService
     public function feed_update_get($args)
     {
         if($this->validate_args($args, array()) == false) return null;
-        return AggregatorFeed::findOutdated($limit=1);
+        $total = array_key_exists('total', $args) ? intval($args['total']) : 1;
+        return AggregatorFeed::findOutdated($total);
     }
 
     /**
@@ -181,7 +182,8 @@ class L_WebService
     public function blog_publish_get($args)
     {
         if($this->validate_args($args, array()) == false) return null;
-        return BlogEntry::findAwaitingPublication();
+        $total = array_key_exists('total', $args) ? intval($args['total']) : 1;
+        return BlogEntry::findAwaitingPublication($total);
     }
 
     /**
@@ -214,7 +216,7 @@ class L_WebService
     /**
      * Do queue suggestion (blog entry feeding)
      */
-    public function auto_enqueue($args)
+    public function queue_suggest_do($args)
     {
         if($this->validate_args($args, array()) == false) return null;
 

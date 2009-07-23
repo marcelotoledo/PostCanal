@@ -244,7 +244,7 @@ class BlogEntry extends B_Model
      * 
      * @return  array
      */
-    public static function findAwaitingPublication()
+    public static function findAwaitingPublication($limit=1)
     {
         $sql = "SELECT 
                     a.user_blog_entry_id AS id, 
@@ -267,7 +267,7 @@ class BlogEntry extends B_Model
                     a.deleted = 0
                 ORDER BY
                     a.ordering ASC
-                LIMIT 1";
+                LIMIT " . intval($limit);
 
         return self::select($sql, array(self::STATUS_WAITING), PDO::FETCH_ASSOC);
     }
