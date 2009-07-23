@@ -55,8 +55,8 @@ class Daemon:
                 return None
 
             try:
-                id       = int(feed['aggregator_feed_id'])
-                url      = str(feed['feed_url'])
+                id  = int(feed['id'])
+                url = str(feed['feed_url'])
             except:
                 logging.error("feed update get: invalid feed dictionary")
                 return None
@@ -202,6 +202,21 @@ def start(argv):
         daemon.blog_publish()
         daemon.queue_suggest()
 
+def debug(argv): # run once
+    base_path = os.path.abspath("../")
+    config_path = base_path + "/config/environment.xml"
+    daemon = Daemon(config_path)
+
+    # logger (stdout)
+    logging.basicConfig(level=logging.DEBUG, 
+                        format="[%(asctime)s] [%(levelname)s] %(message)s")
+
+    logging.info("debug started")
+
+    daemon.feed_update()
+    daemon.blog_publish()
+    daemon.queue_suggest()
+
 def usage(argv):
     print 'PostCanal Daemon %s - Daemon system for postcanal.com' % VERSION
     print 'Copyright  (C)  2009 PostCanal Inc. <https://www.postcanal.com>\n'
@@ -218,3 +233,6 @@ if __name__ == "__main__":
 
     if sys.argv[1] == 'start':
         start(sys.argv)
+
+    if sys.argv[1] == 'debug':
+        debug(sys.argv)
