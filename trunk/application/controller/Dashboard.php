@@ -1,8 +1,5 @@
 <?php
 
-echo 'deprecated';
-exit(1);
-
 /**
  * Dashboard controller class
  * 
@@ -28,6 +25,9 @@ class C_Dashboard extends B_Controller
      */
     public function A_index()
     {
+        echo "deprecated\n";
+        exit(1);
+
         $id = $this->session()->user_profile_id;
         $blogs = UserBlog::findByUser($id, $enabled=true);
         $this->view()->blogs = $blogs;

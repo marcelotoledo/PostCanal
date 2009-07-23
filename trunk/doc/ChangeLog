@@ -139,5 +139,8 @@ HORAS TRABALHADAS: 7h
 ==========
 
 - ajustes no editor wysiwyg
+- implemented: ao editar um blog a senha deve ter opcao de nao ser modificada (bugzId:18)
+- smallfixes de exibicao de mensagem no cadastro do blog
+- smallfixes no library/base/loader e no controller/dashboard
 
-HORAS TRABALHADAS: 4h
+HORAS TRABALHADAS: 7h

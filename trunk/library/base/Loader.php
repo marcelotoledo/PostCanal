@@ -129,9 +129,10 @@ class B_Loader
         }
         else
         {
-            $_m = "class (Zend_Loader) not found";
-            $_d = array('method' => __METHOD__);
-            throw new B_Exception($_m, E_ERROR, $_d);
+            echo "<pre>";
+            echo "class Zend_Loader not found\n";
+            echo "</pre>";
+            exit(1);
         }
     }
 }

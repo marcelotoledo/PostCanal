@@ -56,6 +56,11 @@ function blog_add_callback(d)
         blog_populate(d.find('result'));
         toggle_blog_add();
         blog_edit_show(d.find('result').find('blog').text());
+
+        var _b = d.find('blog').text();
+
+        mytpl.blog_list_ref[_b].form.find('div.donotchangepwd').hide();
+        mytpl.blog_list_ref[_b].form.find('input[name="password"]').show();
     }
     if(_status=="<?php echo C_Blog::DISCOVER_STATUS_FAILED ?>")
     {
@@ -81,6 +86,9 @@ function blog_add_callback(d)
 
 function blog_add()
 {
+    add_message(''); 
+    mytpl.blog_type_failed.hide();
+
     var _u = null;
 
     if((_u = mytpl.new_blog_url.val())=="")
@@ -206,13 +214,13 @@ $(document).ready(function()
     {
         if((e.which && e.which == 13) || (e.keyCode && e.keyCode == 13))
         {
-            if(active_request==false) { add_message(''); blog_add(); }
+            if(active_request==false) { blog_add(); }
         }
     });
 
     mytpl.new_blog_submit.click(function()
     {
-        if(active_request==false) { add_message(''); blog_add(); }
+        if(active_request==false) { blog_add(); }
     });
 
     function blog_item_getid(i)
