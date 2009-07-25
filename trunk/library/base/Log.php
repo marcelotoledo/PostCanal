@@ -50,11 +50,9 @@ class B_Log
         }
         catch(Exception $exception)
         {
-            $message = chop($exception->getMessage()) . ";\n" . chop($message);
-            echo "<pre>";
-            echo $message;
-            echo "</pre>";
-            exit(1);
+            $_m = chop($exception->getMessage()) . ";\n" . chop($message);
+            if(error_reporting()>0) echo $_m . "\n";
+            syslog($_m);
         }
     }
 }

@@ -30,11 +30,10 @@ class B_Loader
     {
         if(class_exists($name) == false)
         {
-            if    (strpos($name, "L_") === 0)    self::library($name);
-            elseif(strpos($name, "C_") === 0)    self::controller($name);
-            elseif(strpos($name, "H_") === 0)    self::helper($name);
-            elseif(strpos($name, "Zend_") === 0) self::zend($name);
-            else                                 self::model($name);
+            if    (strpos($name, "L_") === 0)    self::fromLibrary($name);
+            elseif(strpos($name, "C_") === 0)    self::fromController($name);
+            elseif(strpos($name, "Zend_") === 0) self::fromZend($name);
+            else                                 self::fromModel($name);
         }
     }
 
@@ -44,7 +43,7 @@ class B_Loader
      * @param   string  $name   Class name
      * @return  void
      */
-    public static function library($name)
+    public static function fromLibrary($name)
     {
         $path = APPLICATION_PATH . "/library/" . substr($name, 2) . ".php";
 
@@ -63,25 +62,9 @@ class B_Loader
      * @param   string  $name   Class name
      * @return  void
      */
-    public static function controller($name)
+    public static function fromController($name)
     {
         $path = APPLICATION_PATH . "/controller/" . substr($name, 2) . ".php";
-
-        if(file_exists($path))
-        {
-            include $path;
-        }
-    }
-
-    /**
-     * Helper loader
-     *
-     * @param   string  $name   Class name
-     * @return  void
-     */
-    public static function helper($name)
-    {
-        $path = APPLICATION_PATH . "/view/helper/" . substr($name, 2) . ".php";
 
         if(file_exists($path))
         {
@@ -95,7 +78,7 @@ class B_Loader
      * @param   string  $name   Class name
      * @return  void
      */
-    public static function model($name)
+    public static function fromModel($name)
     {
         $path = APPLICATION_PATH . "/model/" . $name . ".php";
 
@@ -112,7 +95,7 @@ class B_Loader
      * @throw   B_Exception
      * @return  void
      */
-    public static function zend($name)
+    public static function fromZend($name)
     {
         if(class_exists("Zend_Loader") == false)
         {
@@ -129,10 +112,9 @@ class B_Loader
         }
         else
         {
-            echo "<pre>";
-            echo "class Zend_Loader not found\n";
-            echo "</pre>";
-            exit(1);
+            $_m = 'class Zend_Loader not found';
+            $_d = array('method' => __METHOD__);
+            B_Log::write($_m, E_ERROR, $_d);
         }
     }
 }

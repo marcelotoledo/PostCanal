@@ -8,7 +8,7 @@
  * @author      Rafael Castilho <rafael@castilho.biz>
  */
 
-error_reporting (E_ALL);
+error_reporting (E_ALL | E_STRICT);
 
 
 /* configure path */

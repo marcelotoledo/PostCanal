@@ -3,9 +3,15 @@
 
 require "../application/console.php";
 
-//$x = BlogEntry::getByPrimaryKey(25);
-$x = UserProfile::getByPrimaryKey(1);
+$u = UserProfile::getByPrimaryKey(1);
 
-// $x->publication_status = BlogEntry::STATUS_PUBLISHED;
+echo $u->login_email . "\t" . $u->name . "\n";
 
-print_r($x);
+$u->login_email = 'rafael+' . mt_rand() . '@castilho.biz';
+$u->name = 'Rafael C\'ast"ilho (' . mt_rand() . ')';
+
+$u->save(array('login_email', 'name'));
+
+echo $u->login_email . "\t" . $u->name . "\n";
+
+#var_dump($x);
