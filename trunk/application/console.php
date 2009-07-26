@@ -8,7 +8,8 @@
  * @author      Rafael Castilho <rafael@castilho.biz>
  */
 
-error_reporting (E_ALL | E_STRICT);
+error_reporting (E_STRICT | E_ALL);
+date_default_timezone_set('America/Sao_Paulo');
 
 
 /* configure path */

@@ -134,11 +134,11 @@ class B_Registry
 
         if(is_array($arg))
         {
-            $result = Array();
+            $result = new stdClass();
 
             foreach($arg as $k)
             {
-                $result[$k] = $registry->__get($k);
+                $result->{$k} = $registry->__get($k);
             }
         }
         else

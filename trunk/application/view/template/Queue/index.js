@@ -175,9 +175,25 @@ function entry_show(e)
     }
 }
 
+function queue_editor_init()
+{
+    var _size = { w : $(window).width() - magic_fck_position.l ,
+                  h : $(window).height() - magic_fck_position.t };
+
+    if(_size.w < magic_fck_position.h) { _size.w = magic_fck_position.h; }
+    if(_size.h < magic_fck_position.v) { _size.h = magic_fck_position.v; }
+    
+    queue.editor = new FCKeditor("FCKQueueEntryEditor", _size.w, _size.h);
+    queue.editor.Config["CustomConfigurationsPath"] = "../../js/fckconfig.js?t=<?php echo time() ?>";
+    queue.editor.Config["EditorAreaCSS"] = "../../css/fck_editorarea.css?t=<?php echo time() ?>";
+    queue.editor.Config["AutoDetectLanguage"] = false;
+    queue.editor.Config["DefaultLanguage"] = "<?php echo substr($this->session()->getCulture(), 0, 2) ?>";
+}
+
 function FCKeditor_OnComplete(i)
 {
     i.SetData(queue.data[queue.current.attr('entry')].content);
+    set_active_request(false);
 }
 
 function entry_edit(e)
@@ -191,6 +207,7 @@ function entry_edit(e)
 
         _form = queue.current.next('div.editform');
         _form.find("input[name='entrytitle']").val(queue.data[e].title).focus();
+        set_active_request(true);
         _form.find("textarea[name='entrybody']").replaceWith(queue.editor.CreateHtml());
     }
 }
@@ -431,21 +448,6 @@ function on_blog_change()
 function on_blog_load()
 {
     initialize();
-}
-
-function queue_editor_init()
-{
-    var _size = { w : $(window).width() - magic_fck_position.l ,
-                  h : $(window).height() - magic_fck_position.t };
-
-    if(_size.w < magic_fck_position.h) { _size.w = magic_fck_position.h; }
-    if(_size.h < magic_fck_position.v) { _size.h = magic_fck_position.v; }
-    
-    queue.editor = new FCKeditor("FCKQueueEntryEditor", _size.w, _size.h);
-    queue.editor.Config["CustomConfigurationsPath"] = "../../js/fckconfig.js?t=<?php echo time() ?>";
-    queue.editor.Config["EditorAreaCSS"] = "../../css/fck_editorarea.css?t=<?php echo time() ?>";
-    queue.editor.Config["AutoDetectLanguage"] = false;
-    queue.editor.Config["DefaultLanguage"] = "<?php echo substr($this->session()->getCulture(), 0, 2) ?>";
 }
 
 $(document).ready(function()

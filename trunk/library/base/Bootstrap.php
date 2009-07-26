@@ -70,8 +70,7 @@ class B_Bootstrap
             $message = "controller (" . $controller_name . ") not found";
             $response->setStatus(B_Response::STATUS_NOT_FOUND);
         }
-
-        if($has_error==false)
+        else
         {
             /* check action */
 
@@ -88,88 +87,87 @@ class B_Bootstrap
                 $message = "action (" . $action_name . ") not found";
                 $response->setStatus(B_Response::STATUS_NOT_FOUND);
             }
-        }
-
-        if($has_error==false)
-        {
-            /* initialize view */
-
-            $view = new B_View();
-            $layout = strtolower($controller_name);
-            $view->setLayout($layout);
-            $template = ucfirst($controller_name) . "/" . $action_name;
-            $view->setTemplate($template);
-            $controller->view = $view;
-
-            /* initialize session */
-
-            $session_name = $registry->session()->name;
-            $session = new B_Session($session_name);
-            $registry->session()->object = $session;
-
-            /* initialize translation */
-
-            $culture = $session->getCulture();
-            $translation = new B_Translation($culture);
-            $registry->translation()->object = $translation;
-
-            /* translation load */
-
-            $this->translation_load[] = 'application';
-            $this->translation_load[] = $controller_name;
-            $this->translation_load[] = $controller_name . "/" . $action_name;
-            $translation->load($this->translation_load);
-
-            /* run action */
-
-            try
+            else
             {
-                $controller->before();
-                $controller->run($action_name);
-                $controller->after();
-            }
-            catch(B_Exception $exception)
-            {
-                /* set error */
+                /* initialize view */
 
-                $has_error = true;
-                $exception->controller = $controller_name;
-                $exception->action = $action_name;
-                $message = ((string) $exception);
+                $view = new B_View();
+                $layout = strtolower($controller_name);
+                $view->setLayout($layout);
+                $template = ucfirst($controller_name) . "/" . $action_name;
+                $view->setTemplate($template);
+                $controller->view = $view;
 
-                /* set response status */
+                /* initialize session */
 
-                if($exception->getCode() == E_ERROR)
+                $session_name = $registry->session()->name;
+                $session = new B_Session($session_name);
+                $registry->session()->object = $session;
+
+                /* initialize translation */
+
+                $culture = $session->getCulture();
+                $translation = new B_Translation($culture);
+                $registry->translation()->object = $translation;
+
+                /* translation load */
+
+                $this->translation_load[] = 'application';
+                $this->translation_load[] = $controller_name;
+                $this->translation_load[] = $controller_name . "/" . $action_name;
+                $translation->load($this->translation_load);
+
+                /* run action */
+
+                try
                 {
-                    $response->setStatus(B_Response::STATUS_ERROR);
+                    $controller->before();
+                    $controller->run($action_name);
+                    $controller->after();
                 }
+                catch(B_Exception $exception)
+                {
+                    /* set error */
 
-                /* log exception */
+                    $exception->controller = $controller_name;
+                    $exception->action = $action_name;
+                    $has_error = true;
+                    $message = ((string) $exception);
 
-                $exception->writeLog();
-            }
-            catch(Exception $exception)
-            {
-                /* set error */
+                    /* set response status */
 
-                $has_error = true;
+                    if($exception->getCode() == E_ERROR)
+                    {
+                        $response->setStatus(B_Response::STATUS_ERROR);
+                    }
 
-                $message = "message: " . $exception->getMessage() . "; " .
-                           "code: "    . $exception->getCode() . "; " .
-                           "file: "    . $exception->getFile() . "; " .
-                           "line: "    . $exception->getLine() . "; " .
-                           "trace: "   . $exception->getTraceAsString();
+                    /* log exception */
 
-                /* unexpected exceptions are fatal errors */
+                    $exception->writeLog();
+                }
+                catch(Exception $exception)
+                {
+                    /* set error */
 
-                $response->setStatus(B_Response::STATUS_ERROR);
+                    $has_error = true;
+
+                    $message = "message: " . $exception->getMessage() . "; " .
+                               "code: "    . $exception->getCode() . "; " .
+                               "file: "    . $exception->getFile() . "; " .
+                               "line: "    . $exception->getLine() . "; " .
+                               "trace: "   . $exception->getTraceAsString();
+
+                    /* unexpected exceptions are fatal errors */
+
+                    $response->setStatus(B_Response::STATUS_ERROR);
          
-                /* log exception */
+                    /* log exception */
 
-                $_d = array ('method' => __METHOD__, 
-                             'controller' => $controller_name, 
-                             'action' => $action_name);
-                B_Log::write($message, E_ERROR, $_d);
+                    $_d = array ('method' => __METHOD__, 
+                                 'controller' => $controller_name, 
+                                 'action' => $action_name);
+                    B_Log::write($message, E_ERROR, $_d);
+                }
             }
         }
 

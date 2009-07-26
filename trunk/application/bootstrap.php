@@ -8,9 +8,9 @@
  * @author      Rafael Castilho <rafael@castilho.biz>
  */
 
-error_reporting (E_ALL | E_STRICT);
-// date_default_timezone_set('UTC');
-date_default_timezone_set('America/Sao_Paulo'); // == /etc/timezone
+error_reporting (E_STRICT | E_ALL);
+date_default_timezone_set('America/Sao_Paulo');
+
 
 /* configure path */
 
