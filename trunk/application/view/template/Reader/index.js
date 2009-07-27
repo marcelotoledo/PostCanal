@@ -212,11 +212,12 @@ function article_scroll_top()
 {
     if(article.current)
     {
-        mytpl.article_list.scrollTop(
-            article.current.position().top -
-            mytpl.article_list.position().top +
-            mytpl.article_list.scrollTop() - 2
-        );
+        mytpl.article_list.animate(
+        {
+            scrollTop: article.current.position().top -
+                mytpl.article_list.position().top +
+                mytpl.article_list.scrollTop() - 2
+        }, 200);
     }
 }
 
@@ -231,7 +232,7 @@ function article_show_fix_vertical()
                _apt -
                ((_coh > _rmh) ? _rmt : _rmh);
 
-    mytpl.article_list.scrollTop(_scr);
+    mytpl.article_list.animate({ scrollTop: _scr }, 200);
 }
 
 function article_hide(a)
@@ -554,17 +555,19 @@ $(document).ready(function()
 
     mytpl.article_list.find('div.article')
         .find('div.articlebutton')
-        .find('input').live('change', function()
+        .find('input').live('click', function()
     {
-        if($(this).attr('checked'))
+        var _i = $(this).parent().parent();
+
+        if($(this).is(':checked'))
         {
-            var _i = $(this).parent().parent();
             queue_add(_i.attr('feed'), _i.attr('article'));
+            $(this).attr('checked', true);
         }
         else
         {
-            var _i = $(this).parent().parent();
             queue_delete(_i.attr('entry'));
+            $(this).attr('checked', false);
         }
 
         $(this).blur();

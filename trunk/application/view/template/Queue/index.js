@@ -578,7 +578,7 @@ $(document).ready(function()
 
     mytpl.entry_list.find('div.entry')
         .find('div.entrybutton')
-        .find('input').live('change', function()
+        .find('input').live('click', function()
     {
         entry_delete($(this).parent().parent().attr('entry'));
         $(this).attr('checked', false).attr('disabled' , true).blur();
