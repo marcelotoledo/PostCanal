@@ -126,11 +126,12 @@ function entry_scroll_top()
 {
     if(queue.current)
     {
-        mytpl.entry_list.scrollTop(
-            queue.current.position().top -
-            mytpl.entry_list.position().top +
-            mytpl.entry_list.scrollTop() - 2
-        );
+        mytpl.entry_list.animate(
+        {
+            scrollTop: queue.current.position().top -
+                mytpl.entry_list.position().top +
+                mytpl.entry_list.scrollTop() - 2
+        }, 200);
     }
 }
 
@@ -145,7 +146,7 @@ function entry_show_fix_vertical()
                _apt -
                ((_coh > _rmh) ? _rmt : _rmh);
 
-    mytpl.entry_list.scrollTop(_scr);
+    mytpl.entry_list.animate({ scrollTop: _scr }, 200);
 }
 
 function entry_hide(e)

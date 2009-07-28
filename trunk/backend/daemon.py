@@ -175,14 +175,14 @@ class Daemon:
 
     def queue_suggest(self):
         i = 0
-        #try:
-        i = self.client.queue_suggest_do({ 'token': self.token })
-        _m = "queue suggest: called successfuly for blog id (%s)"
-        logging.info(_m % (i))
-        #except:
-        #    _m = "queue suggest: called failed for blog id (%s); (%s)"
-        #    logging.error(_m % (i, sys.exc_info()[0].__name__))
-        #    return None
+        try:
+            i = self.client.queue_suggest_do({ 'token': self.token })
+            _m = "queue suggest: called successfuly for blog id (%s)"
+            logging.info(_m % (i))
+        except:
+            _m = "queue suggest: called failed for blog id (%s); (%s)"
+            logging.error(_m % (i, sys.exc_info()[0].__name__))
+            return None
 
 
 def start(argv):
