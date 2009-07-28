@@ -302,13 +302,16 @@ class BlogEntry extends B_Model
     {
         $entry = self::getByPrimaryKey($id);
 
-        $entry->publication_status = $published ?
-            self::STATUS_PUBLISHED :
-            self::STATUS_FAILED;
+        if(is_object($entry))
+        {
+            $entry->publication_status = $published ?
+                self::STATUS_PUBLISHED :
+                self::STATUS_FAILED;
 
-        $entry->publication_lock = 0;
+            $entry->publication_lock = 0;
 
-        $entry->save();
+            $entry->save();
+        }
     }
 
     /**

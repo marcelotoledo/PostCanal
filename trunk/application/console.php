@@ -34,3 +34,5 @@ B_Loader::register();
 /* load registry and configuration */
 
 B_Registry::load(BASE_PATH . '/config/environment.xml');
+
+define('BASE_URL', B_Registry::get('base/url'));
