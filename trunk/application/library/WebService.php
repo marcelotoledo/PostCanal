@@ -44,8 +44,8 @@ class L_WebService
      */
     public function __construct($is_server=false, $throw_exception=false)
     {
-        $registry = B_Registry::singleton();
-        $this->token = $registry->webservice()->token;
+        $cfg= B_Registry::get('webservice');
+        $this->token = $cfg->token;
 
         if(($this->is_server = $is_server) === true)
         {
@@ -53,7 +53,7 @@ class L_WebService
         }
         else
         {
-            $url = BASE_URL . $registry->webservice()->backendUrl;
+            $url = BASE_URL . $cfg->backendUrl;
             $this->initializeClient($url);
         }
 
@@ -222,11 +222,11 @@ class L_WebService
 
         try
         {
-            BlogEntry::enqueueingAuto();
+            BlogEntry::suggestEntry();
         }
         catch(B_Exception $_e)
         {
-            $_m = "trying to do queue feeding failed";
+            $_m = "queue suggest failed";
             $_d = array ('method' => __METHOD__);
             B_Log::write($_m, E_ERROR, $_d);
         }

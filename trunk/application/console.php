@@ -33,4 +33,4 @@ B_Loader::register();
 
 /* load registry and configuration */
 
-$registry = B_Registry::singleton(BASE_PATH . '/config/environment.xml');
+B_Registry::load(BASE_PATH . '/config/environment.xml');

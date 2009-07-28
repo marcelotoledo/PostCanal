@@ -40,20 +40,12 @@ class B_Bootstrap
         $has_error = false;
         $message = ((string) null); 
 
-        $registry = B_Registry::singleton();
-        $view = null;
-
-        $registry->request()->object = null;
-        $registry->response()->object = null;
-        $registry->session()->object = null;
-        $registry->translation()->object = null;
-
         /* initialize request and response */
 
         $request = new B_Request();
         $response = new B_Response();
-        $registry->request()->object = $request;
-        $registry->response()->object = $response;
+        B_Registry::set('request/object',  $request);
+        B_Registry::set('response/object', $response);
 
         /* check controller */
 
@@ -100,15 +92,15 @@ class B_Bootstrap
 
                 /* initialize session */
 
-                $session_name = $registry->session()->name;
+                $session_name = B_Registry::get('session/name');
                 $session = new B_Session($session_name);
-                $registry->session()->object = $session;
+                B_Registry::set('session/object', $session);
 
                 /* initialize translation */
 
                 $culture = $session->getCulture();
                 $translation = new B_Translation($culture);
-                $registry->translation()->object = $translation;
+                B_Registry::set('translation/object', $translation);
 
                 /* translation load */
 

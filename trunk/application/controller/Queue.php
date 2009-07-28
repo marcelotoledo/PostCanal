@@ -52,7 +52,7 @@ class C_Queue extends B_Controller
         $zd = new Zend_Date(time(), false, $this->session()->getCulture());
         $zd->setTimezone($this->session()->getTimezone());
         $ct = $zd->toString('YYYMMMdd');
-        $zd_cfg = B_Registry::get('zend')->date;
+        $zd_cfg = B_Registry::get('zend/date');
 
         foreach($queue as $o)
         {

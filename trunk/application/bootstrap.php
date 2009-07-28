@@ -34,9 +34,9 @@ B_Session::register();
 
 /* initialize registry and configuration */
 
-$registry = B_Registry::singleton(BASE_PATH . '/config/environment.xml');
+B_Registry::load(BASE_PATH . '/config/environment.xml');
 
-define('BASE_URL', $registry->base()->url);
+define('BASE_URL', B_Registry::get('base/url'));
 
 
 /* configure and run bootstrap */

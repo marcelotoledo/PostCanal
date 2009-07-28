@@ -40,20 +40,12 @@ class B_Bootstrap
         $has_error = false;
         $message = ((string) null); 
 
-        $registry = B_Registry::singleton();
-        $view = null;
-
-        $registry->request()->object = null;
-        $registry->response()->object = null;
-        $registry->session()->object = null;
-        $registry->translation()->object = null;
-
         /* initialize request and response */
 
         $request = new B_Request();
         $response = new B_Response();
-        $registry->request()->object = $request;
-        $registry->response()->object = $response;
+        B_Registry::set('request/object',  $request);
+        B_Registry::set('response/object', $response);
 
         /* check controller */
 
@@ -100,15 +92,15 @@ class B_Bootstrap
 
                 /* initialize session */
 
-                $session_name = $registry->session()->name;
+                $session_name = B_Registry::get('session/name');
                 $session = new B_Session($session_name);
-                $registry->session()->object = $session;
+                B_Registry::set('session/object', $session);
 
                 /* initialize translation */
 
                 $culture = $session->getCulture();
                 $translation = new B_Translation($culture);
-                $registry->translation()->object = $translation;
+                B_Registry::set('translation/object', $translation);
 
                 /* translation load */
 
@@ -261,9 +253,8 @@ class B_Controller
      */
     public function __call ($name, $arguments)
     {
-        if($name == "view")     return $this->view;
-        if($name == "registry") return B_Registry::singleton();
-        else                    return B_Registry::get($name)->object;
+        if($name == "view") return $this->view;
+        else                return B_Registry::get($name . '/object');
     }
 
     /**
@@ -1184,7 +1175,7 @@ abstract class B_Model
      */
     public static function connection($database='default')
     {
-        if(($db = B_Registry::get('database')->{$database}()) == null)
+        if(($db = B_Registry::get('database/' . $database))==null)
         {
             $_m = "database (" . $database . ") does not exists in registry";
             $_d = array('method' => __METHOD__);
@@ -1263,21 +1254,46 @@ class B_Registry
      */
     private static $instance;
 
-    /**
-     * Data
-     * 
-     * @var array
-     */
-    private $data = array();
+
+    private function __construct() { }
+    private function __clone() { }
 
     /**
-     * Constructor 
+     * Singleton constructor
+     */
+    protected static function singleton()
+    {
+        if(is_null(self::$instance) == true)
+        {
+            self::$instance = new self();
+        }
+
+        return self::$instance;
+    }
+
+    /**
+     * Set overloading
+     */
+    private function __set ($k, $v)
+    {
+        $this->{$k} = $v;
+    }
+
+    /**
+     * Get overloading
+     */
+    public function __get ($k)
+    {
+        return isset($this->{$k}) ? $this->{$k} : null;
+    }
+
+    /**
+     * Loader
      *
      * @param   string  $filename
      * @param   string  $type
-     * @return  void
      */
-    private function __construct($filename=null, $type='xml')
+    public static function load($filename=null, $type='xml')
     {
         if(strlen($filename) > 0 && file_exists($filename))
         {
@@ -1288,145 +1304,73 @@ class B_Registry
 
                     if(is_object($xml)) 
                         if(count($xml) > 0) 
-                            self::fromXML($xml->children(), $this->data);
+                            self::fromXML($xml->children(), self::singleton());
                 break;
             }
         }
     }
 
-    private function __clone() { }
-
     /**
-     * Singleton constructor
-     * 
-     * @return B_Dispatcher
-     */
-    public static function singleton($filename=null, $type='xml')
-    {
-        if(is_null(self::$instance) == true)
-        {
-            self::$instance = new self($filename, $type);
-        }
-
-        return self::$instance;
-    }
-
-    /**
-     * Set overloading
+     * Static setter
      *
-     * @param   string  $name
+     * @param   string  $path
      * @param   mixed   $value
-     * @return  void
      */
-    public function __set ($name, $value)
+    public static function set($path, $value)
     {
-        $this->data[$name] = $value;
+        $r = self::singleton();
+        $a = explode('/', $path);
+        $j = array_pop($a);
+
+        foreach($a as $i)
+        {
+            if(strlen($i)==0) throw new B_Exception('invalid path', E_WARNING);
+            if(!isset($r->{$i})) $r->{$i} = new self();
+            $r = $r->{$i};
+        }
+
+        $r->{$j} = $value;
     }
 
     /**
-     * Set static
+     * Static getter
      *
-     * @param   mixed   $name/$hash
-     * @param   mixed   $value
-     * @return  void
-     */
-    public static function set ($arg, $value=null)
-    {
-        $registry = self::singleton();
-
-        if(is_array($arg))
-        {
-            foreach($arg as $k => $v)
-            {
-                $registry->__set($k, $v);
-            }
-        }
-        else
-        {
-            $registry->__set($arg, $value);
-        }
-    }
-
-    /**
-     * Get overloading
-     * 
-     * @param   string  $name
+     * @param   string  $path
      * @return  mixed
      */
-    public function __get ($name)
+    public static function get($path)
     {
-        $value = null;
+        $r = self::singleton();
+        $a = explode('/', $path);
 
-        if(array_key_exists($name, $this->data))
+        foreach($a as $i)
         {
-            $value = $this->data[$name];
+            if(strlen($i)==0) throw new B_Exception('invalid path', E_WARNING);
+            $r = $r->{$i};
         }
 
-        return $value;
-    }
-
-    /**
-     * Get static
-     *
-     * @param   mixed   $name/$names
-     * @return  mixed
-     */
-    public static function get ($arg)
-    {
-        $result = null;
-        $registry = self::singleton();
-
-        if(is_array($arg))
-        {
-            $result = new stdClass();
-
-            foreach($arg as $k)
-            {
-                $result->{$k} = $registry->__get($k);
-            }
-        }
-        else
-        {
-            $result = $registry->__get($arg);
-        }
-
-        return $result;
-    }
-
-    /**
-     * Call overloading
-     *
-     * @param   string  $name
-     */
-    public function __call($name, $arguments)
-    {
-        if(array_key_exists($name, $this->data) == false)
-        {
-            $this->data[$name] = new self();
-        }
-
-        return $this->data[$name];
+        return $r;
     }
 
     /**
      * Load data from XML
      *
      * @param   SimpleXMLElement    $xml
-     * @param   array               $data
+     * @param   object              $obj
      * @return  void
      */
-    protected static function fromXML($xml, &$data)
+    protected static function fromXML($xml, $obj)
     {
         foreach($xml as $k => $v)
         {
             if(count($v) > 0) 
             {
-                $data[$k] = new self();
-                self::fromXML($v, $data[$k]->data);
+                $obj->{$k} = new self();
+                self::fromXML($v, $obj->{$k});
             }
             else
             {
-                $data[$k] = ((string) $v);
+                $obj->{$k} = ((string) $v);
             }
         }
     }
@@ -2128,17 +2072,13 @@ class B_Session
      */
     public static function gc ($max) 
     {
-        if(($expiration = intval(B_Registry::get('session')->expiration)) <= 0)
-        {
-            $_m = "session expiration value must be greater than zero";
-            $_d = array('method' => __METHOD__);
-            throw new B_Exception($_m, E_ERROR, $_d);
-        }
+        $exp = intval(B_Registry::get('session/expiration'));
+        if($exp==0) $exp = 3600;
 
         return B_Model::execute("DELETE FROM " . self::$table_name . " " .
                                  "WHERE (session_expires < ? AND active = 0) " .
                                  "OR (session_expires < ? AND active = 1)",
-                                 array((time() - $max), (time() - $expiration)));
+                                 array((time() - $max), (time() - $exp)));
     }
 
     /**
@@ -2203,7 +2143,7 @@ class B_Session
      */
     public function setCulture($culture)
     {
-        $this->__set('B_Session__culture', $culture);
+        $this->__set('B_Session_Culture', $culture);
     }
 
     /**
@@ -2211,7 +2151,7 @@ class B_Session
      */
     public function getCulture()
     {
-        $c = $this->__get('B_Session__culture');
+        $c = $this->__get('B_Session_Culture');
         return (strlen($c) > 0) ? $c : 'en_US';
     }
 
@@ -2222,7 +2162,7 @@ class B_Session
      */
     public function setTimezone($timezone)
     {
-        $this->__set('B_Session__timezone', $timezone);
+        $this->__set('B_Session_Timezone', $timezone);
     }
 
     /**
@@ -2230,7 +2170,7 @@ class B_Session
      */
     public function getTimezone()
     {
-        $t = $this->__get('B_Session__timezone');
+        $t = $this->__get('B_Session_Timezone');
         return (strlen($t) > 0) ? $t : 'UTC';
     }
 }
@@ -2385,8 +2325,7 @@ class B_View
      */
     public function __call($name, $arguments)
     {
-        if($name == "registry") return B_Registry::singleton();
-        else                    return B_Registry::get($name)->object;
+        return B_Registry::get($name . '/object');
     }
 
     /**

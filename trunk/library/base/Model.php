@@ -485,7 +485,7 @@ abstract class B_Model
      */
     public static function connection($database='default')
     {
-        if(($db = B_Registry::get('database')->{$database}()) == null)
+        if(($db = B_Registry::get('database/' . $database))==null)
         {
             $_m = "database (" . $database . ") does not exists in registry";
             $_d = array('method' => __METHOD__);

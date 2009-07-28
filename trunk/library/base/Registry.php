@@ -19,21 +19,46 @@ class B_Registry
      */
     private static $instance;
 
-    /**
-     * Data
-     * 
-     * @var array
-     */
-    private $data = array();
+
+    private function __construct() { }
+    private function __clone() { }
 
     /**
-     * Constructor 
+     * Singleton constructor
+     */
+    protected static function singleton()
+    {
+        if(is_null(self::$instance) == true)
+        {
+            self::$instance = new self();
+        }
+
+        return self::$instance;
+    }
+
+    /**
+     * Set overloading
+     */
+    private function __set ($k, $v)
+    {
+        $this->{$k} = $v;
+    }
+
+    /**
+     * Get overloading
+     */
+    public function __get ($k)
+    {
+        return isset($this->{$k}) ? $this->{$k} : null;
+    }
+
+    /**
+     * Loader
      *
      * @param   string  $filename
      * @param   string  $type
-     * @return  void
      */
-    private function __construct($filename=null, $type='xml')
+    public static function load($filename=null, $type='xml')
     {
         if(strlen($filename) > 0 && file_exists($filename))
         {
@@ -44,145 +69,73 @@ class B_Registry
 
                     if(is_object($xml)) 
                         if(count($xml) > 0) 
-                            self::fromXML($xml->children(), $this->data);
+                            self::fromXML($xml->children(), self::singleton());
                 break;
             }
         }
     }
 
-    private function __clone() { }
-
     /**
-     * Singleton constructor
-     * 
-     * @return B_Dispatcher
-     */
-    public static function singleton($filename=null, $type='xml')
-    {
-        if(is_null(self::$instance) == true)
-        {
-            self::$instance = new self($filename, $type);
-        }
-
-        return self::$instance;
-    }
-
-    /**
-     * Set overloading
+     * Static setter
      *
-     * @param   string  $name
+     * @param   string  $path
      * @param   mixed   $value
-     * @return  void
      */
-    public function __set ($name, $value)
+    public static function set($path, $value)
     {
-        $this->data[$name] = $value;
+        $r = self::singleton();
+        $a = explode('/', $path);
+        $j = array_pop($a);
+
+        foreach($a as $i)
+        {
+            if(strlen($i)==0) throw new B_Exception('invalid path', E_WARNING);
+            if(!isset($r->{$i})) $r->{$i} = new self();
+            $r = $r->{$i};
+        }
+
+        $r->{$j} = $value;
     }
 
     /**
-     * Set static
+     * Static getter
      *
-     * @param   mixed   $name/$hash
-     * @param   mixed   $value
-     * @return  void
-     */
-    public static function set ($arg, $value=null)
-    {
-        $registry = self::singleton();
-
-        if(is_array($arg))
-        {
-            foreach($arg as $k => $v)
-            {
-                $registry->__set($k, $v);
-            }
-        }
-        else
-        {
-            $registry->__set($arg, $value);
-        }
-    }
-
-    /**
-     * Get overloading
-     * 
-     * @param   string  $name
+     * @param   string  $path
      * @return  mixed
      */
-    public function __get ($name)
+    public static function get($path)
     {
-        $value = null;
+        $r = self::singleton();
+        $a = explode('/', $path);
 
-        if(array_key_exists($name, $this->data))
+        foreach($a as $i)
         {
-            $value = $this->data[$name];
+            if(strlen($i)==0) throw new B_Exception('invalid path', E_WARNING);
+            $r = $r->{$i};
         }
 
-        return $value;
-    }
-
-    /**
-     * Get static
-     *
-     * @param   mixed   $name/$names
-     * @return  mixed
-     */
-    public static function get ($arg)
-    {
-        $result = null;
-        $registry = self::singleton();
-
-        if(is_array($arg))
-        {
-            $result = new stdClass();
-
-            foreach($arg as $k)
-            {
-                $result->{$k} = $registry->__get($k);
-            }
-        }
-        else
-        {
-            $result = $registry->__get($arg);
-        }
-
-        return $result;
-    }
-
-    /**
-     * Call overloading
-     *
-     * @param   string  $name
-     */
-    public function __call($name, $arguments)
-    {
-        if(array_key_exists($name, $this->data) == false)
-        {
-            $this->data[$name] = new self();
-        }
-
-        return $this->data[$name];
+        return $r;
     }
 
     /**
      * Load data from XML
      *
      * @param   SimpleXMLElement    $xml
-     * @param   array               $data
+     * @param   object              $obj
      * @return  void
      */
-    protected static function fromXML($xml, &$data)
+    protected static function fromXML($xml, $obj)
     {
         foreach($xml as $k => $v)
         {
             if(count($v) > 0) 
             {
-                $data[$k] = new self();
-                self::fromXML($v, $data[$k]->data);
+                $obj->{$k} = new self();
+                self::fromXML($v, $obj->{$k});
             }
             else
             {
-                $data[$k] = ((string) $v);
+                $obj->{$k} = ((string) $v);
             }
         }
     }

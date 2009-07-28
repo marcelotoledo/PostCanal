@@ -40,8 +40,7 @@ class B_View
      */
     public function __call($name, $arguments)
     {
-        if($name == "registry") return B_Registry::singleton();
-        else                    return B_Registry::get($name)->object;
+        return B_Registry::get($name . '/object');
     }
 
     /**

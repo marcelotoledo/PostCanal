@@ -161,3 +161,13 @@ HORAS TRABALHADAS: 4h
 - bugfixes no IE
 
 HORAS TRABALHADAS: 3h
+
+==========
+27/07/2009
+==========
+
+- correcao de bug no botao 'adicionar ao queue'
+- correcao de bug no codigo base (Registry)
+- correcao de problemas com timezone no auto enqueue e publication
+
+HORAS TRABALHADAS: 7h

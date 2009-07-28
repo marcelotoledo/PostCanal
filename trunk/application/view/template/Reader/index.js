@@ -330,6 +330,7 @@ function queue_add_callback(d)
         .find('div.articlebutton')
         .find('input')
         .attr('checked', true)
+        .attr('disabled', false)
         .blur();
 }
 
@@ -349,7 +350,9 @@ function queue_delete_callback(d)
     mytpl.article_list.find(_sel)
         .find('div.articlebutton')
         .find('input')
-        .attr('checked', false);
+        .attr('checked', false)
+        .attr('disabled', false)
+        .blur();
 }
 
 function queue_delete(e)
@@ -562,15 +565,13 @@ $(document).ready(function()
         if($(this).is(':checked'))
         {
             queue_add(_i.attr('feed'), _i.attr('article'));
-            $(this).attr('checked', true);
         }
         else
         {
             queue_delete(_i.attr('entry'));
-            $(this).attr('checked', false);
         }
 
-        $(this).blur();
+        $(this).attr('disabled', true);
         return false;
     });
 

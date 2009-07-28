@@ -26,9 +26,8 @@ class B_Controller
      */
     public function __call ($name, $arguments)
     {
-        if($name == "view")     return $this->view;
-        if($name == "registry") return B_Registry::singleton();
-        else                    return B_Registry::get($name)->object;
+        if($name == "view") return $this->view;
+        else                return B_Registry::get($name . '/object');
     }
 
     /**

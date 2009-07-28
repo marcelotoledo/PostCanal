@@ -144,14 +144,17 @@ class AggregatorFeed extends B_Model
      */
     public static function findAssocByURL($url, $lifetime=86400)
     {
+        $lf = intval(B_Registry::get('application/feed/discoverLife'));
+        if($lf==0) $lf=$lifetime;
+
         $_s = "SELECT a.feed_url, b.feed_title, b.feed_description, 
                       b.feed_status, b.feed_link, b.feed_update_time
                FROM model_aggregator_feed_discover AS a
                LEFT JOIN model_aggregator_feed AS b 
                ON (a.feed_url_md5 = b.feed_url_md5)
                WHERE a.url_md5 = ? AND (UNIX_TIMESTAMP(a.updated_at) + ?) > 
-               UNIX_TIMESTAMP(UTC_TIMESTAMP())";
-        $_d = array(md5($url), B_Registry::get('application')->feed()->discoverLife);
+               UNIX_TIMESTAMP()";
+        $_d = array(md5($url), $lf);
         return self::select($_s, $_d, PDO::FETCH_ASSOC);
     }
 
@@ -178,12 +181,25 @@ class AggregatorFeed extends B_Model
     {
         $sql = "SELECT aggregator_feed_id AS id, feed_url
                 FROM " . self::$table_name . "
-                WHERE (feed_update_time + UNIX_TIMESTAMP(updated_at)) < 
-                       UNIX_TIMESTAMP(UTC_TIMESTAMP())
+                WHERE (feed_update_time + UNIX_TIMESTAMP(updated_at)) < UNIX_TIMESTAMP()
                 ORDER BY (feed_update_time + UNIX_TIMESTAMP(updated_at)) ASC
                 LIMIT " . intval($limit);
 
-        return self::select($sql, array(), PDO::FETCH_ASSOC);
+        if(($res = self::select($sql, array(), PDO::FETCH_ASSOC)))
+        {
+            $sql = "UPDATE " . self::$table_name . "
+                    SET updated_at=?
+                    WHERE aggregator_feed_id=?";
+
+            /* update feed to avoid duplicated items on backend */
+
+            for($i=0;$i<count($res);$i++)
+            {
+                self::execute($sql, array(time(), $res[$i]['id']));
+            }
+        }
+
+        return $res;
     }
 
     /**
@@ -309,8 +325,8 @@ class AggregatorFeed extends B_Model
             {
                 $_s = "INSERT INTO model_aggregator_feed_discover 
                        (url, url_md5, feed_url, feed_url_md5, updated_at) 
-                       VALUES (?, ?, ?, ?, UTC_TIMESTAMP()) 
-                       ON DUPLICATE KEY UPDATE updated_at=UTC_TIMESTAMP()";
+                       VALUES (?, ?, ?, ?, NOW()) 
+                       ON DUPLICATE KEY UPDATE updated_at=NOW()";
                 $_d = array($url, md5($url), $f['feed_url'], md5($f['feed_url']));
                 self::execute($_s, $_d);
             }

@@ -66,9 +66,8 @@ class L_Mailer
      */
     public function __construct($mailer='default', $sender='default')
     {
-        $registry = B_Registry::singleton();
-        $mailer_config = $registry->mailer()->{$mailer}();
-        $sender_config = $mailer_config->sender()->{$sender}();
+        $mailer_config = B_Registry::get('mailer/' . $mailer);
+        $sender_config = $mailer_config->sender->{$sender};
 
         if($mailer_config->transport == "smtp")
         {

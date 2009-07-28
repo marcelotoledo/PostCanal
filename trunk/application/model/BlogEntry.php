@@ -263,7 +263,7 @@ class BlogEntry extends B_Model
                     model_blog_type AS c ON (b.blog_type_id = c.blog_type_id) 
                 WHERE
                     a.publication_status = ? AND
-                    a.publication_date < UTC_TIMESTAMP() AND
+                    a.publication_date < NOW() AND
                     a.deleted = 0
                 ORDER BY
                     a.ordering ASC
@@ -305,7 +305,7 @@ class BlogEntry extends B_Model
         }
 
         $mtime = self::getMaxPublicationTime($result['user_blog_id']);
-        $mtime+= intval(B_Registry::get('application')->queue()->publicationMargin);
+        $mtime+= intval(B_Registry::get('application/queue/publicationMargin'));
         $mtime+= $result['publication_interval'];
         $entry->publication_date = $mtime;
 
@@ -526,8 +526,7 @@ class BlogEntry extends B_Model
     {
         if($interval<=0)
         {
-            $margin = B_Registry::get('application')->queue()->publicationMargin;
-            $interval = intval($margin);
+            $interval = intval(B_Registry::get('application/queue/publicationMargin'));
         }
 
         $t = time();
@@ -581,11 +580,13 @@ class BlogEntry extends B_Model
     }
 
     /**
-     * Do queue suggestion (blog entry feeding) when enqueueing_auto is true
+     * Do queue entry suggestion when enqueueing_auto is true
      */
-    public static function enqueueingAuto()
+    public static function suggestEntry()
     {
         /* get blog */
+
+        $max = intval(B_Registry::get('application/queue/suggestMaxEntries'));
 
         $sql = "SELECT 
                     a.user_blog_id AS blog_id, 
@@ -598,7 +599,7 @@ class BlogEntry extends B_Model
                     GROUP BY user_blog_id) AS x
                 ON (a.user_blog_id = x.user_blog_id)
                 WHERE enqueueing_auto=1 AND enabled=1
-                AND (x.entries < " . self::ENQUEUEING_AUTO_MAX_ENTRIES . " OR x.entries IS NULL)
+                AND (x.entries < " . $max . " OR x.entries IS NULL)
                 ORDER BY enqueueing_auto_updated_at ASC LIMIT 1";
 
         $articles = array();
@@ -606,11 +607,8 @@ class BlogEntry extends B_Model
 
         if(is_object($blog = current(self::select($sql, 
             array(self::STATUS_PUBLISHED), 
-            PDO::FETCH_OBJ)))==false)
-        {
-            $_m = "invalid user blog";
-            $_d = array('method' => __METHOD__);
-            throw new B_Exception($_m, E_ERROR, $_d);
+            PDO::FETCH_OBJ)))==false) {
+            return false;
         }
 
         /* get blog keywords */
@@ -749,8 +747,11 @@ class BlogEntry extends B_Model
         if($ma>0)
         {
             self::newFromArticleBlogId($ma, $blog->blog_id);
-            $_m = "suggestion of article (" . $ma . ") added to blog (" . $blog->blog_id . ")";
+            $_m = "suggestion of article (" . $ma . ") " . 
+                  "added to blog (" . $blog->blog_id . ")";
             B_Log::write($_m, E_NOTICE);
         }
+
+        return true;
     }
 }

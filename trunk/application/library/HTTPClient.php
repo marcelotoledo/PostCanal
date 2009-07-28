@@ -128,8 +128,7 @@ class L_HTTPClient
             $headers = $this->response->getHeaders();
         }
 
-        $registry = B_Registry::singleton();
-        $max = intval($registry->httpClient()->maxHeaders);
+        $max = intval(B_Registry::get('httpClient/maxHeaders'));
         $total = count($headers);
 
         if($max > 0 && $total > $max)
@@ -157,8 +156,7 @@ class L_HTTPClient
         if(is_object($this->response))
         {
             $body = $this->response->getBody();
-            $registry = B_Registry::singleton();
-            $max = intval($registry->httpClient()->maxBodyLenght);
+            $max = intval(B_Registry::get('httpClient/maxBodyLenght'));
             $lenght = strlen($body);
 
             if($max > 0 && $lenght > $max)

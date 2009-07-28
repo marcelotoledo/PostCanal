@@ -394,20 +394,14 @@ function publication_updater()
 
 function enqueue_updater_callback(d)
 {
-    d.find('result').find('queue').children().each(function()
-    {
-        if(queue.data[($(this).find('entry').text())]==undefined)
-        {
-            queue_populate($(this));
-        }
-    });
+    entry_populate(d.find('result').find('queue').children());
 }
 
 function enqueue_updater()
 {
     if(queue.enqueueing!=true || updater.request==true) { return false; }
     _data = { blog : blog.current };
-    do_request('GET', './queue/list', _data, publication_updater_callback);
+    do_request('GET', './queue/list', _data, enqueue_updater_callback);
 }
 
 function updater_run()

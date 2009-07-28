@@ -177,17 +177,13 @@ class B_Session
      */
     public static function gc ($max) 
     {
-        if(($expiration = intval(B_Registry::get('session')->expiration)) <= 0)
-        {
-            $_m = "session expiration value must be greater than zero";
-            $_d = array('method' => __METHOD__);
-            throw new B_Exception($_m, E_ERROR, $_d);
-        }
+        $exp = intval(B_Registry::get('session/expiration'));
+        if($exp==0) $exp = 3600;
 
         return B_Model::execute("DELETE FROM " . self::$table_name . " " .
                                  "WHERE (session_expires < ? AND active = 0) " .
                                  "OR (session_expires < ? AND active = 1)",
-                                 array((time() - $max), (time() - $expiration)));
+                                 array((time() - $max), (time() - $exp)));
     }
 
     /**
@@ -252,7 +248,7 @@ class B_Session
      */
     public function setCulture($culture)
     {
-        $this->__set('B_Session__culture', $culture);
+        $this->__set('B_Session_Culture', $culture);
     }
 
     /**
@@ -260,7 +256,7 @@ class B_Session
      */
     public function getCulture()
     {
-        $c = $this->__get('B_Session__culture');
+        $c = $this->__get('B_Session_Culture');
         return (strlen($c) > 0) ? $c : 'en_US';
     }
 
@@ -271,7 +267,7 @@ class B_Session
      */
     public function setTimezone($timezone)
     {
-        $this->__set('B_Session__timezone', $timezone);
+        $this->__set('B_Session_Timezone', $timezone);
     }
 
     /**
@@ -279,7 +275,7 @@ class B_Session
      */
     public function getTimezone()
     {
-        $t = $this->__get('B_Session__timezone');
+        $t = $this->__get('B_Session_Timezone');
         return (strlen($t) > 0) ? $t : 'UTC';
     }
 }
