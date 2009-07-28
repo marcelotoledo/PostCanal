@@ -169,5 +169,7 @@ HORAS TRABALHADAS: 3h
 - correcao de bug no botao 'adicionar ao queue'
 - correcao de bug no codigo base (Registry)
 - correcao de problemas com timezone no auto enqueue e publication
+- correcao de obtencao de id unico no backend para atualizacao de feeds,
+publicacao de queue e auto enqueue
 
-HORAS TRABALHADAS: 7h
+HORAS TRABALHADAS: 10h

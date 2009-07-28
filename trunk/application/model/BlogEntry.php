@@ -31,6 +31,7 @@ class BlogEntry extends B_Model
 		'entry_content' => array ('type' => 'string','size' => 0,'required' => true),
 		'keywords' => array ('type' => 'string','size' => 0,'required' => false),
 		'publication_status' => array ('type' => 'string','size' => 0,'required' => false),
+		'publication_lock' => array ('type' => 'boolean','size' => 0,'required' => false),
 		'publication_date' => array ('type' => 'date','size' => 0,'required' => false),
 		'ordering' => array ('type' => 'integer','size' => 0,'required' => false),
 		'created_at' => array ('type' => 'date','size' => 0,'required' => false),
@@ -264,12 +265,50 @@ class BlogEntry extends B_Model
                 WHERE
                     a.publication_status = ? AND
                     a.publication_date < NOW() AND
+                    a.publication_lock = 0 AND
                     a.deleted = 0
                 ORDER BY
                     a.ordering ASC
                 LIMIT " . intval($limit);
 
-        return self::select($sql, array(self::STATUS_WAITING), PDO::FETCH_ASSOC);
+        self::transaction();
+
+        if(($res = self::select($sql, array(self::STATUS_WAITING), PDO::FETCH_ASSOC)))
+        {
+            $sql = "UPDATE model_user_blog_entry
+                    SET publication_lock=1, updated_at=NOW()
+                    WHERE user_blog_entry_id=?";
+
+            /* lock entry to avoid duplicated items on backend */
+
+            for($i=0;$i<count($res);$i++)
+            {
+                self::execute($sql, array($res[$i]['id']));
+            }
+        }
+
+        self::commit();
+
+        return $res;
+    }
+
+    /**
+     * Set blog entry as published
+     * 
+     * @param   integer     $id             Entry ID
+     * @param   boolean     $published      Entry published?
+     */
+    public static function setPublished($id, $published)
+    {
+        $entry = self::getByPrimaryKey($id);
+
+        $entry->publication_status = $published ?
+            self::STATUS_PUBLISHED :
+            self::STATUS_FAILED;
+
+        $entry->publication_lock = 0;
+
+        $entry->save();
     }
 
     /**
@@ -605,11 +644,22 @@ class BlogEntry extends B_Model
         $articles = array();
         $keywords = array();
 
+        self::transaction();
+
         if(is_object($blog = current(self::select($sql, 
             array(self::STATUS_PUBLISHED), 
             PDO::FETCH_OBJ)))==false) {
-            return false;
+            self::rollback();
+            return 0;
         }
+
+        $sql = "UPDATE model_user_blog
+                SET enqueueing_auto_updated_at = NOW()
+                WHERE user_blog_id = ?";
+
+        self::execute($sql, array($blog->blog_id));
+
+        self::commit();
 
         /* get blog keywords */
 
@@ -752,6 +802,6 @@ class BlogEntry extends B_Model
             B_Log::write($_m, E_NOTICE);
         }
 
-        return true;
+        return $blog->blog_id;
     }
 }

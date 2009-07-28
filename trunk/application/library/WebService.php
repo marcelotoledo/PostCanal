@@ -193,15 +193,9 @@ class L_WebService
     {
         if($this->validate_args($args, array('id','published')) == false) return false;
 
-        $entry = BlogEntry::getByPrimaryKey($args['id']);
-        $published = ((boolean) $args['published']);
-
         try
         {
-            $entry->publication_status = $published ? 
-                BlogEntry::STATUS_PUBLISHED : 
-                BlogEntry::STATUS_FAILED;
-            $entry->save();
+            BlogEntry::setPublished($args['id'], ((boolean) $args['published']));
         }
         catch(B_Exception $_e)
         {
@@ -220,9 +214,11 @@ class L_WebService
     {
         if($this->validate_args($args, array()) == false) return null;
 
+        $blog_id = 0;
+
         try
         {
-            BlogEntry::suggestEntry();
+            $blog_id = BlogEntry::suggestEntry();
         }
         catch(B_Exception $_e)
         {
@@ -231,6 +227,6 @@ class L_WebService
             B_Log::write($_m, E_ERROR, $_d);
         }
         
-        return true;
+        return $blog_id;
     }
 }

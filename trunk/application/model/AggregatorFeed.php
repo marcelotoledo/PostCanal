@@ -177,7 +177,7 @@ class AggregatorFeed extends B_Model
      * @param   integer         $limit
      * @return  AggregatorFeed
      */
-    public static function findOutdated($limit=10)
+    public static function findOutdated($limit=1)
     {
         $sql = "SELECT aggregator_feed_id AS id, feed_url
                 FROM " . self::$table_name . "
@@ -185,19 +185,23 @@ class AggregatorFeed extends B_Model
                 ORDER BY (feed_update_time + UNIX_TIMESTAMP(updated_at)) ASC
                 LIMIT " . intval($limit);
 
+        self::transaction();
+
         if(($res = self::select($sql, array(), PDO::FETCH_ASSOC)))
         {
             $sql = "UPDATE " . self::$table_name . "
-                    SET updated_at=?
+                    SET updated_at=NOW()
                     WHERE aggregator_feed_id=?";
 
             /* update feed to avoid duplicated items on backend */
 
             for($i=0;$i<count($res);$i++)
             {
-                self::execute($sql, array(time(), $res[$i]['id']));
+                self::execute($sql, array($res[$i]['id']));
             }
         }
+
+        self::commit();
 
         return $res;
     }

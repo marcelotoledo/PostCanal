@@ -152,15 +152,15 @@ class Daemon:
             try:
                 post_id = t.publish({ 'title'  : entry_title,
                                       'content': entry_content })
-                _m = "blog publish post: post id (%d) "
+                _m = "blog publish post: post id (%s) "
                 _m = _m + "published successfully for blog entry id (%s)"
-                logging.info(_m % (int(post_id), id))
+                logging.info(_m % (str(post_id), id))
                 published = True
             except xmlrpclib.Fault, message:
-                _m = "blog publish post: failed to publish blog entry id (%d); (%s)"
+                _m = "blog publish post: failed to publish blog entry id (%s); (%s)"
                 logging.warning(_m % (id, message))
             except:
-                _m = "blog publish post: failed to publish blog entry id (%d); (%s)"
+                _m = "blog publish post: failed to publish blog entry id (%s); (%s)"
                 logging.error(_m % (id, sys.exc_info()[0].__name__))
 
             try:
@@ -174,14 +174,15 @@ class Daemon:
                 return None
 
     def queue_suggest(self):
-        try:
-            self.client.queue_suggest_do({ 'token': self.token })
-            _m = "queue suggest: webservice call successful"
-            logging.info(_m)
-        except:
-            _m = "queue suggest: webservice call failed; (%s)"
-            logging.error(_m % (sys.exc_info()[0].__name__))
-            return None
+        i = 0
+        #try:
+        i = self.client.queue_suggest_do({ 'token': self.token })
+        _m = "queue suggest: called successfuly for blog id (%s)"
+        logging.info(_m % (i))
+        #except:
+        #    _m = "queue suggest: called failed for blog id (%s); (%s)"
+        #    logging.error(_m % (i, sys.exc_info()[0].__name__))
+        #    return None
 
 
 def start(argv):
