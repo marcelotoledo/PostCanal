@@ -200,4 +200,17 @@ class UserBlog extends B_Model
     {
         return self::execute('UPDATE ' . self::$table_name . ' SET deleted=1 WHERE user_profile_id=? AND hash=?', array($user_id, $hash));
     }
+
+    /**
+     * Select total registered blogs
+     */
+    public static function total($user_id)
+    {
+        $q = current(self::select("SELECT COUNT(*) AS total
+                                   FROM " . self::$table_name . 
+                                 " WHERE user_profile_id=? AND deleted=0",
+        array($user_id), PDO::FETCH_OBJ));
+
+        return is_object($q) ? $q->total : 0;
+    }
 }

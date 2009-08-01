@@ -50,6 +50,16 @@ class C_Feed extends B_Controller
     public function A_discover()
     {
         $this->response()->setXML(true);
+
+        $user_id = $this->session()->user_profile_id;
+        $quota = $this->session()->user_profile_quota_feed;
+
+        if($quota > 0 && UserBlogFeed::total($user_id) >= $quota)
+        {
+            $this->view()->overquota = true;
+            return false;
+        }
+
         $this->view->results = AggregatorFeed::discover($this->request()->url);
     }
 
@@ -59,7 +69,6 @@ class C_Feed extends B_Controller
     protected function feedAdd($url, $title, $blog_hash)
     {
         $user_id = $this->session()->user_profile_id;
-
         $blog_feed = null;
 
         if(is_object(($feed = AggregatorFeed::getByURL($url))))

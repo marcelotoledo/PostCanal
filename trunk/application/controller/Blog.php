@@ -13,12 +13,13 @@ class C_Blog extends B_Controller
     /**
      * Discover status
      */
-    const DISCOVER_STATUS_OK          = 'ok';
-    const DISCOVER_STATUS_FAILED      = 'failed';
-    const DISCOVER_STATUS_TIMEOUT     = 'timeout';
-    const DISCOVER_STATUS_URL_FAILED  = 'url_failed';
-    const DISCOVER_STATUS_TYPE_FAILED = 'type_failed';
-    const DISCOVER_STATUS_MAINTENANCE = 'maintenance';
+    const ADD_STATUS_OK          = 'ok';
+    const ADD_STATUS_FAILED      = 'failed';
+    const ADD_STATUS_TIMEOUT     = 'timeout';
+    const ADD_STATUS_OVERQUOTA   = 'overquota'; // TODO
+    const ADD_STATUS_URL_FAILED  = 'url_failed';
+    const ADD_STATUS_TYPE_FAILED = 'type_failed';
+    const ADD_STATUS_MAINTENANCE = 'maintenance';
 
 
     /**
@@ -80,37 +81,46 @@ class C_Blog extends B_Controller
     public function A_add()
     {
         $this->response()->setXML(true);
-        $status = self::DISCOVER_STATUS_FAILED;
         $url = $this->request()->url;
         $profile_id = $this->session()->user_profile_id;
+        $quota = $this->session()->user_profile_quota_blog;
         $blog = null;
+
+        /* check blog quota */
+        if($quota > 0 && UserBlog::total($profile_id) >= $quota)
+        {
+            $this->view()->status = self::ADD_STATUS_OVERQUOTA;
+            return false;
+        }
 
         /* discover blog type */
 
         if(!is_object(($discover = BlogType::discover($url))))
         {
-            $status = self::DISCOVER_STATUS_TIMEOUT;
+            $this->view()->status = self::ADD_STATUS_TIMEOUT;
             return false;
         }
 
+        $status = self::ADD_STATUS_FAILED;
+
         if($discover->url_accepted == false)
         {
-            $status = self::DISCOVER_STATUS_URL_FAILED;
+            $status = self::ADD_STATUS_URL_FAILED;
         }
         elseif($discover->type_accepted == false)
         {
-            $status = self::DISCOVER_STATUS_TYPE_FAILED;
+            $status = self::ADD_STATUS_TYPE_FAILED;
             $_m = sprintf('unsuported blog type for url (%s)', $url);
             $_d = array('method' => __METHOD__, 'user_profile_id' => $profile_id);
             B_Log::write($_m, E_NOTICE, $_d);
         }
         elseif($discover->maintenance == true)
         {
-            $status = self::DISCOVER_STATUS_MAINTENANCE;
+            $status = self::ADD_STATUS_MAINTENANCE;
         }
         else
         {
-            $status = self::DISCOVER_STATUS_OK;
+            $status = self::ADD_STATUS_OK;
 
             $blog = new UserBlog();
             $blog->user_profile_id = $this->session()->user_profile_id;

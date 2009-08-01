@@ -95,7 +95,8 @@ class L_Utility
         $s = preg_replace("/[\t\r\n]+/", "", $s); // new lines and tabs
         $s = strtolower($s);
 
-        $s = htmlentities($s, ENT_NOQUOTES, 'UTF-8', false);
+        // $s = htmlentities($s, ENT_NOQUOTES, 'UTF-8', false); // PHP 5.3
+        $s = htmlentities($s, ENT_NOQUOTES, 'UTF-8'); // PHP 5.2
         $s = preg_replace("/&(.)(acute|cedil|circ|ring|tilde|uml);/", "$1", $s);
         $s = preg_replace("/&(.)([\w]+);/", " ", $s);
         $s = preg_replace("/[^\w]+/", " ", $s);

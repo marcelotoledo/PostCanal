@@ -51,7 +51,7 @@ function blog_add_callback(d)
 {
     var _status = d.find('status').text();
 
-    if(_status=="<?php echo C_Blog::DISCOVER_STATUS_OK ?>")
+    if(_status=="<?php echo C_Blog::ADD_STATUS_OK ?>")
     {
         blog_populate(d.find('result'));
         toggle_blog_add();
@@ -62,23 +62,27 @@ function blog_add_callback(d)
         mytpl.blog_list_ref[_b].form.find('div.donotchangepwd').hide();
         mytpl.blog_list_ref[_b].form.find('input[name="password"]').show();
     }
-    if(_status=="<?php echo C_Blog::DISCOVER_STATUS_FAILED ?>")
+    if(_status=="<?php echo C_Blog::ADD_STATUS_OVERQUOTA ?>")
+    {
+        add_message("<?php $this->translation()->overquota ?>");
+    }
+    if(_status=="<?php echo C_Blog::ADD_STATUS_FAILED ?>")
     {
         add_message("<?php echo $this->translation()->discover_failed ?>");
     }
-    if(_status=="<?php echo C_Blog::DISCOVER_STATUS_TIMEOUT ?>")
+    if(_status=="<?php echo C_Blog::ADD_STATUS_TIMEOUT ?>")
     {
         add_message("<?php echo $this->translation()->discover_timeout ?>");
     }
-    if(_status=="<?php echo C_Blog::DISCOVER_STATUS_URL_FAILED ?>")
+    if(_status=="<?php echo C_Blog::ADD_STATUS_URL_FAILED ?>")
     {
         add_message("<?php echo $this->translation()->url_failed ?>");
     }
-    if(_status=="<?php echo C_Blog::DISCOVER_STATUS_TYPE_FAILED ?>")
+    if(_status=="<?php echo C_Blog::ADD_STATUS_TYPE_FAILED ?>")
     {
         mytpl.blog_type_failed.show();
     }
-    if(_status=="<?php echo C_Blog::DISCOVER_STATUS_MAINTENANCE ?>")
+    if(_status=="<?php echo C_Blog::ADD_STATUS_MAINTENANCE ?>")
     {
         add_message("<?php echo $this->translation()->blog_type_maintenance ?>");
     }

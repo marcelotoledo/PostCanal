@@ -25,6 +25,7 @@ function feed_add_toggle()
 function add_message(m)
 {
     mytpl.new_feed_message.text(m);
+    (m=='') ? mytpl.new_feed_message.hide() : mytpl.new_feed_message.show();
 }
 
 function feed_populate(b, app)
@@ -95,6 +96,12 @@ function feed_options(r)
 
 function feed_discover_callback(d)
 {
+    if(d.find('overquota').text()=="true")
+    {
+        add_message("<?php echo $this->translation()->overquota ?>");
+        return false;
+    }
+
     var _results = d.find('results').find('item');
 
     if(_results.length == 0)

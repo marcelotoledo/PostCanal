@@ -40,6 +40,11 @@ class UserProfile extends B_Model
 		'local_territory' => array ('type' => 'string','size' => 0,'required' => false),
 		'local_culture' => array ('type' => 'string','size' => 0,'required' => false),
 		'local_timezone' => array ('type' => 'string','size' => 0,'required' => false),
+
+		'quota_blog' => array ('type' => 'integer','size' => 0,'required' => false),
+		'quota_feed' => array ('type' => 'integer','size' => 0,'required' => false),
+		'quota_publication_period' => array ('type' => 'integer','size' => 0,'required' => false),
+
 		'created_at' => array ('type' => 'date','size' => 0,'required' => false),
 		'updated_at' => array ('type' => 'date','size' => 0,'required' => false),
 		'enabled' => array ('type' => 'boolean','size' => 0,'required' => false));

@@ -53,6 +53,10 @@ class C_Profile extends B_Controller
                 $this->session()->user_profile_hash = $profile->hash;
                 $this->session()->user_profile_login_email = $profile->login_email;
 
+                $this->session()->user_profile_quota_blog = $profile->quota_blog;
+                $this->session()->user_profile_quota_feed = $profile->quota_feed;
+                $this->session()->user_profile_quota_publication_period = $profile->quota_publication_period;
+
                 $profile->last_login_time = time();
                 $profile->save();
 
@@ -106,6 +110,11 @@ class C_Profile extends B_Controller
                 $profile->name = $name;
                 $profile->local_territory = $territory;
                 $profile->local_timezone = $timezone;
+
+                $profile->quota_blog = B_Registry::get('application/profile/quotaBlog');
+                $profile->quota_feed = B_Registry::get('application/profile/quotaFeed');
+                $profile->quota_publication_period = B_Registry::get('application/profile/quotaPublicationPeriod');
+
                 $profile->save();
 
                 $id = intval($profile->user_profile_id);

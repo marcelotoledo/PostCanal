@@ -165,6 +165,10 @@ CREATE TABLE model_user_profile
     local_culture VARCHAR(8) NOT NULL DEFAULT 'en_US',
     local_timezone VARCHAR(50) NOT NULL DEFAULT 'UTC',
     -- -------------------------------------------------------------------------
+    quota_blog SMALLINT NOT NULL DEFAULT 0,
+    quota_feed SMALLINT NOT NULL DEFAULT 0,
+    quota_publication_period SMALLINT NOT NULL DEFAULT 0,
+    -- -------------------------------------------------------------------------
     created_at TIMESTAMP NOT NULL DEFAULT '1970-01-01 00:00:00',
     updated_at TIMESTAMP NOT NULL DEFAULT '1970-01-01 00:00:00',
     enabled TINYINT(1) NOT NULL DEFAULT 1,

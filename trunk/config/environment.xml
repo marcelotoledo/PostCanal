@@ -68,6 +68,12 @@
         <frontendUrl>/webservice</frontendUrl>
     </webservice>
     <application>
+        <profile>
+            <!-- default values for profile quota -->
+            <quotaBlog>1</quotaBlog>
+            <quotaFeed>10</quotaFeed>
+            <quotaPublicationPeriod>5</quotaPublicationPeriod>
+        </profile>
         <feed>
             <!-- discover life time (feed cache) -->
             <discoverLife>1296000</discoverLife>
