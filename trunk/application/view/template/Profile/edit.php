@@ -4,6 +4,7 @@
     <div class="tabitem tabitem-selected" related="tabpersonal"><?php echo $this->translation()->tab_personal_information ?></div>
     <div class="tabitem" related="tabpassword"><?php echo $this->translation()->tab_password ?></div>
     <div class="tabitem" related="tabemail"><?php echo $this->translation()->tab_email ?></div>
+    <div class="tabitem" related="tabquota"><?php echo $this->translation()->tab_quota ?></div>
 </div>
 
 <div class="tabgroup" id="edittabgroup">
@@ -67,4 +68,22 @@
     </div>
     <div class="inputmessage" id="emlchangemessage"></div>
 </div>
+
+<div class="tabcontainer" id="tabquota" style="display:none">
+    <table id="quotatable">
+        <tr>
+            <th><?php echo $this->translation()->blog ?></th>
+            <td><?php echo $this->blog_total ?> / <?php echo $this->session()->user_profile_quota_blog ?></td>
+        </tr>
+        <tr>
+            <th><?php echo $this->translation()->feed ?></th>
+            <td><?php echo $this->feed_total ?> / <?php echo $this->session()->user_profile_quota_feed ?></td>
+        </tr>
+        <tr>
+            <th><?php echo $this->translation()->publication_period ?></th>
+            <td><?php echo $this->publication_period_total ?> / <?php echo $this->session()->user_profile_quota_publication_period ?> (<?php echo $this->publication_period ?>)</td>
+        </tr>
+    </table>
+</div>
+
 </div>

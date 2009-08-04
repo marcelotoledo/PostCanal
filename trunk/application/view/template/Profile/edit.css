@@ -6,3 +6,12 @@ div.inputmessage
 {
     text-align: left;
 }
+#quotatable tr
+{
+    height: 30px;
+}
+#quotatable th
+{
+    text-align: left;
+    padding-right: 25px;
+}

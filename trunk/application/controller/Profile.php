@@ -668,6 +668,13 @@ class C_Profile extends B_Controller
         }
 
         $this->view()->language = $language;
+
+        /* quota */
+
+        $this->view()->blog_total = UserBlog::total($id);
+        $this->view()->feed_total = UserBlogFeed::total($id);
+        $this->view()->publication_period_total = 0; // TODO
+        $this->view()->publication_period = B_Registry::get('application/queue/publicationPeriod'); // TODO human readable
     }
 
     /**

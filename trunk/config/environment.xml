@@ -70,7 +70,7 @@
     <application>
         <profile>
             <!-- default values for profile quota -->
-            <quotaBlog>1</quotaBlog>
+            <quotaBlog>3</quotaBlog>
             <quotaFeed>10</quotaFeed>
             <quotaPublicationPeriod>5</quotaPublicationPeriod>
         </profile>
@@ -80,7 +80,8 @@
         </feed>
         <queue>
             <!-- queue publication date margin from current time -->
-            <publicationMargin>300</publicationMargin>
+            <publicationMargin>60</publicationMargin>
+            <publicationPeriod>3600</publicationPeriod>
             <suggestMaxEntries>10</suggestMaxEntries>
         </queue>
     </application>

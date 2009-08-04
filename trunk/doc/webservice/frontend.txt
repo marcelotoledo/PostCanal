@@ -65,3 +65,13 @@ params : str.token           # token
 bool.queue_suggest_do(dict)  # do queue entry suggestion
 
 params : str.token
+
+................................................................................
+
+
+3) MULTI-TASK DATABASE LOCK
+
+feed_update_get  : model_aggregator_feed.updated_at=NOW()
+blog_publish_get : model_user_blog_entry.publication_lock=true
+blog_publish_set : model_user_blog_entry.publication_lock=false
+queue_suggest_do : model_user_blog.enqueueing_auto_updated_at=NOW()

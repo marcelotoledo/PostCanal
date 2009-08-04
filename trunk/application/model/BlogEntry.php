@@ -281,6 +281,8 @@ class BlogEntry extends B_Model
 
             /* lock entry to avoid duplicated items on backend */
 
+            // TODO : check quota
+
             for($i=0;$i<count($res);$i++)
             {
                 self::execute($sql, array($res[$i]['id']));
@@ -806,5 +808,23 @@ class BlogEntry extends B_Model
         }
 
         return $blog->blog_id;
+    }
+
+    /**
+     * Find total publication in a period
+     */
+    public static function totalPeriod($profile_id, $period)
+    {
+        $sql = "SELECT COUNT(*) AS total 
+                FROM " . self::$table_name . " 
+                WHERE publication_status=?
+                AND publication_date > (UNIX_TIMESTAMP() - ?)
+                AND user_blog_id IN (
+                    SELECT user_blog_id
+                    FROM model_user_blog
+                    WHERE user_profile_id=?
+                    AND deleted=0
+                )";
+       // TODO...
     }
 }

@@ -14,6 +14,7 @@ function toggle_blog_add()
 function add_message(m)
 {
     mytpl.new_blog_message.text(m);
+    mytpl.new_blog_message.show();
 }
 
 function blog_populate(b)
@@ -64,7 +65,7 @@ function blog_add_callback(d)
     }
     if(_status=="<?php echo C_Blog::ADD_STATUS_OVERQUOTA ?>")
     {
-        add_message("<?php $this->translation()->overquota ?>");
+        add_message("<?php echo $this->translation()->overquota ?>");
     }
     if(_status=="<?php echo C_Blog::ADD_STATUS_FAILED ?>")
     {

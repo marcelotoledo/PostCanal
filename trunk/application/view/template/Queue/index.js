@@ -544,6 +544,8 @@ $(document).ready(function()
         .find('div.entrytitle')
         .find('a').live('click', function()
     {
+        if(active_request==true) { return false; }
+
         var _pt = $(this).parent().parent().parent();
         var _st = _pt.attr('status')
 
