@@ -1,6 +1,6 @@
-# blogfinder.py --- blog client for backend system of postcanal
+# blog.py --- blog client for backend system of postcanal
 
-# Copyright  (C)  2009  Rafael Castilho <rafel@castilho.biz>
+# Copyright  (C)  2009  Postcanal Inc. <http://www.postcanal.com>
 
 # Version: 1.0
 # Keywords: 

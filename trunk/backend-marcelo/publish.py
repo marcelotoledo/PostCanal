@@ -1,26 +1,13 @@
 # publish.py --- short description
 
-# Copyright  (C)  2009  Marcelo Toledo <marcelo@marcelotoledo.org>
+# Copyright  (C)  2009  Postcanal Inc. <http://www.postcanal.com>
 
 # Version: 1.0
 # Keywords: 
-# Author: Marcelo Toledo <marcelo@marcelotoledo.org>
-# Maintainer: Marcelo Toledo <marcelo@marcelotoledo.org>
+# Author: Marcelo Toledo <marcelo.toledo@postcanal.com>
+#         Rafael Castilho <rafael.castilho@postcanal.com>
+# Maintainer: Marcelo Toledo <marcelo.toledo@postcanal.com>
 # URL: http://
-
-# This program is free software; you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation; either version 2 of the License, or
-# (at your option) any later version.
-
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-
-# You should have received a copy of the GNU General Public License
-# along with this program; if not, write to the Free Software
-# Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 # Commentary: 
 
@@ -79,7 +66,7 @@ def Publish(client, token):
         t.username = blog_username
         t.password = blog_password
 
-        l.log("Preparing to publish for %s" % (id), funcName())
+        l.log("Preparing to publish %s" % (id), funcName())
 
         published = False
         message = ""
@@ -87,7 +74,7 @@ def Publish(client, token):
         try:
             post_id = t.publish({ 'title'  : entry_title,
                                   'content': entry_content })
-            l.log("%s published %s" % (id, str(post_id)), funcName())
+            l.log("Entry %s published as %s" % (id, str(post_id)), funcName())
             published = True
         except xmlrpclib.Fault, message:
             l.log("Failed to publish (%s) - (%s)" % (id, message), funcName())
