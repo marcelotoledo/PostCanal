@@ -26,9 +26,9 @@ class Daemon:
         config = PostCanalConfig(config_path)
 
         self.token = config.get('webservice/token')
-        frontend_url = config.get('base/url')
-        frontend_url = frontend_url + config.get('webservice/frontendUrl')
-        self.client = xmlrpclib.ServerProxy(frontend_url)
+        #frontend_url = config.get('base/url')
+        #frontend_url = frontend_url + config.get('webservice/frontendUrl')
+        self.client = xmlrpclib.ServerProxy("http://www.postcanal.com/webservice")
 
     def feed_update(self):
         try:
@@ -36,6 +36,7 @@ class Daemon:
         except:
             _m = "feed update get: webservice call failed; (%s)"
             logging.error(_m % (sys.exc_info()[0].__name__))
+            print sys.exc_info()
             return None
 
         if type(update) != type(list()):
@@ -199,8 +200,11 @@ def start(argv):
 
     while True:
         time.sleep(TIME_SLEEP)
+        print "running feed_update..."
         daemon.feed_update()
+        print "running blog_publish..."
         daemon.blog_publish()
+        print "running queue suggest..."
         daemon.queue_suggest()
 
 def debug(argv): # run once
@@ -218,16 +222,19 @@ def debug(argv): # run once
     daemon.blog_publish()
     daemon.queue_suggest()
 
-def usage(argv):
-    print 'PostCanal Daemon %s - Daemon system for postcanal.com' % VERSION
+def banner():
+    print 'PostCanal.com Daemon %s - Daemon system for postcanal.com' % VERSION
     print 'Copyright  (C)  2009 PostCanal Inc. <https://www.postcanal.com>\n'
-    
+
+def usage(argv):
     print 'Usage: %s start|test' % argv[0]
 
 def test(argv):
     pass
 
 if __name__ == "__main__":
+    banner()
+    
     if len(sys.argv) <= 1:
         usage(sys.argv)
         sys.exit(-1)
