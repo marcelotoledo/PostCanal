@@ -44,4 +44,4 @@ if __name__ == "__main__":
         feedUpdate(r.client, r.token)
         #Publish(r.client, r.token)
         #autoQueue(r.client, r.token)
-        time.sleep(1)
+        time.sleep(5)
