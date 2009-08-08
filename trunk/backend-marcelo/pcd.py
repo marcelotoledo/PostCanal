@@ -17,13 +17,14 @@
 
 from conf      import runtimeConfig
 from utils     import Usage
-from feed      import feedUpdate
+from feed      import feedUpdate, getNextFeed, processFeed
 from publish   import Publish
 from autoQueue import autoQueue
 
 import sys
 import time
 import log
+import thread
 
 if __name__ == "__main__":
     u = Usage()    
@@ -40,8 +41,16 @@ if __name__ == "__main__":
     r.addOption("FrontendWS", r.frontendWS)
     r.printOptions()
 
+    lock = thread.allocate_lock()
+    threadCount = 0
+    
     while (True):
-        feedUpdate(r.client, r.token)
+        print "Thread Count = " + str(threadCount)
+        feed = getNextFeed(r.client, r.token, lock)
+        if feed != None:
+            threadCount = threadCount + 1
+            thread.start_new_thread(processFeed, (r.client, r.token, feed, lock))
+            
+        #feedUpdate(r.client, r.token)
         #Publish(r.client, r.token)
         #autoQueue(r.client, r.token)
-        time.sleep(5)
