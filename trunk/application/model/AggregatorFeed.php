@@ -288,6 +288,14 @@ class AggregatorFeed extends B_Model
     }
 
     /**
+     * Reset the update time for all feeds
+     */
+    public static function resetUpdate()
+    {
+        self::execute('UPDATE ' . self::$table_name . ' SET feed_update_time = 0');
+    }
+
+    /**
      * Discover feeds from URL
      *
      * @param   string  $url

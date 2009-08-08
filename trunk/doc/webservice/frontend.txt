@@ -38,6 +38,12 @@ return : int                 # total affected (updated) articles
 
 ................................................................................
 
+bool.feed_update_reset(dict) # reset the update time for all feeds
+
+params : str.token           # token
+
+................................................................................
+
 list.blog_publish_get(dict)  # get a 'must publish' list of blog entry
 
 params : str.token           # token

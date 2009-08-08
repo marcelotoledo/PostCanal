@@ -177,6 +177,15 @@ class L_WebService
     }
 
     /**
+     * Reset feed update time for all feeds
+     */
+    public function feed_update_reset($args)
+    {
+        if($this->validate_args($args, array()) == false) return false;
+        AggregatorFeed::resetUpdate();
+    }
+
+    /**
      * Get a blog entry awaiting publication
      */
     public function blog_publish_get($args)
