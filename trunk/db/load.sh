@@ -27,8 +27,8 @@ _tagv=$(cat $config | tail -n $_pter | grep "<db>" | sed s/":.*"//g | head -n 1)
 _tagv=$(echo $_tagv | sed s/"<[^>]\+>"//g)
 __D=$_tagv
 
-_fn="$__D-dump-$(date +%s).mysql"
+_fn="$1"
 
-echo "dumping to $_fn"
+echo "loading to $_fn"
 
-/usr/bin/env mysqldump --compact --extended-insert --single-transaction -c -n -t -u$__U -p$__P -h$__H $__D > $_fn
+/usr/bin/env mysql -u$__U -p$__P -h$__H $__D < $_fn
