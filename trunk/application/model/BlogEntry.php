@@ -295,6 +295,36 @@ class BlogEntry extends B_Model
     }
 
     /**
+     * Get total blog entry that need publication
+     * 
+     * @return  integer
+     */
+    public static function getAwaitingPublicationTotal()
+    {
+        $sql = "SELECT COUNT(a.user_blog_entry_id) AS total
+                FROM 
+                    model_user_blog_entry AS a 
+                LEFT JOIN 
+                    model_user_blog AS b ON (a.user_blog_id = b.user_blog_id) 
+                LEFT JOIN 
+                    model_blog_type AS c ON (b.blog_type_id = c.blog_type_id) 
+                WHERE
+                    a.publication_status = ? AND
+                    a.publication_date < NOW() AND
+                    a.publication_lock = 0 AND
+                    a.deleted = 0";
+
+        $total = 0;
+
+        if(($res = current(self::select($sql, array(self::STATUS_WAITING), PDO::FETCH_ASSOC))))
+        {
+            $total = $res['total'];
+        }
+
+        return $total;
+    }
+
+    /**
      * Set blog entry as published
      * 
      * @param   integer     $id             Entry ID

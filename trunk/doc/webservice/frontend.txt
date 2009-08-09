@@ -42,7 +42,15 @@ bool.feed_update_reset(dict) # reset the update time for all feeds
 
 params : str.token           # token
 
-................................................................................
+.................................................................................
+
+int.feed_update_total(dict)  # total feeds for update
+
+params : str.token           # token
+
+return : int
+
+...............................................................................
 
 list.blog_publish_get(dict)  # get a 'must publish' list of blog entry
 
@@ -65,6 +73,14 @@ params : str.token           # token
          str.id              # feed identification
          bool.published      # entry was published correctly?
          str.message         # error message (optional)
+
+.................................................................................
+
+int.blog_publish_total(dict) # get a total for 'must publish' blog entry
+
+params : str.token           # token
+
+return : int
 
 ................................................................................
 

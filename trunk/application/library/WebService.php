@@ -186,6 +186,15 @@ class L_WebService
     }
 
     /**
+     * Feed update total items
+     */
+    public function feed_update_total($args)
+    {
+        if($this->validate_args($args, array()) == false) return false;
+        return AggregatorFeed::getOutdatedTotal();
+    }
+
+    /**
      * Get a blog entry awaiting publication
      */
     public function blog_publish_get($args)
@@ -214,6 +223,15 @@ class L_WebService
         }
         
         return true;
+    }
+
+    /**
+     * Blog publish total items
+     */
+    public function blog_publish_total($args)
+    {
+        if($this->validate_args($args, array()) == false) return false;
+        return BlogEntry::getAwaitingPublicationTotal();
     }
 
     /**

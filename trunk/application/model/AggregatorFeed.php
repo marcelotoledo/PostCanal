@@ -207,6 +207,27 @@ class AggregatorFeed extends B_Model
     }
 
     /**
+     * Get outdated feeds total
+     *
+     * @return  integer
+     */
+    public static function getOutdatedTotal()
+    {
+        $sql = "SELECT COUNT(aggregator_feed_id) AS total
+                FROM " . self::$table_name . "
+                WHERE (feed_update_time + UNIX_TIMESTAMP(updated_at)) < UNIX_TIMESTAMP()";
+
+        $total = 0;
+
+        if(($res = current(self::select($sql, array(), PDO::FETCH_ASSOC))))
+        {
+            $total = $res['total'];
+        }
+
+        return $total;
+    }
+
+    /**
      * Insert feed (raw)
      *
      * @param   array           $data
