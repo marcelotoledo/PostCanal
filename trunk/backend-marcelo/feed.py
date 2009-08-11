@@ -17,106 +17,20 @@
 
 from aggregator import get_feed, feed_dump
 from utils      import funcName
+from iface      import openConnection
 
 import log
 import sys
-import multitask
+#import multitask
+import threading
+import time
 
 l = log.Log()
 
-# class Feed():
-#     def __init__(self, client, token):
-#         self.client        = client
-#         self.token         = token
-#         self.feedList      = None
-#         self.feed          = None
-#         self.dump          = None
-#         self.url           = None
-#         self.id            = None
-#         self.status        = None
-#         self.totalArticles = None
-#         self.saved         = None
-
-#     def getNextFeed(self):
-#         try:
-#             self.feedList = self.client.feed_update_get({ 'token': self.token })
-#         except:
-#             l.log("webservice call failed; (%s)" % (sys.exc_info()[0].__name__), funcName())
-#             return False
-
-#         if type(self.feedList) != type(list()):
-#             l.log("wrong type, expected <list>", funcName())
-#             return False
-    
-#         if len(self.feedList) == 0:
-#             l.log("No feeds to update", funcName())
-#             return False
-
-#         try:
-#             self.feed = self.feedList.pop()
-#         except:
-#             return False
-
-#         return True
-
-#     def processFeed(self):
-#         if type(self.feed) != type(dict()):
-#             l.log("Feed type is wrong, expected <dict>", funcName())
-#             return None
-        
-#         try:
-#             self.id  = int(self.feed['id'])
-#             self.url = str(self.feed['feed_url'])
-#         except:
-#             l.log("Invalid feed dictionary", funcName())
-#             return None
-        
-#         l.log("Updating %s" % (self.url), funcName())
-        
-#         self.dump = feed_dump(get_feed(self.url))
-        
-#         if type(self.dump) != type(dict()):
-#             l.log("Wrong type for feed dump", funcName())
-#             return None
-        
-#         self.status         = ""
-#         self.total_articles = 0
-#         self.saved          = 0
-        
-#         try:
-#             self.status        = self.dump['feed_status']
-#             self.totalArticles = len(self.dump['articles'])
-#         except:
-#             l.log("invalid feed dump dictionary, probably not parsed", funcName())
-            
-#         l.log("%s has %d entries" %
-#               (self.url, self.totalArticles), funcName())
-            
-#         try:
-#             self.saved = self.client.feed_update_post({ 'token' : self.token, 
-#                                                         'id'    : self.id, 
-#                                                         'data'  : self.dump })
-#         except:
-#             l.log("Webservice call failed; (%s)" %
-#                   (sys.exc_info()[0].__name__), funcName())
-            
-#         if type(self.saved) != type(int()): self.saved = 0
-            
-#         l.log("Feed %d saved %d articles" % (self.id, self.saved), funcName())
-
-# def feedUpdate(client, token):
-#     f = Feed(client, token)
-    
-#     res = f.getNextFeed()
-#     if res == True:
-        
-#         f.processFeed()
-
-def getNextFeed(client, token, lock):
+def getNextFeed(client, token, total=1):
     try:
-        lock.acquire()
-        feedList = client.feed_update_get({ 'token': token })
-        lock.release()
+        feedList = client.feed_update_get({ 'token' : token,
+                                            'total' : total })
     except:
         l.log("webservice call failed; (%s)" % (sys.exc_info()[0].__name__), funcName())
         return None
@@ -128,15 +42,23 @@ def getNextFeed(client, token, lock):
     if len(feedList) == 0:
         l.log("No feeds to update", funcName())
         return None
+
+    if total == 1:
+        try:
+            feed = feedList.pop()
+        except:
+            return None
+        return feed
     
+    return feedList
+
+def processFeed(url, token, feed):
     try:
-        feed = feedList.pop()
+        client = openConnection(url)
     except:
+        l.log("Error opening connection with interface - %s" % (sys.exc_info()[0].__name__), funcName())
         return None
-
-    return feed
-
-def processFeed(client, token, feed, lock):
+    
     if type(feed) != type(dict()):
         l.log("Feed type is wrong, expected <dict>", funcName())
         return None
@@ -170,11 +92,9 @@ def processFeed(client, token, feed, lock):
           (url, totalArticles), funcName())
             
     try:
-        lock.acquire()
         saved = client.feed_update_post({ 'token' : token, 
-                                                    'id'    : id, 
-                                                    'data'  : dump })
-        lock.release()
+                                          'id'    : id, 
+                                          'data'  : dump })
     except:
         l.log("Webservice call failed; (%s)" %
               (sys.exc_info()[0].__name__), funcName())
@@ -182,8 +102,104 @@ def processFeed(client, token, feed, lock):
     if type(saved) != type(int()): saved = 0
             
     l.log("Feed %d saved %d articles" % (id, saved), funcName())
+
+##
+## processFeeds - Queue
+##
+def processFeeds(url, token, requestQueue, name):
+#    while 1:
+#        print "Sou a thread %s" % funcName() + str(id)
+#        time.sleep(1)
+        
+    try:
+        client = openConnection(url)
+    except:
+        l.log("Error opening connection with interface - %s" % (sys.exc_info()[0].__name__), funcName() + name)
+        return None
     
-def feedUpdate(client, token, lock):
-    feed = getNextFeed(client, token, lock)
+    while 1:
+        if requestQueue.empty():
+            print "Queue is empty, exiting"
+            break
+            
+        feed = requestQueue.get()
+        
+        if type(feed) != type(dict()):
+            l.log("Feed type is wrong, expected <dict>", funcName() + name)
+            continue
+
+        try:
+            id  = int(feed['id'])
+            url = str(feed['feed_url'])
+        except:
+            l.log("Invalid feed dictionary", funcName() + name)
+            continue
+        
+        l.log("Updating %s" % (url), funcName() + name)
+    
+        dump = feed_dump(get_feed(url))
+    
+        if type(dump) != type(dict()):
+            l.log("Wrong type for feed dump", funcName() + name)
+            continue
+    
+        status         = ""
+        totalArticles  = 0
+        saved          = 0
+        
+        try:
+            status        = dump['feed_status']
+            totalArticles = len(dump['articles'])
+        except:
+            l.log("invalid feed dump dictionary, probably not parsed", funcName() + name)
+            continue
+            
+        l.log("%s has %d entries" %
+              (url, totalArticles), funcName() + name)
+            
+        try:
+            saved = client.feed_update_post({ 'token' : token, 
+                                              'id'    : id, 
+                                              'data'  : dump })
+        except:
+            l.log("Webservice call failed; (%s)" %
+                  (sys.exc_info()[0].__name__), funcName() + name)
+            continue
+        
+        if type(saved) != type(int()): saved = 0
+        
+        l.log("Feed %d saved %d articles" % (id, saved), funcName() + name)
+        
+        time.sleep(1)
+
+def pendingFeeds(client, token):
+    try:
+        feedCount = client.feed_update_total({ 'token': token })
+    except:
+        l.log("webservice call failed; (%s)" % (sys.exc_info()[0].__name__), funcName())
+        return None
+
+    return feedCount
+
+def scheduleAll(client, token):
+    try:
+        client.feed_update_reset({ 'token': token })
+    except:
+        l.log("webservice call failed; (%s)" % (sys.exc_info()[0].__name__), funcName())
+        return None
+    
+def feedUpdate(url, token, lock):
+    feed = getNextFeed(client, token)
     if feed != None:
-        processFeed(client, token, feed, lock)
+        processFeed(url, token, feed)
+
+class FeedThread(threading.Thread):
+    def __init__(self, url, token, requestQueue, id):
+        threading.Thread.__init__(self, name="%02d" % (id,))
+        self.requestQueue = requestQueue
+        self.url          = url
+        self.token        = token
+        self.id           = id
+        
+    def run(self):
+        processFeeds(self.url, self.token, self.requestQueue, self.name)

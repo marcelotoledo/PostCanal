@@ -14,6 +14,9 @@
 
 # Code:
 
+from xml.dom import minidom
+
+import os
 import xmlrpclib
 import log
 
@@ -22,18 +25,16 @@ class runtimeConfig():
         self.options = {}
         self.l = log.Log()                
         if config_path == None:
-            import os
             config_path = os.getcwd().replace("backend-marcelo", "") + "config/environment.xml"
-            
-        from xml.dom import minidom
-        self.xmldoc = minidom.parse(config_path)
-
-        self.token = self.getElement('webservice/token')
+        
         #frontend_url = config.get('base/url')
         #frontend_url = frontend_url + config.get('webservice/frontendUrl')
-        self.frontend = "http://www.postcanal.com"
+
+        self.xmldoc     = minidom.parse(config_path)                
+        self.token      = self.getElement('webservice/token')
+        self.frontend   = "http://www.postcanal.com"
         self.frontendWS = self.frontend + "/webservice"
-        self.client = xmlrpclib.ServerProxy(self.frontendWS)
+        self.client     = xmlrpclib.ServerProxy(self.frontendWS)
 
     def getElement(self, path):
         tag = self.xmldoc.firstChild
