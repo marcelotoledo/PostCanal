@@ -1,0 +1,137 @@
+<html>
+<head>
+<style>
+*
+{
+	padding: 0;
+	margin: 0;
+}
+body
+{
+	text-align: center;
+}
+#toprow
+{
+	margin-top: 20px;
+	margin-bottom: 50px;
+	float: right;
+}
+div.toprowimg
+{
+	background-image: url('image/toprow.png');
+    background-repeat: no-repeat;
+    background-position: top right;
+}
+#toplogo
+{
+	width: 165px;
+	height: 77px;
+	margin-right: 50px;
+	float: left;
+	background-position: 0px 0px;
+}
+#topmenu
+{
+	float: left;
+}
+div.menuitm
+{
+	float: left;
+	padding: 0px 20px 0px 20px;
+	margin-top: 38px;
+	line-height: 45px;
+	background-color: #081C27;
+	font-family: "Trebuchet MS", Verdana, Geneva, Arial, Helvetica, sans-serif;
+	font-size: 1.1em;
+	color: white;
+	font-weight: bold;
+}
+div.menuitm-ebd
+{
+	background-color: #2780B1;
+}
+a.menulnk
+{
+	color: white;
+	font-weight: normal;
+	text-decoration: none;
+}
+
+#menubrd 
+{
+	width: 9px;
+	padding: 0px;
+}
+div.menubrd-ebd { background-position: -201px 0px; }
+div.menubrd-dbd { background-position: -210px 0px; }
+
+div.sepbrd
+{
+	width: 12px;
+	padding: 0px;
+}
+div.sepbrd-dbd   { background-position: -189px 0px; }
+div.sepbrd-ebd-l { background-position: -165px 0px; }
+div.sepbrd-ebd-r { background-position: -177px 0px; }
+
+#signuparw
+{
+	width: 31px;
+	padding: 0px 20px 0px 0px;
+}
+div.signuparw-ebd { background-position: -196px -45px; 	background-color: #2780B1; }
+div.signuparw-dbd { background-position: -165px -45px; }
+
+#menursp
+{
+	width: 50px;
+}
+
+#menuitmclr { clear: left;  }
+#toprowclr  { clear: left;  }
+#topclr     { clear: right; }
+
+#midrow
+{
+	margin: 0 auto;
+	width: 800px;
+	background-color: green;
+}
+#btmrow
+{
+	margin: 0 auto;
+	width: 400px;
+	text-align: center;
+	background-color: blue;
+}
+</style>
+</head>
+<body>
+	<div id="toprow">
+		<div class="toprowimg" id="toplogo">&nbsp;</div>
+		<div id="topmenu">
+			<div class="menuitm toprowimg menubrd-dbd" id="menubrd">&nbsp;</div>
+			<div class="menuitm"><a class="menulnk" href="#">Home</a></div>
+			<div class="menuitm toprowimg sepbrd sepbrd-ebd-l">&nbsp;</div>
+			<div class="menuitm menuitm-ebd">Sign Up</div>
+			<div class="menuitm toprowimg signuparw-ebd" id="signuparw">&nbsp;</div>
+			<div class="menuitm toprowimg sepbrd sepbrd-ebd-r">&nbsp;</div>
+			<div class="menuitm"><a class="menulnk" href="#">Quick Tour</a></div>
+			<div class="menuitm toprowimg sepbrd sepbrd-dbd">&nbsp;</div>
+			<div class="menuitm"><a class="menulnk" href="#">Plans &amp; Prices</a></div>
+			<div class="menuitm toprowimg sepbrd sepbrd-dbd">&nbsp;</div>
+			<div class="menuitm"><a class="menulnk" href="#">Contact</a></div>
+			<div class="menuitm" id="menursp">&nbsp;</div>
+			<div id="menuitmclr"></div>
+		</div>
+		<div id="toprowclr"></div>
+	</div>
+	<div id="topclr"></div>
+	<div id="midrow">
+		middle
+	</div>
+	<div id="btmrow">
+		bottom
+	</div>
+</body>
+</html>
