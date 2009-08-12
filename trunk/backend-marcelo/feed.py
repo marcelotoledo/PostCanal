@@ -21,7 +21,6 @@ from iface      import openConnection
 
 import log
 import sys
-#import multitask
 import threading
 import time
 
@@ -52,65 +51,7 @@ def getNextFeed(client, token, total=1):
     
     return feedList
 
-def processFeed(url, token, feed):
-    try:
-        client = openConnection(url)
-    except:
-        l.log("Error opening connection with interface - %s" % (sys.exc_info()[0].__name__), funcName())
-        return None
-    
-    if type(feed) != type(dict()):
-        l.log("Feed type is wrong, expected <dict>", funcName())
-        return None
-        
-    try:
-        id  = int(feed['id'])
-        url = str(feed['feed_url'])
-    except:
-        l.log("Invalid feed dictionary", funcName())
-        return None
-        
-    l.log("Updating %s" % (url), funcName())
-    
-    dump = feed_dump(get_feed(url))
-    
-    if type(dump) != type(dict()):
-        l.log("Wrong type for feed dump", funcName())
-        return None
-    
-    status         = ""
-    totalArticles  = 0
-    saved          = 0
-        
-    try:
-        status        = dump['feed_status']
-        totalArticles = len(dump['articles'])
-    except:
-        l.log("invalid feed dump dictionary, probably not parsed", funcName())
-            
-    l.log("%s has %d entries" %
-          (url, totalArticles), funcName())
-            
-    try:
-        saved = client.feed_update_post({ 'token' : token, 
-                                          'id'    : id, 
-                                          'data'  : dump })
-    except:
-        l.log("Webservice call failed; (%s)" %
-              (sys.exc_info()[0].__name__), funcName())
-        
-    if type(saved) != type(int()): saved = 0
-            
-    l.log("Feed %d saved %d articles" % (id, saved), funcName())
-
-##
-## processFeeds - Queue
-##
-def processFeeds(url, token, requestQueue, name):
-#    while 1:
-#        print "Sou a thread %s" % funcName() + str(id)
-#        time.sleep(1)
-        
+def processFeed(url, token, requestQueue, name):
     try:
         client = openConnection(url)
     except:
@@ -188,11 +129,6 @@ def scheduleAll(client, token):
         l.log("webservice call failed; (%s)" % (sys.exc_info()[0].__name__), funcName())
         return None
     
-def feedUpdate(url, token, lock):
-    feed = getNextFeed(client, token)
-    if feed != None:
-        processFeed(url, token, feed)
-
 class FeedThread(threading.Thread):
     def __init__(self, url, token, requestQueue, id):
         threading.Thread.__init__(self, name="%02d" % (id,))
@@ -202,4 +138,4 @@ class FeedThread(threading.Thread):
         self.id           = id
         
     def run(self):
-        processFeeds(self.url, self.token, self.requestQueue, self.name)
+        processFeed(self.url, self.token, self.requestQueue, self.name)

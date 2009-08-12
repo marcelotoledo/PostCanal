@@ -17,7 +17,7 @@
 
 from conf      import runtimeConfig
 from utils     import Usage
-from feed      import feedUpdate, getNextFeed, processFeed, pendingFeeds, scheduleAll, FeedThread
+from feed      import getNextFeed, pendingFeeds, scheduleAll, FeedThread
 from publish   import Publish
 from autoQueue import autoQueue
 from iface     import openConnection
@@ -86,7 +86,7 @@ if __name__ == "__main__":
                 requestQueue.put('kill')
 
         time.sleep(1)
-            
-        #feedUpdate(r.client, r.token)
+
+        # TODO
         #Publish(r.client, r.token)
         #autoQueue(r.client, r.token)
