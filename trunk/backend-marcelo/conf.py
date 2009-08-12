@@ -15,6 +15,7 @@
 # Code:
 
 from xml.dom import minidom
+from iface   import openConnection
 
 import os
 import xmlrpclib
@@ -34,7 +35,7 @@ class runtimeConfig():
         self.token      = self.getElement('webservice/token')
         self.frontend   = "http://www.postcanal.com"
         self.frontendWS = self.frontend + "/webservice"
-        self.client     = xmlrpclib.ServerProxy(self.frontendWS)
+        self.client     = openConnection(self.frontendWS)
 
     def getElement(self, path):
         tag = self.xmldoc.firstChild

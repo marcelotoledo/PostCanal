@@ -118,11 +118,11 @@ def processFeeds(url, token, requestQueue, name):
         return None
     
     while 1:
-        if requestQueue.empty():
-            print "Queue is empty, exiting"
-            break
-            
         feed = requestQueue.get()
+
+        if feed == 'kill':
+            l.log("I am done, ending thread", funcName() + name)
+            return None
         
         if type(feed) != type(dict()):
             l.log("Feed type is wrong, expected <dict>", funcName() + name)

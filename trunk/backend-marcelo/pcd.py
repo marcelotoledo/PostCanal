@@ -29,7 +29,7 @@ import threading
 import Queue
 
 if __name__ == "__main__":
-    u = Usage()    
+    u = Usage()
     u.banner()
     u.usage()
 
@@ -45,33 +45,47 @@ if __name__ == "__main__":
 
     scheduleAll(r.client, r.token)
 
-    MAX_THREADS  = 5
+    MAX_THREADS   = 20
+    MIN_THREADS   = 3
+    THREADS_RATIO = 3
     requestQueue = Queue.Queue()
 
-    #while True:
-    feedCount = pendingFeeds(r.client, r.token)
-    feedList  = getNextFeed(r.client, r.token, feedCount)
+    while True:
+        feedCount = pendingFeeds(r.client, r.token)
+        feedList  = getNextFeed(r.client, r.token, feedCount)
 
-    if int(feedCount) > 1:
-        print "Adicionando %d itens no Queue" % int(feedCount)
-        for feed in feedList:
-            requestQueue.put(feed)
-
-    #for i in range(MAX_THREADS):
-    for i in range(10):
-        FeedThread(r.frontendWS, r.token, requestQueue, i).start()
+        if int(feedCount) > 1:
+            l.log("Queueing %d items" % int(feedCount))
+            for feed in feedList:
+                requestQueue.put(feed)
+    
+        queueSize   = requestQueue.qsize()
+        threadCount = threading.activeCount() - 1
+        maxCurrSize = int(round(queueSize / THREADS_RATIO))
+        
+        if maxCurrSize > MAX_THREADS:
+            maxCurrSize = MAX_THREADS
+        elif maxCurrSize == 0:
+            maxCurrSize = MIN_THREADS
             
-    #time.sleep(5)
+        newThreads  = maxCurrSize - threadCount
 
-    #for item in threading.enumerate():
-    #    print item
+        l.debug("####################################")
+        l.debug("QueueSize   = %d" % queueSize)
+        l.debug("threadCount = %d" % threadCount)
+        l.debug("maxCurrSize = %d" % maxCurrSize)
+        l.debug("newThreads  = %d" % newThreads)
+        l.debug("####################################")        
+        
+        if newThreads > 0:
+            l.log("Opening %d new threads" % newThreads)
+            for i in range(newThreads):
+                FeedThread(r.frontendWS, r.token, requestQueue, i).start()
+        elif newThreads < 0:
+            for i in range(newThreads * -1):
+                requestQueue.put('kill')
 
-    #print "We have %d active threads." % threading.activeCount()
-
-    #    feed = getNextFeed(r.frontendWS, r.token)
-    #    if feed != None:
-    #        threadCount = threadCount + 1
-    #        thread.start_new_thread(processFeed, (r.frontendWS, r.token, feed))
+        time.sleep(1)
             
         #feedUpdate(r.client, r.token)
         #Publish(r.client, r.token)
