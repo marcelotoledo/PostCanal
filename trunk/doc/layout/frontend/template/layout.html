@@ -9,7 +9,19 @@
 body
 {
 	text-align: center;
+	background-image: url('image/bgbody.png');
+	background-position: 0px 0px;
 }
+#mainct
+{
+	background-image: url('image/bghead.png');
+	background-repeat: repeat-x;
+	background-position: top left;
+	height: 600px;
+}
+
+/* top */
+
 #toprow
 {
 	margin-top: 20px;
@@ -19,8 +31,8 @@ body
 div.toprowimg
 {
 	background-image: url('image/toprow.png');
-    background-repeat: no-repeat;
-    background-position: top right;
+	background-repeat: no-repeat;
+	background-position: top right;
 }
 #toplogo
 {
@@ -61,6 +73,7 @@ a.menulnk
 {
 	width: 9px;
 	padding: 0px;
+	background-color: transparent;
 }
 div.menubrd-ebd { background-position: -201px 0px; }
 div.menubrd-dbd { background-position: -210px 0px; }
@@ -91,12 +104,93 @@ div.signuparw-dbd { background-position: -165px -45px; }
 #toprowclr  { clear: left;  }
 #topclr     { clear: right; }
 
+/* middle */
+
 #midrow
 {
 	margin: 0 auto;
-	width: 800px;
-	background-color: green;
+	width: 900px;
 }
+
+#midct
+{
+	float: left;
+}
+div.midct-half
+{
+	width: 650px;
+}
+div.midct-full
+{
+	width: 900px;
+}
+div.midbrd
+{
+	text-align: left;
+}
+div.midbrd-rnd
+{
+	height: 10px;
+	line-height: 10px;
+	background-image: url('image/midbrd-c.png');
+	background-repeat: no-repeat;
+}
+div.midbrd-nw
+{
+	width: 10px;
+	background-position: top left;
+}
+div.midbrd-ne
+{
+	margin-left: 10px;
+	margin-top: -10px;
+	background-position: top right;
+}
+div.midbrd-nc
+{
+	margin-right: 10px;
+	background-color: white;
+	border-top: 1px solid #ACACAC;
+}
+div.midbrd-cc
+{
+	border-left: 1px solid #ACACAC;
+	border-right: 1px solid #ACACAC;
+	background-color: white;
+}
+div.midbrd-sw
+{
+	width: 10px;
+	background-position: bottom left;
+}
+div.midbrd-se
+{
+	margin-left: 10px;
+	margin-top: -11px; /* safari is -12px */
+	background-position: bottom right;
+}
+div.midbrd-sc
+{
+	margin-right: 10px;
+	background-color: white;
+	border-bottom: 1px solid #ACACAC;
+}
+div.midbrd-xx
+{
+	clear: left;
+}
+
+#rightbar
+{
+	float: left;
+}
+#midclear
+{
+	clear: left;
+}
+
+/* bottom */
+
 #btmrow
 {
 	margin: 0 auto;
@@ -107,6 +201,7 @@ div.signuparw-dbd { background-position: -165px -45px; }
 </style>
 </head>
 <body>
+	<div id="mainct">
 	<div id="toprow">
 		<div class="toprowimg" id="toplogo">&nbsp;</div>
 		<div id="topmenu">
@@ -128,10 +223,35 @@ div.signuparw-dbd { background-position: -165px -45px; }
 	</div>
 	<div id="topclr"></div>
 	<div id="midrow">
-		middle
+		<div class="midct-half" id="midct">
+		<!-- mid left [ -->
+		<div class="midbrd">
+			<div class="midbrd-rnd midbrd-nw">&nbsp;</div>
+			<div class="midbrd-rnd midbrd-ne">
+				<div class="midbrd-nc">&nbsp;</div>
+			</div>
+			<div class="midbrd-xx"></div>
+		</div>
+		<div class="midbrd-cc">
+			middle
+		</div>
+		<div class="midbrd">
+			<div class="midbrd-rnd midbrd-sw">&nbsp;</div>
+			<div class="midbrd-rnd midbrd-se">
+				<div class="midbrd-sc">&nbsp;</div>
+			</div>
+			<div class="midbrd-xx"></div>
+		</div>
+		<!-- mid left ] -->
+		</div>
+		<div id="rightbar">
+			right
+		</div>
+		<div id="midclear"></div>
 	</div>
 	<div id="btmrow">
 		bottom
+	</div>
 	</div>
 </body>
 </html>
