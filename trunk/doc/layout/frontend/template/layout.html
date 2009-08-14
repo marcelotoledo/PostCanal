@@ -1,5 +1,6 @@
 <html>
 <head>
+<meta http-equiv="X-UA-Compatible" content="IE=EmulateIE7"/>
 <style>
 *
 {
@@ -9,12 +10,13 @@
 body
 {
 	text-align: center;
-	background-image: url('image/bgbody.png');
+	background-image: url('image/bg-body.png');
 	background-position: 0px 0px;
+	font-family: "Trebuchet MS", Verdana, Geneva, Arial, Helvetica, sans-serif;
 }
 #mainct
 {
-	background-image: url('image/bghead.png');
+	background-image: url('image/bg-head.png');
 	background-repeat: repeat-x;
 	background-position: top left;
 	height: 600px;
@@ -30,7 +32,7 @@ body
 }
 div.toprowimg
 {
-	background-image: url('image/toprow.png');
+	background-image: url('image/top.png');
 	background-repeat: no-repeat;
 	background-position: top right;
 }
@@ -53,7 +55,6 @@ div.menuitm
 	margin-top: 38px;
 	line-height: 45px;
 	background-color: #081C27;
-	font-family: "Trebuchet MS", Verdana, Geneva, Arial, Helvetica, sans-serif;
 	font-size: 1.1em;
 	color: white;
 	font-weight: bold;
@@ -68,6 +69,7 @@ a.menulnk
 	font-weight: normal;
 	text-decoration: none;
 }
+a.menulnk:hover { color: #FFA800; }
 
 #menubrd 
 {
@@ -87,11 +89,7 @@ div.sepbrd-dbd   { background-position: -189px 0px; }
 div.sepbrd-ebd-l { background-position: -165px 0px; }
 div.sepbrd-ebd-r { background-position: -177px 0px; }
 
-#signuparw
-{
-	width: 31px;
-	padding: 0px 20px 0px 0px;
-}
+#signuparw { }
 div.signuparw-ebd { background-position: -196px -45px; 	background-color: #2780B1; }
 div.signuparw-dbd { background-position: -165px -45px; }
 
@@ -112,78 +110,297 @@ div.signuparw-dbd { background-position: -165px -45px; }
 	width: 900px;
 }
 
-#midct
+div.midct
 {
-	float: left;
+	background-color: white;
 }
 div.midct-half
 {
-	width: 650px;
+	float: left;
+	width: 648px;
 }
 div.midct-full
 {
 	width: 900px;
 }
-div.midbrd
+div.midct-top
 {
-	text-align: left;
-}
-div.midbrd-rnd
-{
-	height: 10px;
-	line-height: 10px;
-	background-image: url('image/midbrd-c.png');
-	background-repeat: no-repeat;
-}
-div.midbrd-nw
-{
-	width: 10px;
-	background-position: top left;
-}
-div.midbrd-ne
-{
-	margin-left: 10px;
-	margin-top: -10px;
-	background-position: top right;
-}
-div.midbrd-nc
-{
-	margin-right: 10px;
-	background-color: white;
+	height: 9px;
 	border-top: 1px solid #ACACAC;
+	border-left: 1px solid #ACACAC;
+	border-right: 1px solid #ACACAC;
+	-moz-border-radius-topleft: 9px;
+	-webkit-border-radius-topleft: 9px;
+	-moz-border-radius-topright: 9px;
+	-webkit-border-radius-topright: 9px;
 }
-div.midbrd-cc
+div.midct-cen
 {
 	border-left: 1px solid #ACACAC;
 	border-right: 1px solid #ACACAC;
-	background-color: white;
+	display: none;
 }
-div.midbrd-sw
+div.midct-bot
 {
-	width: 10px;
-	background-position: bottom left;
-}
-div.midbrd-se
-{
-	margin-left: 10px;
-	margin-top: -11px; /* safari is -12px */
-	background-position: bottom right;
-}
-div.midbrd-sc
-{
-	margin-right: 10px;
-	background-color: white;
+	height: 30px;
 	border-bottom: 1px solid #ACACAC;
+	border-left: 1px solid #ACACAC;
+	border-right: 1px solid #ACACAC;
+	-moz-border-radius-bottomleft: 9px;
+	-webkit-border-radius-bottomleft: 9px;
+	-moz-border-radius-bottomright: 9px;
+	-webkit-border-radius-bottomright: 9px;
+	display: none;
 }
-div.midbrd-xx
+#midct-home-0
+{
+	height: 64px;
+	line-height: 64px;
+	border-left: 1px solid #ACACAC;
+	border-right: 1px solid #ACACAC;
+	font-size: 2.4em;
+	font-weight: bold;
+	color: #124367;
+}
+#midct-home-1
+{
+	height: 276px;
+	background-image: url('image/middle-home.png');
+	background-repeat: no-repeat;
+	background-position: top left;
+}
+#midct-home-2
+{
+	float: left;
+	width: 450px;
+	height: 180px;
+}
+div.midct-home-tr
+{
+	background-image: url('image/middle-home-tr-en_US.png'); /* i18n */
+}
+#midct-home-sp-1
+{
+	height: 125px;
+}
+#midct-home-sp-2
+{
+	float: left;
+	width: 170px;
+	height: 38px;
+}
+#midct-home-sp-3
 {
 	clear: left;
 }
-
-#rightbar
+#midct-home-intl
+{
+	float: left;
+	width: 250px;
+	height: 38px;
+	background-repeat: no-repeat;
+	background-position: top left;
+}
+#midct-home-3
+{
+	float: right;
+	width: 180px;
+	height: 180px;
+}
+#midct-home-rtxt
+{
+	margin: 20px 35px 0px 0px;
+	color: #2780B1;
+	text-align: right;
+	font-size: 1.1em;
+}
+#midct-home-4
 {
 	float: left;
 }
+#midct-home-sp-4
+{
+	width: 380px;
+	height: 20px;
+}
+#midct-home-sp-5
+{
+	float: left;
+	width: 25px;
+	height: 46px;
+}
+#midct-home-yb
+{
+	float: left;
+	width: 345px;
+	height: 46px;
+	background-repeat: no-repeat;
+	background-position: 0px -38px;
+}
+#midct-home-sp-6
+{
+	clear: left;
+}
+#midct-home-5
+{
+	float: right;
+	width: 240px;
+	text-align: left;
+}
+#midct-home-btn
+{
+	background-image: url('image/middle-home-btn.png');
+	width: 208px;
+	height: 63px;
+	line-height: 58px;
+	text-align: left;
+	text-indent: 30px;
+}
+#midct-home-btn a
+{
+	color: white;
+	font-size: 1.2em;
+	font-weight: bold;
+	text-decoration: none;
+}
+#mict-home-x
+{
+	clear: both;
+}
+
+/*
+#midct-home-2
+{
+	float: right;
+	width: 140px;
+	margin: 20px 35px 0px 0px;
+	color: #2780B1;
+	text-align: right;
+	font-size: 1.1em;
+}
+#midct-home-3
+{
+}
+#midct-home-intl
+{
+	position: relative;
+	top: 140px;
+	left: 55px;
+	font-size: 2.2em;
+	font-weight: bold;
+	line-height: 0px;
+}
+#midct-home-intl big
+{
+	font-size: 2.6em;
+}
+#midct-home-yb
+{
+	position: relative;
+	top: 225px;
+	left: -45px;
+	font-size: 3.4em;
+	font-weight: bold;
+	line-height: 0px;
+	color: #F68738;
+}
+#midct-home-3 > #midct-home-yb
+{
+	top: 205px;
+}
+#midct-home-btn
+{
+	position: relative;
+	top: 180px;
+	left: 280px;
+	width: 208px;
+	height: 63px;
+	background-image: url('image/middle-home-btn.png');
+}
+#midct-home-1 > #midct-home-btn
+{
+	top: 160px;
+	left: 400px;
+}
+div.midct-home-clr
+{
+	clear: both;
+}
+*/
+
+/* right */
+
+div.rgtct
+{
+	float: left;
+	width: 250px;
+	padding: 10px 0px 10px 0px;
+	margin-top: 10px;
+	margin-left: 1px;
+	background-color: #48898C;
+	-moz-border-radius-topright: 9px;
+	-webkit-border-radius-topright: 9px;
+	-moz-border-radius-bottomright: 9px;
+	-webkit-border-radius-bottomright: 9px;
+	text-align: left;
+	color: white;
+}
+div.rgtct-ttl
+{
+	margin-left: 20px;
+	font-size: 1.1em;
+	font-weight: bold;
+}
+div.rgtct-lgt
+{
+	padding: 10px 10px 10px 20px;
+	margin: 10px 10px 0px 0px;
+	background-color: #5E9F97;
+	font-size: 1em;
+	font-weight: bold;
+	-moz-border-radius-topright: 9px;
+	-webkit-border-radius-topright: 9px;
+	-moz-border-radius-bottomright: 9px;
+	-webkit-border-radius-bottomright: 9px;
+}
+div.rgtct-lgt a
+{
+	color: black;
+	font-size: 0.8em;
+}
+input.intxt-rgt
+{
+	width: 200px;
+}
+#btn-signin
+{
+	padding-top: 10px;
+}
+div.rgtct-hrd
+{
+	padding: 10px;
+	margin: 10px 10px 0px 10px;
+	background-color: #144A4D;
+	-moz-border-radius: 9px;
+	-webkit-border-radius: 9px;
+}
+#notmember
+{
+	padding: 5px 5px 0px 10px;
+	font-size: 1.2em;
+}
+#learnmore
+{
+	padding: 0px 5px 0px 10px;
+}
+#learnmore a
+{
+	color: #FFA800;
+	font-size: 1.6em;
+	font-weight: bold;
+	text-decoration: none;
+}
+
 #midclear
 {
 	clear: left;
@@ -194,10 +411,86 @@ div.midbrd-xx
 #btmrow
 {
 	margin: 0 auto;
-	width: 400px;
+	width: 880px;
 	text-align: center;
-	background-color: blue;
 }
+#btmdsh
+{
+	margin-top: 50px;
+	border-top: 1px dotted #2780B1;
+}
+#btmtxt
+{
+	font-family: "Verdana";
+	font-size: 0.6em;
+}
+#btmtxt a
+{
+	color: #2780B1;
+	text-decoration: underline;
+}
+
+/* form */
+
+div.form-row
+{
+	height: 60px;
+}
+input.intxt
+{
+	border: 1px solid #C6C6C6;
+	height: 25px;
+	line-height: 23px;
+	padding: 0px 2px 0px 2px;
+	font-size: 1em;
+	color: #464646;
+	font-weight: bold;
+}
+
+/* button */
+
+div.btn { }
+div.btn-brd
+{
+	float: left;
+	background-image: url('image/btn-brd.png');
+}
+div.btn-l
+{
+	width: 15px;
+	height: 30px;
+	background-repeat: no-repeat;
+	background-position: 0px 0px;
+}
+div.btn-c
+{
+	float: left;
+	height: 30px;
+	line-height: 30px;
+	padding: 0px 5px 0px 5px;
+	background-image: url('image/btn-bg.png');
+	background-repeat: repeat-x;
+	background-position: 0px 0px;
+	background-color: #FF6600;
+}
+div.btn-c a
+{
+	color: black;
+	font-size: 1em;
+	text-decoration: none;
+}
+div.btn-r
+{
+	width: 15px;
+	height: 30px;
+	background-repeat: no-repeat;
+	background-position: -15px 0px;
+}
+div.btn-x
+{
+	clear: left;
+}
+
 </style>
 </head>
 <body>
@@ -223,34 +516,66 @@ div.midbrd-xx
 	</div>
 	<div id="topclr"></div>
 	<div id="midrow">
-		<div class="midct-half" id="midct">
-		<!-- mid left [ -->
-		<div class="midbrd">
-			<div class="midbrd-rnd midbrd-nw">&nbsp;</div>
-			<div class="midbrd-rnd midbrd-ne">
-				<div class="midbrd-nc">&nbsp;</div>
+		<div class="midct midct-half">
+			<div class="midct-top">&nbsp;</div>
+			<div class="midct-cen">&nbsp;</div>
+			<div class="midct-bot">&nbsp;</div>
+			<div id="midct-home-0">
+				Publish content with intelligence
 			</div>
-			<div class="midbrd-xx"></div>
-		</div>
-		<div class="midbrd-cc">
-			middle
-		</div>
-		<div class="midbrd">
-			<div class="midbrd-rnd midbrd-sw">&nbsp;</div>
-			<div class="midbrd-rnd midbrd-se">
-				<div class="midbrd-sc">&nbsp;</div>
+			<div id="midct-home-1">
+				<div id="midct-home-2">
+					<div id="midct-home-sp-1">&nbsp;</div>
+					<div id="midct-home-sp-2">&nbsp;</div>
+					<div class="midct-home-tr" id="midct-home-intl">&nbsp;</div>
+					<div id="midct-home-sp-3"></div>
+				</div>
+				<div id="midct-home-3">
+					<div id="midct-home-rtxt">We'll select the content based on your taste and <b>push it automatically</b> to your blog</div>
+				</div>
+				<div id="midct-home-4">
+					<div id="midct-home-sp-4">&nbsp;</div>
+					<div id="midct-home-sp-5">&nbsp;</div>
+					<div class="midct-home-tr" id="midct-home-yb">&nbsp;</div>
+					<div id="midct-home-sp-6"></div>
+				</div>
+				<div id="midct-home-5">
+					<div id="midct-home-btn"><a href="#">QUICK TOUR</a></div>
+				</div>
+				<div id="midct-home-x"></div>
 			</div>
-			<div class="midbrd-xx"></div>
 		</div>
-		<!-- mid left ] -->
-		</div>
-		<div id="rightbar">
-			right
+		<div class="rgtct">
+			<div class="rgtct-ttl">Sign In</div>
+			<div class="rgtct-lgt">
+				<form>
+				<div class="form-row">
+					E-mail<br/><input type="text" class="intxt intxt-rgt">
+				</div>
+				<div class="form-row">
+					Password<br/><input type="password" class="intxt intxt-rgt">
+					<a href="#">forgot your password?</a>
+				</div>
+				<div class="btn" id="btn-signin">
+					<div class="btn-brd btn-l">&nbsp;</div>
+					<div class="btn-bg  btn-c"><a href="#">SIGN IN</a></div>
+					<div class="btn-brd btn-r">&nbsp;</div>
+					<div class="btn-x"></div>
+				</div>
+				</form>
+			</div>
+			<div class="rgtct-hrd">
+				<div id="notmember">Not a member?</div>
+				<div id="learnmore"><a href="#">Learn More!</a></div>
+			</div>
 		</div>
 		<div id="midclear"></div>
 	</div>
 	<div id="btmrow">
-		bottom
+		<div id="btmdsh">&nbsp;</div>
+		<div id="btmtxt">
+			Copyright (C) 2009, PostCanal.com Inc.  •  <a href="#">Terms of Use</a>  •  <a href="#">Privacy Policy</a>
+		</div>
 	</div>
 	</div>
 </body>
