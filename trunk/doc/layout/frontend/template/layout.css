@@ -10,6 +10,11 @@ body
 	background-position: 0px 0px;
 	font-family: "Trebuchet MS", Verdana, Geneva, Arial, Helvetica, sans-serif;
 }
+img
+{
+	border: 0;
+}
+
 #mainct
 {
 	background-image: url('image/bg-head.png');
