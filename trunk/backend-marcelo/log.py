@@ -36,10 +36,10 @@ class Log():
     def log(self, string, func=None):
         if func == None:
             func = 'Main'            
-        self.LogPrint("%15s \t %s" % (func, string))
+        self.LogPrint("%20s \t %s" % (func, string))
 
     def debug(self, string, func=None):
         if func == None:
             func = 'Main'
         if self.isDebug:
-            self.LogPrint("%15s \t %s" % (func, string))
+            self.LogPrint("%20s \t %s" % (func, string))

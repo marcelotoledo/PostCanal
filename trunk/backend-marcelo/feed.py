@@ -1,4 +1,4 @@
-# feed.py --- short description
+# feed.py --- Module for updating feeds
 
 # Copyright  (C)  2009  Postcanal Inc. <http://www.postcanal.com>
 
@@ -52,6 +52,8 @@ def getNextFeed(client, token, total=1):
     return feedList
 
 def processFeed(url, token, requestQueue, name):
+    name = "-" + name
+    
     try:
         client = openConnection(url)
     except:
@@ -131,7 +133,7 @@ def scheduleAll(client, token):
     
 class FeedThread(threading.Thread):
     def __init__(self, url, token, requestQueue, id):
-        threading.Thread.__init__(self, name="%02d" % (id,))
+        threading.Thread.__init__(self, name="feed%02d" % (id,))
         self.requestQueue = requestQueue
         self.url          = url
         self.token        = token

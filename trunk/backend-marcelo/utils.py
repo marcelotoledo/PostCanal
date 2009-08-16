@@ -48,3 +48,18 @@ class Usage():
 def funcName():
     frame = inspect.currentframe()
     return frame.f_back.f_code.co_name
+
+def tCount(threadList, name):
+    count = 0
+    for t in threadList:
+        if name in t.getName():
+            count += 1
+    return count
+
+def addToQueue(queue, list):
+    print "List size is %d" % len(list)
+    if len(list) >= 1:
+        #print "List is big enough, proceeding..."
+        for item in list:
+            print "Inserting %s in list" % str(item)
+            queue.put(item)
