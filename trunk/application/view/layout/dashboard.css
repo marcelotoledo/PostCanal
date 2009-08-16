@@ -1,3 +1,85 @@
+/* general */
+
+*
+{
+    font-size: 10pt;
+    font-family: sans-serif;
+}
+
+html, body
+{
+    margin: 0;
+    padding: 0;
+    overflow: hidden; /* avoid unwanted scrollbars */
+    background-color: white;
+}
+
+div, form
+{
+    margin: 0;
+}
+
+a
+{
+    color: midnightblue;
+    text-decoration: underline;
+    cursor: pointer;
+    cursor: hand;
+}
+
+a:hover
+{
+    color: blue
+}
+
+h1
+{
+    font-size: 18pt;
+    text-transform: capitalize;
+}
+
+h2
+{
+    font-size: 12pt;
+    text-transform: capitalize;
+}
+
+/* tab panel */
+
+div.tabhead
+{
+    height: 57px;
+    margin-bottom: 15px;
+    border-bottom: 1px solid silver;
+    width: 50%;
+    border-collapse: collapse;
+}
+div.tabitem
+{
+    float: left;
+    padding-left: 10px;
+    padding-right: 10px;
+    line-height: 30px;
+    border: 1px solid silver;
+    border-top: 2px solid silver;
+    margin-right: 25px;
+    cursor: pointer;
+    cursor: hand;
+    margin-top: 25px;
+    margin-bottom: 20px;
+}
+
+div.tabitem-selected
+{
+    border-top: 2px solid orange;
+    border-bottom: 1px solid white;
+    /* background-color: moccasin; */
+}
+div.tabcontainer
+{
+    clear: left;
+}
+
 /* topbar */
 
 #topbar

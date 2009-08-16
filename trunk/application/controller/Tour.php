@@ -1,14 +1,14 @@
 <?php
 
 /**
- * Index controller class
+ * Tour controller class
  * 
  * @category    PostCanal
  * @package     Application Controller
  * @author      Rafael Castilho <rafael@castilho.biz>
  */
 
-class C_Index extends B_Controller
+class C_Tour extends B_Controller
 {
     public function before()
     {
@@ -20,9 +20,5 @@ class C_Index extends B_Controller
      */
     public function A_index()
     {
-        if($this->session()->getActive() == true)
-        {
-            $this->response()->setRedirect(B_Request::url('reader'));
-        }
     }
 }

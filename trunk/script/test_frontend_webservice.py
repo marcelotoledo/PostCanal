@@ -18,3 +18,4 @@ remote = "%s%s" % (PostCanalConfig(config_path).get('base/url'),
 server = xmlrpclib.ServerProxy(remote)
 
 print server.feed_update_get({ 'token' : token, 'total' : 3 })
+#print server.feed_update_total({ 'token' : token })

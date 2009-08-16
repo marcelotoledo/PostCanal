@@ -26,9 +26,10 @@ class Daemon:
         config = PostCanalConfig(config_path)
 
         self.token = config.get('webservice/token')
-        #frontend_url = config.get('base/url')
-        #frontend_url = frontend_url + config.get('webservice/frontendUrl')
-        self.client = xmlrpclib.ServerProxy("http://www.postcanal.com/webservice")
+        frontend_url = config.get('base/url')
+        frontend_url = frontend_url + config.get('webservice/frontendUrl')
+        #self.client = xmlrpclib.ServerProxy("http://www.postcanal.com/webservice")
+        self.client = xmlrpclib.ServerProxy(frontend_url)
 
     def feed_update(self):
         try:

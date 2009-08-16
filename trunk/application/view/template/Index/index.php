@@ -1,63 +1,52 @@
-<div id="logo">
-    <span>POSTCANAL</span>
-</div>
-
-<div class="rightform" id="loginform" style="display:block">
-    <h1><?php echo $this->translation()->sign_in ?></h1>
-    <div class="formcontainer">
-    <form>
-        <div class="inputcontainer">
-            <div class="inputlabel"><?php echo $this->translation()->email ?></div>
-            <input type="text" name="email" size="20">
-        </div>
-        <div class="inputcontainer">
-            <div class="inputlabel"><?php echo $this->translation()->password ?></div>
-            <input type="password" name="password" size="20">
-        </div>
-        <div class="inputlinks">
-            <a href="#" id="pwdlnk"><?php echo $this->translation()->forgot_password ?></a>
-        </div>
-        <div class="inputbuttons">
-            <input id="loginsubmit" type="button" value="<?php echo $this->translation()->submit ?>">
-        </div>
-        <div class="inputmessage">
-        </div>
-    </form>
+<div class="midct midct-half">
+    <div class="midct-top">&nbsp;</div>
+    <div id="midct-home-0">
+        Publish content with intelligence
     </div>
-    <div class="bottomlnk">
-        <a href="./signup"><?php echo $this->translation()->not_a_member ?></a>
+    <div id="midct-home-1">
+        <div id="midct-home-2">
+            <div id="midct-home-sp-1">&nbsp;</div>
+            <div id="midct-home-sp-2">&nbsp;</div>
+            <div class="midct-home-tr" id="midct-home-intl">&nbsp;</div>
+            <div id="midct-home-sp-3"></div>
+        </div>
+        <div id="midct-home-3">
+            <div id="midct-home-rtxt">We'll select the content based on your taste and <b>push it automatically</b> to your blog</div>
+        </div>
+        <div id="midct-home-4">
+            <div id="midct-home-sp-4">&nbsp;</div>
+            <div id="midct-home-sp-5">&nbsp;</div>
+            <div class="midct-home-tr" id="midct-home-yb">&nbsp;</div>
+            <div id="midct-home-sp-6"></div>
+        </div>
+        <div id="midct-home-5">
+            <div id="midct-home-btn"><a href="./tour">QUICK TOUR&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</a></div>
+        </div>
+        <div id="midct-home-x"></div>
     </div>
 </div>
-
-<div class="rightform" id="recoveryform" style="display:none">
-    <h1><?php echo $this->translation()->forgot_password ?></h1>
-    <div class="formcontainer">
-    <form>
-        <div class="inputcontainer">
-            <div class="inputlabel"><?php echo $this->translation()->email ?></div>
-            <input type="text" name="email" size="20">
+<div class="rgtct">
+    <div class="rgtct-ttl">Sign In</div>
+    <div class="rgtct-lgt">
+        <form>
+        <div class="form-row">
+            E-mail<br/><input type="text" class="intxt intxt-rgt">
         </div>
-        <div class="inputbuttons">
-            <input id="recoverysubmit" type="button" value="<?php echo $this->translation()->retrieve ?>">
+        <div class="form-row">
+            Password<br/><input type="password" class="intxt intxt-rgt">
+            <a href="#">forgot your password?</a>
         </div>
-        <div class="inputmessage">
+        <div class="btn" id="btn-signin">
+            <div class="btn-brd btn-l">&nbsp;</div>
+            <div class="btn-bg  btn-c"><a href="#">SIGN IN</a></div>
+            <div class="btn-brd btn-r">&nbsp;</div>
+            <div class="btn-x"></div>
         </div>
-    </form>
+        </form>
     </div>
-    <div class="bottomlnk">
-        <a href="#" id="siglnk"><?php echo $this->translation()->remembered_let_me_sign_in ?></a>
+    <div class="rgtct-hrd">
+        <div id="notmember">Not a member?</div>
+        <div id="learnmore"><a href="./signup">Learn More!</a></div>
     </div>
 </div>
-
-<div class="rightform" id="recoverysent" style="display:none">
-    <h1><?php echo $this->translation()->retrieved_password ?></h1>
-    <div class="formcontainer">
-        <span class="msgbig"><?php echo $this->translation()->retrieved_msg_big ?></span><br/>
-        <span class="msgsmall"><?php echo $this->translation()->retrieved_msg_small ?></span>
-    </div>
-    <div class="bottomlnk">
-        <a href="#" id="siglnk2"><?php echo $this->translation()->retrieved_let_me_sign_in ?></a>
-    </div>
-</div>
-
-<div style="clear:both"></div>
+<div id="midclear"></div>

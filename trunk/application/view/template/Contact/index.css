@@ -32,6 +32,11 @@ input.intxt-full
 {
     width: 565px;
 }
+textarea.intxa-full
+{
+    width: 565px;
+    height: 100px;
+}
 select.insel
 {
     width: 270px;
@@ -48,6 +53,8 @@ div.form-row-x
 {
     clear: left;
 }
+
+div > #btn-send { margin-top: 70px; }
 
 /* right */
 
