@@ -30,15 +30,15 @@
     <div class="rgtct-lgt">
         <form>
         <div class="form-row">
-            E-mail<br/><input type="text" class="intxt intxt-rgt">
+            E-mail<br/><input type="text" class="intxt intxt-rgt" name="email" id="input-email">
         </div>
         <div class="form-row">
-            Password<br/><input type="password" class="intxt intxt-rgt">
-            <a href="#">forgot your password?</a>
+            Password<br/><input type="password" class="intxt intxt-rgt" name="password" id="input-password">
+            <a href="#" id="link-forgot">forgot your password?</a>
         </div>
         <div class="btn" id="btn-signin">
             <div class="btn-brd btn-l">&nbsp;</div>
-            <div class="btn-bg  btn-c"><a href="#">SIGN IN</a></div>
+            <div class="btn-bg  btn-c"><a href="#" id="button-signin">SIGN IN</a></div>
             <div class="btn-brd btn-r">&nbsp;</div>
             <div class="btn-x"></div>
         </div>
