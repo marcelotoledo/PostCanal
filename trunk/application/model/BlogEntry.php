@@ -299,7 +299,7 @@ class BlogEntry extends B_Model
      */
     public static function resetLock()
     {
-        self::execute('UPDATE ' . self::$table_name . ' SET publication_lock=1, updated_at=NOW()');
+        self::execute('UPDATE ' . self::$table_name . ' SET publication_lock=0, updated_at=NOW()');
     }
 
     /**
