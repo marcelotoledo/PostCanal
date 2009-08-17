@@ -226,6 +226,15 @@ class L_WebService
     }
 
     /**
+     * Reset blog entry lock for all entries
+     */
+    public function blog_publish_reset($args)
+    {
+        if($this->validate_args($args, array()) == false) return false;
+        BlogEntry::resetLock();
+    }
+
+    /**
      * Blog publish total items
      */
     public function blog_publish_total($args)
@@ -255,5 +264,14 @@ class L_WebService
         }
         
         return $blog_id;
+    }
+
+    /**
+     * Reset queue suggestion
+     */
+    public function queue_suggest_reset($args)
+    {
+        if($this->validate_args($args, array()) == false) return false;
+        UserBlog::resetSuggest();
     }
 }

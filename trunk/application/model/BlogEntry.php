@@ -294,6 +294,14 @@ class BlogEntry extends B_Model
         return $res;
     }
 
+    /** 
+     * Reset entry publication lock
+     */
+    public static function resetLock()
+    {
+        self::execute('UPDATE ' . self::$table_name . ' SET publication_lock=1, updated_at=NOW()');
+    }
+
     /**
      * Get total blog entry that need publication
      * 
