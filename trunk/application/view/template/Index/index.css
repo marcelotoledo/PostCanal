@@ -126,6 +126,11 @@ input.intxt-rgt
 {
     padding-top: 10px;
 }
+#btn-retrieve
+{
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
 form > #btn-signin
 {
     padding-top: 30px;
@@ -145,4 +150,13 @@ form > #btn-signin
     font-size: 1.6em;
     font-weight: bold;
     text-decoration: none;
+}
+
+#forgot-ttl
+{
+    display: none;
+}
+#forgot-form
+{
+    display: none;
 }

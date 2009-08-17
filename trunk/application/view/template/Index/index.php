@@ -26,24 +26,42 @@
     </div>
 </div>
 <div class="rgtct">
-    <div class="rgtct-ttl">Sign In</div>
-    <div class="rgtct-lgt">
+    <div class="rgtct-ttl" id="signin-ttl">Sign In</div>
+    <div class="rgtct-ttl" id="forgot-ttl">Forgot password?</div>
+
+    <div class="rgtct-lgt" id="signin-form">
         <form>
         <div class="form-row">
-            E-mail<br/><input type="text" class="intxt intxt-rgt" name="email" id="input-email">
+            E-mail<br/><input type="text" class="intxt intxt-rgt" name="email" id="login-email">
         </div>
         <div class="form-row">
-            Password<br/><input type="password" class="intxt intxt-rgt" name="password" id="input-password">
-            <a href="#" id="link-forgot">forgot your password?</a>
+            Password<br/><input type="password" class="intxt intxt-rgt" name="password" id="login-password">
+            <a href="#" id="link-forgot">Forgot your password?</a>
         </div>
         <div class="btn" id="btn-signin">
             <div class="btn-brd btn-l">&nbsp;</div>
-            <div class="btn-bg  btn-c"><a href="#" id="button-signin">SIGN IN</a></div>
+            <div class="btn-bg  btn-c"><a href="#" id="submit-login">SIGN IN</a></div>
             <div class="btn-brd btn-r">&nbsp;</div>
             <div class="btn-x"></div>
         </div>
         </form>
     </div>
+
+    <div class="rgtct-lgt" id="forgot-form">
+        <form>
+        <div class="form-row">
+            E-mail<br/><input type="text" class="intxt intxt-rgt" name="email" id="forgot-email">
+        </div>
+        <div class="btn" id="btn-retrieve">
+            <div class="btn-brd btn-l">&nbsp;</div>
+            <div class="btn-bg  btn-c"><a href="#" id="submit-retrieve">RETRIEVE</a></div>
+            <div class="btn-brd btn-r">&nbsp;</div>
+            <div class="btn-x"></div>
+        </div>
+        <a href="#" id="link-remembered">Remembered, let me Sign In</a>
+        </form>
+    </div>
+
     <div class="rgtct-hrd">
         <div id="notmember">Not a member?</div>
         <div id="learnmore"><a href="./signup">Learn More!</a></div>

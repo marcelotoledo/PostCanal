@@ -1,12 +1,12 @@
 var mytpl = null;
 
 
-function signin_msg(m)
+function login_msg(m)
 {
     alert(m);
 }
 
-function signin_submit_cb(d)
+function login_submit_cb(d)
 {
     if(d.length==0) { server_error(); return null; }
     if(d.find('login').text()=="true") 
@@ -15,22 +15,53 @@ function signin_submit_cb(d)
     }
     else
     {
-        signin_msg(d.find('message').text());
+        login_msg(d.find('message').text());
     }
 }
 
-function signin_submit()
+function login_submit()
 {
-    var _data = { email    : mytpl.inputemail.val() ,
-                  password : mytpl.inputpassword.val() }
+    var _data = { email    : mytpl.loginemail.val() ,
+                  password : mytpl.loginpassword.val() }
 
     if(_data.email == "" || _data.password == "")
     {
-        signin_msg("<?php echo $this->translation()->form_incomplete ?>");
+        login_msg("<?php echo $this->translation()->form_incomplete ?>");
         return false;
     }
 
-    do_request('POST', './profile/login', _data, signin_submit_cb);
+    do_request('POST', './profile/login', _data, login_submit_cb);
+}
+
+function recovery_toggle()
+{
+    mytpl.signinttl.toggle();
+    mytpl.forgotttl.toggle();
+    mytpl.signinform.toggle();
+    mytpl.forgotform.toggle();
+}
+
+function recovery_msg(m)
+{
+    alert(m);
+}
+
+function recovery_submit_cb(d)
+{
+    if(d.length==0) { server_error(); return false; }
+}
+
+function recovery_submit()
+{
+    var _data = null;
+
+    if((_data = mytpl.loginemail.val())=="")
+    {
+        recovery_msg("<?php echo $this->translation()->enter_an_email ?>");
+        return false;
+    }
+
+    do_request('POST', './profile/recovery', { email: _data }, recovery_submit_cb);
 }
 
 
@@ -40,42 +71,59 @@ $(document).ready(function()
 
     mytpl = 
     {
-        inputemail    : $("#input-email"),
-        inputpassword : $("#input-password"),
-        linkforgot    : $("#link-forgot"),
-        buttonsignin  : $("#button-signin")
+        loginemail     : $("#login-email"),
+        forgotemail    : $("#forgot-email"),
+        loginpassword  : $("#login-password"),
+        linkforgot     : $("#link-forgot"),
+        linkremembered : $("#link-remembered"),
+        linksignin     : $("#link-signin"),
+        submitlogin    : $("#submit-login"),
+        submitretrieve : $("#submit-retrieve"),
+        signinttl      : $("#signin-ttl"),
+        signinform     : $("#signin-form"),
+        forgotttl      : $("#forgot-ttl"),
+        forgotform     : $("#forgot-form"),
+        recoverymsg    : $("#recoverymsg")
     };
 
     /* triggers */
 
     mytpl.linkforgot.click(function()
     {
-        if(active_request==false) {  }
+        if(active_request==false) { recovery_toggle(); }
+        $(this).blur();
+        mytpl.forgotemail.focus();
+        return false;
+    });
+
+    mytpl.linkremembered.click(function()
+    {
+        if(active_request==false) { recovery_toggle(); }
         $(this).blur();
         return false;
     });
 
-    mytpl.buttonsignin.click(function()
+    mytpl.linksignin.click(function()
     {
-        if(active_request==false) { signin_submit(); }
+        recovery_toggle();
         $(this).blur();
         return false;
     });
 
-    mytpl.inputpassword.keypress(function(e) 
+    mytpl.submitlogin.click(function()
+    {
+        if(active_request==false) { login_submit(); }
+        $(this).blur();
+        return false;
+    });
+
+    mytpl.loginpassword.keypress(function(e) 
     {
         if((e.which && e.which == 13) || (e.keyCode && e.keyCode == 13))
         {
-            mytpl.buttonsignin.click();
+            mytpl.submitlogin.click();
         }
     });
 
-    mytpl.inputemail.keypress(function(e) 
-    {
-        if((e.which && e.which == 13) || (e.keyCode && e.keyCode == 13))
-        {
-        }
-    });
-
-    mytpl.inputemail.focus();
+    mytpl.loginemail.focus();
 });
