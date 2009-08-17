@@ -16,9 +16,9 @@
 # Code:
 
 from conf      import runtimeConfig
-from utils     import Usage, tCount, addToQueue
-from feed      import getNextFeed, pendingFeeds, scheduleAll, FeedThread
-from post      import getNextPost, pendingPosts
+from utils     import Usage, tCount, addToQueue, newThreads, processThreads
+from feed      import getNextFeed, pendingFeeds, feedScheduleAll, FeedThread
+from post      import getNextPost, pendingPosts, postScheduleAll, PostThread
 from autoQueue import autoQueue
 from iface     import openConnection
 
@@ -43,94 +43,45 @@ if __name__ == "__main__":
     r.addOption("FrontendWS", r.frontendWS)
     r.printOptions()
 
-    scheduleAll(r.client, r.token)
+    feedScheduleAll(r.client, r.token)
+    postScheduleAll(r.client, r.token)
 
     MAX_THREADS   = 20
     MIN_THREADS   = 3
     THREADS_RATIO = 3
-    requestQueue = Queue.Queue()
-    postQueue    = Queue.Queue()
-
-    # while True:
-    #     feedCount = pendingFeeds(r.client, r.token)
-    #     feedList  = getNextFeed(r.client, r.token, feedCount)
-        
-    #     if int(feedCount) > 1:
-    #         l.log("Queueing %d items" % int(feedCount))
-    #         for feed in feedList:
-    #             requestQueue.put(feed)
-                
-    #     queueSize   = requestQueue.qsize()
-    #     #threadCount = threading.activeCount() - 1
-    #     threadCount = tCount(threading.enumerate(), "feed")
-    #     maxCurrSize = int(round(queueSize / THREADS_RATIO))
-        
-    #     if maxCurrSize > MAX_THREADS:
-    #         maxCurrSize = MAX_THREADS
-    #     elif maxCurrSize == 0:
-    #         maxCurrSize = MIN_THREADS
-            
-    #     newThreads  = maxCurrSize - threadCount
-
-    #     l.debug("####################################")
-    #     l.debug("QueueSize   = %d" % queueSize)
-    #     l.debug("threadCount = %d" % threadCount)
-    #     l.debug("maxCurrSize = %d" % maxCurrSize)
-    #     l.debug("newThreads  = %d" % newThreads)
-    #     l.debug("####################################")
-        
-    #     if newThreads > 0:
-    #         l.log("Opening %d new threads" % newThreads)
-    #         for i in range(newThreads):
-    #             FeedThread(r.frontendWS, r.token, requestQueue, i).start()
-    #     elif newThreads < 0:
-    #         for i in range(newThreads * -1):
-    #             requestQueue.put('kill')
-                
-    #     time.sleep(1)
-
-
-    postCount = pendingPosts(r.client, r.token)
-    postList  = getNextPost(r.client, r.token, postCount)
-
-    print "postCount: " + str(postCount)
-    print "postList : " + str(postList)
-
-#    addToQueue(postQueue, postList)
-
-#    if int(postCount) > 1:
-#        l.log("Queueing %d items" % int(postCount))
-#        for post in postList:
-#            postQueue.put(post)
     
-    # queueSize   = postQueue.qsize()
-    # threadCount = tCount(threading.enumerate(), "post")
-    # maxCurrSize = int(round(queueSize / THREADS_RATIO))
+    feedQueue     = Queue.Queue()
+    postQueue     = Queue.Queue()
 
-    # if maxCurrSize > MAX_THREADS:
-    #     maxCurrSize = MAX_THREADS
-    # elif maxCurrSize == 0:
-    #     maxCurrSize = MIN_THREADS
-            
-    # newThreads  = maxCurrSize - threadCount
+    while True:
+        feedCount = pendingFeeds(r.client, r.token)
+        feedList  = getNextFeed(r.client, r.token, feedCount)        
+        postCount = pendingPosts(r.client, r.token)
+        postList  = getNextPost(r.client, r.token, postCount)
 
-    # l.debug("####################################")
-    # l.debug("QueueSize   = %d" % queueSize)
-    # l.debug("threadCount = %d" % threadCount)
-    # l.debug("maxCurrSize = %d" % maxCurrSize)
-    # l.debug("newThreads  = %d" % newThreads)
-    # l.debug("####################################")
+        addToQueue(feedQueue, feedList)
+        addToQueue(postQueue, postList)
         
-    # if newThreads > 0:
-    #     l.log("Opening %d new threads" % newThreads)
-    #     for i in range(newThreads):
-    #         FeedThread(r.frontendWS, r.token, requestQueue, i).start()
-    #     elif newThreads < 0:
-    #         for i in range(newThreads * -1):
-    #             requestQueue.put('kill')    
+        l.log("Queued %d feed(s)" % int(feedCount))
+        l.log("Queued %d post(s)" % int(postCount))
 
-#    print threading.enumerate()
-    
+        newFeedThreads = newThreads(feedQueue.qsize(), THREADS_RATIO, MAX_THREADS, MIN_THREADS)
+        newPostThreads = newThreads(postQueue.qsize(), THREADS_RATIO, MAX_THREADS, MIN_THREADS)
+
+        l.log("New threads: Feeds (%d) - Posts (%d)" % (int(feedCount), int(postCount)))
+
+        # l.debug("####################################")
+        # l.debug("QueueSize   = %d" % queueSize)
+        # l.debug("threadCount = %d" % threadCount)
+        # l.debug("maxCurrSize = %d" % maxCurrSize)
+        # l.debug("newThreads  = %d" % newThreads)
+        # l.debug("####################################")
+
+        processThreads(newFeedThreads, FeedThread, r.frontendWS, r.token, feedQueue)
+        processThreads(newPostThreads, PostThread, r.frontendWS, r.token, postQueue)
+        
+        time.sleep(1)
+        
+
     # TODO
-    #Publish(r.client, r.token)
     #autoQueue(r.client, r.token)

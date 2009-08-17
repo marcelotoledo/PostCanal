@@ -18,6 +18,8 @@ import sys
 import conf
 import log
 import inspect
+import threading
+
 from optparse import OptionParser
 
 class Usage():
@@ -57,9 +59,25 @@ def tCount(threadList, name):
     return count
 
 def addToQueue(queue, list):
-    print "List size is %d" % len(list)
     if len(list) >= 1:
-        #print "List is big enough, proceeding..."
         for item in list:
-            print "Inserting %s in list" % str(item)
             queue.put(item)
+
+def newThreads(queueSize, threadRatio, maxThreads, minThreads):
+    threadCount = tCount(threading.enumerate(), "post")
+    maxCurrSize = int(round(queueSize / threadRatio))
+    
+    if maxCurrSize > maxThreads:
+        maxCurrSize = maxThreads
+    elif maxCurrSize == 0:
+        maxCurrSize = minThreads
+        
+    return maxCurrSize - threadCount
+
+def processThreads(newThreads, Class, url, token, queue):
+    if newThreads > 0:
+        for i in range(newThreads):
+            Class(url, token, queue, i).start()
+    elif newThreads < 0:
+        for i in range(newThreads * -1):
+            queue.put('kill')

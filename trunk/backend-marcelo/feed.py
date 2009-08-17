@@ -124,7 +124,7 @@ def pendingFeeds(client, token):
 
     return feedCount
 
-def scheduleAll(client, token):
+def feedScheduleAll(client, token):
     try:
         client.feed_update_reset({ 'token': token })
     except:
