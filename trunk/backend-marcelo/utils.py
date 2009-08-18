@@ -58,13 +58,12 @@ def tCount(threadList, name):
             count += 1
     return count
 
-def addToQueue(queue, list):
-    if len(list) >= 1:
-        for item in list:
+def addToQueue(queue, myList):
+    if type(myList) == type(list()):
+        for item in myList:
             queue.put(item)
 
-def newThreads(queueSize, threadRatio, maxThreads, minThreads):
-    threadCount = tCount(threading.enumerate(), "post")
+def newThreads(queueSize, threadCount, threadRatio, maxThreads, minThreads):
     maxCurrSize = int(round(queueSize / threadRatio))
     
     if maxCurrSize > maxThreads:

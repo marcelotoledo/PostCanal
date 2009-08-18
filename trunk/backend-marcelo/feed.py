@@ -41,13 +41,6 @@ def getNextFeed(client, token, total=1):
     if len(feedList) == 0:
         l.log("No feeds to update", funcName())
         return None
-
-    if total == 1:
-        try:
-            feed = feedList.pop()
-        except:
-            return None
-        return feed
     
     return feedList
 

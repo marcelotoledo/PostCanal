@@ -65,23 +65,27 @@ if __name__ == "__main__":
         l.log("Queued %d feed(s)" % int(feedCount))
         l.log("Queued %d post(s)" % int(postCount))
 
-        newFeedThreads = newThreads(feedQueue.qsize(), THREADS_RATIO, MAX_THREADS, MIN_THREADS)
-        newPostThreads = newThreads(postQueue.qsize(), THREADS_RATIO, MAX_THREADS, MIN_THREADS)
+        newFeedThreads = newThreads(feedQueue.qsize(), tCount(threading.enumerate(), "feed"),
+                                    THREADS_RATIO, MAX_THREADS, MIN_THREADS)
+        newPostThreads = newThreads(postQueue.qsize(), tCount(threading.enumerate(), "post"),
+                                    THREADS_RATIO, MAX_THREADS, MIN_THREADS)
 
-        l.log("New threads: Feeds (%d) - Posts (%d)" % (int(feedCount), int(postCount)))
+        l.log("New threads: Feeds (%d) - Posts (%d)" % (int(newFeedThreads), int(newPostThreads)))
 
-        # l.debug("####################################")
-        # l.debug("QueueSize   = %d" % queueSize)
-        # l.debug("threadCount = %d" % threadCount)
-        # l.debug("maxCurrSize = %d" % maxCurrSize)
-        # l.debug("newThreads  = %d" % newThreads)
-        # l.debug("####################################")
+        l.debug("## Post ##################################")
+        l.debug("## Queue size     = %d" % postQueue.qsize())
+        l.debug("## Active Threads = %d" % tCount(threading.enumerate(), "post"))
+        l.debug("## New Threads    = %d" % newPostThreads)
+        l.debug("## Feed ##################################")
+        l.debug("## Queue size     = %d" % feedQueue.qsize())
+        l.debug("## Active Threads = %d" % tCount(threading.enumerate(), "feed"))
+        l.debug("## New threads    = %d" % newFeedThreads)
+        l.debug("##########################################")
 
         processThreads(newFeedThreads, FeedThread, r.frontendWS, r.token, feedQueue)
         processThreads(newPostThreads, PostThread, r.frontendWS, r.token, postQueue)
         
         time.sleep(1)
         
-
     # TODO
-    #autoQueue(r.client, r.token)
+    # autoQueue(r.client, r.token)

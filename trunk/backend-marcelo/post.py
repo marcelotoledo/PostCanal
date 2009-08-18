@@ -22,6 +22,7 @@ from iface import openConnection
 import log
 import sys
 import threading
+import xmlrpclib
 
 l = log.Log()
 
@@ -37,13 +38,6 @@ def getNextPost(client, token, total=1):
     if len(publishList) == 0:
         l.log("No items to publish", funcName())
         return None
-
-    if total == 1:
-        try:
-            publish = publishList.pop()
-        except:
-            return None
-        return publish
     
     return publishList
 
@@ -114,7 +108,7 @@ def processPost(url, token, requestQueue, name):
         try:
             post_id = t.publish({ 'title'  : entry_title,
                                   'content': entry_content })
-            l.log("Entry %s published as %s" % (id, str(post_id)), funcName() + name)
+            l.log("Entry %s '%s' published as %s" % (id, entry_title, str(post_id)), funcName() + name)
             published = True
         except xmlrpclib.Fault, message:
             l.log("Failed to publish (%s) - (%s)" % (id, message), funcName() + name)
@@ -123,8 +117,8 @@ def processPost(url, token, requestQueue, name):
                                                      sys.exc_info()[0].__name__), funcName() + name)
 
             try:
-                client.blog_publish_set({ 'token'     : token, 
-                                          'id'        : id, 
+                client.blog_publish_set({ 'token'     : token,
+                                          'id'        : id,
                                           'published' : published,
                                           'message'   : message })
             except:
