@@ -14,6 +14,8 @@
 <?php if($this->request()->getController()=='tour') : ?>
 <script type="text/javascript" src="./js/index/thickbox-compressed.js"></script>
 <link rel="stylesheet" href="./css/index/thickbox.css" type="text/css" media="screen"/>
+<script type='text/javascript' src='./ovp/swfobject.js'></script>
+<script type='text/javascript'>var flashvars = {src: 'http%3A//products.edgeboss.net/download/products/content/demo/video/elephants_dream_768x428_24.0fps_608kbps.mp4',autostart: 'false',themeColor: '2780b1',mode: 'sidebyside',scaleMode: 'fit',frameColor: '333333',fontColor: 'cccccc',link: '',embed: ''};var params = {allowFullScreen: 'true'};var attributes = {id: 'myPlayer',name: 'myPlayer'};swfobject.embedSWF('./ovp/AkamaiFlashPlayer.swf', 'myPlayerGoesHere', '624', '351', '9.0.0', './ovp/expressInstall.swf', flashvars, params, attributes);</script>
 <?php endif ?>
 
 <script type="text/javascript"><?php $this->includeLayout('general.js') ?></script>

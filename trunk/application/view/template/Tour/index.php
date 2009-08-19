@@ -2,7 +2,7 @@
     <div class="midct-top">&nbsp;</div>
     <div class="midct-cen">
         <div id="vidct">
-            <object width="640" height="360"><param name="wmode" value="opaque"><param name="allowfullscreen" value="true" /><param name="allowscriptaccess" value="always" /><param name="movie" value="http://vimeo.com/moogaloop.swf?clip_id=3922327&amp;server=vimeo.com&amp;show_title=0&amp;show_byline=0&amp;show_portrait=0&amp;color=&amp;fullscreen=0" /><embed wmode="opaque" src="http://vimeo.com/moogaloop.swf?clip_id=3922327&amp;server=vimeo.com&amp;show_title=0&amp;show_byline=0&amp;show_portrait=0&amp;color=&amp;fullscreen=0" type="application/x-shockwave-flash" allowfullscreen="false" allowscriptaccess="always" width="624" height="351"></embed></object><p></p>
+            <div id='myPlayerGoesHere'><a href='http://www.adobe.com/go/getflashplayer'><img src='http://www.adobe.com/images/shared/download_buttons/get_flash_player.gif' alt='Get Adobe Flash player' /></a></div>
         </div>
         <div id="morevid">More videos</div>
         <div id="vidgal">
