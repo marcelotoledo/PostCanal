@@ -1,27 +1,16 @@
-# blog-support-example.py --- example how blog supports should be create
-
-# Copyright  (C)  2009  Postcanal Inc. <http://www.postcanal.com>
-
-# Version: 1.0
-# Keywords: 
-# Author: Marcelo Toledo <marcelo.toledo@postcanal.com>
-# Maintainer: Marcelo Toledo <marcelo.toledo@postcanal.com>
-# URL: http://
-
-# Commentary: 
-
-
-
-# Code:
-
 class BlogExample:
     def __init__(url, adminUrl, username, password):
         pass
 
     def isItMe():
-        "This function returns True or False, and for a clue if this
-        blog is support by this class or not"
+        "This function is used to identify if this module can interact
+        with the URL passed or not, to do this you need to look for
+        clues and return true for positive or false for negative."
         pass
+
+    def authenticate():
+        "This function returns true or false, respectively for sucessful
+        authentication or not."
 
     def setTitle(string):
         "Set title"
@@ -31,8 +20,19 @@ class BlogExample:
         "Set body content"
         pass
 
+    def getTags():
+        "Return list of available tags"
+        pass
+
     def setTags(list):
         "Set tags"
+        pass
+
+    def getCategories():
+        "Return list of available categories"
+
+    def setCategories(list):
+        "Set categories"
         pass
 
     def setAttachment(file):
