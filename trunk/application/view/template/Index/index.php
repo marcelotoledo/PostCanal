@@ -26,40 +26,53 @@
     </div>
 </div>
 <div class="rgtct">
-    <div class="rgtct-ttl" id="signin-ttl">Sign In</div>
-    <div class="rgtct-ttl" id="forgot-ttl">Forgot password?</div>
+    <div class="rgtct-ttl" id="login-ttl">Sign In</div>
+    <div class="rgtct-ttl" id="recovery-ttl">Forgot password?</div>
+    <div class="rgtct-ttl" id="retrieved-ttl">Retrieved password!</div>
 
-    <div class="rgtct-lgt" id="signin-form">
+    <div class="rgtct-lgt" id="login-form">
         <form>
         <div class="form-row">
             E-mail<br/><input type="text" class="intxt intxt-rgt" name="email" id="login-email">
         </div>
         <div class="form-row">
             Password<br/><input type="password" class="intxt intxt-rgt" name="password" id="login-password">
-            <a href="#" id="link-forgot">Forgot your password?</a>
+            <a href="#" id="link-recovery">Forgot your password?</a>
         </div>
-        <div class="btn" id="btn-signin">
+        <div class="btn" id="btn-login">
             <div class="btn-brd btn-l">&nbsp;</div>
             <div class="btn-bg  btn-c"><a href="#" id="submit-login">SIGN IN</a></div>
             <div class="btn-brd btn-r">&nbsp;</div>
             <div class="btn-x"></div>
         </div>
         </form>
+        <div id="login-msg" class="right-msg"></div>
     </div>
 
-    <div class="rgtct-lgt" id="forgot-form">
+    <div class="rgtct-lgt" id="recovery-form">
         <form>
         <div class="form-row">
-            E-mail<br/><input type="text" class="intxt intxt-rgt" name="email" id="forgot-email">
+            E-mail<br/><input type="text" class="intxt intxt-rgt" name="email" id="recovery-email">
         </div>
-        <div class="btn" id="btn-retrieve">
+        <div class="btn" id="btn-recovery">
             <div class="btn-brd btn-l">&nbsp;</div>
-            <div class="btn-bg  btn-c"><a href="#" id="submit-retrieve">RETRIEVE</a></div>
+            <div class="btn-bg  btn-c"><a href="#" id="submit-recovery">RETRIEVE</a></div>
             <div class="btn-brd btn-r">&nbsp;</div>
             <div class="btn-x"></div>
         </div>
         <a href="#" id="link-remembered">Remembered, let me Sign In</a>
         </form>
+        <div id="recovery-msg" class="right-msg"></div>
+    </div>
+
+    <div class="rgtct-lgt" id="retrieved-notice">
+        Shortly you'll receive an email with instructions to change your password.
+        <br/>
+        &nbsp;<br/>
+        <small>Remember to check your spam folder</small>
+        <br/>
+        &nbsp;<br/>
+        <a href="#" id="link-retrieved">Retrieved, let me Sign In</a>
     </div>
 
     <div class="rgtct-hrd">

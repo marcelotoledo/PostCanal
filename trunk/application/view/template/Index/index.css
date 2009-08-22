@@ -122,16 +122,16 @@ input.intxt-rgt
 {
     width: 200px;
 }
-#btn-signin
+#btn-login
 {
     padding-top: 10px;
 }
-#btn-retrieve
+#btn-recovery
 {
     padding-top: 10px;
     padding-bottom: 10px;
 }
-form > #btn-signin
+form > #btn-login
 {
     padding-top: 30px;
 }
@@ -152,11 +152,30 @@ form > #btn-signin
     text-decoration: none;
 }
 
-#forgot-ttl
+#recovery-ttl
 {
     display: none;
 }
-#forgot-form
+#recovery-form
 {
     display: none;
+}
+
+#retrieved-ttl
+{
+    display: none;
+}
+#retrieved-notice
+{
+    display: none;
+}
+
+div.right-msg
+{
+    display: none;
+    text-align: center;
+    line-height: 20px;
+    padding-top: 8px;
+    font-size: 0.9em;
+    color: yellow;
 }

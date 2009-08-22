@@ -3,7 +3,7 @@ var mytpl = null;
 
 function login_msg(m)
 {
-    alert(m);
+    mytpl.loginmsg.text(m).show();
 }
 
 function login_submit_cb(d)
@@ -33,29 +33,45 @@ function login_submit()
     do_request('POST', './profile/login', _data, login_submit_cb);
 }
 
+function login_show()
+{
+    mytpl.loginttl.show();
+    mytpl.recoveryttl.hide();
+    mytpl.loginform.show();
+    mytpl.recoveryform.hide();
+    mytpl.retrievedttl.hide();
+    mytpl.retrievednotice.hide();
+}
+
 function recovery_toggle()
 {
-    mytpl.signinttl.toggle();
-    mytpl.forgotttl.toggle();
-    mytpl.signinform.toggle();
-    mytpl.forgotform.toggle();
+    mytpl.loginttl.toggle();
+    mytpl.recoveryttl.toggle();
+    mytpl.loginform.toggle();
+    mytpl.recoveryform.toggle();
 }
 
 function recovery_msg(m)
 {
-    alert(m);
+    mytpl.recoverymsg.text(m).show();
 }
 
 function recovery_submit_cb(d)
 {
     if(d.length==0) { server_error(); return false; }
+    mytpl.loginttl.hide();
+    mytpl.recoveryttl.hide();
+    mytpl.loginform.hide();
+    mytpl.recoveryform.hide();
+    mytpl.retrievedttl.show();
+    mytpl.retrievednotice.show();
 }
 
 function recovery_submit()
 {
     var _data = null;
 
-    if((_data = mytpl.loginemail.val())=="")
+    if((_data = mytpl.recoveryemail.val())=="")
     {
         recovery_msg("<?php echo $this->translation()->enter_an_email ?>");
         return false;
@@ -71,28 +87,32 @@ $(document).ready(function()
 
     mytpl = 
     {
-        loginemail     : $("#login-email"),
-        forgotemail    : $("#forgot-email"),
-        loginpassword  : $("#login-password"),
-        linkforgot     : $("#link-forgot"),
-        linkremembered : $("#link-remembered"),
-        linksignin     : $("#link-signin"),
-        submitlogin    : $("#submit-login"),
-        submitretrieve : $("#submit-retrieve"),
-        signinttl      : $("#signin-ttl"),
-        signinform     : $("#signin-form"),
-        forgotttl      : $("#forgot-ttl"),
-        forgotform     : $("#forgot-form"),
-        recoverymsg    : $("#recoverymsg")
+        linkrecovery    : $("#link-recovery"),
+        linkremembered  : $("#link-remembered"),
+        linklogin       : $("#link-login"),
+        linkretrieved   : $("#link-retrieved"),
+        submitlogin     : $("#submit-login"),
+        submitrecovery  : $("#submit-recovery"),
+        loginttl        : $("#login-ttl"),
+        loginform       : $("#login-form"),
+        loginemail      : $("#login-email"),
+        loginpassword   : $("#login-password"),
+        loginmsg        : $("#login-msg"),
+        recoveryttl     : $("#recovery-ttl"),
+        recoveryform    : $("#recovery-form"),
+        recoveryemail   : $("#recovery-email"),
+        recoverymsg     : $("#recovery-msg"),
+        retrievedttl    : $("#retrieved-ttl"),
+        retrievednotice : $("#retrieved-notice")
     };
 
     /* triggers */
 
-    mytpl.linkforgot.click(function()
+    mytpl.linkrecovery.click(function()
     {
         if(active_request==false) { recovery_toggle(); }
         $(this).blur();
-        mytpl.forgotemail.focus();
+        mytpl.recoveryemail.focus();
         return false;
     });
 
@@ -103,7 +123,14 @@ $(document).ready(function()
         return false;
     });
 
-    mytpl.linksignin.click(function()
+    mytpl.linkretrieved.click(function()
+    {
+        if(active_request==false) { login_show(); }
+        $(this).blur();
+        return false;
+    });
+
+    mytpl.linklogin.click(function()
     {
         recovery_toggle();
         $(this).blur();
@@ -113,6 +140,13 @@ $(document).ready(function()
     mytpl.submitlogin.click(function()
     {
         if(active_request==false) { login_submit(); }
+        $(this).blur();
+        return false;
+    });
+
+    mytpl.submitrecovery.click(function()
+    {
+        if(active_request==false) { recovery_submit(); }
         $(this).blur();
         return false;
     });
