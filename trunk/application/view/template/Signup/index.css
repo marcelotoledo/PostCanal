@@ -74,3 +74,11 @@ div.faq-lnk a
     color: #FF6600;
     text-decoration: underline;
 }
+
+#register-msg
+{
+    display: none;
+    text-align: center;
+    font-size: 0.9em;
+    color: red;
+}
