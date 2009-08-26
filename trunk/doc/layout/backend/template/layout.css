@@ -1,0 +1,138 @@
+*
+{
+	padding: 0;
+	margin: 0;
+}
+body
+{
+	text-align: center;
+	font-family: "Trebuchet MS", Verdana, Geneva, Arial, Helvetica, sans-serif;
+}
+img
+{
+	border: 0;
+}
+a
+{
+    text-decoration: none;
+    color: #2780b1;
+}
+a:hover
+{
+    color: #164a66;
+}
+
+#mainct
+{
+}
+
+/* top */
+
+#toprow
+{
+
+}
+div.sprites-img
+{
+    background-image: url('image/sprites.png');
+}
+#leftlogo
+{
+    position: absolute;
+    top: 10px;
+    left: 50px;
+    width: 165px;
+    height: 80px;
+    line-height: 80px;
+	background-repeat: no-repeat;
+	background-position: top left;
+}
+#rightmenu
+{
+    margin-left: 240px;
+}
+#menutop
+{
+    height: 50px;
+    background-color: #e7f0f4;
+}
+div.menutopfmt
+{
+    font-size: 0.9em;
+    margin: 20px 20px 0px 20px;
+}
+div.menutopfmt a
+{
+    font-weight: bold;
+}
+div.menutopfmt img
+{
+    width: 1px;
+    height: 20px;
+    border-left: 1px solid black;
+    margin: 0px 10px -5px 15px; 
+}
+#menutopleft
+{
+    float: left;
+}
+#menutopright
+{
+    float: right;
+    margin-right: 60px;
+}
+#menutopclr
+{
+    clear: both;
+}
+#menubot
+{
+    height: 35px;
+    background-color: black;
+    -moz-border-radius-bottomleft: 9px;
+    -webkit-border-bottom-left-radius: 9px;
+}
+div.menubotfmt
+{
+    font-size: 0.8em;
+    line-height: 35px;
+    font-weight: bold;
+    color: white;
+    margin: 0px 20px 0px 20px;
+}
+div.menubotfmt a
+{
+    text-decoration: none;
+    color: #ffcc00;
+}
+div.menubotfmt a:hover
+{
+    color: #ff8e00;
+}
+
+#menubotleft
+{
+    float: left;
+}
+#menubotleft select
+{
+    width: 180px;
+    margin-top: 5px;
+}
+#menubotleft img
+{
+    width: 1px;
+    height: 15px;
+    border-left: 1px solid #2780b1;
+    margin: 0px 8px -2px 8px; 
+}
+
+#menubotright
+{
+    float: right;
+    margin-right: 60px;
+}
+#menubotclr
+{
+    clear: both;
+}
