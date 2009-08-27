@@ -68,15 +68,22 @@ def newThreads(queueSize, threadCount, threadRatio, maxThreads, minThreads):
     
     if maxCurrSize > maxThreads:
         maxCurrSize = maxThreads
-    elif maxCurrSize == 0:
+    elif maxCurrSize == 0 or maxCurrSize < minThreads:
         maxCurrSize = minThreads
-        
+
     return maxCurrSize - threadCount
 
-def processThreads(newThreads, Class, url, token, queue):
+def processThreads(newThreads, Class, url, token, queue, currentThreadId):
     if newThreads > 0:
         for i in range(newThreads):
-            Class(url, token, queue, i).start()
+            Class(url, token, queue, currentThreadId).start()
+            currentThreadId += 1
     elif newThreads < 0:
         for i in range(newThreads * -1):
             queue.put('kill')
+
+    MAX_THREAD_ID = 9999
+    if currentThreadId >= MAX_THREAD_ID:
+        currentThreadId = 0
+
+    return currentThreadId

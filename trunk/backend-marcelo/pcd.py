@@ -46,17 +46,19 @@ if __name__ == "__main__":
     feedScheduleAll(r.client, r.token)
     postScheduleAll(r.client, r.token)
 
-    MAX_THREADS   = 20
-    MIN_THREADS   = 3
-    THREADS_RATIO = 3
+    MAX_THREADS     = 20
+    MIN_THREADS     = 3
+    THREADS_RATIO   = 3
     
     feedQueue     = Queue.Queue()
     postQueue     = Queue.Queue()
 
+    currentThreadId = 0    
+
     while True:
         feedCount = pendingFeeds(r.client, r.token)
+        postCount = pendingPosts(r.client, r.token)        
         feedList  = getNextFeed(r.client, r.token, feedCount)        
-        postCount = pendingPosts(r.client, r.token)
         postList  = getNextPost(r.client, r.token, postCount)
 
         addToQueue(feedQueue, feedList)
@@ -82,8 +84,8 @@ if __name__ == "__main__":
         l.debug("## New threads    = %d" % newFeedThreads)
         l.debug("##########################################")
 
-        processThreads(newFeedThreads, FeedThread, r.frontendWS, r.token, feedQueue)
-        processThreads(newPostThreads, PostThread, r.frontendWS, r.token, postQueue)
+        currentThreadId = processThreads(newFeedThreads, FeedThread, r.frontendWS, r.token, feedQueue, currentThreadId)
+        currentThreadId = processThreads(newPostThreads, PostThread, r.frontendWS, r.token, postQueue, currentThreadId)
         
         time.sleep(1)
         
