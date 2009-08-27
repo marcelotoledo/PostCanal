@@ -7,6 +7,7 @@
 
 import sys
 import urlparse
+import urllib
 
 import pyblog
 
@@ -23,7 +24,11 @@ class Wordpress(Blog):
     #___________________________________________________________________________
 
     def isItMe(self):
-        return True
+        try:
+            # a wordpress site will have this special page
+            return urllib.urlopen(urlparse.urljoin(self._admin_url, 'xmlrpc.php')).read() == 'XML-RPC server accepts POST requests only.'
+        except:
+            return False
 
     #___________________________________________________________________________
 
@@ -69,8 +74,7 @@ class Wordpress(Blog):
     #___________________________________________________________________________
 
     def setAttachment(self, filepath):
-        #self._filepath = filepath
-        self.api.upload_file({'name': filepath})
+        return self.api.upload_file({'name': filepath})['url']
     #___________________________________________________________________________
 
     def postEntry(self):
@@ -110,7 +114,7 @@ if __name__ == '__main__':
             api.setContent('汉语/漢語')
             api.postEntry()
             
-            #api.setAttachment('/home/rbp/test.png')
+            #print api.setAttachment('/home/rbp/test.png')
             #print api.getTags()
         else:
             print 'Authentication failed'
