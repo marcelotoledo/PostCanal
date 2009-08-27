@@ -26,7 +26,7 @@ class runtimeConfig():
         self.options = {}
         self.l = log.Log()                
         if config_path == None:
-            config_path = os.getcwd().replace("backend-marcelo", "") + "config/environment.xml"
+            config_path = os.getcwd().replace("pcd", "") + "config/environment.xml"
         
         #frontend_url = config.get('base/url')
         #frontend_url = frontend_url + config.get('webservice/frontendUrl')
