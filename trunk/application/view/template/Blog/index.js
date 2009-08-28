@@ -170,7 +170,7 @@ function blog_update_callback(d)
     {
         var _blog = _updated.find('blog').text();
         var _name = _updated.find('name').text();
-        my_template.blog_list_ref[_blog].item.find('span.blogitemname').text(_name);
+        my_template.blog_list_ref[_blog].item.find('div.blogtit').text(_name);
         flash_message("<?php echo $this->translation()->saved ?>");
         blog_edit_hide(_blog);
     }

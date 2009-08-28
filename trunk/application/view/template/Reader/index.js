@@ -374,7 +374,7 @@ $(document).ready(function()
         //left_container       : $("#leftcontainer"),
         all_items            : $("#chall"),
         //right_container      : $("#rightcontainer"),
-        right_header_title   : $("#tplbarch"),
+        right_header_title   : $("#tplbartt"),
         right_middle         : $("#artlst"),
         article_list         : $("#artlst"),
         article_blank        : $("#articleblank"),

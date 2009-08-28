@@ -1,253 +1,161 @@
-#maincontainer
-{
-    overflow: hidden; /* avoid scrollbars */
-}
-
-#queuecontainer
-{
-    position: absolute;
-    top: 0px;
-    left: 0px;
-    width: 900px;
-    height: 500px;
-    margin-left: -1px;
-    border: 1px solid gray;
-}
-#queueheader
-{
-    height: 61px;
-    line-height: 61px;
-    background-color: silver;
-    border-bottom: 1px solid gray;
-    margin-top: -1px;
-}
-div.headersep
+#tplbaropt
 {
     float: right;
-    border-right: 2px solid gray;
-    margin-right: 10px;
-    padding-left: 10px;
+    font-size: 0.9em;
 }
-div.headerlabel
+#tplbaropt img
 {
-    float: right;
-    text-transform: capitalize;
-    font-weight: bold;
-}
-#queueheadertitle
-{
-    float: left;
-    padding-left: 15px;
-    font-size: 22px;
-    font-weight: bold;
-    text-transform: capitalize;
+    width: 1px;
+    height: 20px;
+    border-left: 1px solid black;
+    margin: 0px 10px -5px 15px; 
 }
 button.queuepubbtn
 {
-    float: right;
-    width: 36px;
-    height: 36px;
-    font-size: 9px;
-    line-height: 10px;
-    font-weight: bolder;
-    margin-top: 12px;
-    margin-left: 5px;
+    width: 40px;
+    height: 40px;
+    font-size: 0.5em;
 }
-#enqueuecontainer
-{
-    float: right;
-    height: 20px;
-    line-height: 20px;
-    margin-top: 6px;
-}
-#enqueuecontainer td
-{
-    text-align: center;
-    white-space: nowrap;
-}
-#intervalcontainer
-{
-    float: right;
-    height: 20px;
-    line-height: 20px;
-    margin-top: 6px;
-    margin-right: 10px;
-}
-#intervalcontainer td
-{
-    text-align: center;
-    white-space: nowrap;
-}
-
-
-#queueheaderclear
+#tplbarclr
 {
     clear: both;
 }
 
-#queuemiddle
+#etylst
 {
-    height: 500px;
-    overflow: auto;
+    height: 400px;
+    text-align: left;
+    white-space: nowrap;
     overflow-x: hidden;
-    overflow-y: auto;
-    padding-top: 2px;
 }
-
-/* ENTRY */
-
-div.entry
+div.ety
 {
-    line-height: 30px;
-    padding-top: 3px;
-    background-color: whitesmoke;
+    height: 45px;
 }
-div.entryclosed
+div.ety-cl
 {
-    border: 2px solid white;
-    border-bottom: 1px solid lightgray;
+    border-bottom: 2px solid white;
+    background-color: #e1f0f4;
 }
-div.entryopen
+div.ety-op
 {
-    border: 2px solid brown;
-    border-bottom: 1px solid white;
-    border-collapse: collapse;
-    margin-top: -2px;
+    border: 2px solid #48898c;
+    border-bottom: 1px solid #e1f0f4;
+    background-color: white;
 }
 div.entrydndhdr
 {
     float: left;
-    width: 25px;
-    line-height: 5px;
+    width: 30px;
+    line-height: 4px;
     margin-left: 10px;
     margin-right: 5px;
+    margin-top: 7px;
     cursor: move;
-    background-color: white;
 }
 div.entrydndhdrdec
 {
-    border-bottom: 1px solid silver;
+    border-bottom: 3px solid silver;
 }
-div.entrybutton
+div.etytog
+{
+    position: relative;
+    float: left;
+    top: 12px;
+    left: 12px;
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    cursor: hand;
+    background-repeat: no-repeat;
+}
+div.etytog-un
+{
+    background-position: -165px 0px;
+}
+div.etytog-ck
+{
+    background-position: -165px -20px;
+}
+div.etylab
 {
     float: left;
-    width: 40px;
-    margin-right: 5px;
-    margin-top: -3px;
-    line-height: 30px;
-    text-align: center;
+    margin-left: 20px;
+    margin-top: 5px;
 }
-div.entryhead
-{
-    margin-right: 280px;
-    overflow: hidden;
-    -o-text-overflow: ellipsis;
-    -ms-text-overflow: ellipsis;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-}
-div.entrysource
-{
-    color: gray;
-    font-size: small;
-    line-height: 15px;
-}
-div.entrytitle
-{
-    font-size: 14pt;
-    line-height: 20px;
-}
-div.entrytitle a
+div.etylab a
 {
     text-decoration: none;
+    color: black;
+}
+div.etylab a:hover
+{
+    color: #164a66;
+}
+span.etytt
+{
+    font-size: 1em;
+    line-height: 35px;
     font-weight: bold;
 }
-div.entryinfo
+div.etylnk
+{
+    position: relative;
+    float: left;
+    top: 15px;
+    left: 10px;
+    width: 23px;
+    height: 20px;
+    cursor: pointer;
+    cursor: hand;
+    background-repeat: no-repeat;
+    background-position: -165px -40px;
+}
+div.etylnk a
+{
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+div.etydte
 {
     float: right;
-    margin-top: -25px;
-    margin-right: 50px;
+    font-size: 0.9em;
+    height: 45px;
+    line-height: 45px;
+    margin-right: 10px;
 }
-div.entrylinks
-{
-    float: right;
-    margin-top: -25px;
-    margin-right: 15px;
-}
-a.entryview
-{
-    text-decoration: none;
-    font-weight: bold;
-}
-div.entryclear
+div.etyclr
 {
     clear: both;
 }
+div.etyview
+{
+    border: 2px solid #48898c;
+    border-top: 0;
+    padding: 0px 10px 0px 38px;
+    white-space: normal;
+    background-color: white;
+}
+div.etyview h1
+{
+    line-height: 50px;
+    font-size: 1.6em;
+}
+div.etybody
+{
+    font-size: 0.9em;
+    /*text-align: justify;*/
+    line-height: 1.3em;
+    padding-bottom: 15px;
+    max-width: 650px;
+}
 
-/* CONTENT */
-
-div.content
+#entryblank
 {
-    border: 2px solid brown;
-    border-top: 2px solid white;
-    padding: 0px 15px 15px 15px;
-    border-collapse: collapse;
-    margin-top: -3px;
+    display: none;
 }
-div.contenttitle
+#contentblank
 {
-    color: #404040;
-    font-size: 20px;
-    font-weight: bold;
-    padding: 10px 0px 10px 0px;
-}
-div.contentbody
-{
-    padding: 5px 0px 5px 0px;
-}
-
-/* EDIT FORM */
-
-div.editform
-{
-    border: 2px solid brown;
-    border-top: 2px solid white;
-    padding: 0px 15px 15px 15px;
-    border-collapse: collapse;
-    margin-top: -3px;
-    padding-top: 15px;
-    padding-left: 53px;
-}
-div.editformtitle
-{
-    color: #404040;
-    font-size: 20px;
-    font-weight: bold;
-    padding: 10px 0px 10px 0px;
-}
-input.editformtitle
-{
-    width: 600px;
-    color: #404040;
-    font-size: 14px;
-    font-weight: bold;
-    border: 1px solid gray;
-    padding: 5px 2px 5px 2px;
-}
-textarea.editformbody
-{
-    width: 700px;
-    height: 180px;
-    color: #404040;
-    font-family: monospace;
-    font-size: 14px;
-    font-weight: bold;
-    border: 1px solid gray;
-    padding: 0px 0px 0px 2px;
-}
-input.editformbutton
-{
-    width: 80px;
-    line-height: 18px;
-    margin-right: 10px;
+    display: none;
 }

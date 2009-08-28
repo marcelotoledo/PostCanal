@@ -25,7 +25,7 @@ function entry_set_status(e, s)
 {
     if(typeof e == 'string' && e.length > 0)
     {
-        e = mytpl.entry_list.find("div.entry[entry='" + e + "']");
+        e = mytpl.entry_list.find("div.ety[entry='" + e + "']");
     }
 
     if(typeof e == 'object')
@@ -34,16 +34,16 @@ function entry_set_status(e, s)
 
         if(s=='waiting')
         {
-            e.find('div.entrybutton').html('<input type="checkbox" checked disabled/>');
+            e.find('div.etytog').html('<input type="checkbox" checked disabled/>');
         }
         if(s=='failed')
         {
-            e.find('div.entrybutton')
+            e.find('div.etytog')
                 .html('<nobr><input type="checkbox"/><img src="/image/warning.png"/></nobr>');
         }
         if(s=='published')
         {
-            e.find('div.entrybutton').html("<b>(P)</b>");
+            e.find('div.etytog').html("<b>(P)</b>");
         }
     }
 }
@@ -74,14 +74,14 @@ function entry_populate(d)
         if(queue.data[_data.entry]==undefined) // avoid dupl
         {
             _item  = mytpl.entry_blank.clone();
-            _inner = _item.find('div.entry');
+            _inner = _item.find('div.ety');
             _inner.attr('entry', _data.entry);
             _inner.attr('ord', _data.ordering);
 
             entry_set_status(_inner, _data.publication_status);
 
-            _inner.find('div.entrytitle > a').text(_data.entry_title);
-            _inner.find('div.entrydate').text(_data.publication_date_local);
+            _inner.find('span.etytt').text(_data.entry_title);
+            _inner.find('div.etydte').text(_data.publication_date_local);
 
             _lsdata[_i] = _item.html(); _i++;
         }
@@ -93,7 +93,7 @@ function entry_populate(d)
         };
     });
 
-    var _pls = mytpl.entry_list.find("div.entry[status='published']").eq(0);
+    var _pls = mytpl.entry_list.find("div.ety[status='published']").eq(0);
 
     if(_pls.length>0)
     {
@@ -119,7 +119,7 @@ function entry_list_callback(d)
 
 function entry_list()
 {
-    do_request('GET', './queue/list', { blog : blog.current }, entry_list_callback);
+    do_request('GET', './queue/list', { blog : my_blog.current }, entry_list_callback);
 }
 
 function entry_scroll_top()
@@ -140,7 +140,7 @@ function entry_show_fix_vertical()
     var _rmh = mytpl.queue_middle_area.h / 2;
     var _rmt = mytpl.queue_middle_area.y;
     var _apt = queue.current.position().top;
-    var _coh = queue.current.next('div.content').outerHeight();
+    var _coh = queue.current.next('div.etyview').outerHeight();
 
     var _scr = mytpl.entry_list.scrollTop() + 
                _apt -
@@ -151,8 +151,8 @@ function entry_show_fix_vertical()
 
 function entry_hide(e)
 {
-    e.removeClass('entryopen').next('div.content').remove();
-    e.removeClass('entryopen').next('div.editform').remove();
+    e.removeClass('ety-op').next('div.etyview').remove();
+    e.removeClass('ety-op').next('div.etyform').remove();
     $("#my_source_editor").remove();
 }
 
@@ -168,11 +168,11 @@ function entry_show(e)
     {
         var _content = mytpl.content_blank.clone();
 
-        _content.find('div.contenttitle').html(queue.data[e].title);
-        _content.find('div.contentbody').html(queue.data[e].content);
+        _content.find('div.etyviewtitle').html(queue.data[e].title);
+        _content.find('div.etyviewbody').html(queue.data[e].content);
 
-        queue.current = mytpl.entry_list.find("div.entry[entry='" + e + "']");
-        queue.current.after(_content.html()).addClass('entryopen');
+        queue.current = mytpl.entry_list.find("div.ety[entry='" + e + "']");
+        queue.current.after(_content.html()).addClass('ety-op');
     }
 }
 
@@ -203,10 +203,10 @@ function entry_edit(e)
     {
         var _form = mytpl.edit_form_blank.clone();
 
-        queue.current = mytpl.entry_list.find("div.entry[entry='" + e + "']");
-        queue.current.after(_form.html()).addClass('entryopen');
+        queue.current = mytpl.entry_list.find("div.ety[entry='" + e + "']");
+        queue.current.after(_form.html()).addClass('ety-op');
 
-        _form = queue.current.next('div.editform');
+        _form = queue.current.next('div.etyform');
         _form.find("input[name='entrytitle']").val(queue.data[e].title).focus();
         set_active_request(true);
         _form.find("textarea[name='entrybody']").replaceWith(queue.editor.CreateHtml());
@@ -218,7 +218,7 @@ function entry_save_callback(d)
     var _e = d.find('entry').text();
     queue.data[_e].title = d.find('title').text();
     queue.data[_e].content = d.find('content').text();
-    queue.current.find('div.entrytitle > a').text(queue.data[_e].title);
+    queue.current.find('span.etytt > a').text(queue.data[_e].title);
     entry_hide_current();
     flash_message("<?php echo $this->translation()->saved ?>");
 }
@@ -227,9 +227,9 @@ function entry_save_current()
 {
     var _data = 
     { 
-        blog    : blog.current , 
+        blog    : my_blog.current , 
         entry   : queue.current.attr('entry'),
-        title   : queue.current.next('div.editform').find("input[name='entrytitle']").val(),
+        title   : queue.current.next('div.etyform').find("input[name='entrytitle']").val(),
         content : FCKeditorAPI.GetInstance("FCKQueueEntryEditor").GetData()
     };
 
@@ -238,12 +238,12 @@ function entry_save_current()
 
 function entry_delete_callback(d)
 {
-    mytpl.entry_list.find("div.entry[entry='" + d.find('entry').text() + "']").remove();
+    mytpl.entry_list.find("div.ety[entry='" + d.find('entry').text() + "']").remove();
 }
 
 function entry_delete(e)
 {
-    var _data = { blog  : blog.current , entry : e };
+    var _data = { blog  : my_blog.current , entry : e };
     entry_hide_current();
     do_request('POST', './queue/delete', _data, entry_delete_callback);
 }
@@ -256,7 +256,7 @@ function entry_position_callback(d)
 
 function entry_position(e, p)
 {
-    var _data = { blog  : blog.current , entry : e, position: p };
+    var _data = { blog  : my_blog.current , entry : e, position: p };
     do_request('POST', './queue/position', _data, entry_position_callback);
 }
 
@@ -264,7 +264,7 @@ function entry_sortable_callback(e)
 {
     var _p = 1;
 
-    mytpl.entry_list.find('div.entry').each(function()
+    mytpl.entry_list.find('div.ety').each(function()
     {
         if(e==$(this).attr('entry') && _p != $(this).attr('ord'))
         {
@@ -280,8 +280,8 @@ function entry_sortable_init()
     mytpl.entry_list.sortable(
     {
         handle : "div.entrydndhdr",
-        items : "div.entry[status!='published']",
-        cancel : "div.entryopen",
+        items : "div.ety[status!='published']",
+        cancel : "div.ety-op",
         distance : 10,
         start: function(e,u)
         {
@@ -306,7 +306,7 @@ function set_queue_publication()
 {
     if(queue.publication==null)
     {
-        queue.publication = (blog.info['publication_auto']==1);
+        queue.publication = (my_blog.info['publication_auto']==1);
     }
 
     if(queue.publication)
@@ -323,7 +323,7 @@ function set_queue_publication()
 
 function set_queue_publication_auto()
 {
-    var _data = { blog        : blog.current   ,
+    var _data = { blog        : my_blog.current   ,
                   interval    : queue.interval ,
                   publication : (queue.publication ? 1 : 0) };
 
@@ -340,7 +340,7 @@ function set_queue_enqueueing()
 {
     if(queue.enqueueing==null)
     {
-        queue.enqueueing = (blog.info['enqueueing_auto']==1);
+        queue.enqueueing = (my_blog.info['enqueueing_auto']==1);
     }
 
     if(queue.enqueueing)
@@ -357,7 +357,7 @@ function set_queue_enqueueing()
 
 function set_queue_interval()
 {
-    queue.interval = parseInt(blog.info['publication_interval']);
+    queue.interval = parseInt(my_blog.info['publication_interval']);
 
     mytpl.queue_interval_sel.find('option').each(function()
     {
@@ -381,14 +381,14 @@ function publication_updater()
 {
     if(updater.request==true) { return false; }
 
-    var _wdom = mytpl.entry_list.find("div.entry[status='waiting']");
+    var _wdom = mytpl.entry_list.find("div.ety[status='waiting']");
     var _wpar = Array();
     var _data = null;
 
     if(_wdom.length>0)
     {
         _wdom.each(function() { _wpar.push($(this).attr('entry')); });
-        _data = { blog : blog.current, waiting : _wpar.join(',') };
+        _data = { blog : my_blog.current, waiting : _wpar.join(',') };
         do_request('GET', './queue/check', _data, publication_updater_callback);
     }
 }
@@ -401,7 +401,7 @@ function enqueue_updater_callback(d)
 function enqueue_updater()
 {
     if(queue.enqueueing!=true || updater.request==true) { return false; }
-    _data = { blog : blog.current };
+    _data = { blog : my_blog.current };
     do_request('GET', './queue/list', _data, enqueue_updater_callback);
 }
 
@@ -449,11 +449,11 @@ $(document).ready(function()
 {
     mytpl =
     {
-        main_container     : $("#maincontainer"),
-        queue_container    : $("#queuecontainer"),
-        queue_header       : $("#queueheader"),
-        queue_middle       : $("#queuemiddle"),
-        entry_list         : $("#queuemiddle"),
+        main_container     : $("#mainct"),
+        // queue_container    : $("#queuecontainer"),
+        queue_header       : $("#tplbar"),
+        queue_middle       : $("#etylst"),
+        entry_list         : $("#etylst"),
         entry_blank        : $("#entryblank"),
         content_blank      : $("#contentblank"),
         edit_form_blank    : $("#editformblank"),
@@ -472,8 +472,8 @@ $(document).ready(function()
                             mytpl.main_container.position().top,
                    width  : $(window).width() };
 
-        mytpl.queue_container.width(_w.width);
-        mytpl.queue_container.height(_w.height);
+        // mytpl.queue_container.width(_w.width);
+        // mytpl.queue_container.height(_w.height);
         mytpl.queue_middle.height(_w.height - mytpl.queue_middle.position().top - 3);
 
         mytpl.queue_middle_area.x = mytpl.queue_middle.offset().left;
@@ -539,9 +539,8 @@ $(document).ready(function()
 
     /* controls */
 
-    mytpl.entry_list.find('div.entry')
-        .find('div.entryhead')
-        .find('div.entrytitle')
+    mytpl.entry_list.find('div.ety')
+        .find('div.etylab')
         .find('a').live('click', function()
     {
         if(active_request==true) { return false; }
@@ -549,7 +548,7 @@ $(document).ready(function()
         var _pt = $(this).parent().parent().parent();
         var _st = _pt.attr('status')
 
-        if(_pt.hasClass('entryopen'))
+        if(_pt.hasClass('ety-op'))
         { 
             entry_hide_current();
             $(this).blur();
@@ -573,36 +572,25 @@ $(document).ready(function()
         return false;
     });
 
-    mytpl.entry_list.find('div.entry')
-        .find('div.entrybutton')
-        .find('input').live('click', function()
-    {
-        entry_delete($(this).parent().parent().attr('entry'));
-        $(this).attr('checked', false).attr('disabled' , true).blur();
-        return false;
-    });
-
-    mytpl.entry_list.find('div.editform')
+    mytpl.entry_list.find('div.etyform')
         .find("input[name='editformsave']")
         .live('click', function()
     {
         entry_save_current();
     });
 
-    mytpl.entry_list.find('div.editform')
+    mytpl.entry_list.find('div.etyform')
         .find("input[name='editformcancel']")
         .live('click', function()
     {
         entry_hide_current();
     });
 
-    mytpl.entry_list.find('div.entry')
-        .find('div.entrybutton')
-        .find('input')
-        .live('change', function()
+    mytpl.entry_list.find('div.ety')
+        .find('div.etytog')
+        .live('click', function()
     {
         entry_delete($(this).parent().parent().attr('entry'));
-        $(this).attr('checked', false).attr('disabled' , true).blur();
         return false;
     });
 

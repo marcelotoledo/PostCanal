@@ -1,5 +1,5 @@
 <div id="tplbar" class="midct">
-    <div id="tplbarch">Manage Blogs</div>
+    <div id="tplbartt">Manage Blogs</div>
     <button id="addnewblogbtn">ADD NEW BLOG</button>
     <div id="tplbarclr"></div>
 </div>

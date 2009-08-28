@@ -1,5 +1,5 @@
 <div id="tplbar" class="midct">
-    <div id="tplbarch">All items</div>
+    <div id="tplbartt">All items</div>
     <div id="tplbaropt">
         <b>Show:</b> <a href="#" id="articleexpandedlnk">Expanded</a> <span id="articleexpandedlab">Expanded</span> | <a href="#" id="articlelistlnk">List</a> <span id="articlelistlab">List</span>
     </div>
@@ -25,11 +25,11 @@
 <div id="artlst" class="midct"></div>
 
 <div id="feeditemblank">
-<div class="ch">&raquo; <a href="#" class="feeditemlnk"></a></div>
+<div class="ch" feed="">&raquo; <a href="#" class="feeditemlnk"></a></div>
 </div>
 
 <div id="articleblank">
-<div class="art art-cl">
+<div class="art art-cl" feed="" article="" entry="">
     <div class="sprites-img arttog arttog-un">&nbsp;</div>
     <div class="artlab">
         <a href="#"><span class="artch"></span><br/><span class="arttt"></span></a>
