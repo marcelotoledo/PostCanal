@@ -1,210 +1,219 @@
-#maincontainer
-{
-    overflow: hidden; /* avoid scrollbars */
-}
-
-#leftcontainer
-{
-    position: absolute;
-    top: 0px;
-    left: 0px;
-    width: 300px;
-    height: 500px;
-}
-div.leftgrouptitle
-{
-    height: 30px;
-    line-height: 30px;
-    padding-left: 15px;
-    border: 1px solid gray;
-    border-collapse: collapse;
-    margin-top: -1px;
-    background-color: silver;
-    font-size: 14px;
-    font-weight: bold;
-    text-transform: capitalize;
-}
-div.cursorpointer
-{
-    cursor: pointer;
-    cursor: hand;
-}
-div.leftgroupcontainer
-{
-    padding: 10px 15px 0px 10px;
-    overflow: auto;
-    overflow-x: hidden;
-    overflow-y: auto;
-}
-div.feeditem
-{
-    padding: 3px 0px 3px 0px;
-    text-align: right;
-}
-a.feeditemlnk
-{
-    font-size: 15px;
-    font-weight: bold;
-    text-decoration: none;
-}
-
-#rightcontainer
-{
-    position: absolute;
-    top: 0px;
-    left: 300px;
-    width: 600px;
-    height: 500px;
-    margin-left: -1px;
-    border: 1px solid gray;
-}
-#rightheader
-{
-    height: 61px;
-    line-height: 61px;
-    background-color: lightgray;
-    border-bottom: 1px solid gray;
-    margin-top: -1px;
-}
-#rightheadertitle
+#tplbarch
 {
     float: left;
-    padding-left: 15px;
-    font-size: 22px;
+    font-weight: bold;
 }
-#rightheaderbuttons
+#tplbaropt
 {
     float: right;
-    padding-right: 15px;
-    text-transform: capitalize;
+    font-size: 0.9em;
 }
-#rightheaderclear
+#tplbarclr
 {
     clear: both;
 }
-#rightmiddle
+
+#artlst
 {
-    height: 398px;
-    overflow: auto;
+    height: 400px;
+    margin-left: 250px;
+    margin-right: 50px;
+    text-align: left;
+    white-space: nowrap;
     overflow-x: hidden;
-    overflow-y: auto;
-    padding-top: 2px;
 }
-#rightfooter
+div.art
+{
+    height: 45px;
+}
+div.art-cl
+{
+    border-bottom: 2px solid white;
+    background-color: #e1f0f4;
+}
+div.art-op
+{
+    border: 2px solid #48898c;
+    border-bottom: 1px solid #e1f0f4;
+    background-color: white;
+}
+div.arttog
+{
+    position: relative;
+    float: left;
+    top: 12px;
+    left: 12px;
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    cursor: hand;
+    background-repeat: no-repeat;
+}
+div.arttog-un
+{
+    background-position: -165px 0px;
+}
+div.arttog-ck
+{
+    background-position: -165px -20px;
+}
+div.artlab
+{
+    float: left;
+    margin-left: 20px;
+    margin-top: 5px;
+}
+div.artlab a
+{
+    text-decoration: none;
+    color: black;
+}
+div.artlab a:hover
+{
+    color: #164a66;
+}
+span.artch
+{
+    font-size: 0.9em;
+    font-weight: bold;
+}
+span.arttt
+{
+    font-size: 0.9em;
+}
+div.artlnk
+{
+    position: relative;
+    float: left;
+    top: 15px;
+    left: 10px;
+    width: 23px;
+    height: 20px;
+    cursor: pointer;
+    cursor: hand;
+    background-repeat: no-repeat;
+    background-position: -165px -40px;
+}
+div.artlnk a
+{
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+div.artdte
+{
+    float: right;
+    font-size: 0.9em;
+    height: 45px;
+    line-height: 45px;
+    margin-right: 10px;
+}
+div.artclr
+{
+    clear: both;
+}
+div.artview
+{
+    border: 2px solid #48898c;
+    border-top: 0;
+    padding: 0px 10px 0px 38px;
+    white-space: normal;
+    background-color: white;
+}
+div.artview h1
+{
+    line-height: 50px;
+    font-size: 1.6em;
+}
+div.artbody
+{
+    font-size: 0.9em;
+    /*text-align: justify;*/
+    line-height: 1.3em;
+    padding-bottom: 15px;
+    max-width: 650px;
+}
+
+#arttop
 {
     height: 40px;
     line-height: 40px;
-    background-color: lightgray;
-    border-top: 1px solid gray;
-    padding-left: 15px;
-}
-button.articlenavbutton
-{
-    width: 120px;
-    line-height: 18px;
-    margin-right: 10px;
-}
-
-/* ARTICLE */
-
-div.article
-{
-    line-height: 30px;
-    padding-top: 3px;
-    background-color: whitesmoke;
-}
-div.articleclosed
-{
-    border: 2px solid white;
-    border-bottom: 1px solid lightgray;
-}
-div.articleopen
-{
-    border: 2px solid navy;
-    border-bottom: 1px solid white;
-    border-collapse: collapse;
-    margin-top: -2px;
-}
-div.articlebutton
-{
-    float: left;
-    width: 40px;
-    margin-right: 5px;
-    margin-top: -3px;
-    line-height: 40px;
-    text-align: center;
-}
-div.articlehead
-{
-    margin-right: 240px;
-    overflow: hidden;
-    -o-text-overflow: ellipsis;
-    -ms-text-overflow: ellipsis;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-}
-div.articlesource
-{
-    color: gray;
-    font-size: small;
-    line-height: 15px;
-}
-div.articletitle
-{
-    font-size: 14pt;
-    line-height: 20px;
-}
-div.articletitle a
-{
-    text-decoration: none;
-    font-weight: bold;
-}
-div.articleinfo
-{
-    float: right;
-    margin-top: -33px;
+    text-align: left;
+    margin-left: 250px;
     margin-right: 50px;
+    padding-left: 10px;
+    background-color: #48898c;
+    -moz-border-radius-topright: 5px;
+    -webkit-border-top-right-radius: 5px;
 }
-div.articlelinks
+#navbar
 {
     float: right;
-    margin-top: -33px;
-    margin-right: 15px;
+    padding-right: 15px;
 }
-a.articleview
+input.navbtn
 {
-    text-decoration: none;
-    font-weight: bold;
+    width: 100px;
+    height: 26px;
+    margin-left: 5px;
 }
-div.articleclear
+#navclr
 {
     clear: both;
 }
 
-/* CONTENT */
+#midmenu
+{
+    position: absolute;
+    top: 135px;
+    left: 50px;
+    width: 180px;
+    background-color: #48898c;
+    text-align: left;
+    -moz-border-radius-topleft: 4px;
+    -webkit-border-top-left-radius: 4px;
+    -moz-border-radius-bottomleft: 4px;
+    -webkit-border-bottom-left-radius: 4px;
+}
+#midmenu h1
+{
+    font-size: 1em;
+    padding: 10px;
+    color: white;
+}
+div.chlst
+{
+    margin: 0px 0px 10px 10px;
+    padding: 5px 5px 5px 10px;
+    color: #2780b1;
+    white-space: nowrap;
+    overflow-x: hidden;
+    background-color: #e1f0f4;
+    max-height: 300px;
+}
+div.chlstsc
+{
+    height: 200px;
+    overflow-y: auto;
+}
+div.ch
+{
+    font-size: 0.8em;
+    line-height: 1.7em;
+}
+#chall
+{
+}
 
-div.content
+#feeditemblank
 {
-    border: 2px solid navy;
-    border-top: 2px solid white;
-    padding: 0px 15px 15px 15px;
-    border-collapse: collapse;
-    margin-top: -3px;
+    display: none;
 }
-div.contentauthor
+#articleblank
 {
-    color: gray;
-    font-size: small;
-    padding-bottom: 10px;
+    display: none;
 }
-div.contenttitle
+#contentblank
 {
-    color: #404040;
-    font-size: 20px;
-    font-weight: bold;
-    padding: 10px 0px 10px 0px;
-}
-div.contentbody
-{
-    padding: 5px 0px 5px 0px;
+    display: none;
 }

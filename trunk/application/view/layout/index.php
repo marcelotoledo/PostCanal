@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=EmulateIE7"/>
 <base href="<?php echo BASE_URL ?>" />
 
-<title>PostCanal</title>
+<title>PostCanal.com</title>
 
 <script type="text/javascript" src="./jquery/jquery-1.3.2.min.js"></script>
 <script type="text/javascript" src="./js/application.js"></script>

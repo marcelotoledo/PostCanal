@@ -1,4 +1,4 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<?php $bc = count($this->blogs); ?>
 <html>
 <head>
 
@@ -6,14 +6,9 @@
 <meta http-equiv="X-UA-Compatible" content="IE=EmulateIE7"/>
 <base href="<?php echo BASE_URL ?>" />
 
-<title>PostCanal</title>
+<title>PostCanal.com</title>
 
 <script type="text/javascript" src="./jquery/jquery-1.3.2.min.js"></script>
-<script type="text/javascript" src="./jquery/jquery-ui-1.7.1.custom.min.js"></script>
-<?php if($this->request()->getController()=='queue' &&
-         $this->request()->getAction()=='index') : ?>
-<script type="text/javascript" src="./fckeditor/fckeditor.js"></script>
-<?php endif ?>
 <script type="text/javascript" src="./js/application.js"></script>
 <link rel="stylesheet" href="./css/application.css" type="text/css" media="screen"/>
 
@@ -25,44 +20,69 @@
 
 </head>
 <body>
+<div id="mainct">
 
-<div id="topbar">
-<div id="topleftbar"><nobr><ul>
-
-<?php $bc = count($this->blogs) ?>
-
-<li><a href="./blog"><?php echo $this->translation()->manage_blogs ?></a></li>
-<li><a href="./feed"><?php echo $this->translation()->manage_feeds ?></a></li>
-<li><a href="./reader"><?php echo $this->translation()->reader ?></a></li>
-<li><a href="./queue"><?php echo $this->translation()->queue ?></a></li>
-<li><a href="./profile/edit"><?php echo $this->translation()->edit_settings ?></a></li>
-
-<li id="bloglstbar">
-<?php if($bc==1) : ?>
-    <b><?php echo $this->translation()->application_blog ?>: </b><i><?php echo $this->blogs[0]->name ?></i>
-    <input type="hidden" id="currentblog" value="<?php echo $this->blogs[0]->hash ?>">
-<?php elseif($bc > 1) : ?>
-    <b><?php echo $this->translation()->blog ?>: </b>
-    <select id="bloglstsel">
-    <?php foreach($this->blogs as $c) : ?>
-    <option value="<?php echo $c->hash ?>" <?php if($this->settings->blog->current == $c->hash) echo "selected"; ?>><?php echo $c->name ?></option>
-    <?php endforeach ?>
-    </select>
-<?php endif ?>
-</li>
-
-</ul></nobr></div>
-<div id="toprightbar"><nobr><ul>
-
-<li id="profilebar"><?php echo $this->session()->user_profile_login_email ?></li>
-<li><a href="./profile/logout"><?php echo $this->translation()->sign_out ?></a></li>
-
-</ul></nobr></div>
+<div id="toprow">
+    <div class="sprites-img" id="leftlogo">&nbsp;</div>
+    <div id="rightmenu">
+        <div id="menutop">
+            <div class="menutopfmt" id="menutopleft">
+                <?php if($this->request()->getController()=='blog') : ?>
+                Manage Blogs
+                <?php else : ?>
+                <a href="./blog">Manage Blogs</a>
+                <?php endif ?>
+            </div>
+            <div class="menutopfmt" id="menutopright">
+                <?php if($this->request()->getController()=='profile') : ?>
+                Edit Settings
+                <?php else : ?>
+                <a href="./profile/edit">Edit Settings</a><img class="fakespcimg">
+                <?php endif ?>
+                <a href="./profile/logout">Sign Out</a>
+            </div>
+            <div id="menutopclr"></div>
+        </div>
+        <div id="menubot">
+            <div class="menubotfmt" id="menubotleft">
+                <?php if($bc>0) : ?>
+                Working on:
+                <select id="bloglstsel">
+                <?php foreach($this->blogs as $b) : ?>
+                <option value="<?php echo $b->hash ?>" <?php if($this->settings->blog->current == $b->hash) echo "selected"; ?>><?php echo $b->name ?></option>
+                <?php endforeach ?>
+                </select>
+                &nbsp;
+                <img>
+                <?php endif ?>
+                <?php if($this->request()->getController()=='feed') : ?>
+                Manage Feeds
+                <?php else : ?>
+                <a href="./feed">Manage Feeds</a>
+                <?php endif ?>
+                <img>
+                <?php if($this->request()->getController()=='reader') : ?>
+                Reader
+                <?php else : ?>
+                <a href="./reader">Reader</a>
+                <?php endif ?>
+                <img>
+                <?php if($this->request()->getController()=='queue') : ?>
+                Queue
+                <?php else : ?>
+                <a href="./queue">Queue</a>
+                <?php endif ?>
+            </div>
+            <div class="menubotfmt" id="menubotright">
+                <a href="#">Upgrade</a>
+            </div>
+            <div id="menubotclr"></div>
+        </div>
+    </div>
 </div>
 
-<div id="maincontainer" style="display:none"><?php $this->includeTemplate() ?></div>
+<?php $this->includeTemplate() ?>
 
-<div id="flashmessage" style="display:none"></div>
-
+</div>
 </body>
 </html>

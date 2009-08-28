@@ -1,11 +1,11 @@
-var mytpl = null;
+var my_template = null;
 
-var feed =
+var my_feed =
 {
     current : null
 };
 
-var article = 
+var my_article = 
 {
     display : "<?php echo $this->settings->article->display ?>",
     data    : Array(),
@@ -19,25 +19,25 @@ var magic_slh = 10;
 
 function set_article_display()
 {
-    if(article.display=='list')
+    if(my_article.display=='list')
     {
-        mytpl.article_expanded_lab.hide();
-        mytpl.article_expanded_lnk.show();
-        mytpl.article_list_lnk.hide();
-        mytpl.article_list_lab.show();
+        my_template.article_expanded_lab.hide();
+        my_template.article_expanded_lnk.show();
+        my_template.article_list_lnk.hide();
+        my_template.article_list_lab.show();
         article_hide_all();
-        mytpl.article_prev.attr('disabled', false);
-        mytpl.article_next.attr('disabled', false);
+        my_template.article_prev.attr('disabled', false);
+        my_template.article_next.attr('disabled', false);
     }
-    if(article.display=='expanded')
+    if(my_article.display=='expanded')
     {
-        mytpl.article_expanded_lnk.hide();
-        mytpl.article_expanded_lab.show();
-        mytpl.article_list_lab.hide();
-        mytpl.article_list_lnk.show();
+        my_template.article_expanded_lnk.hide();
+        my_template.article_expanded_lab.show();
+        my_template.article_list_lab.hide();
+        my_template.article_list_lnk.show();
         article_show_all();
-        mytpl.article_prev.attr('disabled', true);
-        mytpl.article_next.attr('disabled', true);
+        my_template.article_prev.attr('disabled', true);
+        my_template.article_next.attr('disabled', true);
     }
 }
 
@@ -45,7 +45,7 @@ function set_article_display()
 
 function feed_populate(d)
 {
-    mytpl.subscribed_list.html('');
+    my_template.subscribed_list.find('div.ch').remove();
     if(d.length==0) { return false; }
 
     var _data   = null;
@@ -62,15 +62,15 @@ function feed_populate(d)
             title : $(this).find('feed_title').text()
         };
 
-        _item = mytpl.feed_item_blank.clone();
-        _inner = _item.find('div.feeditem');
+        _item = my_template.feed_item_blank.clone();
+        _inner = _item.find('div.ch');
         _inner.attr('feed', _data.feed);
         _inner.find('a.feeditemlnk').text(_data.title);
 
         _lsdata[_i] = _item.html(); _i++;
     });
 
-    mytpl.subscribed_list.html(_lsdata.join("\n"));
+    my_template.subscribed_list.append(_lsdata.join("\n"));
 }
 
 function feed_list_callback(d)
@@ -80,9 +80,9 @@ function feed_list_callback(d)
 
 function feed_list()
 {
-    feed.current = null;
+    my_feed.current = null;
 
-    var _data = { blog    : blog.current ,
+    var _data = { blog    : my_blog.current ,
                   enabled : true };
 
     do_request('GET', './feed/list', _data, feed_list_callback);
@@ -94,20 +94,20 @@ function update_right_header_title()
 {
     var _title = "";
 
-    if(feed.current)
+    if(my_feed.current)
     {
-        _title = mytpl.subscribed_list
-            .find("div.feeditem[feed='" + feed.current + "']")
+        _title = my_template.subscribed_list
+            .find("div.ch[feed='" + my_feed.current + "']")
             .find('a').text();
-        mytpl.right_header_title.css('text-transform', 'none');
+        my_template.right_header_title.css('text-transform', 'none');
     }
     else
     {
         _title = "<?php echo $this->translation()->all_items ?>";
-        mytpl.right_header_title.css('text-transform', 'capitalize');
+        my_template.right_header_title.css('text-transform', 'capitalize');
     }
 
-    mytpl.right_header_title.text(_title);
+    my_template.right_header_title.text(_title);
 }
 
 function article_populate(d, append)
@@ -116,16 +116,16 @@ function article_populate(d, append)
 
     if(append==false)
     {
-        mytpl.article_list.html('');
-        article.data = Array();
-        article.current = null;
-        article.older = 0;
-        article.bottom = 0;
+        my_template.article_list.html('');
+        my_article.data = Array();
+        my_article.current = null;
+        my_article.older = 0;
+        my_article.bottom = 0;
     }
 
     if(d.length==0)
     { 
-        if(append==true) { article.older = 0; }
+        if(append==true) { my_article.older = 0; }
         return false; 
     }
 
@@ -153,29 +153,30 @@ function article_populate(d, append)
             entry              : $(this).find('entry').text()
         };
 
-        if(article.data[_data.article]==undefined) // avoid dupl
+        if(my_article.data[_data.article]==undefined) // avoid dupl
         {
-            _item  = mytpl.article_blank.clone();
-            _inner = _item.find('div.article');
+            _item  = my_template.article_blank.clone();
+            _inner = _item.find('div.art');
             _inner.attr('feed', _data.feed);
             _inner.attr('article', _data.article);
             _inner.attr('entry', _data.entry);
 
             if(_data.publication_status.length>0)
             {
-                _inner.find('div.articlebutton')
-                    .html('<input type="checkbox" checked/>');
+                _inner.find('div.arttog')
+                    .removeClass('arttog-un')
+                    .addClass('arttog-ck');
             }
 
-            _inner.find('div.articlesource').text(_data.feed_title);
-            _inner.find('div.articletitle > a').text(_data.article_title);
-            _inner.find('div.articledate').text(_data.article_date_local);
-            _inner.find('a.articleview').attr('href', _data.article_link);
+            _inner.find('span.artch').text(_data.feed_title);
+            _inner.find('span.arttt').text(_data.article_title);
+            _inner.find('div.artdte').text(_data.article_date_local);
+            _inner.find('div.artlnk > a').attr('href', _data.article_link);
 
             _lsdata[_i] = _item.html(); _i++;
         }
 
-        article.data[_data.article] =
+        my_article.data[_data.article] =
         {
             title   : _data.article_title,
             author  : _data.article_author,
@@ -183,13 +184,13 @@ function article_populate(d, append)
         };
     });
 
-    mytpl.article_list.append(_lsdata.join("\n"));
-    article.older = _data.article_time;
+    my_template.article_list.append(_lsdata.join("\n"));
+    my_article.older = _data.article_time;
 
-    if(article.display=='expanded') { article_show_all(); }
-    if(append==false) { mytpl.article_list.scrollTop(0); }
+    if(my_article.display=='expanded') { article_show_all(); }
+    if(append==false) { my_template.article_list.scrollTop(0); }
 
-    article.bottom += mytpl.article_list.find('div.article:last').position().top;
+    my_article.bottom += my_template.article_list.find('div.art:last').position().top;
 }
 
 function article_list_callback(d)
@@ -199,10 +200,10 @@ function article_list_callback(d)
 
 function article_list(older)
 {
-    var _url = ((feed.current) ? './article/threaded' : './article/all');
+    var _url = ((my_feed.current) ? './article/threaded' : './article/all');
 
-    var _data = { blog  : blog.current ,
-                  feed  : feed.current ,
+    var _data = { blog  : my_blog.current ,
+                  feed  : my_feed.current ,
                   older : older };
 
     do_request('GET', _url, _data, article_list_callback);
@@ -210,61 +211,61 @@ function article_list(older)
 
 function article_scroll_top()
 {
-    if(article.current)
+    if(my_article.current)
     {
-        mytpl.article_list.animate(
+        my_template.article_list.animate(
         {
-            scrollTop: article.current.position().top -
-                mytpl.article_list.position().top +
-                mytpl.article_list.scrollTop() - 2
+            scrollTop: my_article.current.position().top -
+                my_template.article_list.position().top +
+                my_template.article_list.scrollTop() - 2
         }, 200);
     }
 }
 
 function article_show_fix_vertical()
 {
-    var _rmh = mytpl.right_middle_area.h / 2;
-    var _rmt = mytpl.right_middle_area.y;
-    var _apt = article.current.position().top;
-    var _coh = article.current.next('div.content').outerHeight();
+    var _rmh = my_template.right_middle_area.h / 2;
+    var _rmt = my_template.right_middle_area.y;
+    var _apt = my_article.current.position().top;
+    var _coh = my_article.current.next('div.artview').outerHeight();
 
-    var _scr = mytpl.article_list.scrollTop() + 
+    var _scr = my_template.article_list.scrollTop() + 
                _apt -
                ((_coh > _rmh) ? _rmt : _rmh);
 
-    mytpl.article_list.animate({ scrollTop: _scr }, 200);
+    my_template.article_list.animate({ scrollTop: _scr }, 200);
 }
 
 function article_hide(a)
 {
-    a.removeClass('articleopen').next('div.content').remove();
+    a.removeClass('art-op').next('div.artview').remove();
 }
 
 function article_hide_current()
 {
-    if(article.current) { article_hide(article.current); }
-    article.current = null;
+    if(my_article.current) { article_hide(my_article.current); }
+    my_article.current = null;
 }
 
 function article_hide_all()
 {
-    mytpl.article_list.find('div.content').remove();
-    mytpl.article_list.find('div.article').removeClass('articleopen');
-    article.current = null;
+    my_template.article_list.find('div.artview').remove();
+    my_template.article_list.find('div.art').removeClass('art-op');
+    my_article.current = null;
 }
 
 function article_show(a)
 {
-    if(article.data[a])
+    if(my_article.data[a])
     {
-        var _content = mytpl.content_blank.clone();
+        var _content = my_template.content_blank.clone();
 
-        _content.find('div.contentauthor').html(article.data[a].author);
-        _content.find('div.contenttitle').html(article.data[a].title);
-        _content.find('div.contentbody').html(article.data[a].content);
+        // _content.find('div.contentauthor').html(my_article.data[a].author);
+        _content.find('h1').html(my_article.data[a].title);
+        _content.find('div.artbody').html(my_article.data[a].content);
 
-        article.current = mytpl.article_list.find("div.article[article='" + a + "']");
-        article.current.after(_content.html()).addClass('articleopen');
+        my_article.current = my_template.article_list.find("div.art[article='" + a + "']");
+        my_article.current.after(_content.html()).addClass('art-op');
     }
 }
 
@@ -272,7 +273,7 @@ function article_show_all()
 {
     article_hide_all();
 
-    mytpl.article_list.find('div.article').each(function()
+    my_template.article_list.find('div.art').each(function()
     {
         article_show($(this).attr('article'));
     });
@@ -282,9 +283,9 @@ function article_previous()
 {
     var _prev = null;
 
-    if(article.current)
+    if(my_article.current)
     {
-        _prev = article.current.prevAll('div.article').attr('article');
+        _prev = my_article.current.prevAll('div.art').attr('article');
     }
 
     if(_prev) 
@@ -299,13 +300,13 @@ function article_next()
 {
     var _next = null;
 
-    if(article.current)
+    if(my_article.current)
     {
-        _next = article.current.nextAll('div.article').attr('article');
+        _next = my_article.current.nextAll('div.art').attr('article');
     }
     else
     {
-        _next = mytpl.article_list.find('div.article').attr('article');
+        _next = my_template.article_list.find('div.art').attr('article');
     }
 
     if(_next)
@@ -320,23 +321,22 @@ function article_next()
 
 function queue_add_callback(d)
 {
-    var _sel = "div.article" +
+    var _sel = "div.art" +
                "[feed='" + d.find('feed').text() + "']" + 
                "[article='" + d.find('article').text() + "']";
 
-    mytpl.article_list
+    my_template.article_list
         .find(_sel)
         .attr('entry', d.find('entry').text())
-        .find('div.articlebutton')
-        .find('input')
-        .attr('checked', true)
-        .attr('disabled', false)
+        .find('div.arttog')
+        .removeClass('arttog-un')
+        .addClass('arttog-ck')
         .blur();
 }
 
 function queue_add(f, a)
 {
-    var _data = { blog    : blog.current ,
+    var _data = { blog    : my_blog.current ,
                   feed    : f,
                   article : a };
 
@@ -345,19 +345,18 @@ function queue_add(f, a)
 
 function queue_delete_callback(d)
 {
-    var _sel = "div.article[entry='" + d.find('entry').text() + "']";
+    var _sel = "div.art[entry='" + d.find('entry').text() + "']";
 
-    mytpl.article_list.find(_sel)
-        .find('div.articlebutton')
-        .find('input')
-        .attr('checked', false)
-        .attr('disabled', false)
+    my_template.article_list.find(_sel)
+        .find('div.arttog')
+        .removeClass('arttog-ck')
+        .addClass('arttog-un')
         .blur();
 }
 
 function queue_delete(e)
 {
-    var _data = { blog  : blog.current , entry : e };
+    var _data = { blog  : my_blog.current , entry : e };
     do_request('POST', './queue/delete', _data, queue_delete_callback);
 }
 
@@ -369,50 +368,52 @@ function on_blog_change()
 
 $(document).ready(function()
 {
-    mytpl =
+    my_template =
     {
-        main_container       : $("#maincontainer"),
-        left_container       : $("#leftcontainer"),
-        all_items            : $("#allitems"),
-        right_container      : $("#rightcontainer"),
-        right_header_title   : $("#rightheadertitle"),
-        right_middle         : $("#rightmiddle"),
-        article_list         : $("#rightmiddle"),
+        main_container       : $("#mainct"),
+        //left_container       : $("#leftcontainer"),
+        all_items            : $("#chall"),
+        //right_container      : $("#rightcontainer"),
+        right_header_title   : $("#tplbarch"),
+        right_middle         : $("#artlst"),
+        article_list         : $("#artlst"),
         article_blank        : $("#articleblank"),
         content_blank        : $("#contentblank"),
         right_middle_area    : { x : 0 , y : 0 , w : 0 , h : 0 },
         right_middle_hover   : false,
-        right_footer         : $("#rightfooter"),
-        subscribed_list      : $("#subscribedfeedslist"),
+        //right_footer         : $("#rightfooter"),
+        subscribed_list      : $("#chlst"),
         feed_item_blank      : $("#feeditemblank"),
         article_expanded_lnk : $("#articleexpandedlnk"),
         article_expanded_lab : $("#articleexpandedlab"),
         article_list_lnk     : $("#articlelistlnk"),
         article_list_lab     : $("#articlelistlab"),
-        article_next         : $("#articlenext"),
-        article_prev         : $("#articleprev")
+        article_prev         : $("#articleprev"),
+        article_next         : $("#articlenext")
     }; 
     
     function window_update()
     {
         var _w = { height : $(window).height() - 
-                            mytpl.main_container.position().top,
+                            my_template.main_container.position().top,
                    width  : $(window).width() };
 
-        mytpl.left_container.height(_w.height);
-        mytpl.right_container.width(_w.width -
-                                    mytpl.left_container.width());
-        mytpl.right_container.height(_w.height);
-        mytpl.right_container.css('left', mytpl.left_container.width());
-        mytpl.subscribed_list.height(_w.height - 
-                                     mytpl.subscribed_list.position().top - 
+        /*
+        my_template.left_container.height(_w.height);
+        my_template.right_container.width(_w.width -
+                                    my_template.left_container.width());
+        my_template.right_container.height(_w.height);
+        my_template.right_container.css('left', my_template.left_container.width());
+        my_template.subscribed_list.height(_w.height - 
+                                     my_template.subscribed_list.position().top - 
                                      magic_slh);
-        mytpl.right_middle.height(_w.height - mytpl.right_middle.offset().top);
+        */
+        my_template.right_middle.height(_w.height - my_template.right_middle.offset().top);
 
-        mytpl.right_middle_area.x = mytpl.right_middle.offset().left;
-        mytpl.right_middle_area.y = mytpl.right_middle.offset().top;
-        mytpl.right_middle_area.w = mytpl.right_middle.width();
-        mytpl.right_middle_area.h = mytpl.right_middle.height();
+        my_template.right_middle_area.x = my_template.right_middle.offset().left;
+        my_template.right_middle_area.y = my_template.right_middle.offset().top;
+        my_template.right_middle_area.w = my_template.right_middle.width();
+        my_template.right_middle_area.h = my_template.right_middle.height();
     }
 
     function initialize()
@@ -425,22 +426,22 @@ $(document).ready(function()
 
     /* events */
 
-    mytpl.article_list_lnk.click(function()
+    my_template.article_list_lnk.click(function()
     {
         if(active_request==false)
         {
-            article.display = 'list';
-            save_setting('article', 'display', article.display);
+            my_article.display = 'list';
+            save_setting('article', 'display', my_article.display);
         }
         return false;
     });
 
-    mytpl.article_expanded_lnk.click(function()
+    my_template.article_expanded_lnk.click(function()
     {
         if(active_request==false)
         {
-            article.display = 'expanded';
-            save_setting('article', 'display', article.display);
+            my_article.display = 'expanded';
+            save_setting('article', 'display', my_article.display);
         }
         return false;
     });
@@ -458,12 +459,12 @@ $(document).ready(function()
 
     function on_mouse_wheel(e)
     {
-        if(mytpl.right_middle_hover==true && $.browser.msie) // Emulate wheel scroll on IE
+        if(my_template.right_middle_hover==true && $.browser.msie) // Emulate wheel scroll on IE
         {
             var j = null;
             e = e ? e : window.event;
             j = e.detail ? e.detail * -1 : e.wheelDelta / 2;
-            mytpl.right_middle.scrollTop(mytpl.right_middle.scrollTop() - j);
+            my_template.right_middle.scrollTop(my_template.right_middle.scrollTop() - j);
             return false;
         }
     }
@@ -480,13 +481,13 @@ $(document).ready(function()
 
     window.onmousewheel = document.onmousewheel = on_mouse_wheel; /* IE */
 
-    mytpl.right_middle.scroll(function()
+    my_template.right_middle.scroll(function()
     {
-        // if(mytpl.article_list.scrollTop() > (article.bottom * 2/3) && /* fails when threaded */
-        if(mytpl.article_list.scrollTop() > (article.bottom / 2) &&
-           article.older > 0 && active_request==false)
+        // if(my_template.article_list.scrollTop() > (my_article.bottom * 2/3) && /* fails when threaded */
+        if(my_template.article_list.scrollTop() > (my_article.bottom / 2) &&
+           my_article.older > 0 && active_request==false)
         {
-            article_list(article.older);
+            article_list(my_article.older);
         }
     });
 
@@ -504,7 +505,7 @@ $(document).ready(function()
         _mp.x = (e.pageX) ? e.pageX : e.clientX + document.body.scrollLeft;
         _mp.y = (e.pageY) ? e.pageY : e.clientY + document.body.scrollTop;
 
-        mytpl.right_middle_hover = mouse_is_over_area(_mp.x, _mp.y, mytpl.right_middle_area);
+        my_template.right_middle_hover = mouse_is_over_area(_mp.x, _mp.y, my_template.right_middle_area);
     }
 
     $(window).bind('mousemove', function(e) /* Mozilla */
@@ -516,36 +517,35 @@ $(document).ready(function()
 
     /* controls */
 
-    mytpl.all_items.click(function()
+    my_template.all_items.click(function()
     {
-        feed.current = null;
+        my_feed.current = null;
         article_list(null);
         return false;
     });
 
-    mytpl.subscribed_list.find('a.feeditemlnk').live('click', function()
+    my_template.subscribed_list.find('a.feeditemlnk').live('click', function()
     {
-        feed.current = $(this).parent().attr('feed');
+        my_feed.current = $(this).parent().attr('feed');
         article_list(null);
         $(this).blur();
         return false;
     });
 
-    mytpl.article_list.find('div.article')
-        .find('div.articlehead')
-        .find('div.articletitle')
+    my_template.article_list.find('div.art')
+        .find('div.artlab')
         .find('a').live('click', function()
     {
-        var _pt = $(this).parent().parent().parent();
+        var _pt = $(this).parent().parent();
 
-        if(_pt.hasClass('articleopen'))
+        if(_pt.hasClass('art-op'))
         {
             article_hide_current();
             $(this).blur();
             return false; 
         }
 
-        if(article.display=='list')
+        if(my_article.display=='list')
         {
             article_hide_current();
             article_show(_pt.attr('article'));
@@ -556,31 +556,30 @@ $(document).ready(function()
         return false;
     });
 
-    mytpl.article_list.find('div.article')
-        .find('div.articlebutton')
-        .find('input').live('click', function()
+    my_template.article_list.find('div.art')
+        .find('div.arttog')
+        .live('click', function()
     {
-        var _i = $(this).parent().parent();
+        var _i = $(this).parent();
 
-        if($(this).is(':checked'))
-        {
-            queue_add(_i.attr('feed'), _i.attr('article'));
-        }
-        else
+        if($(this).hasClass('arttog-ck'))
         {
             queue_delete(_i.attr('entry'));
         }
+        else
+        {
+            queue_add(_i.attr('feed'), _i.attr('article'));
+        }
 
-        $(this).attr('disabled', true);
         return false;
     });
 
-    mytpl.article_next.click(function()
+    my_template.article_next.click(function()
     {
         article_next();
     });
 
-    mytpl.article_prev.click(function()
+    my_template.article_prev.click(function()
     {
         article_previous();
     });
