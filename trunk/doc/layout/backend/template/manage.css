@@ -1,0 +1,88 @@
+#tplbarch
+{
+    float: left;
+    font-weight: bold;
+}
+#tplbaropt
+{
+    float: right;
+    font-size: 0.9em;
+}
+#tplbarclr
+{
+    clear: left;
+}
+
+#btn-new
+{
+    float: left;
+    margin-top: 10px;
+    margin-left: 15px;
+}
+
+#bloglst
+{
+    height: 400px;
+    margin-left: 250px;
+    margin-right: 50px;
+    text-align: left;
+    white-space: nowrap;
+    overflow-x: hidden;
+}
+div.blog
+{
+    height: 45px;
+}
+div.blogtop
+{
+    background-color: #48898c;
+    padding: 10px;
+    -moz-border-radius-topleft: 5px;
+    -webkit-border-top-left-radius: 5px;
+    -moz-border-radius-topright: 5px;
+    -webkit-border-top-right-radius: 5px;
+}
+div.blogtit
+{
+    color: white;
+    font-weight: bold;
+}
+div.blogurl
+{
+    font-size: 0.8em;
+    margin-top: 2px;
+    color: whitesmoke;
+}
+div.blogurl span
+{
+    padding: 2px 5px 2px 2px;
+    background-color: #144a4c;
+}
+div.blogbot
+{
+    padding: 10px 15px 10px 15px;
+    /*background-color: #e1f0f4;*/
+    background-color: #c4e2ea;
+}
+
+input.intxt-full
+{
+    width: 400px;
+}
+#frm-btn
+{
+    margin: 15px 0px 5px 0px;
+}
+#btn-save
+{
+    float: left;
+    margin-right: 10px;
+}
+#btn-cancel
+{
+    float: left;
+}
+#btn-clr
+{
+    clear: left;
+}
