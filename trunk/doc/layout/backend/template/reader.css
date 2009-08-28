@@ -17,7 +17,7 @@
 {
     height: 400px;
     margin-left: 250px;
-    /*margin-right: 50px;*/
+    margin-right: 50px;
     text-align: left;
     white-space: nowrap;
     overflow-x: hidden;
@@ -28,7 +28,7 @@ div.art
 }
 div.art-cl
 {
-    border-bottom: 1px solid white;
+    border-bottom: 2px solid white;
     background-color: #e1f0f4;
 }
 div.art-op
@@ -84,9 +84,9 @@ span.arttt
 div.artlnk
 {
     position: relative;
-    float: right;
-    top: 15px;
-    right: 20px;
+    float: left;
+    top: 16px;
+    left: 10px;
     width: 23px;
     height: 20px;
     cursor: pointer;
@@ -110,8 +110,9 @@ div.artview
 {
     border: 2px solid #48898c;
     border-top: 0;
-    padding: 0px 10px 0px 10px;
+    padding: 0px 10px 0px 38px;
     white-space: normal;
+    background-color: white;
 }
 div.artview h1
 {
@@ -121,23 +122,23 @@ div.artview h1
 div.artbody
 {
     font-size: 0.9em;
-    text-align: justify;
+    /*text-align: justify;*/
     line-height: 1.3em;
-    padding-bottom: 10px;
-    background-color: white;
+    padding-bottom: 15px;
+    max-width: 650px;
 }
 
 #arttop
 {
-    height: 35px;
-    line-height: 34px;
+    height: 40px;
+    line-height: 40px;
     text-align: left;
     margin-left: 250px;
-    /*margin-right: 50px;*/
+    margin-right: 50px;
     padding-left: 10px;
     background-color: #48898c;
-    /*-moz-border-radius-topright: 5px;
-    -webkit-border-top-right-radius: 5px;*/
+    -moz-border-radius-topright: 5px;
+    -webkit-border-top-right-radius: 5px;
 }
 #navbar
 {
