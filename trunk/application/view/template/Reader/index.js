@@ -577,11 +577,13 @@ $(document).ready(function()
     my_template.article_next.click(function()
     {
         article_next();
+        $(this).blur();
     });
 
     my_template.article_prev.click(function()
     {
         article_previous();
+        $(this).blur();
     });
 
     /* initialize */

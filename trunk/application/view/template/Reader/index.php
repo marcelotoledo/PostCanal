@@ -1,4 +1,4 @@
-<div id="tplbar">
+<div id="tplbar" class="midct">
     <div id="tplbarch">All items</div>
     <div id="tplbaropt">
         <b>Show:</b> <a href="#" id="articleexpandedlnk">Expanded</a> <span id="articleexpandedlab">Expanded</span> | <a href="#" id="articlelistlnk">List</a> <span id="articlelistlab">List</span>
@@ -14,15 +14,15 @@
     <div class="chlst" id="chlst"></div><!-- .chlstsc 2 scroll -->
 </div>
 
-<div id="arttop">
+<div id="arttop" class="midct">
     <div id="navbar">
-        <input class="navbtn" type="button" value="previous" id="articleprev">
-        <input class="navbtn" type="button" value="next" id="articlenext">
+        <button class="navbtn" type="button" id="articleprev">PREVIOUS</button>
+        <button class="navbtn" type="button" id="articlenext">NEXT</button>
     </div>
     <div id="navclr"></div>
 </div>
 
-<div id="artlst"></div>
+<div id="artlst" class="midct"></div>
 
 <div id="feeditemblank">
 <div class="ch">&raquo; <a href="#" class="feeditemlnk"></a></div>

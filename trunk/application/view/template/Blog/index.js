@@ -213,6 +213,8 @@ $(document).ready(function()
     mytpl.new_blog_button.click(function()
     {
         if(active_request==false) { toggle_blog_add(); }
+        $(this).blur();
+        return false;
     });
 
     mytpl.new_blog_url.keypress(function(e)

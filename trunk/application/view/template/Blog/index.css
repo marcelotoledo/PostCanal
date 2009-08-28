@@ -1,93 +1,70 @@
-#maincontainer
+#tplbaropt
 {
-    padding: 25px;
+    float: right;
+    font-size: 0.9em;
+}
+#tplbarclr
+{
+    clear: left;
+}
+
+#addnewblogform
+{
+    display: none;
+    text-align: left;
 }
 #addnewblogbtn
 {
-    cursor: pointer;
-    cursor: hand;
-    margin-top: 25px;
-    margin-bottom: 15px;
-    width: 200px;
-}
-div.inputmessage
-{
-    text-align: left;
-}
-
-#bloglistarea
-{
-    padding-top: 15px;
-}
-
-div.blogitem
-{
-    padding-top: 5px;
-    padding-bottom: 5px;
-    width: 600px;
-    border-bottom: 1px solid silver;
-}
-div.blogitemleft
-{
     float: left;
+    margin-top: 13px;
+}
+
+#bloglst
+{
+    height: 400px;
+    margin-left: 250px;
+    margin-right: 50px;
+    text-align: left;
+    white-space: nowrap;
+    overflow-x: hidden;
+}
+div.blog
+{
+    height: 45px;
+}
+div.blogtop
+{
+    background-color: #48898c;
+    padding: 10px;
+    -moz-border-radius-topleft: 5px;
+    -webkit-border-top-left-radius: 5px;
+    -moz-border-radius-topright: 5px;
+    -webkit-border-top-right-radius: 5px;
+}
+div.blogtit
+{
+    color: white;
+    font-weight: bold;
+}
+div.blogurl
+{
+    font-size: 0.8em;
+    margin-top: 2px;
+    color: whitesmoke;
+}
+div.blogurl span
+{
+    padding: 2px 5px 2px 2px;
+    background-color: #144a4c;
+}
+div.blogbot
+{
+    padding: 10px 15px 10px 15px;
+    /*background-color: #e1f0f4;*/
+    background-color: #c4e2ea;
+}
+
+input.intxt-full
+{
     width: 400px;
-}
-div.blogitemleftbold
-{
-    font-weight: bold;
-}
-div.blogitemleft small
-{
-    color: gray;
-    font-size: x-small;
-}
-div.blogitemright
-{
-    float: right;
-    line-height: 2.4em;
-}
-div.blogitemright a
-{
-    padding-left: 10px;
-}
-div.blogitemeditform
-{
-    width: 570px;
-    padding: 15px;
-    background-color: lightyellow;
-    border-bottom: 2px solid silver;
-}
-div.blogdeletemsg
-{
-    width: 570px;
-    padding: 15px;
-    background-color: lightyellow;
-    border-bottom: 2px solid silver;
-}
-span.deletemsgbig
-{
-    font-size: 18pt;
-    line-height: 50px;
-}
-span.deletemsgmed
-{
-    font-size: 14pt;
-}
-span.deletemsgask
-{
-    font-weight: bold;
-    line-height: 50px;
-}
-input.blogdeletey
-{
-    background-color: lightgreen;
-}
-input.blogdeleten
-{
-    background-color: tomato;
-}
-#blogtypefailedmsg
-{
-    font-size: 14pt;
-    line-height: 40px;
 }
