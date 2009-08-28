@@ -202,9 +202,9 @@ select.insel
 }
 button
 {
-	height: 24px;
-    font-size: 0.8em;
-	line-height: 24px;
+	height: 20px;
+    font-size: 0.7em;
+	line-height: 20px;
 	font-weight: bold;
 	padding: 0px 5px 0px 5px;
     border: 0;
@@ -214,4 +214,22 @@ button
 	background-color: #FF6600;
 	-moz-border-radius: 9px;
 	-webkit-border-radius: 9px;
+}
+
+/* flash message */
+
+#flashmessage
+{
+    position: absolute;
+    top: 5px;
+    left: 5%;
+    width: 84%;
+    padding: 2%;
+    font-size: 2em;
+    color: black;
+    background-color: gold;
+    text-align: center;
+    -moz-border-radius: 5px;
+    -webkit-border-radius: 5px;
+    display: none;
 }

@@ -84,5 +84,6 @@
 <?php $this->includeTemplate() ?>
 
 </div>
+<div id="flashmessage"></div>
 </body>
 </html>
