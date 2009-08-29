@@ -211,7 +211,8 @@ function entry_edit(e)
             .modal({ position   : [ _rect.T, _rect.L ], 
                      focus      : true, 
                      opacity    : 75, 
-                     autoResize : true });
+                     autoResize : true,
+                     onClose    : function() { entry_hide_current() } });
 
         my_template.edit_form.find('div.form-bot').css('top', _rect.H - 55); // position hack
         my_template.edit_form.find("input[name='entrytitle']").val(my_queue.data[e].title).focus();
@@ -228,7 +229,6 @@ function entry_save_callback(d)
     my_queue.current.find('span.etytt').text(my_queue.data[_e].title);
     entry_hide_current();
     flash_message("<?php echo $this->translation()->saved ?>");
-    $.modal.close();
 }
 
 function entry_save_current()
@@ -584,6 +584,7 @@ $(document).ready(function()
         .find("button[name='editformsave']")
         .live('click', function()
     {
+        if(active_request==true) { return false; }
         entry_save_current();
     });
 
@@ -591,6 +592,7 @@ $(document).ready(function()
         .find("button[name='editformcancel']")
         .live('click', function()
     {
+        if(active_request==true) { return false; }
         entry_hide_current();
     });
 

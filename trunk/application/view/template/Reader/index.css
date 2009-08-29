@@ -10,6 +10,7 @@
 
 #artlst
 {
+    margin-right: 0;
     height: 400px;
     text-align: left;
     white-space: nowrap;
@@ -129,13 +130,14 @@ div.artbody
 
 #arttop
 {
+    margin-right: 0;
     height: 40px;
     line-height: 40px;
     text-align: left;
     padding-left: 10px;
     background-color: #48898c;
-    -moz-border-radius-topright: 5px;
-    -webkit-border-top-right-radius: 5px;
+    /* -moz-border-radius-topright: 5px;
+    -webkit-border-top-right-radius: 5px; */
 }
 #navbar
 {
@@ -149,17 +151,21 @@ button.navbtn
 }
 #articleprev
 {
+    /*
     -moz-border-radius-topright: 0;
     -webkit-border-top-right-radius: 0;
     -moz-border-radius-bottomright: 0;
     -webkit-border-bottom-right-radius: 0;
+    */
 }
 #articlenext
 {
+    /*
     -moz-border-radius-topleft: 0;
     -webkit-border-top-left-radius: 0;
     -moz-border-radius-bottomleft: 0;
     -webkit-border-bottom-left-radius: 0;
+    */
 }
 #navclr
 {
