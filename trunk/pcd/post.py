@@ -57,7 +57,7 @@ def postScheduleAll(client, token):
         l.log("webservice call failed; (%s)" % (sys.exc_info()[0].__name__), funcName())
         return None
 
-def processPost(url, token, requestQueue, name):
+def processPost(url, token, requestQueue, name, module):
     name = "-" + name
     
     try:
@@ -90,15 +90,24 @@ def processPost(url, token, requestQueue, name):
             l.log("Invalid post dictionary (%s)" %
                   (sys.exc_info()[0].__name__), funcName() + name)
 
-        t = init_type(blog_type, blog_version)
-
-        if t == None:
-            l.log("Unknown blog type", funcName() + name)
+        dynClass = m.myClassByName(blog_type, manager_url, blog_username, blog_password)
+        if dynClass == None:
+            l.log("Blog not supported", funcName() + name)
             return None
 
-        t.set_manager_url(manager_url)
-        t.username = blog_username
-        t.password = blog_password
+        if dynClass.authenticate == False:
+            l.log("Uname to authenticate", funcName() + name)
+            return None
+            
+        #t = init_type(blog_type, blog_version)
+
+        #if t == None:
+        #    l.log("Unknown blog type", funcName() + name)
+        #    return None
+
+        #t.set_manager_url(manager_url)
+        #t.username = blog_username
+        #t.password = blog_password
 
         l.log("Preparing to publish %s" % (id), funcName() + name)
 
@@ -106,10 +115,18 @@ def processPost(url, token, requestQueue, name):
         message = ""
         
         try:
-            post_id = t.publish({ 'title'  : entry_title,
-                                  'content': entry_content })
+            dynClass.setTitle(entry_title)
+            dynClass.setContent(entry_content)
+            if dynClass.postEntry() == False:
+                l.log("Failed to publish (%s) - (%s)" % (id, message), funcName() + name)
+                return None
+            
             l.log("Entry %s '%s' published as %s" % (id, entry_title, str(post_id)), funcName() + name)
-            published = True
+            
+            #post_id = t.publish({ 'title'  : entry_title,
+            #                      'content': entry_content })
+            #l.log("Entry %s '%s' published as %s" % (id, entry_title, str(post_id)), funcName() + name)
+            #published = True
         except xmlrpclib.Fault, message:
             l.log("Failed to publish (%s) - (%s)" % (id, message), funcName() + name)
         except:
@@ -126,12 +143,13 @@ def processPost(url, token, requestQueue, name):
                 return None
 
 class PostThread(threading.Thread):
-    def __init__(self, url, token, requestQueue, id):
+    def __init__(self, url, token, requestQueue, id, module):
         threading.Thread.__init__(self, name="post%02d" % (id,))
         self.requestQueue = requestQueue
         self.url          = url
         self.token        = token
         self.id           = id
+        self.module       = module
       
     def run(self):
-        processPost(self.url, self.token, self.requestQueue, self.name)
+        processPost(self.url, self.token, self.requestQueue, self.name, self.module)

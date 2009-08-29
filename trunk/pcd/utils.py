@@ -73,10 +73,15 @@ def newThreads(queueSize, threadCount, threadRatio, maxThreads, minThreads):
 
     return maxCurrSize - threadCount
 
-def processThreads(newThreads, Class, url, token, queue, currentThreadId):
+def processThreads(newThreads, Class, url, token, queue, currentThreadId, module=None):
     if newThreads > 0:
         for i in range(newThreads):
-            Class(url, token, queue, currentThreadId).start()
+            if module == None:
+                # feed class
+                Class(url, token, queue, currentThreadId).start()
+            else:
+                # post class
+                Class(url, token, queue, currentThreadId, module).start()
             currentThreadId += 1
     elif newThreads < 0:
         for i in range(newThreads * -1):

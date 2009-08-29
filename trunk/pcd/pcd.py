@@ -117,7 +117,7 @@ if __name__ == "__main__":
         l.debug("##########################################")
 
         currentThreadId = processThreads(newFeedThreads, FeedThread, r.frontendWS, r.token, feedQueue, currentThreadId)
-        currentThreadId = processThreads(newPostThreads, PostThread, r.frontendWS, r.token, postQueue, currentThreadId)
+        currentThreadId = processThreads(newPostThreads, PostThread, r.frontendWS, r.token, postQueue, currentThreadId, m)
         
         time.sleep(1)
         
