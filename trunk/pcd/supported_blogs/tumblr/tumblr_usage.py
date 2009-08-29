@@ -1,4 +1,19 @@
-#coding=utf-8
+# tumblr_usage.py --- tumblr module usage
+# -*- coding: utf-8 -*-
+
+# Copyright  (C)  2009  Marcelo Toledo <marcelo.toledo@postcanal.com>
+
+# Version: 1.0
+# Keywords: 
+# Author: Marcelo Toledo <marcelo.toledo@postcanal.com>
+# Maintainer: Marcelo Toledo <marcelo.toledo@postcanal.com>
+# URL: http://
+
+# Commentary: 
+
+
+
+# Code:
 
 '''Demo program which uses the live-journal module.'''
 

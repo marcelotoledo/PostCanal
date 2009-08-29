@@ -1,37 +1,39 @@
-#!/usr/bin/python
-# -*- coding: UTF-8 -*- 
-# 
+# blogger.py --- Module for blogger API
+# -*- coding: utf-8 -*- 
+
+# Copyright  (C)  2009  Postcanal Inc. <http://www.postcanal.com>
+
+# Version: 1.0
+# Keywords: 
 # Author: Richard Penman
-# Date: 22/08/09
-# 
+# Maintainer: Marcelo Toledo <marcelo.toledo@postcanal.com>
+# URL: http://
+
+# Commentary: 
+
+
+
+# Code:
 
 import sys
-
 import gdata.blogger.client
 import gdata.client
+import urlparse
 
-from blog import Blog, BlogError
-
-
-
-class Blogger(Blog):
+class Blogger():
     """API to http://www.blogger.com
     """
+    
     def __init__(self, admin_url, username, password):
-        Blog.__init__(self, admin_url, username, password)
-        self.api = gdata.blogger.client.BloggerClient()
-
-    #___________________________________________________________________________
+        self.clear()
+        self._username      = username
+        self._password      = password
+        self._admin_url     = admin_url
+        self._authenticated = False        
+        self.api            = gdata.blogger.client.BloggerClient()
 
     def isItMe(self):
         return 'blogger.com' in self.domain(self._admin_url) or 'blogspot.com' in self.domain(self._admin_url)
-
-    #___________________________________________________________________________
-
-    def __str__(self):
-        return 'Blogger'
-
-    #___________________________________________________________________________
 
     def authenticate(self):
         try:
@@ -40,60 +42,60 @@ class Blogger(Blog):
             self._authenticated = False
         else:
             self._authenticated = True
-            self._blog_id = None
+            self._blog_id       = None
+            
             # find blog
             for entry in self.api.get_blogs().entry:
                 blog_url = self.domain(entry.get_html_link().href)
+                
                 if blog_url == self.domain(self._admin_url):
                     self._blog_id = entry.get_blog_id()
                     break
             if not self._blog_id:
-                raise BlogError('Error: blog with given admin URL not found')
+                #raise BlogError('Error: blog with given admin URL not found')
+                self._authenticated = False
+
         return self._authenticated
     
-    #___________________________________________________________________________
-
     def setTitle(self, title):
         self._title = title
-
-    #___________________________________________________________________________
 
     def setContent(self, content):
         self._content = content
 
-    #___________________________________________________________________________
+    def getTags(self):
+        pass
 
     def setTags(self, tags):
         self._tags = tags
 
-    #___________________________________________________________________________
+    def getCategories(self):
+        pass
+
+    def setCategories(self, categories):
+        pass
+
+    def setAttachment(self, filepath):
+        pass
+
+    def clear(self):
+        """Clear everything
+        """
+        self._title      = ''
+        self._content    = ''
+        self._filepath   = ''
+        self._tags       = []
+        self._categories = []    
 
     def postEntry(self):
         if self._authenticated:
             self.api.add_post(self._blog_id, self._title, self._content, labels=self._tags)
+            return True
         else:
-            print 'Need to authenticate'
+            #print 'Need to authenticate'
+            return False
 
-
-
-if __name__ == '__main__':
-    try:
-        admin_url = sys.argv[1]
-        email = sys.argv[2]
-        password = sys.argv[3]
-    except IndexError:
-        print 'Usage: python %s <url> <blogger.com email> <password>' % sys.argv[0]
-    else:
-        api = Blogger(admin_url, email, password)
-        if api.authenticate():
-            api.setTitle('basic test')
-            api.setContent('my test post')
-            api.setTags(['test', 'basic'])
-            api.postEntry()
-
-            api.clear()
-            api.setTitle('unicode test')
-            api.setContent('汉语/漢語')
-            api.postEntry()
-        else:
-            print 'Authentication failed'
+    def domain(self, url):
+        """Return domain of passed URL
+        """
+        return urlparse.urlsplit(url).netloc        

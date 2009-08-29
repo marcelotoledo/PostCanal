@@ -1,9 +1,19 @@
-#!/usr/bin/python
-# -*- coding: UTF-8 -*- 
-# 
+# wordpress.py --- wordpress module
+# -*- coding: utf-8 -*- 
+
+# Copyright  (C)  2009  Postcanal Inc. <http://www.postcanal.com>
+
+# Version: 1.0
+# Keywords: 
 # Author: Richard Penman
-# Date: 22/08/09
-# 
+# Maintainer: Marcelo Toledo <marcelo.toledo@postcanal.com>
+# URL: http://
+
+# Commentary: 
+
+
+
+# Code:
 
 import sys
 import urlparse
@@ -11,17 +21,15 @@ import urllib
 
 import pyblog
 
-from blog import Blog
-
-
-
-class Wordpress(Blog):
+class Wordpress():
     """API for Wordpress instance
     """
     def __init__(self, admin_url, username, password):
-        Blog.__init__(self, admin_url, username, password)
-
-    #___________________________________________________________________________
+        self.clear()
+        self._username      = username
+        self._password      = password
+        self._admin_url     = admin_url
+        self._authenticated = False        
 
     def isItMe(self):
         try:
@@ -29,13 +37,6 @@ class Wordpress(Blog):
             return urllib.urlopen(urlparse.urljoin(self._admin_url, 'xmlrpc.php')).read() == 'XML-RPC server accepts POST requests only.'
         except:
             return False
-
-    #___________________________________________________________________________
-
-    def __str__(self):
-        return 'Wordpress'
-
-    #___________________________________________________________________________
 
     def authenticate(self):
         try:
@@ -47,74 +48,53 @@ class Wordpress(Blog):
             self._authenticated = True
         return self._authenticated
     
-    #___________________________________________________________________________
-
     def setTitle(self, title):
         self._title = title
-
-    #___________________________________________________________________________
 
     def setContent(self, content):
         self._content = content
 
-    #___________________________________________________________________________
-    
     def getTags(self):
         return [tag['name'] for tag in self.api.get_tags()]
 
-    #___________________________________________________________________________
-    
     def getCategories(self):
         return [category['categoryName'] for category in self.api.get_categories()]
     
-    #___________________________________________________________________________
-
     def setCategories(self, categories):
         self._categories = categories
-    #___________________________________________________________________________
 
     def setAttachment(self, filepath):
         return self.api.upload_file({'name': filepath})['url']
-    #___________________________________________________________________________
 
     def postEntry(self):
         if self._authenticated:
             for category in self._categories:
                 # need to define categories separately
                 self.api.new_category({'name': category})
+                
             data = {
-                'title': self._title, 
-                'description': self._content,
-                'categories': self._categories,
-                'tags': self._tags,
+                'title'       : self._title, 
+                'description' : self._content,
+                'categories'  : self._categories,
+                'tags'        : self._tags,
             }
+            
             self.api.new_post(data)
+            return True
         else:
-            print 'Need to authenticate'
+            #print 'Need to authenticate'
+            return False
 
+    def clear(self):
+        """Clear everything
+        """
+        self._title      = ''
+        self._content    = ''
+        self._filepath   = ''
+        self._tags       = []
+        self._categories = []    
 
-
-if __name__ == '__main__':
-    try:
-        admin_url = sys.argv[1]
-        username = sys.argv[2]
-        password = sys.argv[3]
-    except IndexError:
-        print 'Usage: python %s <wordpress url> <login email> <password>' % sys.argv[0]
-    else:
-        api = Wordpress(admin_url, username, password)
-        if api.authenticate():            
-            api.setTitle('basic test')
-            api.setContent('automatic post')
-            api.setCategories(['cat1', 'cat2', 'test'])
-            api.postEntry()
-            
-            api.clear()
-            api.setTitle('unicode test')
-            api.setContent('汉语/漢語')
-            api.postEntry()
-            
-            #print api.setAttachment('/home/rbp/test.png')
-            #print api.getTags()
-        else:
-            print 'Authentication failed'
+    def domain(self, url):
+        """Return domain of passed URL
+        """
+        return urlparse.urlsplit(url).netloc        
