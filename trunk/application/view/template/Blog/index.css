@@ -87,3 +87,43 @@ input.intxt-full
 {
     display: none;
 }
+
+#blogdeleteblank
+{
+    display: none;
+}
+div.blogdeletemsg
+{
+}
+span.deletemsgbig
+{
+    font-size: 1.6em;
+    font-weight: bold;
+    line-height: 50px;
+}
+span.deletemsgmed
+{
+    font-size: 1.2em;
+}
+span.deletemsgtny
+{
+    font-size: 0.8em;
+}
+span.deletemsgask
+{
+    font-weight: bold;
+    line-height: 50px;
+}
+button.blogdeletey
+{
+    /*background-color: lightgreen;*/
+}
+button.blogdeleten
+{
+    /*background-color: tomato;*/
+}
+#blogtypefailedmsg
+{
+    font-size: 14pt;
+    line-height: 40px;
+}

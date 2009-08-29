@@ -22,7 +22,7 @@
 <div class="blog">
     <div class="blogtop">
         <div class="blogtit"></div>
-        <div class="blogurl"><span>http://blog.marcelotoledo.org</span></div>
+        <div class="blogurl"><span></span></div>
         <button class="blogeditbtn">EDIT</button>
         <button class="blogdeletebtn">DELETE</button>
     </div>
@@ -49,4 +49,19 @@
     </form>
     </div>
 </div>
+</div>
+
+<div id="blogdeleteblank" style="display:none">
+    <div class="blogdeletemsg">
+        <span class="deletemsgbig">Deleting</span><br/>
+        <span class="deletemsgmed">proceding will delete</span><br/>
+        <span class="deletemsgtny">no content from your blog</span><br/>
+        <span class="deletemsgask">Are you sure?</span><br/>
+        <form>
+        <div class="inputcontainer">
+            <button type="button" class="blogdeletey" name="blogdeletebtn">Yes delete</button>
+            <button type="button" class="blogdeleten" name="blognodelbtn">Don't delete</button>
+        </div>
+        </form>
+    </div>
 </div>

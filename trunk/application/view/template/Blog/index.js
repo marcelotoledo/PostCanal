@@ -141,14 +141,20 @@ function blog_remove_from_list(b)
 
 function blog_delete_confirm_show(b)
 {
-    blog_edit_hide(b);
+    //blog_edit_hide(b);
     my_template.blog_list_ref[b].item.find('button.blogeditbtn').hide();
-    my_template.blog_list_ref[b].item.after(my_template.blog_delete_blank.clone().html());
+    var _form = my_template.blog_list_ref[b].item.find('div.blogbot > form');
+    _form.hide();
+    _form.after(my_template.blog_delete_blank.clone().html());
 }
 
 function blog_delete_confirm_hide(b)
 {
-    my_template.blog_list_ref[b].item.next('div.blogdeletemsg').remove();
+    var _form = my_template.blog_list_ref[b].item.find('div.blogbot > form');
+    _form.next('div.blogdeletemsg').remove();
+    blog_edit_hide(b);
+    _form.show();
+    // my_template.blog_list_ref[b].item.find('div.blogdeletemsg').remove();
     my_template.blog_list_ref[b].item.find('button.blogeditbtn').show();
 }
 
@@ -228,7 +234,7 @@ $(document).ready(function()
 
     function blog_item_getid(i)
     {
-        return i.parent().parent().attr('blog')
+        return i.parent().parent().attr('blog');
     }
 
     my_template.blog_list_area.find('button.blogeditbtn').live('click', function()
@@ -271,16 +277,17 @@ $(document).ready(function()
 
     function blog_delete_getid(i)
     {
-        return i.parent().parent().parent().prev('div.blogitem').attr('blog');
+        return i.parent().parent().parent().parent().parent().attr('blog');
+        //return i.parent().parent().parent().prev('div.blogitem').attr('blog');
     }
 
-    my_template.blog_list_area.find("input[name='blogdeletebtn']").live('click', function()
+    my_template.blog_list_area.find("button[name='blogdeletebtn']").live('click', function()
     {
         blog_delete(blog_delete_getid($(this)));
         return false;
     });
 
-    my_template.blog_list_area.find("input[name='blognodelbtn']").live('click', function()
+    my_template.blog_list_area.find("button[name='blognodelbtn']").live('click', function()
     {
         blog_delete_confirm_hide(blog_delete_getid($(this)));
         return false;
