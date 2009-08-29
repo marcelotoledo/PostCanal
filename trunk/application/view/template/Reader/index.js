@@ -26,8 +26,8 @@ function set_article_display()
         my_template.article_list_lnk.hide();
         my_template.article_list_lab.show();
         article_hide_all();
-        my_template.article_prev.attr('disabled', false);
-        my_template.article_next.attr('disabled', false);
+        //my_template.article_prev.attr('disabled', false);
+        //my_template.article_next.attr('disabled', false);
     }
     if(my_article.display=='expanded')
     {
@@ -36,8 +36,8 @@ function set_article_display()
         my_template.article_list_lab.hide();
         my_template.article_list_lnk.show();
         article_show_all();
-        my_template.article_prev.attr('disabled', true);
-        my_template.article_next.attr('disabled', true);
+        //my_template.article_prev.attr('disabled', true);
+        //my_template.article_next.attr('disabled', true);
     }
 }
 
@@ -258,14 +258,16 @@ function article_show(a)
 {
     if(my_article.data[a])
     {
-        var _content = my_template.content_blank.clone();
+        my_article.current = my_template.article_list
+            .find("div.art[article='" + a + "']");
 
-        // _content.find('div.contentauthor').html(my_article.data[a].author);
-        _content.find('h1').html(my_article.data[a].title);
-        _content.find('div.artbody').html(my_article.data[a].content);
-
-        my_article.current = my_template.article_list.find("div.art[article='" + a + "']");
-        my_article.current.after(_content.html()).addClass('art-op');
+        if(my_article.current.hasClass('art-op')==false)
+        {
+            var _content = my_template.content_blank.clone();
+            _content.find('h1').html(my_article.data[a].title);
+            _content.find('div.artbody').html(my_article.data[a].content);
+            my_article.current.after(_content.html()).addClass('art-op');
+        }
     }
 }
 
@@ -275,7 +277,11 @@ function article_show_all()
 
     my_template.article_list.find('div.art').each(function()
     {
-        article_show($(this).attr('article'));
+        var _art = $(this).attr('article');
+        var _content = my_template.content_blank.clone();
+        _content.find('h1').html(my_article.data[_art].title);
+        _content.find('div.artbody').html(my_article.data[_art].content);
+        $(this).after(_content.html()).addClass('art-op');
     });
 }
 
@@ -290,7 +296,7 @@ function article_previous()
 
     if(_prev) 
     { 
-        article_hide_current(); 
+        if(my_article.display=='list') { article_hide_current(); }
         article_show(_prev); 
         article_scroll_top();
     }
@@ -311,7 +317,7 @@ function article_next()
 
     if(_next)
     {
-        article_hide_current();
+        if(my_article.display=='list') { article_hide_current(); }
         article_show(_next);
         article_scroll_top();
     }
