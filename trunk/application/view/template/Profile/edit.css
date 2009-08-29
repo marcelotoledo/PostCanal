@@ -5,6 +5,8 @@
 div.inputmessage
 {
     text-align: left;
+    font-size: 0.8em;
+    color: red;
 }
 #quotatable tr
 {
@@ -14,4 +16,33 @@ div.inputmessage
 {
     text-align: left;
     padding-right: 25px;
+}
+
+/* form */
+
+input.intxt-full
+{
+    width: 400px;
+}
+select.insel-full
+{
+    width: 400px;
+}
+
+/* tabs */
+
+div.tabitem
+{
+    background-color: #48898C;
+    color: white;
+}
+div.tabitem-selected
+{
+    background-color: #E1F0F4;
+    border-bottom: 1px solid #E1F0F4;
+    color: black;
+}
+div.tabcontainer
+{
+    background-color: #E1F0F4;
 }

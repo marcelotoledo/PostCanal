@@ -156,11 +156,15 @@ $(document).ready(function()
     mytpl.editsubmit.click(function()
     {
         if(active_request==false) { edit_message(''); edit_submit(); }
+        $(this).blur();
+        return false;
     });
 
     mytpl.pwdchangesubmit.click(function()
     {
         if(active_request==false) { pwdchange_message(''); pwdchange_submit(); }
+        $(this).blur();
+        return false;
     });
 
     mytpl.neweml.keypress(function(e) 
