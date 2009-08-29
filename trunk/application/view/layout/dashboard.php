@@ -12,6 +12,7 @@
 <script type="text/javascript" src="./jquery/jquery-ui-1.7.1.custom.min.js"></script>
 <?php if($this->request()->getController()=='queue' &&
          $this->request()->getAction()=='index') : ?>
+<script type="text/javascript" src="./jquery/jquery.simplemodal-1.3.min.js"></script>
 <script type="text/javascript" src="./fckeditor/fckeditor.js"></script>
 <?php endif ?>
 <script type="text/javascript" src="./js/application.js"></script>
@@ -42,8 +43,9 @@
                 <?php if($this->request()->getController()=='profile') : ?>
                 Edit Settings
                 <?php else : ?>
-                <a href="./profile/edit">Edit Settings</a><img class="fakespcimg">
+                <a href="./profile/edit">Edit Settings</a>
                 <?php endif ?>
+                <img class="fakespcimg">
                 <a href="./profile/logout">Sign Out</a>
             </div>
             <div id="menutopclr"></div>

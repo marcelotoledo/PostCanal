@@ -90,7 +90,7 @@ FCKConfig.SourcePopup	= false ;
 FCKConfig.ToolbarStartExpanded	= true ;
 FCKConfig.ToolbarCanCollapse	= false ;
 FCKConfig.IgnoreEmptyParagraphValue = true ;
-FCKConfig.FloatingPanelsZIndex = 10000 ;
+FCKConfig.FloatingPanelsZIndex = 10042 ;
 FCKConfig.HtmlEncodeOutput = false ;
 
 FCKConfig.TemplateReplaceAll = true ;

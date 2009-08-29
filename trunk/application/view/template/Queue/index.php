@@ -44,8 +44,17 @@
 </div>
 </div>
 
-<div id="editformblank">
-<div class="etyform">
-    edit form (TODO)
-</div>
+<div id="editform">
+<form>
+    <div class="form-row">
+        Title<br/><input type="text" name="entrytitle" value="" class="intxt intxt-full">
+    </div>
+    <div class="form-row">
+        Content<br/><textarea name="entrybody" class="intxa intxa-full" disabled></textarea>
+    </div>
+    <div class="form-bot" id="editform-bot">
+        <button type="button" name="editformsave">SAVE</button>
+        <button type="button" name="editformcancel">CANCEL</button>
+    </div>
+</form>
 </div>

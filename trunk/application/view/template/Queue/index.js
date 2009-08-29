@@ -1,6 +1,6 @@
-var mytpl = null;
+var my_template = null;
 
-var queue = 
+var my_queue = 
 {
     data        : Array() ,
     current     : null    ,
@@ -12,30 +12,28 @@ var queue =
     request     : false
 };
 
-var updater =
+var my_updater =
 {
     interval : 15000,
     request  : false
 }
-
-var magic_fck_position = { l: 150, t: 280, h: 750, v: 120 };
 
 
 function entry_set_status(e, s)
 {
     if(typeof e == 'string' && e.length > 0)
     {
-        e = mytpl.entry_list.find("div.ety[entry='" + e + "']");
+        e = my_template.entry_list.find("div.ety[entry='" + e + "']");
     }
 
     if(typeof e == 'object')
     {
         e.attr('status', s);
 
-        if(s=='waiting')
-        {
-            e.find('div.etytog').html('<input type="checkbox" checked disabled/>');
-        }
+        //if(s=='waiting')
+        //{
+        //    e.find('div.etytog').html('<input type="checkbox" checked disabled/>');
+        //}
         if(s=='failed')
         {
             e.find('div.etytog')
@@ -71,9 +69,9 @@ function entry_populate(d)
             ordering               : $(this).find('ordering').text()
         };
 
-        if(queue.data[_data.entry]==undefined) // avoid dupl
+        if(my_queue.data[_data.entry]==undefined) // avoid dupl
         {
-            _item  = mytpl.entry_blank.clone();
+            _item  = my_template.entry_blank.clone();
             _inner = _item.find('div.ety');
             _inner.attr('entry', _data.entry);
             _inner.attr('ord', _data.ordering);
@@ -86,14 +84,14 @@ function entry_populate(d)
             _lsdata[_i] = _item.html(); _i++;
         }
 
-        queue.data[_data.entry] =
+        my_queue.data[_data.entry] =
         {
             title   : _data.entry_title,
             content : _data.entry_content
         };
     });
 
-    var _pls = mytpl.entry_list.find("div.ety[status='published']").eq(0);
+    var _pls = my_template.entry_list.find("div.ety[status='published']").eq(0);
 
     if(_pls.length>0)
     {
@@ -101,18 +99,18 @@ function entry_populate(d)
     }
     else
     {
-        mytpl.entry_list.append(_lsdata.join("\n"));
+        my_template.entry_list.append(_lsdata.join("\n"));
     }
 
     entry_sortable_init();
-    mytpl.entry_list.scrollTop(0);
+    my_template.entry_list.scrollTop(0);
 }
 
 function entry_list_callback(d)
 {
-    queue.data = Array();
-    queue.current = null;
-    mytpl.entry_list.html('');
+    my_queue.data = Array();
+    my_queue.current = null;
+    my_template.entry_list.html('');
     entry_populate(d.find('result').find('queue').children());
     entry_populate(d.find('result').find('published').children());
 }
@@ -124,29 +122,29 @@ function entry_list()
 
 function entry_scroll_top()
 {
-    if(queue.current)
+    if(my_queue.current)
     {
-        mytpl.entry_list.animate(
+        my_template.entry_list.animate(
         {
-            scrollTop: queue.current.position().top -
-                mytpl.entry_list.position().top +
-                mytpl.entry_list.scrollTop() - 2
+            scrollTop: my_queue.current.position().top -
+                my_template.entry_list.position().top +
+                my_template.entry_list.scrollTop() - 2
         }, 200);
     }
 }
 
 function entry_show_fix_vertical()
 {
-    var _rmh = mytpl.queue_middle_area.h / 2;
-    var _rmt = mytpl.queue_middle_area.y;
-    var _apt = queue.current.position().top;
-    var _coh = queue.current.next('div.etyview').outerHeight();
+    var _rmh = my_template.queue_middle_area.h / 2;
+    var _rmt = my_template.queue_middle_area.y;
+    var _apt = my_queue.current.position().top;
+    var _coh = my_queue.current.next('div.etyview').outerHeight();
 
-    var _scr = mytpl.entry_list.scrollTop() + 
+    var _scr = my_template.entry_list.scrollTop() + 
                _apt -
                ((_coh > _rmh) ? _rmt : _rmh);
 
-    mytpl.entry_list.animate({ scrollTop: _scr }, 200);
+    my_template.entry_list.animate({ scrollTop: _scr }, 200);
 }
 
 function entry_hide(e)
@@ -158,69 +156,79 @@ function entry_hide(e)
 
 function entry_hide_current()
 {
-    if(queue.current) { entry_hide(queue.current); }
-    queue.current = null;
+    $.modal.close();
+    if(my_queue.current) { entry_hide(my_queue.current); }
+    my_queue.current = null;
 }
 
 function entry_show(e)
 {
-    if(queue.data[e])
+    if(my_queue.data[e])
     {
-        var _content = mytpl.content_blank.clone();
+        var _content = my_template.content_blank.clone();
 
-        _content.find('div.etyviewtitle').html(queue.data[e].title);
-        _content.find('div.etyviewbody').html(queue.data[e].content);
+        _content.find('div.etyviewtitle').html(my_queue.data[e].title);
+        _content.find('div.etyviewbody').html(my_queue.data[e].content);
 
-        queue.current = mytpl.entry_list.find("div.ety[entry='" + e + "']");
-        queue.current.after(_content.html()).addClass('ety-op');
+        my_queue.current = my_template.entry_list.find("div.ety[entry='" + e + "']");
+        my_queue.current.after(_content.html()).addClass('ety-op');
     }
 }
 
 function queue_editor_init()
 {
-    var _size = { w : $(window).width() - magic_fck_position.l ,
-                  h : $(window).height() - magic_fck_position.t };
+    var _sz = { W : $(window).width()  * 0.75 , 
+                H : $(window).height()   -280 };
 
-    if(_size.w < magic_fck_position.h) { _size.w = magic_fck_position.h; }
-    if(_size.h < magic_fck_position.v) { _size.h = magic_fck_position.v; }
-    
-    queue.editor = new FCKeditor("FCKQueueEntryEditor", _size.w, _size.h);
-    queue.editor.Config["CustomConfigurationsPath"] = "../../js/fckconfig.js?t=<?php echo time() ?>";
-    queue.editor.Config["EditorAreaCSS"] = "../../css/fck_editorarea.css?t=<?php echo time() ?>";
-    queue.editor.Config["AutoDetectLanguage"] = false;
-    queue.editor.Config["DefaultLanguage"] = "<?php echo substr($this->session()->getCulture(), 0, 2) ?>";
+    my_queue.editor = new FCKeditor("FCKQueueEntryEditor", _sz.W, _sz.H);
+    my_queue.editor.Config["CustomConfigurationsPath"] = "../../js/fckconfig.js?t=<?php echo time() ?>";
+    my_queue.editor.Config["EditorAreaCSS"] = "../../css/fck_editorarea.css?t=<?php echo time() ?>";
+    my_queue.editor.Config["AutoDetectLanguage"] = false;
+    my_queue.editor.Config["DefaultLanguage"] = "<?php echo substr($this->session()->getCulture(), 0, 2) ?>";
 }
 
 function FCKeditor_OnComplete(i)
 {
-    i.SetData(queue.data[queue.current.attr('entry')].content);
+    i.SetData(my_queue.data[my_queue.current.attr('entry')].content);
     set_active_request(false);
 }
 
 function entry_edit(e)
 {
-    if(queue.data[e])
+    if(my_queue.data[e])
     {
-        var _form = mytpl.edit_form_blank.clone();
+        my_queue.current = my_template.entry_list.find("div.ety[entry='" + e + "']");
+        my_queue.current.addClass('ety-op');
 
-        queue.current = mytpl.entry_list.find("div.ety[entry='" + e + "']");
-        queue.current.after(_form.html()).addClass('ety-op');
+        var _rect = { L : $(window).width()  * 0.1 , 
+                      T :                       50 ,
+                      W : $(window).width()  * 0.8 , 
+                      H : $(window).height()  -100 };
 
-        _form = queue.current.next('div.etyform');
-        _form.find("input[name='entrytitle']").val(queue.data[e].title).focus();
+        my_template.edit_form
+            .css('width',  _rect.W)
+            .css('height', _rect.H)
+            .modal({ position   : [ _rect.T, _rect.L ], 
+                     focus      : true, 
+                     opacity    : 75, 
+                     autoResize : true });
+
+        my_template.edit_form.find('div.form-bot').css('top', _rect.H - 55); // position hack
+        my_template.edit_form.find("input[name='entrytitle']").val(my_queue.data[e].title).focus();
         set_active_request(true);
-        _form.find("textarea[name='entrybody']").replaceWith(queue.editor.CreateHtml());
+        my_template.edit_form.find("textarea[name='entrybody']").replaceWith(my_queue.editor.CreateHtml());
     }
 }
 
 function entry_save_callback(d)
 {
     var _e = d.find('entry').text();
-    queue.data[_e].title = d.find('title').text();
-    queue.data[_e].content = d.find('content').text();
-    queue.current.find('span.etytt > a').text(queue.data[_e].title);
+    my_queue.data[_e].title = d.find('title').text();
+    my_queue.data[_e].content = d.find('content').text();
+    my_queue.current.find('span.etytt').text(my_queue.data[_e].title);
     entry_hide_current();
     flash_message("<?php echo $this->translation()->saved ?>");
+    $.modal.close();
 }
 
 function entry_save_current()
@@ -228,8 +236,8 @@ function entry_save_current()
     var _data = 
     { 
         blog    : my_blog.current , 
-        entry   : queue.current.attr('entry'),
-        title   : queue.current.next('div.etyform').find("input[name='entrytitle']").val(),
+        entry   : my_queue.current.attr('entry'),
+        title   : my_template.edit_form.find("input[name='entrytitle']").val(),
         content : FCKeditorAPI.GetInstance("FCKQueueEntryEditor").GetData()
     };
 
@@ -238,7 +246,7 @@ function entry_save_current()
 
 function entry_delete_callback(d)
 {
-    mytpl.entry_list.find("div.ety[entry='" + d.find('entry').text() + "']").remove();
+    my_template.entry_list.find("div.ety[entry='" + d.find('entry').text() + "']").remove();
 }
 
 function entry_delete(e)
@@ -264,7 +272,7 @@ function entry_sortable_callback(e)
 {
     var _p = 1;
 
-    mytpl.entry_list.find('div.ety').each(function()
+    my_template.entry_list.find('div.ety').each(function()
     {
         if(e==$(this).attr('entry') && _p != $(this).attr('ord'))
         {
@@ -277,7 +285,7 @@ function entry_sortable_callback(e)
 
 function entry_sortable_init()
 {
-    mytpl.entry_list.sortable(
+    my_template.entry_list.sortable(
     {
         handle : "div.entrydndhdr",
         items : "div.ety[status!='published']",
@@ -286,82 +294,82 @@ function entry_sortable_init()
         start: function(e,u)
         {
             entry_hide_current();
-            queue.sorting = true;
+            my_queue.sorting = true;
         },
         update: function (e,u)
         {
             entry_sortable_callback(u.item.attr('entry'));
         }
     });
-    mytpl.entry_list.disableSelection();
+    my_template.entry_list.disableSelection();
 }
 
 function toggle_queue_publication()
 {
-    queue.publication = queue.publication ^ true;
-    blog_update('publication_auto', (queue.publication ? 1 : 0));
+    my_queue.publication = my_queue.publication ^ true;
+    blog_update('publication_auto', (my_queue.publication ? 1 : 0));
 }
 
 function set_queue_publication()
 {
-    if(queue.publication==null)
+    if(my_queue.publication==null)
     {
-        queue.publication = (my_blog.info['publication_auto']==1);
+        my_queue.publication = (my_blog.info['publication_auto']==1);
     }
 
-    if(queue.publication)
+    if(my_queue.publication)
     {
-        mytpl.queue_pub_play.hide();
-        mytpl.queue_pub_pause.show();
+        my_template.queue_pub_play.hide();
+        my_template.queue_pub_pause.show();
     }
     else
     {
-        mytpl.queue_pub_pause.hide();
-        mytpl.queue_pub_play.show();
+        my_template.queue_pub_pause.hide();
+        my_template.queue_pub_play.show();
     }
 }
 
 function set_queue_publication_auto()
 {
     var _data = { blog        : my_blog.current   ,
-                  interval    : queue.interval ,
-                  publication : (queue.publication ? 1 : 0) };
+                  interval    : my_queue.interval ,
+                  publication : (my_queue.publication ? 1 : 0) };
 
     do_request('POST', './queue/auto', _data, function() { entry_list(); });
 }
 
 function toggle_queue_enqueueing()
 {
-    queue.enqueueing = queue.enqueueing ^ true;
-    blog_update('enqueueing_auto', (queue.enqueueing ? 1 : 0));
+    my_queue.enqueueing = my_queue.enqueueing ^ true;
+    blog_update('enqueueing_auto', (my_queue.enqueueing ? 1 : 0));
 }
 
 function set_queue_enqueueing()
 {
-    if(queue.enqueueing==null)
+    if(my_queue.enqueueing==null)
     {
-        queue.enqueueing = (my_blog.info['enqueueing_auto']==1);
+        my_queue.enqueueing = (my_blog.info['enqueueing_auto']==1);
     }
 
-    if(queue.enqueueing)
+    if(my_queue.enqueueing)
     {
-        mytpl.enqueue_no.hide();
-        mytpl.enqueue_yes.show();
+        my_template.enqueue_no.hide();
+        my_template.enqueue_yes.show();
     }
     else
     {
-        mytpl.enqueue_yes.hide();
-        mytpl.enqueue_no.show();
+        my_template.enqueue_yes.hide();
+        my_template.enqueue_no.show();
     }
 }
 
 function set_queue_interval()
 {
-    queue.interval = parseInt(my_blog.info['publication_interval']);
+    my_queue.interval = parseInt(my_blog.info['publication_interval']);
 
-    mytpl.queue_interval_sel.find('option').each(function()
+    my_template.queue_interval_sel.find('option').each(function()
     {
-        if($(this).val()==queue.interval)
+        if($(this).val()==my_queue.interval)
         {
             $(this).attr('selected', true);
         }
@@ -379,9 +387,9 @@ function publication_updater_callback(d)
 
 function publication_updater()
 {
-    if(updater.request==true) { return false; }
+    if(my_updater.request==true) { return false; }
 
-    var _wdom = mytpl.entry_list.find("div.ety[status='waiting']");
+    var _wdom = my_template.entry_list.find("div.ety[status='waiting']");
     var _wpar = Array();
     var _data = null;
 
@@ -400,14 +408,14 @@ function enqueue_updater_callback(d)
 
 function enqueue_updater()
 {
-    if(queue.enqueueing!=true || updater.request==true) { return false; }
+    if(my_queue.enqueueing!=true || my_updater.request==true) { return false; }
     _data = { blog : my_blog.current };
     do_request('GET', './queue/list', _data, enqueue_updater_callback);
 }
 
 function updater_run()
 {
-    var _i = updater.interval / 3;
+    var _i = my_updater.interval / 3;
     setTimeout('publication_updater()', _i * 1);
     setTimeout('enqueue_updater()', _i * 2);
     updater_init();
@@ -415,20 +423,20 @@ function updater_run()
 
 function updater_init()
 {
-    setTimeout('updater_run()', updater.interval);
+    setTimeout('updater_run()', my_updater.interval);
 }
 
 function initialize()
 {
-    queue.data        = Array();
-    queue.current     = null;
-    queue.sorting     = false;
-    queue.publication = null;
-    queue.interval    = 0;
-    queue.enqueueing  = null;
+    my_queue.data        = Array();
+    my_queue.current     = null;
+    my_queue.sorting     = false;
+    my_queue.publication = null;
+    my_queue.interval    = 0;
+    my_queue.enqueueing  = null;
 
     set_queue_publication();
-    set_queue_enqueueing();
+    // set_queue_enqueueing();
     set_queue_interval();
 
     entry_list();
@@ -447,7 +455,7 @@ function on_blog_load()
 
 $(document).ready(function()
 {
-    mytpl =
+    my_template =
     {
         main_container     : $("#mainct"),
         // queue_container    : $("#queuecontainer"),
@@ -456,7 +464,7 @@ $(document).ready(function()
         entry_list         : $("#etylst"),
         entry_blank        : $("#entryblank"),
         content_blank      : $("#contentblank"),
-        edit_form_blank    : $("#editformblank"),
+        edit_form          : $("#editform"),
         queue_middle_area  : { x : 0 , y : 0 , w : 0 , h : 0 },
         queue_middle_hover : false,
         queue_pub_play     : $("#queuepubplay"),
@@ -469,17 +477,17 @@ $(document).ready(function()
     function window_update()
     {
         var _w = { height : $(window).height() - 
-                            mytpl.main_container.position().top,
+                            my_template.main_container.position().top,
                    width  : $(window).width() };
 
-        // mytpl.queue_container.width(_w.width);
-        // mytpl.queue_container.height(_w.height);
-        mytpl.queue_middle.height(_w.height - mytpl.queue_middle.position().top - 3);
+        // my_template.queue_container.width(_w.width);
+        // my_template.queue_container.height(_w.height);
+        my_template.queue_middle.height(_w.height - my_template.queue_middle.position().top);
 
-        mytpl.queue_middle_area.x = mytpl.queue_middle.offset().left;
-        mytpl.queue_middle_area.y = mytpl.queue_middle.offset().top;
-        mytpl.queue_middle_area.w = mytpl.queue_middle.width();
-        mytpl.queue_middle_area.h = mytpl.queue_middle.height();
+        my_template.queue_middle_area.x = my_template.queue_middle.offset().left;
+        my_template.queue_middle_area.y = my_template.queue_middle.offset().top;
+        my_template.queue_middle_area.w = my_template.queue_middle.width();
+        my_template.queue_middle_area.h = my_template.queue_middle.height();
     }
 
     /* events */
@@ -491,12 +499,12 @@ $(document).ready(function()
 
     function on_mouse_wheel(e)
     {
-        if(mytpl.queue_middle_hover==true && $.browser.msie) // Emulate wheel scroll on IE
+        if(my_template.queue_middle_hover==true && $.browser.msie) // Emulate wheel scroll on IE
         {
             var j = null;
             e = e ? e : window.event;
             j = e.detail ? e.detail * -1 : e.wheelDelta / 2;
-            mytpl.queue_middle.scrollTop(mytpl.queue_middle.scrollTop() - j);
+            my_template.queue_middle.scrollTop(my_template.queue_middle.scrollTop() - j);
             return false;
         }
     }
@@ -527,7 +535,7 @@ $(document).ready(function()
         _mp.x = (e.pageX) ? e.pageX : e.clientX + document.body.scrollLeft;
         _mp.y = (e.pageY) ? e.pageY : e.clientY + document.body.scrollTop;
 
-        mytpl.queue_middle_hover = mouse_is_over_area(_mp.x, _mp.y, mytpl.queue_middle_area);
+        my_template.queue_middle_hover = mouse_is_over_area(_mp.x, _mp.y, my_template.queue_middle_area);
     }
 
     $(window).bind('mousemove', function(e) /* Mozilla */
@@ -539,13 +547,13 @@ $(document).ready(function()
 
     /* controls */
 
-    mytpl.entry_list.find('div.ety')
+    my_template.entry_list.find('div.ety')
         .find('div.etylab')
         .find('a').live('click', function()
     {
         if(active_request==true) { return false; }
 
-        var _pt = $(this).parent().parent().parent();
+        var _pt = $(this).parent().parent();
         var _st = _pt.attr('status')
 
         if(_pt.hasClass('ety-op'))
@@ -572,29 +580,29 @@ $(document).ready(function()
         return false;
     });
 
-    mytpl.entry_list.find('div.etyform')
-        .find("input[name='editformsave']")
+    my_template.edit_form
+        .find("button[name='editformsave']")
         .live('click', function()
     {
         entry_save_current();
     });
 
-    mytpl.entry_list.find('div.etyform')
-        .find("input[name='editformcancel']")
+    my_template.edit_form
+        .find("button[name='editformcancel']")
         .live('click', function()
     {
         entry_hide_current();
     });
 
-    mytpl.entry_list.find('div.ety')
+    my_template.entry_list.find('div.ety')
         .find('div.etytog')
         .live('click', function()
     {
-        entry_delete($(this).parent().parent().attr('entry'));
+        entry_delete($(this).parent().attr('entry'));
         return false;
     });
 
-    mytpl.queue_header
+    my_template.queue_header
         .find('button.queuepubbtn')
         .live('click', function()
     {
@@ -607,7 +615,7 @@ $(document).ready(function()
         set_queue_publication_auto();
     });
 
-    mytpl.queue_header
+    my_template.queue_header
         .find('div.enqueuelnk')
         .find('a')
         .live('click', function()
@@ -621,9 +629,9 @@ $(document).ready(function()
         set_queue_enqueueing();
     });
 
-    mytpl.queue_interval_sel.change(function()
+    my_template.queue_interval_sel.change(function()
     {
-        if((queue.interval = $(this).find('option:selected').val()))
+        if((my_queue.interval = $(this).find('option:selected').val()))
         {
             $(this).blur();
             set_queue_publication_auto();
