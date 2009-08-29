@@ -13,10 +13,14 @@
 # Code:
 # client/server class for web services methods
 
-
+from postcanal import PostCanalConfig
+import blog
+import aggregator
+        
 class WebService:
 
     def __init__(self, config_path=None):
+        self.token = PostCanalConfig(config_path).get('webservice/token')
         #from postcanal import PostCanalConfig
         #self.token = PostCanalConfig(config_path).get('webservice/token')
         from conf import runtimeConfig
@@ -32,35 +36,30 @@ class WebService:
 
     def blog_discover(self, args):
         if not self.validate_args(args, ['url']): return None
-        import blog
         return blog.type_dump(blog.guess_type(args['url']))
 
     # blog url manager check
 
     def blog_manager_url_check(self, args):
         if not self.validate_args(args, ['url', 'type', 'version']): return None
-        import blog
         return blog.type_dump(blog.manager_url_check(args['url'], args['type'], args['version']))
 
     # blog publication check
 
     def blog_login_check(self, args):
         if not self.validate_args(args, ['url', 'type', 'version', 'username', 'password']): return None
-        import blog
         return blog.type_dump(blog.login_check(args['url'], args['type'], args['version'], args['username'], args['password']))
 
     # blog publication check
 
     def blog_publication_check(self, args):
         if not self.validate_args(args, ['url', 'type', 'version', 'username', 'password']): return None
-        import blog
         return blog.type_dump(blog.publication_check(args['url'], args['type'], args['version'], args['username'], args['password']))
 
     # feed discover
 
     def feed_discover(self, args):
         if not self.validate_args(args, ['url']): return None
-        import aggregator
         feeds = []
         for f in aggregator.guess_feeds(args['url']):
             feeds.append(aggregator.feed_dump(f))
