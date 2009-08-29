@@ -143,6 +143,7 @@ function blog_delete_confirm_show(b)
 {
     //blog_edit_hide(b);
     my_template.blog_list_ref[b].item.find('button.blogeditbtn').hide();
+    my_template.blog_list_ref[b].item.find('button.blogdeletebtn').hide();
     var _form = my_template.blog_list_ref[b].item.find('div.blogbot > form');
     _form.hide();
     _form.after(my_template.blog_delete_blank.clone().html());
@@ -278,7 +279,6 @@ $(document).ready(function()
     function blog_delete_getid(i)
     {
         return i.parent().parent().parent().parent().parent().attr('blog');
-        //return i.parent().parent().parent().prev('div.blogitem').attr('blog');
     }
 
     my_template.blog_list_area.find("button[name='blogdeletebtn']").live('click', function()

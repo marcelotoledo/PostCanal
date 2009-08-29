@@ -1,31 +1,31 @@
-var mytpl = null;
+var my_template = null;
 
 function feed_add_show()
 {
-    mytpl.feed_type_failed.hide();
-    mytpl.new_feed_form.show();
-    mytpl.new_feed_url.val('');
-    mytpl.new_feed_url.focus();
+    my_template.feed_type_failed.hide();
+    my_template.new_feed_form.show();
+    my_template.new_feed_url.val('');
+    my_template.new_feed_url.focus();
 }
 
 function feed_add_hide()
 {
-    mytpl.new_feed_form.hide();
-    mytpl.feed_type_failed.hide();
-    mytpl.feed_options_form.hide();
+    my_template.new_feed_form.hide();
+    my_template.feed_type_failed.hide();
+    my_template.feed_options_form.hide();
 }
 
 function feed_add_toggle()
 {
-    (mytpl.new_feed_form.css('display')=='block') ?
+    (my_template.new_feed_form.css('display')=='block') ?
         feed_add_hide() :
         feed_add_show() ;
 }
 
 function add_message(m)
 {
-    mytpl.new_feed_message.text(m);
-    (m=='') ? mytpl.new_feed_message.hide() : mytpl.new_feed_message.show();
+    my_template.new_feed_message.text(m);
+    (m=='') ? my_template.new_feed_message.hide() : my_template.new_feed_message.show();
 }
 
 function feed_populate(b, app)
@@ -41,30 +41,28 @@ function feed_populate(b, app)
         enabled : b.find('enabled').text()
     };
 
-    if(mytpl.feed_list_ref[_feed.feed]!=undefined) // avoid dupl
+    if(my_template.feed_list_ref[_feed.feed]!=undefined) // avoid dupl
     {
         return false;
     }
 
-    var _item = mytpl.feed_item_blank.clone();
+    var _item = my_template.feed_item_blank.clone();
 
-    _item.find('div.feeditem')
+    _item.find('div.feed')
         .attr('feed', _feed.feed)
         .attr('ord', _feed.ord);
-    _item.find('div.feeditemeditform').attr('feed', _feed.feed);
 
-    (app==true) ? mytpl.feed_list_area.append(_item.html()) : 
-                  mytpl.feed_list_area.prepend(_item.html()) ; 
+    (app==true) ? my_template.feed_list_area.append(_item.html()) : 
+                  my_template.feed_list_area.prepend(_item.html()) ; 
 
-    mytpl.feed_list_ref[_feed.feed] = 
+    my_template.feed_list_ref[_feed.feed] = 
     {
-        item : mytpl.feed_list_area.find("div.feeditem[feed='" + _feed.feed + "']"),
-        form : mytpl.feed_list_area.find("div.feeditemeditform[feed='" + _feed.feed + "']")
+        item : my_template.feed_list_area.find("div.feed[feed='" + _feed.feed + "']")
     };
-
-    mytpl.feed_list_ref[_feed.feed].item.find('span.feeditemname').text(_feed.title);
-    mytpl.feed_list_ref[_feed.feed].item.find('span.feeditemurl').text(_feed.url);
-    mytpl.feed_list_ref[_feed.feed].form.find("input[name='title']").val(_feed.title);
+    
+    my_template.feed_list_ref[_feed.feed].item.find('div.feedtit').text(_feed.title);
+    my_template.feed_list_ref[_feed.feed].item.find('div.feedurl > span').text(_feed.url);
+    my_template.feed_list_ref[_feed.feed].item.find("input[name='title']").val(_feed.title);
 }
 
 function feed_options(r)
@@ -79,19 +77,19 @@ function feed_options(r)
     {
         _url = $(this).find('feed_url').text();
         _title = $(this).find('feed_title').text();
-        _option = mytpl.feed_option_blank.clone();
-        _option.find(mytpl.feed_option_selector)
+        _option = my_template.feed_option_blank.clone();
+        _option.find(my_template.feed_option_selector)
             .attr('url', _url)
             .after(((_title.length>0) ? _title : _url));
         _output[_i] = _option.html(); _i++;
     });
 
-    mytpl.feed_options_form.find('div.inputfeedoption').remove();
-    mytpl.feed_options_form.find('form').prepend(_output.join(''));
-    mytpl.feed_options_form.find(mytpl.feed_option_selector + ":first").attr('checked', true);
+    my_template.feed_options_form.find('div.inputfeedoption').remove();
+    my_template.feed_options_form.find('form').prepend(_output.join(''));
+    my_template.feed_options_form.find(my_template.feed_option_selector + ":first").attr('checked', true);
 
     feed_add_hide();
-    mytpl.feed_options_form.show();
+    my_template.feed_options_form.show();
 }
 
 function feed_discover_callback(d)
@@ -131,7 +129,7 @@ function feed_discover_callback(d)
 
 function feed_discover()
 {
-    var _data = { url: mytpl.new_feed_url.val() };
+    var _data = { url: my_template.new_feed_url.val() };
 
     if(_data.url=="")
     {
@@ -150,15 +148,15 @@ function feed_add_callback(d)
 
 function feed_add(u)
 {
-    var _data = { url : u, blog: blog.current };
+    var _data = { url : u, blog: my_blog.current };
     add_message(''); 
     do_request('POST', './feed/add', _data, feed_add_callback);
 }
 
 function feed_list_callback(d)
 {
-    mytpl.feed_list_area.html(''); 
-    mytpl.feed_list_ref = Array();
+    my_template.feed_list_area.html(''); 
+    my_template.feed_list_ref = Array();
 
     d.find('feeds').children().each(function()
     {
@@ -173,7 +171,7 @@ function feed_list()
         type: "GET",
         url: "./feed/list",
         dataType: "xml",
-        data: { blog: blog.current },
+        data: { blog: my_blog.current },
         beforeSend: function () { set_active_request(true); },
         complete: function ()   { set_active_request(false); 
                                   $(document).trigger('after_feed_list'); },
@@ -184,39 +182,45 @@ function feed_list()
 
 function feed_edit_show(b)
 {
-    mytpl.feed_list_ref[b].item.find('a.feededitlnk').hide();
-    mytpl.feed_list_ref[b].item.find('a.feeddeletelnk').show();
+    my_template.feed_list_ref[b].item.find('button.feededitbtn').hide();
+    my_template.feed_list_ref[b].item.find('button.feeddeletebtn').show();
     disable_submit(); // form have only one input, disable submit from this
-    mytpl.feed_list_ref[b].form.show();
+    my_template.feed_list_ref[b].item.find('div.feedbot').show();
 }
 
 function feed_edit_hide(b)
 {
-    mytpl.feed_list_ref[b].form.hide();
-    mytpl.feed_list_ref[b].item.find('a.feeddeletelnk').hide();
-    mytpl.feed_list_ref[b].item.find('a.feededitlnk').show();
+    my_template.feed_list_ref[b].item.find('div.feedbot').hide();
+    my_template.feed_list_ref[b].item.find('button.feeddeletebtn').hide();
+    my_template.feed_list_ref[b].item.find('button.feededitbtn').show();
 }
 
 function feed_remove_from_list(b)
 {
-    mytpl.feed_list_ref[b].item.next('div.feeddeletemsg').remove();
-    mytpl.feed_list_ref[b].item.remove();
-    mytpl.feed_list_ref[b].form.remove();
-    mytpl.feed_list_ref[b] = null;
+    //my_template.feed_list_ref[b].item.next('div.feeddeletemsg').remove();
+    my_template.feed_list_ref[b].item.remove();
+    my_template.feed_list_ref[b] = null;
     flash_message("<?php echo $this->translation()->deleted ?>");
 }
 
 function feed_delete_confirm_show(b)
 {
-    feed_edit_hide(b);
-    mytpl.feed_list_ref[b].item.find('a.feededitlnk').hide();
-    mytpl.feed_list_ref[b].item.after(mytpl.feed_delete_blank.clone().html());
+    //feed_edit_hide(b);
+    my_template.feed_list_ref[b].item.find('button.feededitbtn').hide();
+    my_template.feed_list_ref[b].item.find('button.feeddeletebtn').hide();
+    var _form = my_template.feed_list_ref[b].item.find('div.feedbot > form');
+    _form.hide();
+    _form.after(my_template.feed_delete_blank.clone().html());
 }
 
 function feed_delete_confirm_hide(b)
 {
-    mytpl.feed_list_ref[b].item.next('div.feeddeletemsg').remove();
-    mytpl.feed_list_ref[b].item.find('a.feededitlnk').show();
+    var _form = my_template.feed_list_ref[b].item.find('div.feedbot > form');
+    _form.next('div.feeddeletemsg').remove();
+    feed_edit_hide(b);
+    _form.show();
+    // my_template.feed_list_ref[b].item.next('div.feeddeletemsg').remove();
+    my_template.feed_list_ref[b].item.find('button.feededitbtn').show();
 }
 
 function feed_delete_callback(d)
@@ -226,7 +230,7 @@ function feed_delete_callback(d)
 
 function feed_delete(f)
 {
-    var _data = { blog: blog.current, feed: f };
+    var _data = { blog: my_blog.current, feed: f };
     do_request('POST', './feed/delete', _data, feed_delete_callback);
 }
 
@@ -238,7 +242,7 @@ function feed_update_callback(d)
     {
         var _feed = _updated.find('feed').text();
         var _title = _updated.find('feed_title').text();
-        mytpl.feed_list_ref[_feed].item.find('span.feeditemname').text(_title);
+        my_template.feed_list_ref[_feed].item.find('div.feedtit').text(_title);
         flash_message("<?php echo $this->translation()->saved ?>");
         feed_edit_hide(_feed);
     }
@@ -249,8 +253,8 @@ function feed_update(f)
     var _up = 
     {
         feed       : f,
-        blog       : blog.current,
-        feed_title : mytpl.feed_list_ref[f].form.find("input[name='title']").val(),
+        blog       : my_blog.current,
+        feed_title : my_template.feed_list_ref[f].item.find("input[name='title']").val(),
     }
 
     do_request('POST', './feed/update', _up, feed_update_callback);
@@ -266,7 +270,7 @@ function feed_position_callback(d)
 
 function feed_position(f, p)
 {
-    var _data = { blog : blog.current, feed : f, position : p };
+    var _data = { blog : my_blog.current, feed : f, position : p };
     do_request('POST', './feed/position', _data, feed_position_callback);
 }
 
@@ -274,7 +278,7 @@ function sortable_callback(feed)
 {
     var _p = 1;
 
-    mytpl.feed_list_area.find('.feeditem').each(function()
+    my_template.feed_list_area.find('div.feed').each(function()
     {
         if(feed == $(this).attr('feed') && _p != $(this).attr('ord'))
         {
@@ -287,16 +291,16 @@ function sortable_callback(feed)
 
 function feed_sortable_init()
 {
-    mytpl.feed_list_area.sortable(
+    my_template.feed_list_area.sortable(
     { 
         stop: function(e, ui)
         {
             sortable_callback(ui.item.attr('feed'));
         },
-        handle: "div.feeditemleft",
+        handle: "div.feedtop",
         distance: 10
     });
-    mytpl.feed_list_area.disableSelection();
+    my_template.feed_list_area.disableSelection();
 }
 
 function on_blog_change()
@@ -307,7 +311,7 @@ function on_blog_change()
 
 $(document).ready(function()
 {
-    mytpl =
+    my_template =
     {
         new_feed_button      : $("#addnewfeedbtn"),
         new_feed_form        : $("#addnewfeedform"),
@@ -326,12 +330,12 @@ $(document).ready(function()
         feed_list_ref        : Array()
     }; 
     
-    mytpl.new_feed_button.click(function()
+    my_template.new_feed_button.click(function()
     {
         if(active_request==false) { feed_add_toggle(); }
     });
 
-    mytpl.new_feed_url.keypress(function(e)
+    my_template.new_feed_url.keypress(function(e)
     {
         if((e.which && e.which == 13) || (e.keyCode && e.keyCode == 13))
         {
@@ -339,7 +343,7 @@ $(document).ready(function()
         }
     });
 
-    mytpl.new_feed_submit.click(function()
+    my_template.new_feed_submit.click(function()
     {
         if(active_request==false) { feed_discover(); }
     });
@@ -349,13 +353,13 @@ $(document).ready(function()
         return i.parent().parent().attr('feed')
     }
 
-    mytpl.feed_list_area.find('a.feededitlnk').live('click', function()
+    my_template.feed_list_area.find('button.feededitbtn').live('click', function()
     {
         feed_edit_show(feed_item_getid($(this)));
         return false;
     });
 
-    mytpl.feed_list_area.find('a.feeddeletelnk').live('click', function()
+    my_template.feed_list_area.find('button.feeddeletebtn').live('click', function()
     {
         feed_delete_confirm_show(feed_item_getid($(this)));
         return false;
@@ -363,16 +367,16 @@ $(document).ready(function()
 
     function feed_update_getid(i)
     {
-        return i.parent().parent().parent().attr('feed')
+        return i.parent().parent().parent().parent().attr('feed')
     }
 
-    mytpl.feed_list_area.find("input[name='feedupdatebtn']").live('click', function()
+    my_template.feed_list_area.find("button.feedupdatebtn").live('click', function()
     {
         feed_update(feed_update_getid($(this)));
         return false;
     });
 
-    mytpl.feed_list_area.find("input[name='feedcancelbtn']").live('click', function()
+    my_template.feed_list_area.find("button.feedcancelbtn").live('click', function()
     {
         feed_edit_hide(feed_update_getid($(this)));
         return false;
@@ -380,25 +384,25 @@ $(document).ready(function()
 
     function feed_delete_getid(i)
     {
-        return i.parent().parent().parent().prev('div.feeditem').attr('feed');
+        return i.parent().parent().parent().parent().parent().attr('feed');
     }
 
-    mytpl.feed_list_area.find("input[name='feeddeletebtn']").live('click', function()
+    my_template.feed_list_area.find("button[name='feeddeletebtn']").live('click', function()
     {
         feed_delete(feed_delete_getid($(this)));
         return false;
     });
 
-    mytpl.feed_list_area.find("input[name='feednodelbtn']").live('click', function()
+    my_template.feed_list_area.find("button[name='feednodelbtn']").live('click', function()
     {
         feed_delete_confirm_hide(feed_delete_getid($(this)));
         return false;
     });
 
-    mytpl.feed_options_submit.live('click', function()
+    my_template.feed_options_submit.live('click', function()
     {
-        mytpl.new_feed_url.val(mytpl.feed_options_form
-            .find(mytpl.feed_option_selector + ":checked").attr('url'));
+        my_template.new_feed_url.val(my_template.feed_options_form
+            .find(my_template.feed_option_selector + ":checked").attr('url'));
         feed_discover();
     });
 
