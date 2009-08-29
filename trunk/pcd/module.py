@@ -15,26 +15,31 @@
 # Code:
 
 import os
+import sys
 
 class Module:
     def __init__(self):
-        self.moduleDir        = '/modules'
+        self.moduleDir        = '/pcd/modules'
         self.ignored          = [ '__init__.py', '__init__.pyc', '.svn' ]
         self.modules          = { }
         self.classes          = [ ]
+        sys.path.append(os.path.abspath('../') + self.moduleDir)
+        
         self.loadModuleData()
 
     def loadModuleData(self):
-        for item in os.listdir(os.getcwd() + self.moduleDir):
+        for item in os.listdir(os.path.abspath('../') + self.moduleDir):
             if not item in self.ignored:
-                self.modules[item] = 'modules.' + item + '.' + item
+                #self.modules[item] = 'modules.' + item + '.' + item
+                self.modules[item] = item + '.' + item
         
     def availableModules(self):
         return self.modules
 
     def loadModule(self, name, path):
         package  = __import__(path)
-        dynclass = getattr(getattr(package, name), name)
+        #dynclass = getattr(getattr(package, name), name)
+        dynclass = getattr(package, name)
 
         if dynclass not in self.classes:
             self.classes.append(dynclass)
