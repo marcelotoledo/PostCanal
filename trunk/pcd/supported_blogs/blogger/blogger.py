@@ -20,10 +20,11 @@ import gdata.blogger.client
 import gdata.client
 import urlparse
 
-class Blogger():
+class PCDModule():
     """API to http://www.blogger.com
     """
-    
+    modName = 'blogger'
+
     def __init__(self, admin_url, username, password):
         self.clear()
         self._username      = username

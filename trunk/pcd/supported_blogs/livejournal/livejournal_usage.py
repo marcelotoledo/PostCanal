@@ -1,7 +1,9 @@
 '''Demo program which uses the live-journal module.'''
 
 import sys
-from livejournal import LiveJournal
+from livejournal import PCDModule
+
+LiveJournal = PCDModule
 
 #user's blog address: http://petertest.livejournal.com/;
 #username='petertest', password='peter2win'

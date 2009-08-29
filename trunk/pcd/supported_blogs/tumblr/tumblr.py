@@ -22,9 +22,11 @@ import urllib
 
 from util import peterBrowser
 
-class Tumblr:
+class PCDModule:
     '''Class for interacting with tumblr.com'''
     #logger=LoggerFactory.getLogger('tumblr')
+
+    modName = 'tumblr'
 
     # regular expression patterns to extract useful data from web page.
     url_pattern        = re.compile(r'^http://[a-z0-9-]+?\.tumblr\.com/$')
@@ -34,7 +36,7 @@ class Tumblr:
 
     # functional urls
     login_url  = 'http://www.tumblr.com/login'
-    post_entry = 'http://www.Tumblr.com/new/text'
+    post_entry = 'http://www.PCDModule.com/new/text'
 
     def __init__(self, url='', adminUrl=None, username='', password=''):
         '''initiation method
@@ -51,11 +53,11 @@ class Tumblr:
         with the URL passed or not, to do this you need to look for
         clues and return true for positive or false for negative.'''
         
-        if not Tumblr.url_pattern.match(self.url):
-            #Tumblr.logger.warn('invalid url, it should comply with the regular expression "^http://[a-z0-9-]+?\.tumblr\.com/$"')
+        if not PCDModule.url_pattern.match(self.url):
+            #PCDModule.logger.warn('invalid url, it should comply with the regular expression "^http://[a-z0-9-]+?\.tumblr\.com/$"')
             return False
         data = peterBrowser.getUrl(self.url)
-        if Tumblr.not_found_pattern.match(data):
+        if PCDModule.not_found_pattern.match(data):
             return False
         return True
 
@@ -69,8 +71,8 @@ class Tumblr:
         'redirect_to' : '/dashboard'
         }
         
-        data = peterBrowser.getUrl(Tumblr.login_url,urllib.urlencode(values))
-        if Tumblr.logging_in_pattern.match(data):
+        data = peterBrowser.getUrl(PCDModule.login_url,urllib.urlencode(values))
+        if PCDModule.logging_in_pattern.match(data):
             return True
         return False
 
@@ -104,10 +106,10 @@ class Tumblr:
 
     def postEntry(self):
         "Post entry"
-        data = peterBrowser.getUrl(Tumblr.post_entry)
-        matcher = Tumblr.form_key_pattern.match(data)
+        data = peterBrowser.getUrl(PCDModule.post_entry)
+        matcher = PCDModule.form_key_pattern.match(data)
         if not matcher:
-            #Tumblr.logger.error("Can't find the form_key value when trying to post entry")
+            #PCDModule.logger.error("Can't find the form_key value when trying to post entry")
             return False
         form_key_value = matcher.group(1)
         values = {
@@ -126,7 +128,7 @@ class Tumblr:
             'post[type]'          : 'regular',
         }
         
-        data = peterBrowser.getUrl(Tumblr.post_entry, urllib.urlencode(values))
+        data = peterBrowser.getUrl(PCDModule.post_entry, urllib.urlencode(values))
         if not data:
             return False
         return True

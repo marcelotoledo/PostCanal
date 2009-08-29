@@ -21,16 +21,18 @@ import urlparse
 import ptt
 import bitly
 
-class Twitter():
+class PCDModule():
     """API to http://www.twitter.com
     """
     MAX_CHARS = 140
+    
+    modName = 'twitter'
 
     def __init__(self, admin_url, username, password):
         self.clear()
-        self._username = username
-        self._password = password
-        self._admin_url = admin_url
+        self._username      = username
+        self._password      = password
+        self._admin_url     = admin_url
         self._authenticated = False
 
     def isItMe(self):

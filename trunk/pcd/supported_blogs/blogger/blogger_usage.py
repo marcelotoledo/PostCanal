@@ -16,7 +16,9 @@
 # Code:
 
 import sys
-from blogger import Blogger
+from blogger import PCDModule
+
+Blogger = PCDModule
 
 try:
     admin_url = sys.argv[1]

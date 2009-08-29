@@ -21,6 +21,7 @@ from feed      import getNextFeed, pendingFeeds, feedScheduleAll, FeedThread
 from post      import getNextPost, pendingPosts, postScheduleAll, PostThread
 from autoQueue import autoQueue
 from iface     import openConnection
+from module    import *
 
 import sys
 import time
@@ -30,10 +31,12 @@ import Queue
 
 if __name__ == "__main__":
     u = Usage()
+    m = Module()
+    
     u.banner()
     u.usage()
 
-    l = log.Log(u.options.verbose, u.options.debug)    
+    l = log.Log(u.options.verbose, u.options.debug)
 
     r = runtimeConfig()
     r.addOption("Debug",      str(u.options.debug))
@@ -41,7 +44,36 @@ if __name__ == "__main__":
     r.addOption("token",      r.token)
     r.addOption("Frontend",   r.frontend)
     r.addOption("FrontendWS", r.frontendWS)
-    r.printOptions()
+
+    for k, v in m.availableModules().items():
+        m.loadModule(k, v)
+        r.addOption(k, v)
+
+    r.printOptions()        
+
+    #adminURL     = 'http://blog.marcelotoledo.org'
+    #adminURL     = 'http://twitter.com/marcelotoledo'
+    #username     = 'asd'
+    #password     = 'asd'
+
+    #m.myClassName(adminURL, username, password)
+    #mod = m.myClassByName('wordpress', adminURL, username, password)
+    #print mod.isItMe()
+    
+
+    #myClass = m.myClass(adminURL, username, password)
+    #if myClass != None:
+    #    print myClass.modName
+    #else:
+    #    print "Not supported!"    
+
+    ##############################################################
+
+    
+    
+    ##############################################################    
+
+    sys.exit()
 
     feedScheduleAll(r.client, r.token)
     postScheduleAll(r.client, r.token)

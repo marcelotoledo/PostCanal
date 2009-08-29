@@ -25,9 +25,11 @@ from datetime import datetime
 from util     import LoggerFactory
 from util     import peterBrowser
 
-class LiveJournal:
+class PCDModule:
     '''Class for interacting with LiveJournal.com'''
     #logger=LoggerFactory.getLogger('LiveJournal')
+
+    modName = 'livejournal'
 
     #regular expression patterns to extract useful data from web page.
     url_pattern          = re.compile(r'^http://[a-z0-9_]+?\.livejournal\.com/$')
@@ -57,12 +59,12 @@ class LiveJournal:
         with the URL passed or not, to do this you need to look for
         clues and return true for positive or false for negative.'''
         
-        if not LiveJournal.url_pattern.match(self.url):
-            #LiveJournal.logger.warn('invalid url, it should comply with the regular expression "^http://[a-z0-9_]+?\.livejournal\.com/$"')
+        if not PCDModule.url_pattern.match(self.url):
+            #PCDModule.logger.warn('invalid url, it should comply with the regular expression "^http://[a-z0-9_]+?\.livejournal\.com/$"')
             return False
         
         data = peterBrowser.getUrl(self.url)
-        if not LiveJournal.home_pattern.match(data):
+        if not PCDModule.home_pattern.match(data):
             return False
         return True
 
@@ -70,10 +72,10 @@ class LiveJournal:
         '''This function returns true or false, respectively for sucessful
         authentication or not.'''
         
-        data = peterBrowser.getUrl('%s%s'%(LiveJournal.login_get,self.url))
-        matcher = LiveJournal.chal_pattern.match(data)
+        data = peterBrowser.getUrl('%s%s'%(PCDModule.login_get,self.url))
+        matcher = PCDModule.chal_pattern.match(data)
         if not matcher:
-            #LiveJournal.logger.error("Can't find the chal value when trying to authenticate")
+            #PCDModule.logger.error("Can't find the chal value when trying to authenticate")
             return False
         
         chal_value = matcher.group(1)
@@ -86,8 +88,8 @@ class LiveJournal:
         values['chal']     = chal_value
         values['response'] = hashlib.md5(chal_value+hashlib.md5(self.password).hexdigest()).hexdigest()
         
-        data = peterBrowser.getUrl(LiveJournal.login_post, urllib.urlencode(values))
-        if LiveJournal.logout_pattern.match(data):
+        data = peterBrowser.getUrl(PCDModule.login_post, urllib.urlencode(values))
+        if PCDModule.logout_pattern.match(data):
             return True
         return False
 
@@ -122,16 +124,16 @@ class LiveJournal:
     def postEntry(self):
         "Post entry"
         
-        data = peterBrowser.getUrl(LiveJournal.post_entry)
-        matcher = LiveJournal.lj_form_auth_pattern.match(data)
+        data = peterBrowser.getUrl(PCDModule.post_entry)
+        matcher = PCDModule.lj_form_auth_pattern.match(data)
         if not matcher:
-            #LiveJournal.logger.error("Can't find the lj_form_auth value when trying to post entry")
+            #PCDModule.logger.error("Can't find the lj_form_auth value when trying to post entry")
             return False
         
         lj_form_auth_value = matcher.group(1)
-        matcher = LiveJournal.chal_pattern.match(data)
+        matcher = PCDModule.chal_pattern.match(data)
         if not matcher:
-            #LiveJournal.logger.error("Can't find the chal value when trying to post entry")
+            #PCDModule.logger.error("Can't find the chal value when trying to post entry")
             return False
         
         chal_value = matcher.group(1)
@@ -158,8 +160,8 @@ class LiveJournal:
         values['chal']         = chal_value        
         values['response']     = hashlib.md5(chal_value+hashlib.md5(self.password).hexdigest()).hexdigest()
         
-        data = peterBrowser.getUrl(LiveJournal.post_entry, urllib.urlencode(values))
-        if LiveJournal.post_success_pattern.match(data):
+        data = peterBrowser.getUrl(PCDModule.post_entry, urllib.urlencode(values))
+        if PCDModule.post_success_pattern.match(data):
             return True
         return False
 

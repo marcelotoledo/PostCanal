@@ -21,15 +21,18 @@ import urllib
 
 import pyblog
 
-class Wordpress():
+class PCDModule:
     """API for Wordpress instance
     """
+
+    modName = 'wordpress'
+    
     def __init__(self, admin_url, username, password):
         self.clear()
         self._username      = username
         self._password      = password
         self._admin_url     = admin_url
-        self._authenticated = False        
+        self._authenticated = False
 
     def isItMe(self):
         try:

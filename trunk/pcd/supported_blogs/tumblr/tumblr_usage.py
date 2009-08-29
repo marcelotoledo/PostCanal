@@ -18,7 +18,9 @@
 '''Demo program which uses the live-journal module.'''
 
 import sys
-from tumblr import Tumblr
+from tumblr import PCDModule
+
+Tumblr = PCDModule
 
 #username='peter4test', password='peter2win'
 b = Tumblr('http://peter4test.tumblr.com/', None, 'mituzhishi@gmail.com', 'peter2win')

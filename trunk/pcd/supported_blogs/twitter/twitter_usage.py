@@ -16,7 +16,9 @@
 # Code:
 
 import sys
-from twitter import Twitter
+from twitter import PCDModule
+
+Twitter = PCDModule
 
 try:
     admin_url = sys.argv[1]

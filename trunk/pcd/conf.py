@@ -23,7 +23,7 @@ import log
 
 class runtimeConfig():
     def __init__(self, config_path=None):
-        self.options = {}
+        self.options = []
         self.l = log.Log()                
         if config_path == None:
             config_path = os.getcwd().replace("pcd", "") + "config/environment.xml"
@@ -45,9 +45,10 @@ class runtimeConfig():
     
 
     def addOption(self, key, value):
-        self.options[key] = value
+        self.options.append({ key : value })
         
     def printOptions(self):
-        for k, v in self.options.items():
-            self.l.log("Loading %15s as %s" % (k, v))
+        for item in self.options:
+            for k, v in item.items():
+                self.l.log("Loading %15s as %s" % (k, v))
         self.l.log("")

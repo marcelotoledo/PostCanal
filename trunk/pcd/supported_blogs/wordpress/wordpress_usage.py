@@ -16,7 +16,9 @@
 # Code:
 
 import sys
-from wordpress import Wordpress
+from wordpress import PCDModule
+
+Wordpress = PCDModule
 
 try:
     admin_url = sys.argv[1]
