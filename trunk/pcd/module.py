@@ -39,6 +39,10 @@ class Module:
         if dynclass not in self.classes:
             self.classes.append(dynclass)
 
+    def loadAllModules(self):
+        for k, v in self.availableModules().items():
+            self.loadModule(k, v)
+
     def myClass(self, adminURL, username, password):
         for item in self.classes:
             dynClass = item.PCDModule(adminURL, username, password)
@@ -50,4 +54,12 @@ class Module:
         for item in self.classes:
             if name == item.PCDModule.modName:
                 return item.PCDModule(adminURL, username, password)
+        return None
+
+    def myContainerName(self, adminURL):
+        for item in self.classes:
+            # we don't have the user/pass yet, since it's not used, we pass anything
+            dynClass = item.PCDModule(adminURL, 'username', 'password')
+            if dynClass.isItMe():
+                return dynClass.modName
         return None

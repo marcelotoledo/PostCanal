@@ -151,7 +151,9 @@ if __name__ == '__main__':
     #url = "http://www.terra.com.br/"
     url = "http://www.uol.com.br/"
 
-    d = type_dump(guess_type(url))
-    print d
+    d = type_dump(guess_type(url)).items()
+    for k, v in d:
+        print "%25s %s" % (k, v)
+    #print d
     #m = type_dump(manager_url_check(d['manager_url'], d['type_name'], d['version_name']))
     #print m
