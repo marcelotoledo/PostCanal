@@ -228,8 +228,7 @@ class C_Queue extends B_Controller
 
         if(is_object(($e = BlogEntry::getByBlogAndEntryHash($user, $blog, $entry))))
         {
-            if(in_array($e->publication_status, array(BlogEntry::STATUS_NEW,
-                                                      BlogEntry::STATUS_FAILED)))
+            if($e->publication_status != BlogEntry::STATUS_PUBLISHED)
             {
                 $e->entry_title = $this->request()->title;
                 $e->entry_content = $this->request()->content;

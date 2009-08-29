@@ -138,7 +138,7 @@ function entry_show_fix_vertical()
     var _rmh = my_template.queue_middle_area.h / 2;
     var _rmt = my_template.queue_middle_area.y;
     var _apt = my_queue.current.position().top;
-    var _coh = my_queue.current.next('div.etyview').outerHeight();
+    var _coh = my_template.entry_list.find('div.etyview').outerHeight();
 
     var _scr = my_template.entry_list.scrollTop() + 
                _apt -
@@ -156,7 +156,6 @@ function entry_hide(e)
 
 function entry_hide_current()
 {
-    $.modal.close();
     if(my_queue.current) { entry_hide(my_queue.current); }
     my_queue.current = null;
 }
@@ -165,13 +164,21 @@ function entry_show(e)
 {
     if(my_queue.data[e])
     {
-        var _content = my_template.content_blank.clone();
+        my_queue.current = my_template.entry_list
+            .find("div.ety[entry='" + e + "']");
 
-        _content.find('div.etyviewtitle').html(my_queue.data[e].title);
-        _content.find('div.etyviewbody').html(my_queue.data[e].content);
+        var _op = my_queue.current.hasClass('ety-op');
+        var _content = _op ?
+            _content = my_template.entry_list.find('div.etyview') : 
+                       my_template.content_blank.clone();
 
-        my_queue.current = my_template.entry_list.find("div.ety[entry='" + e + "']");
-        my_queue.current.after(_content.html()).addClass('ety-op');
+        _content.find('h1').html(my_queue.data[e].title);
+        _content.find('div.etybody').html(my_queue.data[e].content);
+
+        if(my_queue.current.hasClass('ety-op')==false)
+        {
+            my_queue.current.after(_content.html()).addClass('ety-op');
+        }
     }
 }
 
@@ -211,8 +218,7 @@ function entry_edit(e)
             .modal({ position   : [ _rect.T, _rect.L ], 
                      focus      : true, 
                      opacity    : 75, 
-                     autoResize : true,
-                     onClose    : function() { entry_hide_current() } });
+                     autoResize : true });
 
         my_template.edit_form.find('div.form-bot').css('top', _rect.H - 55); // position hack
         my_template.edit_form.find("input[name='entrytitle']").val(my_queue.data[e].title).focus();
@@ -227,7 +233,8 @@ function entry_save_callback(d)
     my_queue.data[_e].title = d.find('title').text();
     my_queue.data[_e].content = d.find('content').text();
     my_queue.current.find('span.etytt').text(my_queue.data[_e].title);
-    entry_hide_current();
+    $.modal.close();
+    entry_show(_e);
     flash_message("<?php echo $this->translation()->saved ?>");
 }
 
@@ -554,7 +561,6 @@ $(document).ready(function()
         if(active_request==true) { return false; }
 
         var _pt = $(this).parent().parent();
-        var _st = _pt.attr('status')
 
         if(_pt.hasClass('ety-op'))
         { 
@@ -563,18 +569,22 @@ $(document).ready(function()
             return false; 
         }
 
-        if(_st=='waiting' || _st=='published')
-        {
-            entry_hide_current();
-            entry_show(_pt.attr('entry'));
-            entry_show_fix_vertical();
-        }
-        else
-        {
-            entry_hide_current();
-            entry_edit(_pt.attr('entry'));
-            entry_scroll_top();
-        }
+        entry_hide_current();
+        entry_show(_pt.attr('entry'));
+        entry_show_fix_vertical();
+
+        $(this).blur();
+        return false;
+    });
+
+    my_template.entry_list.find('div.ety')
+        .find('div.etyedlnk')
+        .find('a').live('click', function()
+    {
+        var _pt = $(this).parent().parent();
+        var _st = _pt.attr('status')
+
+        entry_edit(_pt.attr('entry'));
 
         $(this).blur();
         return false;

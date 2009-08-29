@@ -40,6 +40,7 @@ div.ety-cl
 div.ety-op
 {
     border: 2px solid #48898c;
+    border-bottom: 1px solid #e1f0f4;
     background-color: white;
 }
 div.entrydndhdr
@@ -97,7 +98,7 @@ span.etytt
     line-height: 35px;
     font-weight: bold;
 }
-div.etylnk
+div.etyedlnk
 {
     position: relative;
     float: left;
@@ -110,7 +111,7 @@ div.etylnk
     background-repeat: no-repeat;
     background-position: -165px -40px;
 }
-div.etylnk a
+div.etyedlnk a
 {
     display: block;
     width: 100%;
