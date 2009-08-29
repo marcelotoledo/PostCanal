@@ -205,7 +205,6 @@ function entry_edit(e)
     if(my_queue.data[e])
     {
         my_queue.current = my_template.entry_list.find("div.ety[entry='" + e + "']");
-        my_queue.current.addClass('ety-op');
 
         var _rect = { L : $(window).width()  * 0.1 , 
                       T :                       50 ,
@@ -603,7 +602,7 @@ $(document).ready(function()
         .live('click', function()
     {
         if(active_request==true) { return false; }
-        entry_hide_current();
+        $.modal.close();
     });
 
     my_template.entry_list.find('div.ety')
