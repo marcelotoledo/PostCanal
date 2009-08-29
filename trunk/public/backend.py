@@ -4,7 +4,7 @@ import sys, os
 from SimpleXMLRPCServer import CGIXMLRPCRequestHandler
 
 base_path = os.path.abspath("../")
-sys_path = base_path + "/backend"
+sys_path = base_path + "/pcd"
 config_path = base_path + "/config/environment.xml"
 
 sys.path.append(sys_path)

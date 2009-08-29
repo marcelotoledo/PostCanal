@@ -17,8 +17,11 @@
 class WebService:
 
     def __init__(self, config_path=None):
-        from postcanal import PostCanalConfig
-        self.token = PostCanalConfig(config_path).get('webservice/token')
+        #from postcanal import PostCanalConfig
+        #self.token = PostCanalConfig(config_path).get('webservice/token')
+        from conf import runtimeConfig
+        r = runtimeConfig(config_path)
+        self.token = r.token
 
     # validate args
 
