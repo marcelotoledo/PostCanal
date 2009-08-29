@@ -18,7 +18,7 @@ import os
 
 class Module:
     def __init__(self):
-        self.moduleDir        = '/supported_blogs'
+        self.moduleDir        = '/modules'
         self.ignored          = [ '__init__.py', '__init__.pyc', '.svn' ]
         self.modules          = { }
         self.classes          = [ ]
@@ -27,7 +27,7 @@ class Module:
     def loadModuleData(self):
         for item in os.listdir(os.getcwd() + self.moduleDir):
             if not item in self.ignored:
-                self.modules[item] = 'supported_blogs.' + item + '.' + item        
+                self.modules[item] = 'modules.' + item + '.' + item
         
     def availableModules(self):
         return self.modules
