@@ -18,8 +18,13 @@ import sys
 import re
 import urllib2
 import urlparse
-import ptt
+import twitterapi
 import bitly
+import log
+
+from utils import funcName
+
+l = log.Log()
 
 class PCDModule():
     """API to http://www.twitter.com
@@ -39,14 +44,14 @@ class PCDModule():
         return 'twitter.com' in self.domain(self._admin_url)
 
     def authenticate(self):
-        self.api = ptt.Twitter(self._username, self._password)
         try:
-            self.api.statuses.friends() # will raise exception if wrong login details
-        except ptt.TwitterError:
+            self.api
+        except:
             self._authenticated = False
-        else:
-            self._authenticated = True
-        return self._authenticated
+            return False
+        
+        self._authenticated = True
+        return True
 
     def setTitle(self, title):
         self._title = title
@@ -71,7 +76,9 @@ class PCDModule():
         pass
 
     def postEntry(self):
+        l.log("Just entered postEntry", 'Twitter')
         if self._authenticated:
+            l.log("I am authenticated", 'Twitter')
             # test if URL
             if len(self._title) + len(self._content) > PCDModule.MAX_CHARS:
                 # shorten content
@@ -80,8 +87,17 @@ class PCDModule():
             else:
                 status = self._title + self._content
 
-            self.api.statuses.update(status=status)
-            
+            l.log("Finished fitting the string, will enter the try to publish!", 'Twitter')
+            print type(status)
+            print status
+
+            try:
+                l.log("Going to update status to", 'Twitter')
+                self.api.PostUpdate(status)
+            except:
+                l.log("Failed to update status (%s) - (%s)" % (status, sys.exc_info()[1]), 'Twitter')
+                return False
+                
             return True
         else:
             #print 'Need to authenticate'
