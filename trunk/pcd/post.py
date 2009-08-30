@@ -15,7 +15,6 @@
 
 # Code:
 
-from blog  import init_type
 from utils import funcName
 from iface import openConnection
 
