@@ -74,14 +74,14 @@ class PCDModule:
             for category in self._categories:
                 # need to define categories separately
                 self.api.new_category({'name': category})
-                
+
             data = {
                 'title'       : self._title, 
                 'description' : self._content,
                 'categories'  : self._categories,
                 'tags'        : self._tags,
             }
-            
+
             self.api.new_post(data)
             return True
         else:

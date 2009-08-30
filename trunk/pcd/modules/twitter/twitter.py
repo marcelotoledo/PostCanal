@@ -73,13 +73,15 @@ class PCDModule():
     def postEntry(self):
         if self._authenticated:
             # test if URL
-            if len(self._title) + len(self._content) > Twitter.MAX_CHARS:
+            if len(self._title) + len(self._content) > PCDModule.MAX_CHARS:
                 # shorten content
                 dots = '...'
-                status = self._title[:Twitter.MAX_CHARS - len(dots) - len(self._content)] + dots + self._content
+                status = self._title[:PCDModule.MAX_CHARS - len(dots) - len(self._content)] + dots + self._content
             else:
                 status = self._title + self._content
+
             self.api.statuses.update(status=status)
+            
             return True
         else:
             #print 'Need to authenticate'

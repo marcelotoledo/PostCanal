@@ -51,36 +51,16 @@ if __name__ == "__main__":
 
     r.printOptions()        
 
-    #adminURL     = 'http://blog.marcelotoledo.org'
-    #adminURL     = 'http://twitter.com/marcelotoledo'
-    #username     = 'asd'
-    #password     = 'asd'
-
-    #m.myClassName(adminURL, username, password)
-    #mod = m.myClassByName('wordpress', adminURL, username, password)
-    #print mod.isItMe()
-    
-
-    #myClass = m.myClass(adminURL, username, password)
-    #if myClass != None:
-    #    print myClass.modName
-    #else:
-    #    print "Not supported!"    
-
-    ##############################################################
-
-    
-    
-    ##############################################################    
-
-    sys.exit()
-
     feedScheduleAll(r.client, r.token)
     postScheduleAll(r.client, r.token)
 
     MAX_THREADS     = 20
     MIN_THREADS     = 3
     THREADS_RATIO   = 3
+
+#    MAX_THREADS     = 1
+#    MIN_THREADS     = 1
+#    THREADS_RATIO   = 1    
     
     feedQueue     = Queue.Queue()
     postQueue     = Queue.Queue()

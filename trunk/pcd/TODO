@@ -5,3 +5,6 @@
 
 * processPost-post08 	 Failed to publish (38) - (UnicodeEncodeError)
   Entender porque esta falhando para postar dados.
+
+* Queue
+  Nao medir o que for kill
