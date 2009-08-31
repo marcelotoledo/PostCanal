@@ -20,8 +20,9 @@ import time
 
 ##feedparser.USER_AGENT = "POSTCANAL/1.0 +http://postcanal.com"
 
-DEFAULT_UPDATE_TIME = 3600 # 1 hour
-MINIMUM_UPDATE_TIME = 300  # 5 minutes
+DEFAULT_UPDATE_TIME = 600
+MINIMUM_UPDATE_TIME = 60
+MAXIMUM_UPDATE_TIME = DEFAULT_UPDATE_TIME
 
 # FEED UPDATE TIME
 # 
@@ -46,11 +47,16 @@ def feed_update_time(articles):
             r = int(l[2] * 100) / 100.0 # chi square
 
             # minimum of 5 minutes
-            if t <= MINIMUM_UPDATE_TIME : t = MINIMUM_UPDATE_TIME
+            if t <= MINIMUM_UPDATE_TIME:
+                t = MINIMUM_UPDATE_TIME
+                
             # decrease time depending on the regularity
             t = int((t - MINIMUM_UPDATE_TIME) * r) + MINIMUM_UPDATE_TIME
         except:
             t = DEFAULT_UPDATE_TIME
+
+    if t >= MAXIMUM_UPDATE_TIME:
+        t = MAXIMUM_UPDATE_TIME
 
     return t 
 

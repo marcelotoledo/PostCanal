@@ -40,6 +40,8 @@ class Usage():
                           help="messages goes to syslog")
         parser.add_option("-d", "--debug", action="store_true", dest="debug", default=False,
                           help="print debug messages")
+        parser.add_option("-m", "--monitor", action="store_true", dest="monitor", default=False,
+                          help="activate pcd monitor updates")
         
         (self.options, args) = parser.parse_args()
 

@@ -22,16 +22,22 @@ from post      import getNextPost, pendingPosts, postScheduleAll, PostThread
 from autoQueue import autoQueue
 from iface     import openConnection
 from module    import *
+from monitor   import Monitor
 
 import sys
 import time
 import log
 import threading
 import Queue
+import codecs
+
+sys.stdout = codecs.getwriter('utf-8')(sys.stdout)
+sys.path.append(os.getcwd())
 
 if __name__ == "__main__":
-    u = Usage()
-    m = Module()
+    u   = Usage()
+    m   = Module()
+    mon = Monitor()
     
     u.banner()
     u.usage()
@@ -41,6 +47,7 @@ if __name__ == "__main__":
     r = runtimeConfig()
     r.addOption("Debug",      str(u.options.debug))
     r.addOption("Verbose",    str(u.options.verbose))
+    r.addOption("Monitor",    str(u.options.monitor))
     r.addOption("token",      r.token)
     r.addOption("Frontend",   r.frontend)
     r.addOption("FrontendWS", r.frontendWS)
@@ -60,46 +67,51 @@ if __name__ == "__main__":
 
 #    MAX_THREADS     = 1
 #    MIN_THREADS     = 1
-#    THREADS_RATIO   = 1    
+#    THREADS_RATIO   = 1
     
     feedQueue     = Queue.Queue()
     postQueue     = Queue.Queue()
 
-    currentThreadId = 0    
+    currentThreadId = 0
 
     while True:
         feedCount = pendingFeeds(r.client, r.token)
+        feedList  = getNextFeed(r.client, r.token, feedCount)
+        if feedCount > 0:
+            addToQueue(feedQueue, feedList)
+            l.log("Queued %d feed(s)" % int(feedCount))            
+            newFeedThreads = newThreads(feedQueue.qsize(), tCount(threading.enumerate(), "feed"),
+                                        THREADS_RATIO, MAX_THREADS, MIN_THREADS)            
+            currentThreadId = processThreads(newFeedThreads, FeedThread, r.frontendWS, r.token, feedQueue, currentThreadId)
+
+        l.emptyLine()
+        l.debug("Feed queue size     = %d" % feedQueue.qsize())
+        l.debug("Feed active threads = %d" % tCount(threading.enumerate(), "feed"))
+        l.debug("Feed new threads    = %d" % newFeedThreads)
+        l.emptyLine()
+
+        mon.setStatus('feed_queue_size',     feedQueue.qsize())
+        mon.setStatus('feed_active_threads', tCount(threading.enumerate(), "feed"))
+        mon.setStatus('feed_new_threads',    newFeedThreads)
+        
+        
         postCount = pendingPosts(r.client, r.token)        
-        feedList  = getNextFeed(r.client, r.token, feedCount)        
         postList  = getNextPost(r.client, r.token, postCount)
+        if feedCount > 0:
+            addToQueue(postQueue, postList)
+            l.log("Queued %d post(s)" % int(postCount))
+            newPostThreads = newThreads(postQueue.qsize(), tCount(threading.enumerate(), "post"),
+                                        THREADS_RATIO, MAX_THREADS, MIN_THREADS)
+            currentThreadId = processThreads(newPostThreads, PostThread, r.frontendWS, r.token, postQueue, currentThreadId, m)
 
-        addToQueue(feedQueue, feedList)
-        addToQueue(postQueue, postList)
-        
-        l.log("Queued %d feed(s)" % int(feedCount))
-        l.log("Queued %d post(s)" % int(postCount))
+        l.emptyLine()
+        l.debug("Post queue size     = %d" % postQueue.qsize())
+        l.debug("Post active threads = %d" % tCount(threading.enumerate(), "post"))
+        l.debug("Post new threads    = %d" % newPostThreads)
+        l.emptyLine()
 
-        newFeedThreads = newThreads(feedQueue.qsize(), tCount(threading.enumerate(), "feed"),
-                                    THREADS_RATIO, MAX_THREADS, MIN_THREADS)
-        newPostThreads = newThreads(postQueue.qsize(), tCount(threading.enumerate(), "post"),
-                                    THREADS_RATIO, MAX_THREADS, MIN_THREADS)
-
-        l.log("New threads: Feeds (%d) - Posts (%d)" % (int(newFeedThreads), int(newPostThreads)))
-
-        l.debug("## Post ##################################")
-        l.debug("## Queue size     = %d" % postQueue.qsize())
-        l.debug("## Active Threads = %d" % tCount(threading.enumerate(), "post"))
-        l.debug("## New Threads    = %d" % newPostThreads)
-        l.debug("## Feed ##################################")
-        l.debug("## Queue size     = %d" % feedQueue.qsize())
-        l.debug("## Active Threads = %d" % tCount(threading.enumerate(), "feed"))
-        l.debug("## New threads    = %d" % newFeedThreads)
-        l.debug("##########################################")
-
-        currentThreadId = processThreads(newFeedThreads, FeedThread, r.frontendWS, r.token, feedQueue, currentThreadId)
-        currentThreadId = processThreads(newPostThreads, PostThread, r.frontendWS, r.token, postQueue, currentThreadId, m)
-        
+        mon.setStatus('post_queue_size',     postQueue.qsize())
+        mon.setStatus('post_active_threads', tCount(threading.enumerate(), "post"))
+        mon.setStatus('post_new_threads',    newPostThreads)
+                
         time.sleep(1)
-        
-    # TODO
-    # autoQueue(r.client, r.token)

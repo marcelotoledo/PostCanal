@@ -45,7 +45,7 @@ def pendingPosts(client, token):
         postCount = client.blog_publish_total({ 'token': token })
     except:
         l.log("webservice call failed; (%s)" % (sys.exc_info()[0].__name__), funcName())
-        return None
+        postCount = 0
 
     return postCount
 
@@ -123,9 +123,8 @@ def processPost(url, token, requestQueue, name, module):
             dynClass.setTitle(entry_title)
             dynClass.setContent(entry_content)
             if dynClass.postEntry() == False:
-                l.log("!!!!!!!!!!!!!! Failed to publish (%s) - (%s)" % (id, message), funcName() + name)
+                l.log("1Failed to publish (%s) - (%s)" % (id, message), funcName() + name)
                 return None
-            print "PASSOU!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
             
             #l.log("Entry %s '%s' published as %s" % (id, entry_title, str(post_id)), funcName() + name)
             
@@ -134,10 +133,9 @@ def processPost(url, token, requestQueue, name, module):
             #l.log("Entry %s '%s' published as %s" % (id, entry_title, str(post_id)), funcName() + name)
             published = True
         except xmlrpclib.Fault, message:
-            l.log("1Failed to publish (%s) - (%s)" % (id, message), funcName() + name)
+            l.log("2Failed to publish (%s) - (%s)" % (id, sys.exc_info()[1]), funcName() + name)
         except:
-            l.log("2Failed to publish (%s) - (%s)" % (id,
-                                                     sys.exc_info()[0].__name__), funcName() + name)
+            l.log("3Failed to publish (%s) - (%s)" % (id, sys.exc_info()[1]), funcName() + name)
 
         try:
             client.blog_publish_set({ 'token'     : token,
@@ -145,7 +143,7 @@ def processPost(url, token, requestQueue, name, module):
                                       'published' : published,
                                       'message'   : message })
         except:
-            l.log("Failed to set published for %s - %s" % (id, sys.exc_info()[0].__name__), funcName() + name)
+            l.log("Failed to set published for %s - %s" % (id, sys.exc_info()[1]), funcName() + name)
             return None
 
 class PostThread(threading.Thread):

@@ -113,7 +113,7 @@ def pendingFeeds(client, token):
         feedCount = client.feed_update_total({ 'token': token })
     except:
         l.log("webservice call failed; (%s)" % (sys.exc_info()[0].__name__), funcName())
-        return None
+        feedCount = 0
 
     return feedCount
 

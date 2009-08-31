@@ -21,6 +21,8 @@ import os
 import xmlrpclib
 import log
 
+l = log.Log()
+
 class runtimeConfig():
     def __init__(self, config_path=None):
         self.options = []
@@ -51,4 +53,4 @@ class runtimeConfig():
         for item in self.options:
             for k, v in item.items():
                 self.l.log("Loading %15s as %s" % (k, v))
-        self.l.log("")
+        print ""

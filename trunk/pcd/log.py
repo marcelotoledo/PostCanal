@@ -43,3 +43,6 @@ class Log():
             func = 'Main'
         if self.isDebug:
             self.LogPrint("%20s \t %s" % (func, string))
+
+    def emptyLine(self):
+        print ""
