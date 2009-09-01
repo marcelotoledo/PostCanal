@@ -45,6 +45,14 @@ class Monitor:
     #         return None
     #     return res
 
+    def getThreads(self, threadType):
+        try:
+            query = "select key, value from pcd_monitor where key like 'thread-%s%%' order by key asc" % threadType
+            res = self.conn.execute(query)            
+        except:
+            return None
+        return res
+
     def setStatus(self, key, value):
         cur = self.conn.cursor()
         cur.execute("select * from pcd_monitor where key='%s'" % key)
@@ -56,10 +64,17 @@ class Monitor:
             self.insert(key, value)
 
     def getValue(self, key):
-        cur = self.conn.cursor()
-        cur.execute("select value from pcd_monitor where key='%s'" % key)
-        return cur.fetchone()[0]
-
+        try:
+            cur = self.conn.cursor()
+            cur.execute("select value from pcd_monitor where key='%s'" % key)
+            return cur.fetchone()[0]
+        except:
+            return 0
+        
+    def delKey(self, key):
+        self.conn.execute("delete from pcd_monitor where key='%s'" % key)
+        self.conn.commit()
+        
     def insert(self, key, value):
         self.conn.execute("insert into pcd_monitor values ('%s', '%s')" % (key, value))
         self.conn.commit()
@@ -78,8 +93,26 @@ class Monitor:
             
 
 # mon = Monitor()
-# #mon.delAll()
-# mon.setStatus('nome', 'marcelo')
+# mon.delAll()
+
+# mon.setStatus('thread-feed01', '1 - status status status')
+# mon.setStatus('thread-feed02', '1 - status status status')
+# mon.setStatus('thread-feed03', '1 - status status status')
+# mon.setStatus('thread-feed04', '1 - status status status')
+# mon.setStatus('thread-feed05', '1 - status status status')
+
+# mon.printAll()
+
+# print "GetThreads!"
+
+# res = mon.getThreads('feed')
+# if res != None:
+#     for item in res:
+#         print item
+# else:
+#     print "zoated"
+
+# mon.setStatus('thread', 'marcelo')
 # mon.printAll()
 # print ""
 # mon.setStatus('nome', 'toledo')

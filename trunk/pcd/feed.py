@@ -18,6 +18,7 @@
 from aggregator import get_feed, feed_dump
 from utils      import funcName
 from iface      import openConnection
+from monitor    import Monitor
 
 import log
 import sys
@@ -45,38 +46,56 @@ def getNextFeed(client, token, total=1):
     return feedList
 
 def processFeed(url, token, requestQueue, name):
+    mon = Monitor()
+
+    monName = 'thread-' + name
     name = "-" + name
     
     try:
+        mon.setStatus(monName, 'Opening connection with interface %s' % url)
         client = openConnection(url)
     except:
-        l.log("Error opening connection with interface - %s" % (sys.exc_info()[0].__name__), funcName() + name)
+        logmsg = "Error opening connection with interface - %s" % (sys.exc_info()[0].__name__)
+        mon.setStatus(monName, logmsg)
+        l.log(logmsg, funcName() + name)
         return None
     
     while 1:
+        mon.setStatus(monName, 'Waiting for next in the queue to arrive')
         feed = requestQueue.get()
 
         if feed == 'kill':
-            l.log("I am done, ending thread", funcName() + name)
+            logmsg = "I am done, ending thread"
+            mon.setStatus(monName, logmsg)
+            l.log(logmsg, funcName() + name)
+            mon.delKey(monName)
             return None
         
         if type(feed) != type(dict()):
-            l.log("Feed type is wrong, expected <dict>", funcName() + name)
+            logmsg = "Feed type is wrong, expected <dict>"
+            mon.setStatus(monName, logmsg)
+            l.log(logmsg, funcName() + name)
             continue
 
         try:
             id  = int(feed['id'])
             url = str(feed['feed_url'])
         except:
-            l.log("Invalid feed dictionary", funcName() + name)
+            logmsg = "Invalid feed dictionary"
+            mon.setStatus(monName, logmsg)
+            l.log(logmsg, funcName() + name)
             continue
-        
-        l.log("Updating %s" % (url), funcName() + name)
+
+        logmsg = "Updating %s" % (url)
+        mon.setStatus(monName, logmsg)
+        l.log(logmsg, funcName() + name)
     
         dump = feed_dump(get_feed(url))
     
         if type(dump) != type(dict()):
-            l.log("Wrong type for feed dump", funcName() + name)
+            logmsg = "Wrong type for feed dump"
+            mon.setStatus(monName, logmsg)
+            l.log(logmsg, funcName() + name)
             continue
     
         status         = ""
@@ -87,24 +106,31 @@ def processFeed(url, token, requestQueue, name):
             status        = dump['feed_status']
             totalArticles = len(dump['articles'])
         except:
-            l.log("invalid feed dump dictionary, probably not parsed", funcName() + name)
+            logmsg = "invalid feed dump dictionary, probably not parsed"
+            mon.setStatus(monName, logmsg)
+            l.log(logmsg, funcName() + name)
             continue
-            
-        l.log("%s has %d entries" %
-              (url, totalArticles), funcName() + name)
+
+        logmsg = "%s has %d entries" % (url, totalArticles)
+        mon.setStatus(monName, logmsg)
+        l.log(logmsg, funcName() + name)
             
         try:
             saved = client.feed_update_post({ 'token' : token, 
                                               'id'    : id, 
                                               'data'  : dump })
         except:
-            l.log("Webservice call failed; (%s)" %
-                  (sys.exc_info()[0].__name__), funcName() + name)
+            logmsg = "Webservice call failed; (%s)" % (sys.exc_info()[1])
+            mon.setStatus(monName, logmsg)
+            l.log(logmsg, funcName() + name)
             continue
         
-        if type(saved) != type(int()): saved = 0
-        
-        l.log("Feed %d saved %d articles" % (id, saved), funcName() + name)
+        if type(saved) != type(int()):
+            saved = 0
+
+        logmsg = "Feed %d saved %d articles" % (id, saved)
+        mon.setStatus(monName, logmsg)
+        l.log(logmsg, funcName() + name)
         
         time.sleep(1)
 

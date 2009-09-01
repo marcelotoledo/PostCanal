@@ -21,11 +21,13 @@ import time
 
 mon = Monitor()
 
+mon.delAll()
+
 def mainBox():
-    colLabel = 5
-    colPost  = 20
-    colFeed  = 28
-    row      = 5
+    colLabel = 2
+    colPost  = 13
+    colFeed  = 25
+    row      = 4
 
     feed_queue_size     = mon.getValue('feed_queue_size')
     feed_active_threads = mon.getValue('feed_active_threads')
@@ -33,20 +35,22 @@ def mainBox():
     post_queue_size     = mon.getValue('post_queue_size')
     post_active_threads = mon.getValue('post_active_threads')
     post_new_threads    = mon.getValue('post_new_threads')
-    
-    term('@%s;%s Threads'  % (row+2, colLabel))
-    term('@%s;%s Queue'    % (row+3, colLabel))
-    term('@%s;%s New thr.' % (row+4, colLabel))
 
-    term('red @%s;%s Posts' % (row, colPost))
-    term('@%s;%s %s'        % (row+2, colPost, post_active_threads))
-    term('@%s;%s %s'        % (row+3, colPost, post_queue_size))
-    term('@%s;%s %s'        % (row+4, colPost, post_new_threads))
+    term('red @%s;%s %5s %5s %5s' % (row,   colPost,
+                                     'Feeds', 'Posts', 'Total'))
+        
+    term('@%s;%s %8s %5s %5s %5s' % (row+1, colLabel, 'Threads',
+                                     feed_active_threads, post_active_threads,
+                                     str(int(feed_active_threads) + int(post_active_threads))))
 
-    term('red @%s;%s Feeds' % (row, colFeed))
-    term('@%s;%s %s'        % (row+2, colFeed, feed_active_threads))
-    term('@%s;%s %s'        % (row+3, colFeed, feed_queue_size))
-    term('@%s;%s %s'        % (row+4, colFeed, feed_new_threads))
+    term('@%s;%s %8s %5s %5s %5s' % (row+2, colLabel, 'Queue',
+                                     feed_queue_size, post_queue_size,
+                                     str(int(feed_queue_size) + int(post_queue_size))))
+
+    term('@%s;%s %8s %5s %5s %5s' % (row+3, colLabel, 'New Thr.',
+                                     feed_new_threads, post_new_threads,
+                                     str(int(feed_new_threads) + int(post_new_threads))))
+
 
 def title():
     term('grey')
@@ -56,12 +60,33 @@ def title():
 def clock():
     term('yellow @4;5 %s' % strftime('%H:%M:%S', time.localtime()))
 
+def showThreads():
+    types   = ['feed', 'post']
+    row     = 9
+
+    i = 0
+    for myType in types:
+        label = '%s Threads' % myType.capitalize()
+        term('red @%s;2 %10s' % (row, label))
+
+        row += 2
+
+        res = mon.getThreads(myType)
+        if res == None:
+            return None
+
+        for item in res:
+            term('@%s;2 %s - %s' % (row, item[0], item[1]))
+            row += 1            
+        row += 1
+
 while True:
     try:
         term('@@')
         title()
-        clock()
+        #clock()
         mainBox()
+        showThreads()
         time.sleep(1)
     except KeyboardInterrupt:
         break

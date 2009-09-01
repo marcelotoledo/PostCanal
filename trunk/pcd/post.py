@@ -15,8 +15,9 @@
 
 # Code:
 
-from utils import funcName
-from iface import openConnection
+from utils   import funcName
+from iface   import openConnection
+from monitor import Monitor
 
 import log
 import sys
@@ -57,23 +58,35 @@ def postScheduleAll(client, token):
         return None
 
 def processPost(url, token, requestQueue, name, module):
+    mon = Monitor()
+    
+    monName = 'thread-' + name    
     name = "-" + name
     
     try:
+        mon.setStatus(monName, 'Opening connection with interface %s' % url)        
         client = openConnection(url)
     except:
-        l.log("Error opening connection with interface - %s" % (sys.exc_info()[0].__name__), funcName() + name)
+        logmsg = "Error opening connection with interface - %s" % (sys.exc_info()[1])
+        mon.setStatus(monName, 'Opening connection with interface %s' % url)
+        l.log(logmsg, funcName() + name)
         return None
 
     while 1:
+        mon.setStatus(monName, 'Waiting for next in the queue to arrive')
         post = requestQueue.get()
 
         if post == 'kill':
-            l.log("I am done, ending thread", funcName() + name)
+            logmsg = "I am done, ending thread"
+            mon.setStatus(monName, logmsg)
+            l.log(logmsg, funcName() + name)
+            mon.delKey(monName)
             return None        
     
         if type(post) != type(dict()):
-            l.log("Wrong type, expected <dict>", funcName() + name)
+            logmsg = "Feed type is wrong, expected <dict>"
+            mon.setStatus(monName, logmsg)
+            l.log(logmsg, funcName() + name)            
             return None
 
         try:
@@ -86,35 +99,38 @@ def processPost(url, token, requestQueue, name, module):
             entry_title   = post['entry_title']
             entry_content = post['entry_content']
         except:
-            l.log("Invalid post dictionary (%s)" %
-                  (sys.exc_info()[0].__name__), funcName() + name)
+            logmsg = "Invalid post dictionary (%s)" % (sys.exc_info()[1])
+            mon.setStatus(monName, logmsg)
+            l.log(logmsg, funcName() + name)
 
-        l.log("We'll publish using: %s (%s) - %s:%s" % (blog_type, manager_url, blog_username, blog_password))
+        logmsg = "We'll publish using: %s (%s) - %s:%s" % (blog_type, manager_url, blog_username, blog_password)
+        mon.setStatus(monName, logmsg)
+        l.log(logmsg,  funcName() + name)
 
         dynClass = module.myClassByName(blog_type, manager_url, blog_username, blog_password)
         if dynClass == None:
-            l.log("Blog not supported", funcName() + name)
+            logmsg = "Blog not supported"
+            mon.setStatus(monName, logmsg)
+            l.log(logmsg, funcName() + name)
             return None
 
-        l.log("Blog is supported! My name from the dynamic class is %s" % dynClass.modName)
+        logmsg = "Blog is supported! My name from the dynamic class is %s" % dynClass.modName
+        mon.setStatus(monName, logmsg)
+        l.log(logmsg, funcName() + name)
 
         if dynClass.authenticate() == False:
-            l.log("Unable to authenticate", funcName() + name)
+            logmsg = "Unable to authenticate"
+            mon.setStatus(monName, logmsg)
+            l.log(logmsg, funcName() + name)
             return None
 
-        l.log("Authenticated!")
-            
-        #t = init_type(blog_type, blog_version)
+        logmsg = "Authenticated!"
+        mon.setStatus(monName, logmsg)
+        l.log(logmsg, funcName() + name)
 
-        #if t == None:
-        #    l.log("Unknown blog type", funcName() + name)
-        #    return None
-
-        #t.set_manager_url(manager_url)
-        #t.username = blog_username
-        #t.password = blog_password
-
-        l.log("Preparing to publish %s" % (id), funcName() + name)
+        logmsg = "Preparing to publish %s" % (id)
+        mon.setStatus(monName, logmsg)
+        l.log(logmsg, funcName() + name)
 
         published = False
         message = ""
@@ -123,19 +139,23 @@ def processPost(url, token, requestQueue, name, module):
             dynClass.setTitle(entry_title)
             dynClass.setContent(entry_content)
             if dynClass.postEntry() == False:
-                l.log("1Failed to publish (%s) - (%s)" % (id, message), funcName() + name)
+                logmsg = "Error postEntry returned false for %s" % (id)
+                mon.setStatus(monName, logmsg)
+                l.log(logmsg, funcName() + name)
                 return None
-            
-            #l.log("Entry %s '%s' published as %s" % (id, entry_title, str(post_id)), funcName() + name)
-            
-            #post_id = t.publish({ 'title'  : entry_title,
-            #                      'content': entry_content })
-            #l.log("Entry %s '%s' published as %s" % (id, entry_title, str(post_id)), funcName() + name)
+
+            logmsg = "Entry %s '%s' published as %s" % (id, entry_title, str(post_id))
+            mon.setStatus(monName, logmsg)
+            l.log(logmsg, funcName() + name)
             published = True
         except xmlrpclib.Fault, message:
-            l.log("2Failed to publish (%s) - (%s)" % (id, sys.exc_info()[1]), funcName() + name)
+            logmsg = "(2) Failed to publish (%s) - (%s)" % (id, sys.exc_info()[1])
+            mon.setStatus(monName, logmsg)            
+            l.log(logmsg, funcName() + name)
         except:
-            l.log("3Failed to publish (%s) - (%s)" % (id, sys.exc_info()[1]), funcName() + name)
+            logmsg = "(3) Failed to publish (%s) - (%s)" % (id, sys.exc_info()[1])
+            mon.setStatus(monName, logmsg)            
+            l.log(logmsg, funcName() + name)
 
         try:
             client.blog_publish_set({ 'token'     : token,
@@ -143,7 +163,9 @@ def processPost(url, token, requestQueue, name, module):
                                       'published' : published,
                                       'message'   : message })
         except:
-            l.log("Failed to set published for %s - %s" % (id, sys.exc_info()[1]), funcName() + name)
+            logmsg = "Failed to set published for %s - %s" % (id, sys.exc_info()[1])
+            mon.setStatus(monName, logmsg)
+            l.log(logmsg, funcName() + name)
             return None
 
 class PostThread(threading.Thread):
