@@ -33,6 +33,7 @@ import codecs
 
 sys.stdout = codecs.getwriter('utf-8')(sys.stdout)
 sys.path.append(os.getcwd())
+sys.path.append(os.getcwd() + '/vendor')
 
 if __name__ == "__main__":
     u   = Usage()
