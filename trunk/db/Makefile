@@ -13,4 +13,3 @@ translation:
 	$(DB) base_translation.mysql
 data: translation
 	$(DB) user_profile.mysql
-	$(DB) blog_type_wordpress.mysql
