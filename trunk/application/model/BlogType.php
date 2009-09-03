@@ -123,11 +123,16 @@ class BlogType extends B_Model
      *
      * @return  BlogType|null 
      */
-    public static function getByName($type_name, $version_name)
+    public static function getByName($type_name, $version_name='')
     {
-        $sql = "SELECT * FROM " . self::$table_name . 
-               " WHERE type_name = ? AND version_name = ?";
-        $args = array($type_name, $version_name);
+        $sql = "SELECT * FROM " . self::$table_name . " WHERE type_name = ?";
+        $args = array($type_name);
+
+        if(strlen($version_name)>0)
+        {
+            $sql.= " AND version_name = ?";
+            $args[] = $version_name;
+        }
 
         return current(self::select($sql, $args, PDO::FETCH_CLASS, get_class()));
     }
@@ -154,21 +159,30 @@ class BlogType extends B_Model
         else
         {
             $discover = ((object) $result);
+            $discover->type_accepted = false;
 
-            if(is_object(($blog_type = self::getByName($discover->type_name, 
-                                                       $discover->version_name))))
+            if(!is_object(($blog_type = self::getByName($discover->type_name, 
+                                                        $discover->version_name))) &&
+                strlen($discover->type_name)>0)
             {
-                foreach($blog_type->dump() as $k => $v)
-                {
-                    $discover->{$k} = $v;
-                }
+                $blog_type = new self();
+                $blog_type->type_name = $discover->type_name;
+                $blog_type->type_label = strtoupper($discover->type_name);
+                $blog_type->version_name = $discover->version_name;
+                $blog_type->version_label = strtoupper($discover->version_name);
+                $blog_type->enabled = true;
+                $blog_type->save();
+            }
+        }
 
-                $discover->type_accepted = true;
-            }
-            else
+        if(is_object($blog_type))
+        {
+            foreach($blog_type->dump() as $k => $v)
             {
-                $discover->type_accepted = false;
+                $discover->{$k} = $v;
             }
+
+            $discover->type_accepted = true;
         }
 
         return $discover;
