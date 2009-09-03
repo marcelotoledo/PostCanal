@@ -1,27 +1,34 @@
 import sys, os
 
 base_path = os.path.abspath("../")
-sys_path = base_path + "/backend"
+sys_path = base_path + "/pcd"
 sys.path.append(sys_path)
+
+print sys_path
+#sys_path = base_path + "/pcd/vendor"
+#sys.path.append(sys_path)
 
 # ==============================================================================
 
-from postcanal import PostCanalConfig
+from conf import runtimeConfig
 
 config_path = base_path + "/config/environment.xml"
-token = PostCanalConfig(config_path).get('webservice/token')
+config = runtimeConfig(config_path)
+token = config.token
 
 import xmlrpclib
 
-remote = "http://192.168.56.101/backend.py"
+remote = "http://localhost:82/backend.py"
 server = xmlrpclib.ServerProxy(remote)
 
 
 # print "---------------------------------------------------------------------------------"
 # print "blog discover"
 # print "---------------------------------------------------------------------------------"
-# url = "http://test.wordpress.com"
-# result = server.blog_discover({ 'token' : token, 'url' : url })
+url = "http://test.wordpress.com"
+#url = "http://www.uol.com.br"
+result = server.blog_discover({ 'token' : token, 'url' : url })
+print result
 # print "url = %s" % (url)
 # print "url accepted = %s" % (result['url_accepted'])
 # print "type = %s" % (result['type'])
@@ -76,9 +83,9 @@ def print_feed_discover_result(r):
     for i in r['articles']:
         print_feed_discover_result_article(i)
 
-print "---------------------------------------------------------------------------------"
-print "feed discover"
-print "---------------------------------------------------------------------------------"
+# print "---------------------------------------------------------------------------------"
+# print "feed discover"
+# print "---------------------------------------------------------------------------------"
 # url = "http://www.google.com"
 # for r in server.feed_discover({ 'token' : token, 'url' : url }):
 #     print_feed_discover_result(r)
@@ -98,7 +105,6 @@ print "-------------------------------------------------------------------------
 # url = "http://www.bovespa.com.br/rss/"
 # for r in server.feed_discover({ 'token' : token, 'url' : url }):
 #     print_feed_discover_result(r)
-url = "http://rss.terra.com.br/0,,EI1,00.xml"
-for r in server.feed_discover({ 'token' : token, 'url' : url }):
-    print_feed_discover_result(r)
-
+# url = "http://rss.terra.com.br/0,,EI1,00.xml"
+# for r in server.feed_discover({ 'token' : token, 'url' : url }):
+#     print_feed_discover_result(r)
