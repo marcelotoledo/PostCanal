@@ -149,6 +149,7 @@ class BlogType extends B_Model
         $args = array('url' => $url);
 
         $discover = null;
+        $blog_type = null;
 
         if(count($result = ((array) $client->blog_discover($args)))==0)
         {
