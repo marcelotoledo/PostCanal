@@ -32,7 +32,7 @@ def getNextFeed(client, token, total=1):
         feedList = client.feed_update_get({ 'token' : token,
                                             'total' : total })
     except:
-        l.log("webservice call failed; (%s)" % (sys.exc_info()[0].__name__), funcName())
+        l.log("webservice call failed; (%s)" % (sys.exc_info()[1]), funcName())
         return None
     
     if type(feedList) != type(list()):
@@ -47,55 +47,43 @@ def getNextFeed(client, token, total=1):
 
 def processFeed(url, token, requestQueue, name):
     mon = Monitor()
-
+    
     monName = 'thread-' + name
-    name = "-" + name
     
     try:
-        mon.setStatus(monName, 'Opening connection with interface %s' % url)
+        l.log('Opening connection with interface %s' % url, name, monName, 'copy-string', mon)
         client = openConnection(url)
     except:
-        logmsg = "Error opening connection with interface - %s" % (sys.exc_info()[0].__name__)
-        mon.setStatus(monName, logmsg)
-        l.log(logmsg, funcName() + name)
+        l.log("Error opening connection with interface - %s" % (sys.exc_info()[1]), name, monName, 'copy-string', mon)
+        mon.delKey(monName)
         return None
     
     while 1:
-        mon.setStatus(monName, 'Waiting for next in the queue to arrive')
+        l.log('Waiting for next in the queue to arrive', name, monName, 'copy-string', mon)
+
         feed = requestQueue.get()
 
         if feed == 'kill':
-            logmsg = "I am done, ending thread"
-            mon.setStatus(monName, logmsg)
-            l.log(logmsg, funcName() + name)
+            l.log("I am done, ending thread", name, monName, 'copy-string', mon)
             mon.delKey(monName)
             return None
         
         if type(feed) != type(dict()):
-            logmsg = "Feed type is wrong, expected <dict>"
-            mon.setStatus(monName, logmsg)
-            l.log(logmsg, funcName() + name)
+            l.log("Feed type is wrong, expected <dict>", name, monName, 'copy-string', mon)
             continue
 
         try:
             id  = int(feed['id'])
             url = str(feed['feed_url'])
         except:
-            logmsg = "Invalid feed dictionary"
-            mon.setStatus(monName, logmsg)
-            l.log(logmsg, funcName() + name)
+            l.log("Invalid feed dictionary", name, monName, 'copy-string', mon)
             continue
 
-        logmsg = "Updating %s" % (url)
-        mon.setStatus(monName, logmsg)
-        l.log(logmsg, funcName() + name)
-    
-        dump = feed_dump(get_feed(url))
-    
+        l.log("Updating %s" % (url), name, monName, 'copy-string', mon)
+        
+        dump = feed_dump(get_feed(url))    
         if type(dump) != type(dict()):
-            logmsg = "Wrong type for feed dump"
-            mon.setStatus(monName, logmsg)
-            l.log(logmsg, funcName() + name)
+            l.log("Wrong type for feed dump", name, monName, 'copy-string', mon)
             continue
     
         status         = ""
@@ -106,31 +94,23 @@ def processFeed(url, token, requestQueue, name):
             status        = dump['feed_status']
             totalArticles = len(dump['articles'])
         except:
-            logmsg = "invalid feed dump dictionary, probably not parsed"
-            mon.setStatus(monName, logmsg)
-            l.log(logmsg, funcName() + name)
+            l.log("invalid feed dump dictionary, probably not parsed", name, monName, 'copy-string', mon)
             continue
 
-        logmsg = "%s has %d entries" % (url, totalArticles)
-        mon.setStatus(monName, logmsg)
-        l.log(logmsg, funcName() + name)
+        l.log("%s has %d entries" % (url, totalArticles), name, monName, 'copy-string', mon)
             
         try:
             saved = client.feed_update_post({ 'token' : token, 
                                               'id'    : id, 
                                               'data'  : dump })
         except:
-            logmsg = "Webservice call failed; (%s)" % (sys.exc_info()[1])
-            mon.setStatus(monName, logmsg)
-            l.log(logmsg, funcName() + name)
+            l.log("Webservice call failed; (%s)" % (sys.exc_info()[1]), name, monName, 'copy-string', mon)
             continue
         
         if type(saved) != type(int()):
             saved = 0
 
-        logmsg = "Feed %d saved %d articles" % (id, saved)
-        mon.setStatus(monName, logmsg)
-        l.log(logmsg, funcName() + name)
+        l.log("Feed %d saved %d articles" % (id, saved), name, monName, 'copy-string', mon)
         
         time.sleep(1)
 
@@ -138,7 +118,7 @@ def pendingFeeds(client, token):
     try:
         feedCount = client.feed_update_total({ 'token': token })
     except:
-        l.log("webservice call failed; (%s)" % (sys.exc_info()[0].__name__), funcName())
+        l.log("webservice call failed; (%s)" % (sys.exc_info()[1]), funcName())
         feedCount = 0
 
     return feedCount
@@ -147,7 +127,7 @@ def feedScheduleAll(client, token):
     try:
         client.feed_update_reset({ 'token': token })
     except:
-        l.log("webservice call failed; (%s)" % (sys.exc_info()[0].__name__), funcName())
+        l.log("webservice call failed; (%s)" % (sys.exc_info()[1]), funcName())
         return None
     
 class FeedThread(threading.Thread):

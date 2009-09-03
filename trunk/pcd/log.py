@@ -16,16 +16,20 @@
 
 import syslog
 
+from monitor import Monitor
+
 class Log():
     __share_resources = {}
     
-    def __init__(self, __isVerbose=None, __isDebug=None):
+    def __init__(self, isVerbose=None, isDebug=None, isMonitor=None):
         self.__dict__ = self.__share_resources
-        
-        if __isVerbose != None:
-            self.isVerbose = __isVerbose
-        if __isDebug != None:
-            self.isDebug   = __isDebug
+
+        if isVerbose != None:
+            self.isVerbose = isVerbose
+        if isDebug != None:
+            self.isDebug   = isDebug
+        if isMonitor != None:
+            self.isMonitor = isMonitor
 
     def LogPrint(self, string):
         if self.isVerbose:
@@ -33,16 +37,26 @@ class Log():
         else:
             syslog.syslog(string)
 
-    def log(self, string, func=None):
+    def log(self, string, func=None, key=None, value=None, mon=None):
         if func == None:
             func = 'Main'            
-        self.LogPrint("%20s \t %s" % (func, string))
+        self.LogPrint("%15s \t %s" % (func, string))        
 
-    def debug(self, string, func=None):
+        if key != None and self.isMonitor == True:
+            if value == 'copy-string':
+                value = string
+            mon.setStatus(key, value)
+
+    def debug(self, string, func=None, key=None, value=None, mon=None):
         if func == None:
             func = 'Main'
         if self.isDebug:
-            self.LogPrint("%20s \t %s" % (func, string))
+            self.LogPrint("%15s \t %s" % (func, string))
+
+        if key != None and self.isMonitor == True:
+            if value == 'copy-string':
+                value = string
+            mon.setStatus(key, value)
 
     def emptyLine(self):
         print ""
