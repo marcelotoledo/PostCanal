@@ -4,10 +4,10 @@ import sys, os
 from SimpleXMLRPCServer import CGIXMLRPCRequestHandler
 
 base_path = os.path.abspath("../")
-sys_path = base_path + "/pcd"
 config_path = base_path + "/config/environment.xml"
 
-sys.path.append(sys_path)
+sys.path.append(base_path + "/pcd")
+sys.path.append(base_path + "/pcd/vendor")
 
 import webservice
 from webservice import WebService
