@@ -254,7 +254,7 @@ function feed_update(f)
     {
         feed       : f,
         blog       : my_blog.current,
-        feed_title : my_template.feed_list_ref[f].item.find("input[name='title']").val(),
+        feed_title : my_template.feed_list_ref[f].item.find("input[name='title']").val()
     }
 
     do_request('POST', './feed/update', _up, feed_update_callback);

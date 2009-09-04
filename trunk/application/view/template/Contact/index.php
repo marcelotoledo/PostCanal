@@ -3,16 +3,16 @@
     <div class="midct-cen">
         <div id="signup-ct">
             <div class="form-row">
-            Name<br/><input type="text" class="intxt intxt-full">
+            <p>Name</p><p><input type="text" class="intxt intxt-full"></p>
             </div>
             <div class="form-row">
-            E-mail<br/><input type="text" class="intxt intxt-full">
+            <p>E-mail</p><p><input type="text" class="intxt intxt-full"></p>
             </div>
             <div class="form-row">
-            Subject<br/><input type="text" class="intxt intxt-full">
+            <p>Subject</p><p><input type="text" class="intxt intxt-full"></p>
             </div>
             <div class="form-row">
-            Message<br/><textarea type="text" class="intxa intxa-full"></textarea>
+            <p>Message</p><p><textarea type="text" class="intxa intxa-full"></textarea></p>
             </div>
             <br/>
             <div class="btn" id="btn-send">

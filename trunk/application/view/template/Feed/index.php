@@ -7,7 +7,7 @@
 <div id="addnewfeedform" class="midct">
 <form>
     <div class="form-row">
-    URL<br/><input type="text" class="intxt intxt-full" id="feedurl">
+    <p>URL</p><p><input type="text" class="intxt intxt-full" id="feedurl"></p>
     </div>
     <div class="form-bot">
     <button id="addsubmit">CONTINUE</button>
@@ -48,7 +48,7 @@
     <div class="feedbot">
     <form>
         <div class="form-row">
-        Title<br/><input type="text" name="title" class="intxt intxt-full">
+        <p>Title</p><p><input type="text" name="title" class="intxt intxt-full"></p>
         </div>
         <div class="form-bot">
         <button class="feedupdatebtn">SAVE</button>
@@ -64,7 +64,7 @@
         <span class="deletemsgbig">Deleting</span><br/>
         <span class="deletemsgask">Are you sure?</span><br/>
         <form>
-        <div class="inputcontainer">
+        <div class="form-bot">
             <button type="button" class="feeddeletey" name="feeddeletebtn">Yes delete</button>
             <button type="button" class="feeddeleten" name="feednodelbtn">Don't delete</button>
         </div>

@@ -13,8 +13,9 @@
     margin-right: 0;
     height: 400px;
     text-align: left;
-    white-space: nowrap;
+    /*white-space: nowrap;*/
     overflow-x: hidden;
+    overflow-y: auto;
 }
 div.art
 {

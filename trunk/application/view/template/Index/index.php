@@ -33,10 +33,10 @@
     <div class="rgtct-lgt" id="login-form">
         <form>
         <div class="form-row">
-            E-mail<br/><input type="text" class="intxt intxt-rgt" name="email" id="login-email">
+            <p>E-mail</p><p><input type="text" class="intxt intxt-rgt" name="email" id="login-email"></p>
         </div>
         <div class="form-row">
-            Password<br/><input type="password" class="intxt intxt-rgt" name="password" id="login-password">
+            <p>Password</p><p><input type="password" class="intxt intxt-rgt" name="password" id="login-password"></p>
             <a href="#" id="link-recovery">Forgot your password?</a>
         </div>
         <div class="btn" id="btn-login">
@@ -52,7 +52,7 @@
     <div class="rgtct-lgt" id="recovery-form">
         <form>
         <div class="form-row">
-            E-mail<br/><input type="text" class="intxt intxt-rgt" name="email" id="recovery-email">
+            <p>E-mail</p><p><input type="text" class="intxt intxt-rgt" name="email" id="recovery-email"></p>
         </div>
         <div class="btn" id="btn-recovery">
             <div class="btn-brd btn-l">&nbsp;</div>

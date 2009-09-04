@@ -31,10 +31,10 @@ button.queuepubbtn
 
 #etylst
 {
-    height: 400px;
+    /*height: 400px;*/
     text-align: left;
-    white-space: nowrap;
-    overflow-x: hidden;
+    /*white-space: nowrap;*/
+    /*overflow-x: hidden;*/ /* TODO: fix entry list scrollbar */
 }
 div.ety
 {
@@ -54,16 +54,14 @@ div.ety-op
 div.entrydndhdr
 {
     float: left;
-    width: 30px;
-    line-height: 4px;
+    width: 32px;
+    height: 32px;
+    line-height: 32px;
     margin-left: 10px;
     margin-right: 5px;
     margin-top: 7px;
     cursor: move;
-}
-div.entrydndhdrdec
-{
-    border-bottom: 3px solid silver;
+	background-image: url('./image/dashboard/btn-dnd.png');
 }
 div.etytog
 {

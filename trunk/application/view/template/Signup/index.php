@@ -4,37 +4,37 @@
         <div id="signup-ct">
             <div class="form-title">E-mail and Password</div>
             <div class="form-row">
-            E-mail<br/><input type="text" class="intxt intxt-full" name="email" id="input-email">
+            <p>E-mail</p><p><input type="text" class="intxt intxt-full" name="email" id="input-email"></p>
             </div>
             <div>
                 <div class="form-row form-row-lft">
-                Password<br/><input type="password" class="intxt intxt-half" name="password" id="input-password">
+                <p>Password</p><p><input type="password" class="intxt intxt-half" name="password" id="input-password"></p>
                 </div>
                 <div class="form-row form-row-rgt">
-                Re-type password<br/><input type="password" class="intxt intxt-half" name="confirm" id="input-confirm">
+                <p>Re-type password</p><p><input type="password" class="intxt intxt-half" name="confirm" id="input-confirm"></p>
                 </div>
                 <div class="form-row-x"></div>
             </div>
             <br/>
             <div class="form-title">Personal Information</div>
             <div class="form-row">
-            Name<br/><input type="text" class="intxt intxt-full" name="name" id="input-name">
+            <p>Name</p><p><input type="text" class="intxt intxt-full" name="name" id="input-name"></p>
             </div>
             <div>
                 <div class="form-row form-row-lft">
-                Country<br/>
+                <p>Country</p><p>
                 <select class="insel insel-half" name="country" id="input-country">
                     <option value="">&nbsp;</option>
                     <?php foreach($this->territory as $k => $v) : ?>
                         <option value="<?php echo $k ?>"><?php echo $v ?></option>
                     <?php endforeach ?>
-                </select>
+                </select></p>
                 </div>
                 <div class="form-row form-row-rgt">
-                Timezone<br/>
+                <p>Timezone</p><p>
                 <select class="insel insel-half" name="timezone" id="input-timezone">
                     <option value="">&nbsp;</option>
-                </select>
+                </select></p>
                 </div>
                 <div class="form-row-x"></div>
             </div>

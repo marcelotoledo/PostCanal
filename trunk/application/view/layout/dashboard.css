@@ -116,6 +116,7 @@ div.menubotfmt a:hover
 #menubotleft
 {
     float: left;
+    line-height: 35px;
 }
 #menubotleft select
 {
@@ -135,6 +136,7 @@ div.menubotfmt a:hover
     float: right;
     margin-right: 50px;
     /*margin-right: 15px;*/
+    line-height: 35px;
 }
 #menubotclr
 {

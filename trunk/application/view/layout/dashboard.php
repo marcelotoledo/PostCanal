@@ -22,7 +22,13 @@
 <script type="text/javascript"><?php $this->includeLayout('dashboard.js') ?></script>
 <script type="text/javascript"><?php $this->includeTemplate('js') ?></script>
 <style type="text/css"><?php $this->includeLayout('dashboard.css') ?></style>
+<!--[if IE]>
+<style type="text/css"><?php $this->includeLayout('dashboard.ie.css') ?></style>
+<![endif]-->
 <style type="text/css"><?php $this->includeTemplate('css') ?></style>
+<!--[if IE]>
+<style type="text/css"><?php $this->includeTemplate('ie.css') ?></style>
+<![endif]-->
 
 </head>
 <body>

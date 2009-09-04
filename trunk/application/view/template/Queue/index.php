@@ -22,12 +22,7 @@
 
 <div id="entryblank">
 <div class="ety ety-cl" entry="" ord="" status="">
-    <div class="entrydndhdr">
-        <div class="entrydndhdrdec">&nbsp;</div>
-        <div class="entrydndhdrdec">&nbsp;</div>
-        <div class="entrydndhdrdec">&nbsp;</div>
-        <div class="entrydndhdrdec">&nbsp;</div>
-    </div>
+    <div class="entrydndhdr">&nbsp;</div>
     <div class="sprites-img etytog etytog-ck">&nbsp;</div>
     <div class="etylab">
         <a href="#"><span class="etytt"></span></a>
@@ -48,10 +43,10 @@
 <div id="editform">
 <form>
     <div class="form-row">
-        Title<br/><input type="text" name="entrytitle" value="" class="intxt intxt-full">
+        <p>Title</p><p><input type="text" name="entrytitle" value="" class="intxt intxt-full"></p>
     </div>
     <div class="form-row">
-        Content<br/><textarea name="entrybody" class="intxa intxa-full" disabled></textarea>
+        <p>Content</p><p><textarea name="entrybody" class="intxa intxa-full" disabled></textarea></p>
     </div>
     <div class="form-bot" id="editform-bot">
         <button type="button" name="editformsave">SAVE</button>

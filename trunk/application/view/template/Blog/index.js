@@ -35,7 +35,7 @@ function blog_populate(b)
 
     my_template.blog_list_ref[_blog.blog] = 
     {
-        item : my_template.blog_list_area.find("div.blog[blog='" + _blog.blog + "']"),
+        item : my_template.blog_list_area.find("div.blog[blog='" + _blog.blog + "']")
     };
 
     my_template.blog_list_ref[_blog.blog].item.find('div.blogtit').text(_blog.name);

@@ -488,6 +488,7 @@ $(document).ready(function()
 
         // my_template.queue_container.width(_w.width);
         // my_template.queue_container.height(_w.height);
+
         my_template.queue_middle.height(_w.height - my_template.queue_middle.position().top);
 
         my_template.queue_middle_area.x = my_template.queue_middle.offset().left;

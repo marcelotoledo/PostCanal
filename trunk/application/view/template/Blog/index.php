@@ -7,7 +7,7 @@
 <div id="addnewblogform" class="midct">
 <form>
     <div class="form-row">
-    URL<br/><input type="text" class="intxt intxt-full" id="blogurl">
+    <p>URL</p><p><input type="text" class="intxt intxt-full" id="blogurl"></p>
     </div>
     <div class="form-bot">
     <button id="addsubmit">CONTINUE</button>
@@ -29,17 +29,17 @@
     <div class="blogbot">
     <form>
         <div class="form-row">
-        Name<br/><input type="text" name="name" class="intxt intxt-full">
+        <p>Name</p><p><input type="text" name="name" class="intxt intxt-full"></p>
         </div>
         <div class="form-row">
-        Username<br/><input type="text" name="username" class="intxt intxt-full">
+        <p>Username</p><p><input type="text" name="username" class="intxt intxt-full"></p>
         </div>
         <div class="form-row">
-        Password<br/><input type="password" name="password" class="intxt intxt-full" style="display:none"><div class="donotchangepwd"><input type="checkbox" name="donotchangepwd" checked> keep unchanged</div>
+        <p>Password</p><p><input type="password" name="password" class="intxt intxt-full" style="display:none"><div class="donotchangepwd"><input type="checkbox" name="donotchangepwd" checked> keep unchanged</div></p>
         </div>
         <!--
         <div class="form-row">
-        Keywords<br/><input type="text" name="keywords" class="intxt intxt-full">
+        <p>Keywords</p><p><input type="text" name="keywords" class="intxt intxt-full"></p>
         </div>
         -->
         <div class="form-bot">
@@ -58,7 +58,7 @@
         <span class="deletemsgtny">no content from your blog</span><br/>
         <span class="deletemsgask">Are you sure?</span><br/>
         <form>
-        <div class="inputcontainer">
+        <div class="form-bot">
             <button type="button" class="blogdeletey" name="blogdeletebtn">Yes delete</button>
             <button type="button" class="blogdeleten" name="blognodelbtn">Don't delete</button>
         </div>
