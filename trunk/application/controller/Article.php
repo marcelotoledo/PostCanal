@@ -33,6 +33,7 @@ class C_Article extends B_Controller
         foreach($results as $a)
         {
             $ts = strtotime($a['article_date']);
+            $lt = L_Utility::literalTime($ts - time());
             $zd->setTimestamp($ts);
 
             $local = $zd->toString($zd->toString('YYYMMMdd')==$ct ? 
@@ -42,6 +43,7 @@ class C_Article extends B_Controller
             $articles[] = array_merge($a, array
             (
                 'article_time' => $ts,
+                'article_time_literal' => $lt,
                 'article_date_local' => $local
             ));
         }

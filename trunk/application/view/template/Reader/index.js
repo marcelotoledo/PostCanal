@@ -139,18 +139,19 @@ function article_populate(d, append)
     {
         _data = 
         {
-            feed               : $(this).find('feed').text(),
-            feed_title         : $(this).find('feed_title').text(),
-            article            : $(this).find('article').text(),
-            article_title      : $(this).find('article_title').text(),
-            article_link       : $(this).find('article_link').text(),
-            article_date       : $(this).find('article_date').text(),
-            article_time       : $(this).find('article_time').text(),
-            article_date_local : $(this).find('article_date_local').text(),
-            article_author     : $(this).find('article_author').text(),
-            article_content    : $(this).find('article_content').text(),
-            publication_status : $(this).find('publication_status').text(),
-            entry              : $(this).find('entry').text()
+            feed                 : $(this).find('feed').text(),
+            feed_title           : $(this).find('feed_title').text(),
+            article              : $(this).find('article').text(),
+            article_title        : $(this).find('article_title').text(),
+            article_link         : $(this).find('article_link').text(),
+            article_date         : $(this).find('article_date').text(),
+            article_time         : $(this).find('article_time').text(),
+            article_time_literal : $(this).find('article_time_literal').text(),
+            article_date_local   : $(this).find('article_date_local').text(),
+            article_author       : $(this).find('article_author').text(),
+            article_content      : $(this).find('article_content').text(),
+            publication_status   : $(this).find('publication_status').text(),
+            entry                : $(this).find('entry').text()
         };
 
         if(my_article.data[_data.article]==undefined) // avoid dupl
@@ -170,7 +171,8 @@ function article_populate(d, append)
 
             _inner.find('span.artch').text(_data.feed_title);
             _inner.find('span.arttt').text(_data.article_title);
-            _inner.find('div.artdte').text(_data.article_date_local);
+            _inner.find('div.artdte').text(_i < 5 ? _data.article_time_literal :
+                                                    _data.article_date_local);
             _inner.find('div.artlnk > a').attr('href', _data.article_link);
 
             _lsdata[_i] = _item.html(); _i++;

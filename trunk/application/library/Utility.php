@@ -10,6 +10,23 @@
 
 class L_Utility
 {
+    public static $literal_time_dictionary = array
+    (
+        '-y' => '%d years ago',
+        '-m' => '%d months ago',
+        '-d' => '%d days ago',
+        '-h' => '%d hours ago',
+        '-i' => '%d minutes ago',
+        '-s' => '%d seconds ago',
+        '+0' => 'now',
+        '+y' => 'in %d years',
+        '+m' => 'in %d months',
+        '+d' => 'in %d days',
+        '+h' => 'in %d hours',
+        '+i' => 'in %d minutes',
+        '+s' => 'in %d seconds'
+    );
+
     /**
      * Fix URL
      * 
@@ -111,5 +128,26 @@ class L_Utility
 
         $s = implode(" ", array_unique(explode(" ", $s)));
         $s = strtolower($s);
+    }
+
+    /**
+     * Literal time
+     */
+    public static function literalTime($t, $d=array())
+    {
+        if(count($d)==0) $d = self::$literal_time_dictionary;
+
+        $k = $t >= 0 ? '+' : '-';
+        $j = abs($t);
+        $x = '0';
+
+        if($j >  0           ) {                     $x = 's'; }
+        if($j > 60 && $x=='s') { $j = ceil($j / 60); $x = 'i'; }
+        if($j > 60 && $x=='i') { $j = ceil($j / 60); $x = 'h'; }
+        if($j > 24 && $x=='h') { $j = ceil($j / 24); $x = 'd'; }
+        if($j > 30 && $x=='d') { $j = ceil($j / 30); $x = 'm'; }
+        if($j > 12 && $x=='m') { $j = ceil($j / 12); $x = 'y'; }
+
+        return sprintf($d[($k . $x)], $j); 
     }
 }

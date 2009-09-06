@@ -60,13 +60,14 @@ function entry_populate(d)
     {
         _data = 
         {
-            entry                  : $(this).find('entry').text(),
-            entry_title            : $(this).find('entry_title').text(),
-            entry_content          : $(this).find('entry_content').text(),
-            publication_status     : $(this).find('publication_status').text(),
-            publication_date       : $(this).find('publication_date').text(),
-            publication_date_local : $(this).find('publication_date_local').text(),
-            ordering               : $(this).find('ordering').text()
+            entry                    : $(this).find('entry').text(),
+            entry_title              : $(this).find('entry_title').text(),
+            entry_content            : $(this).find('entry_content').text(),
+            publication_status       : $(this).find('publication_status').text(),
+            publication_date         : $(this).find('publication_date').text(),
+            publication_date_literal : $(this).find('publication_date_literal').text(),
+            publication_date_local   : $(this).find('publication_date_local').text(),
+            ordering                 : $(this).find('ordering').text()
         };
 
         if(my_queue.data[_data.entry]==undefined) // avoid dupl
@@ -79,7 +80,8 @@ function entry_populate(d)
             entry_set_status(_inner, _data.publication_status);
 
             _inner.find('span.etytt').text(_data.entry_title);
-            _inner.find('div.etydte').text(_data.publication_date_local);
+            _inner.find('div.etydte').text(_i < 5 ? _data.publication_date_literal :
+                                                    _data.publication_date_local);
 
             _lsdata[_i] = _item.html(); _i++;
         }
