@@ -39,6 +39,11 @@ B_Registry::load(BASE_PATH . '/config/environment.xml');
 define('BASE_URL', B_Registry::get('base/url'));
 
 
+/* disable Zend Framework Cache in Zend Locale */
+
+Zend_Locale::disableCache(true);
+
+
 /* configure and run bootstrap */
 
 $bootstrap = new B_Bootstrap();
