@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <environment>
     <base>
-        <url>http://localhost:82</url>
-        <!--<url>http://192.168.56.1:82</url>-->
+        <!--<url>http://localhost:82</url>-->
+        <url>http://192.168.0.147:82</url>
     </base>
     <database>
         <default>
@@ -70,9 +70,9 @@
     <application>
         <profile>
             <!-- default values for profile quota -->
-            <quotaBlog>3</quotaBlog>
-            <quotaFeed>10</quotaFeed>
-            <quotaPublicationPeriod>5</quotaPublicationPeriod>
+            <quotaBlog>999</quotaBlog>
+            <quotaFeed>999</quotaFeed>
+            <quotaPublicationPeriod>60</quotaPublicationPeriod>
         </profile>
         <feed>
             <!-- discover life time (feed cache) -->
