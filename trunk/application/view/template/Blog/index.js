@@ -237,6 +237,8 @@ $(document).ready(function()
     my_template.new_blog_submit.click(function()
     {
         if(active_request==false) { blog_add(); }
+        $(this).blur();
+        return false;
     });
 
     function blog_item_getid(i)

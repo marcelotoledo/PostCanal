@@ -12,6 +12,7 @@
 {
     display: none;
     text-align: left;
+    margin-bottom: 25px;
 }
 #addnewblogbtn
 {
@@ -22,7 +23,7 @@
 {
     font-size: 0.8em;
     color: red;
-    line-height: 40px;
+    margin-top: 10px;
 }
 
 #bloglistarea
