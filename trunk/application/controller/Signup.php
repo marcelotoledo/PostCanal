@@ -24,7 +24,13 @@ class C_Signup extends B_Controller
 
         $territory = array();
 
-        foreach(Zend_Locale::getTranslationList('Territory') as $k => $v)
+        $tl = array();
+        
+        // try catch to avoid unknown locales
+        try {                 $tl = Zend_Locale::getTranslationList('Territory'); }
+        catch(Exception $e) { $tl = Zend_Locale::getTranslationList('Territory', 'en_US'); }
+
+        foreach($tl as $k => $v)
         {
             if(strlen($k)==2 && $k!='ZZ')
             {

@@ -641,7 +641,11 @@ class C_Profile extends B_Controller
 
         $territory = array();
 
-        foreach(Zend_Locale::getTranslationList('Territory', $culture) as $k => $v)
+        // try catch to avoid unknown locales
+        try {                 $tl = Zend_Locale::getTranslationList('Territory', $culture); }
+        catch(Exception $e) { $tl = Zend_Locale::getTranslationList('Territory', 'en_US'); }      
+
+        foreach($tl as $k => $v)
         {
             if(strlen($k)==2 && $k!='ZZ')
             {
@@ -659,7 +663,11 @@ class C_Profile extends B_Controller
 
         $language = array();
 
-        foreach(Zend_Locale::getTranslationList('Language', $culture) as $k => $v)
+        // try catch to avoid unknown locales
+        try {                 $tl = Zend_Locale::getTranslationList('Language', $culture); }
+        catch(Exception $e) { $tl = Zend_Locale::getTranslationList('Language', 'en_US'); }      
+
+        foreach($tl as $k => $v)
         {
             if(in_array($k, $dl))
             {
