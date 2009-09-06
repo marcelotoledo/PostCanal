@@ -142,8 +142,6 @@ div.artbody
 }
 #navbar
 {
-    float: right;
-    padding-right: 15px;
 }
 button.navbtn
 {
@@ -197,7 +195,7 @@ div.chlst
     margin: 0px 0px 10px 10px;
     padding: 5px 5px 5px 10px;
     color: #2780b1;
-    white-space: nowrap;
+    /*white-space: nowrap;*/
     overflow-x: hidden;
     background-color: #e1f0f4;
     max-height: 300px;

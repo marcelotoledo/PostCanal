@@ -128,3 +128,11 @@ button.feeddeleten
     font-size: 14pt;
     line-height: 40px;
 }
+#feedoptionsform
+{
+    text-align: left;
+}
+div.inputfeedoption
+{
+    line-height: 30px;
+}

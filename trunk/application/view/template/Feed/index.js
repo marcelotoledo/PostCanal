@@ -80,7 +80,7 @@ function feed_options(r)
         _option = my_template.feed_option_blank.clone();
         _option.find(my_template.feed_option_selector)
             .attr('url', _url)
-            .after(((_title.length>0) ? _title : _url));
+            .after(' ' + ((_title.length>0) ? _title : _url));
         _output[_i] = _option.html(); _i++;
     });
 

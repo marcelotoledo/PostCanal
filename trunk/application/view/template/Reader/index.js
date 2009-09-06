@@ -487,6 +487,11 @@ $(document).ready(function()
 
     window.onmousewheel = document.onmousewheel = on_mouse_wheel; /* IE */
 
+    $('object').live('focus', function()
+    {
+        alert('goiasd');
+    });
+
     my_template.right_middle.scroll(function()
     {
         // if(my_template.article_list.scrollTop() > (my_article.bottom * 2/3) && /* fails when threaded */

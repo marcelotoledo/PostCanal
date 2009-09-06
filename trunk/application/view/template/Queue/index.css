@@ -31,10 +31,11 @@ button.queuepubbtn
 
 #etylst
 {
-    /*height: 400px;*/
+    margin-right: 0px;
+    height: 400px;
+    overflow-x: hidden;
+    overflow-y: auto;
     text-align: left;
-    /*white-space: nowrap;*/
-    /*overflow-x: hidden;*/ /* TODO: fix entry list scrollbar */
 }
 div.ety
 {

@@ -20,9 +20,9 @@
     <?php echo $this->translation()->feed_type_failed ?>
 </div>
 
-<div id="feedoptionsform" style="display:none">
+<div id="feedoptionsform" class="midct" style="display:none">
 <form>
-    <div class="form-row">
+    <div class="form-bot">
         <button id="optsubmit" type="button">SAVE</button>
     </div>
     <div class="inputmessage" id="optmessage"></div>
@@ -30,7 +30,7 @@
 </div>
 
 <div id="feedoptionblank" style="display:none">
-    <div class="form-row inputfeedoption">
+    <div class="inputfeedoption">
         <input name="inputfeedoption" type="radio" url="">
     </div>
 </div>

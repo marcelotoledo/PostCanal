@@ -99,7 +99,7 @@ function entry_populate(d)
     }
     else
     {
-        my_template.entry_list.append(_lsdata.join("\n"));
+       my_template.entry_list.append(_lsdata.join("\n"));
     }
 
     entry_sortable_init();
@@ -489,6 +489,7 @@ $(document).ready(function()
         // my_template.queue_container.width(_w.width);
         // my_template.queue_container.height(_w.height);
 
+        my_template.queue_middle.width(_w.width - parseInt(my_template.queue_middle.css('margin-left')));
         my_template.queue_middle.height(_w.height - my_template.queue_middle.position().top);
 
         my_template.queue_middle_area.x = my_template.queue_middle.offset().left;
