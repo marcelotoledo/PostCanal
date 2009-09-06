@@ -13,3 +13,4 @@ translation:
 	$(DB) base_translation.mysql
 data: translation
 	$(DB) user_profile.mysql
+	$(DB) user_profile_invitation.mysql

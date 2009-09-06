@@ -50,4 +50,30 @@ class C_Signup extends B_Controller
     {
         /* void */
     }
+
+    /**
+     * Invitation action
+     */
+    public function A_invitation()
+    {
+        $this->request()->getMethod() == B_Request::METHOD_POST ?
+            $this->P_invitation() :
+            $this->G_invitation();
+    }
+
+    /**
+     * Invitation message
+     */
+    public function G_invitation()
+    {
+        $this->view()->setLayout('default');
+    }
+
+    /**
+     * Invitation post
+     */
+    public function P_invitation()
+    {
+        $this->response()->setXML(true);
+    }
 }

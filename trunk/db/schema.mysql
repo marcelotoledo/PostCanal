@@ -178,6 +178,21 @@ CREATE TABLE model_user_profile
 
 CREATE INDEX m_upf_idx ON model_user_profile (hash(4), login_email_local(8), login_email_domain(4), login_password_md5(6), enabled);
 
+CREATE TABLE model_user_profile_invitation
+(
+    user_profile_invitation_id INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
+    invitation_email_local VARCHAR(64) NOT NULL,
+    invitation_email_domain VARCHAR(255) NOT NULL,
+    -- -------------------------------------------------------------------------
+    name VARCHAR(100) NOT NULL DEFAULT '',
+    -- -------------------------------------------------------------------------
+    created_at TIMESTAMP NOT NULL DEFAULT '1970-01-01 00:00:00',
+    enabled TINYINT(1) NOT NULL DEFAULT 0,
+    PRIMARY KEY (user_profile_invitation_id)
+) ENGINE=InnoDB DEFAULT CHARSET='utf8' COLLATE='utf8_unicode_ci';
+
+CREATE INDEX m_upi_idx ON model_user_profile_invitation (login_email_local(8), login_email_domain(4), enabled);
+
 CREATE TABLE model_user_dashboard_setting
 (
     user_dashboard_setting_id INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,

@@ -126,4 +126,12 @@ $(document).ready(function()
     });
 
     my_template.input_email.focus();
+
+    /* invitation (temporary) */
+
+    if(my_template.input_email.val()=='')
+    {
+        my_template.input_email.blur();
+        $("#invitationlnk").click();
+    }
 });

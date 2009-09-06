@@ -17,6 +17,11 @@
 <script type='text/javascript' src='./ovp/swfobject.js'></script>
 <?php endif ?>
 
+<?php if($this->request()->getController()=='signup') : ?>
+<script type="text/javascript" src="./js/index/thickbox-compressed.js"></script>
+<link rel="stylesheet" href="./css/index/thickbox.css" type="text/css" media="screen"/>
+<?php endif ?>
+
 <script type="text/javascript"><?php $this->includeLayout('general.js') ?></script>
 <script type="text/javascript"><?php $this->includeLayout('index.js') ?></script>
 <script type="text/javascript"><?php $this->includeTemplate('js') ?></script>

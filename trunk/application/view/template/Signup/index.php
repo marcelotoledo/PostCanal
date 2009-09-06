@@ -4,7 +4,7 @@
         <div id="signup-ct">
             <div class="form-title">E-mail and Password</div>
             <div class="form-row">
-            <p>E-mail</p><p><input type="text" class="intxt intxt-full" name="email" id="input-email"></p>
+            <p>E-mail</p><p><input type="text" class="intxt intxt-full" name="email" id="input-email" value="<?php echo $this->request()->email ?>"></p>
             </div>
             <div>
                 <div class="form-row form-row-lft">
@@ -18,7 +18,7 @@
             <br/>
             <div class="form-title">Personal Information</div>
             <div class="form-row">
-            <p>Name</p><p><input type="text" class="intxt intxt-full" name="name" id="input-name"></p>
+            <p>Name</p><p><input type="text" class="intxt intxt-full" name="name" id="input-name" value="<?php echo $this->request()->name ?>"></p>
             </div>
             <div>
                 <div class="form-row form-row-lft">
@@ -64,3 +64,5 @@
     </div>
 </div>
 <div id="midclear"></div>
+
+<a class="thickbox" href="./signup/invitation?KeepThis=true&height=480&width=640&TB_iframe=true&modal=true" id="invitationlnk"></a>
