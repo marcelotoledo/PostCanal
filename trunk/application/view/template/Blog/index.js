@@ -99,6 +99,12 @@ function blog_add()
         return null;
     }
 
+    if(_u.indexOf('http')==-1) 
+    { 
+        _u = 'http://' + _u; 
+        my_template.new_blog_url.val(_u);
+    }
+
     do_request('POST', './blog/add', { url: _u }, blog_add_callback);
 }
 
