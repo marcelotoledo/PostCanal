@@ -332,7 +332,11 @@ $(document).ready(function()
     
     my_template.new_feed_button.click(function()
     {
-        if(active_request==false) { feed_add_toggle(); }
+        if(active_request==false)
+        {
+           if(my_template.feed_options_form.is(':visible')) { feed_add_hide();   }
+           else                                             { feed_add_toggle(); }
+        }
     });
 
     my_template.new_feed_url.keypress(function(e)
@@ -346,6 +350,8 @@ $(document).ready(function()
     my_template.new_feed_submit.click(function()
     {
         if(active_request==false) { feed_discover(); }
+        $(this).blur();
+        return false;
     });
 
     function feed_item_getid(i)
