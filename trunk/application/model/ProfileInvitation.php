@@ -113,4 +113,62 @@ class ProfileInvitation extends B_Model
     }
 
     // -------------------------------------------------------------------------
+
+    /**
+     * Set overloading
+     */
+    public function __set ($name, $value)
+    {
+        if($name == 'invitation_email')
+        {
+            if(strpos($value, '@')==0) return null;
+            list($local, $domain) = explode('@', strtolower($value));
+            parent::__set('invitation_email_local', $local);
+            parent::__set('invitation_email_domain', $domain);
+        }
+        else
+        {
+            parent::__set($name, $value);
+        }
+    }
+
+    /**
+     * Get overloading
+     */
+    public function __get ($name)
+    {
+        $res = null;
+
+        if($name == 'invitation_email')
+        {
+            $res = parent::__get('invitation_email_local');
+            $res.= "@";
+            $res.= parent::__get('invitation_email_domain');
+        }
+        else
+        {
+            $res = parent::__get($name);
+        }
+
+        return $res;
+    }
+
+    /**
+     * Get Invitation from email
+     *
+     * @param   string  $email
+     * 
+     * @return  ProfileInvitation|null
+     */
+    public static function getByEmail($email)
+    {
+        if(strpos($email, '@')==0) return null;
+        list($local, $domain) = explode('@', strtolower($email));
+
+        return current(self::select(
+            "SELECT * FROM " . self::$table_name . 
+            " WHERE invitation_email_local = ? 
+              AND invitation_email_domain = ?", 
+            array($local, $domain), PDO::FETCH_CLASS, get_class()));
+    }
 }

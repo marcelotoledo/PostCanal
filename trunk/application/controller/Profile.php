@@ -89,6 +89,20 @@ class C_Profile extends B_Controller
         $this->view()->register = false;
         $this->view()->message = $this->translation()->registration_invalid;
 
+        /* check for invitation */
+        /* TEMPORARY FOR BETA VERSION **********/
+        if(is_object($i = ProfileInvitation::getByEmail($email)) &&
+                     $i->enabled==true)
+        {
+            B_Log::write(sprintf('trying to register (%s) with enabled invitation', $email), E_NOTICE, array('method' => __METHOD__));
+        }
+        else
+        {
+            B_Log::write(sprintf('trying to register (%s) without invitation blocked', $email), E_WARNING, array('method' => __METHOD__));
+            $email = '';
+        }
+        /* TEMPORARY FOR BETA VERSION **********/
+
         /* check for existing profile */
 
         $profile = null;

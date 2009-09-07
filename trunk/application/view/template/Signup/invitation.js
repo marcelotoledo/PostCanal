@@ -12,9 +12,9 @@ $(document).ready(function()
         var _fd = { name  : $("#input-name").val() , 
                     email : $("#input-email").val() };
 
-        if(_fd.name=='' || _fd.email=='')
+        if(_fd.name=='' || _fd.email.indexOf('@')==-1)
         {
-            alert('form incomplete');
+            alert('please fill up the form correctly');
             return false;
         }
 

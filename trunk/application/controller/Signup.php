@@ -75,5 +75,13 @@ class C_Signup extends B_Controller
     public function P_invitation()
     {
         $this->response()->setXML(true);
+
+        if(!is_object(ProfileInvitation::getByEmail($this->request()->email)))
+        {
+            $i = new ProfileInvitation();
+            $i->name = $this->request()->name;
+            $i->invitation_email = $this->request()->email;
+            $i->save();
+        }
     }
 }

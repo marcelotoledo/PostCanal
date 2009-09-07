@@ -7,6 +7,7 @@ DROP TABLE IF EXISTS model_user_blog_feed CASCADE;
 DROP TABLE IF EXISTS model_user_blog CASCADE;
 DROP TABLE IF EXISTS model_user_dashboard_setting CASCADE;
 DROP TABLE IF EXISTS model_user_profile CASCADE;
+DROP TABLE IF EXISTS model_user_profile_invitation CASCADE;
 DROP TABLE IF EXISTS model_aggregator_feed_article CASCADE;
 DROP TABLE IF EXISTS model_aggregator_feed_discover CASCADE;
 DROP TABLE IF EXISTS model_aggregator_feed CASCADE;
@@ -191,7 +192,7 @@ CREATE TABLE model_user_profile_invitation
     PRIMARY KEY (user_profile_invitation_id)
 ) ENGINE=InnoDB DEFAULT CHARSET='utf8' COLLATE='utf8_unicode_ci';
 
-CREATE INDEX m_upi_idx ON model_user_profile_invitation (login_email_local(8), login_email_domain(4), enabled);
+CREATE INDEX m_upi_idx ON model_user_profile_invitation (invitation_email_local(8), invitation_email_domain(4), enabled);
 
 CREATE TABLE model_user_dashboard_setting
 (
