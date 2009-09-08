@@ -58,7 +58,6 @@
         </div>
         <div id="menubot">
             <div class="menubotfmt" id="menubotleft">
-                <?php if($bc>0) : ?>
                 Working on:
                 <select id="bloglstsel">
                 <?php foreach($this->blogs as $b) : ?>
@@ -67,7 +66,6 @@
                 </select>
                 &nbsp;
                 <img>
-                <?php endif ?>
                 <?php if($this->request()->getController()=='feed') : ?>
                 Manage Feeds
                 <?php else : ?>

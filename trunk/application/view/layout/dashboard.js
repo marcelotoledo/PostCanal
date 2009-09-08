@@ -93,17 +93,19 @@ $(document).ready(function()
         $(document).trigger('blog_changed');
     });
 
-    if(my_layout.blog_list.length>0)
+    if(my_layout.blog_list.find('option').length==0)
     {
-        my_layout.blog_list.change(function()
-        {
-            if((my_blog.current = selected_blog()))
-            {
-                my_layout.blog_list.blur();
-                save_setting('blog', 'current', my_blog.current);
-            }
-        });
+        my_layout.blog_list.attr('disabled', true);
     }
+
+    my_layout.blog_list.change(function()
+    {
+        if((my_blog.current = selected_blog()))
+        {
+            my_layout.blog_list.blur();
+            save_setting('blog', 'current', my_blog.current);
+        }
+    });
 
     /* avoid showing partial loaded content */
 
