@@ -45,7 +45,7 @@ class C_Queue extends B_Controller
         $profile_id = $this->session()->user_profile_id;
 
         $queue = BlogEntry::findQueue($profile_id, $blog_hash);
-        $published = BlogEntry::findQueuePublished($profile_id, $blog_hash);
+        $published = BlogEntry::findPublished($profile_id, $blog_hash);
 
         $results = array('queue' => array(), 'published' => array());
 

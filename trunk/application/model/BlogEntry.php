@@ -31,7 +31,6 @@ class BlogEntry extends B_Model
 		'entry_content' => array ('type' => 'string','size' => 0,'required' => true),
 		'keywords' => array ('type' => 'string','size' => 0,'required' => false),
 		'publication_status' => array ('type' => 'string','size' => 0,'required' => false),
-		'publication_lock' => array ('type' => 'boolean','size' => 0,'required' => false),
 		'publication_date' => array ('type' => 'date','size' => 0,'required' => false),
 		'ordering' => array ('type' => 'integer','size' => 0,'required' => false),
 		'created_at' => array ('type' => 'date','size' => 0,'required' => false),
@@ -128,8 +127,9 @@ class BlogEntry extends B_Model
      * 
      * The ordering here is relevant
      */
-    const STATUS_NEW       = 'new';
+    const STATUS_IDLE      = 'idle';
     const STATUS_WAITING   = 'waiting';
+    const STATUS_WORKING   = 'working';
     const STATUS_FAILED    = 'failed';
     const STATUS_PUBLISHED = 'published';
 
@@ -161,7 +161,7 @@ class BlogEntry extends B_Model
     }
 
     /**
-     * Set default ordering
+     * Set default ordering for an entry
      */
     public function setDefaultOrdering()
     {
@@ -169,15 +169,12 @@ class BlogEntry extends B_Model
 
         if($this->user_blog_id)
         {
-            $sql = "SELECT MAX(ordering) as maxord FROM " . self::$table_name . " " .
-                   "WHERE user_blog_id = ? AND publication_status {status}";
+            $sql = "SELECT MAX(ordering) as maxord 
+                    FROM " . self::$table_name . "
+                    WHERE user_blog_id = ? 
+                    AND publication_status != ?";
 
-            $_in = "'" . implode("','", array(self::STATUS_NEW,
-                                              self::STATUS_WAITING,
-                                              self::STATUS_FAILED)) . "'";
-
-            $sql = str_replace('{status}', 'IN (' . $_in . ')', $sql);
-            $result = current(self::select($sql, array($this->user_blog_id), PDO::FETCH_ASSOC));
+            $result = current(self::select($sql, array($this->user_blog_id, self::STATUS_PUBLISHED), PDO::FETCH_ASSOC));
 
             if($result['maxord'] > 0)
             {
@@ -186,24 +183,29 @@ class BlogEntry extends B_Model
         }
     }
 
+    /**
+     * Find entries in queue (not published)
+     *
+     * @return array
+     */
     public static function findQueue($profile_id, $blog_hash)
     {
         $sql = "SELECT * FROM " . self::$table_name . "
                 WHERE user_blog_id = (
                     SELECT user_blog_id FROM model_user_blog
                     WHERE hash = ? AND user_profile_id = ?) AND deleted=0
-                AND publication_status {status} ORDER BY ordering ASC ";
+                AND publication_status != ? 
+                ORDER BY ordering ASC ";
 
-        $_in = "'" . implode("','", array(self::STATUS_NEW,
-                                          self::STATUS_WAITING,
-                                          self::STATUS_FAILED)) . "'";
-
-        $sql = str_replace('{status}', 'IN (' . $_in . ')', $sql);
-
-        return self::select($sql, array($blog_hash, $profile_id), PDO::FETCH_CLASS, get_class());
+        return self::select($sql, array($blog_hash, $profile_id, self::STATUS_PUBLISHED), PDO::FETCH_CLASS, get_class());
     }
 
-    public static function findQueuePublished($profile_id, $blog_hash, $last=10)
+    /**
+     * find las published entries
+     *
+     * @return array
+     */
+    public static function findPublished($profile_id, $blog_hash, $last=10)
     {
         $sql = "SELECT * FROM " . self::$table_name . "
                 WHERE user_blog_id = (
@@ -212,10 +214,14 @@ class BlogEntry extends B_Model
                 AND publication_status = ? AND deleted=0
                 ORDER BY publication_date DESC LIMIT " . intval($last);
 
-        return self::select($sql, array($blog_hash, $profile_id, self::STATUS_PUBLISHED), 
-                            PDO::FETCH_CLASS, get_class());
+        return self::select($sql, array($blog_hash, $profile_id, self::STATUS_PUBLISHED),  PDO::FETCH_CLASS, get_class());
     }
 
+    /**
+     * Get keywords from last published entries
+     *
+     * return array
+     */
     public static function findLastPublishedKeywords($blog_id, $last=10)
     {
         $sql = "SELECT keywords FROM " . self::$table_name . "
@@ -223,25 +229,25 @@ class BlogEntry extends B_Model
                 AND publication_status = ? AND deleted=0
                 ORDER BY publication_date DESC LIMIT " . intval($last);
 
-        return self::select(
-            $sql, 
-            array($blog_id, self::STATUS_PUBLISHED), 
-            PDO::FETCH_OBJ);
+        return self::select($sql, array($blog_id, self::STATUS_PUBLISHED), PDO::FETCH_OBJ);
     }
 
+    /**
+     * Get max publication date (top future) from queue entries
+     *
+     * return integer
+     */
     public static function getMaxPublicationTime($blog_id)
     {
         $sql = "SELECT MAX(publication_date) as maxpub
                 FROM " . self::$table_name . "
                 WHERE user_blog_id = ? AND publication_status != ? AND deleted=0"; 
-        $result = current(self::select($sql, 
-                                       array($blog_id, self::STATUS_PUBLISHED), 
-                                       PDO::FETCH_ASSOC));
+        $result = current(self::select($sql, array($blog_id, self::STATUS_PUBLISHED), PDO::FETCH_ASSOC));
         return intval($result['maxpub'])>0 ? strtotime($result['maxpub']) : time();
     }
 
     /**
-     * Get blog entry that need publication
+     * Get blog entries that need publication
      * 
      * @return  array
      */
@@ -249,6 +255,7 @@ class BlogEntry extends B_Model
     {
         $sql = "SELECT 
                     a.user_blog_entry_id AS id, 
+                    d.article_link       AS article_link,
                     a.entry_title        AS entry_title,
                     a.entry_content      AS entry_content,
                     b.blog_manager_url   AS blog_manager_url,
@@ -262,26 +269,28 @@ class BlogEntry extends B_Model
                     model_user_blog AS b ON (a.user_blog_id = b.user_blog_id) 
                 LEFT JOIN 
                     model_blog_type AS c ON (b.blog_type_id = c.blog_type_id) 
+                LEFT JOIN
+                    model_aggregator_feed_article AS d ON (a.aggregator_feed_article_id = d.aggregator_feed_article_id)
                 WHERE
-                    a.publication_status = ? AND
-                    a.publication_date < NOW() AND
-                    a.publication_lock = 0 AND
-                    a.deleted = 0
+                    (       a.publication_status = ? 
+                        OR (a.publication_status = ? AND (UNIX_TIMESTAMP(a.updated_at) + ?) < UNIX_TIMESTAMP())
+                    )
+                    AND a.publication_date < NOW() 
+                    AND a.deleted = 0
                 ORDER BY
                     a.ordering ASC
                 LIMIT " . intval($limit);
 
         self::transaction();
 
-        if(($res = self::select($sql, array(self::STATUS_WAITING), PDO::FETCH_ASSOC)))
+        if(($res = self::select($sql, array(self::STATUS_WAITING, self::STATUS_WORKING, intval(B_Registry::get('application/queue/entryWorkingTimeout'))), PDO::FETCH_ASSOC)))
         {
+            /* working status avoid duplicated items on backend */
+
             $sql = "UPDATE model_user_blog_entry
-                    SET publication_lock=1, updated_at=NOW()
+                    SET publication_status='" . self::STATUS_WORKING . "', 
+                        updated_at=NOW()
                     WHERE user_blog_entry_id=?";
-
-            /* lock entry to avoid duplicated items on backend */
-
-            // TODO : check quota
 
             for($i=0;$i<count($res);$i++)
             {
@@ -294,16 +303,8 @@ class BlogEntry extends B_Model
         return $res;
     }
 
-    /** 
-     * Reset entry publication lock
-     */
-    public static function resetLock()
-    {
-        self::execute('UPDATE ' . self::$table_name . ' SET publication_lock=0, updated_at=NOW()');
-    }
-
     /**
-     * Get total blog entry that need publication
+     * Get total blog entries that need publication
      * 
      * @return  integer
      */
@@ -317,19 +318,28 @@ class BlogEntry extends B_Model
                 LEFT JOIN 
                     model_blog_type AS c ON (b.blog_type_id = c.blog_type_id) 
                 WHERE
-                    a.publication_status = ? AND
-                    a.publication_date < NOW() AND
-                    a.publication_lock = 0 AND
-                    a.deleted = 0";
+                    (       a.publication_status = ? 
+                        OR (a.publication_status = ? AND (UNIX_TIMESTAMP(a.updated_at) + ?) < UNIX_TIMESTAMP())
+                    )
+                    AND a.publication_date < NOW() 
+                    AND a.deleted = 0";
 
         $total = 0;
 
-        if(($res = current(self::select($sql, array(self::STATUS_WAITING), PDO::FETCH_ASSOC))))
+        if(($res = current(self::select($sql, array(self::STATUS_WAITING, self::STATUS_WORKING, intval(B_Registry::get('application/queue/entryWorkingTimeout'))), PDO::FETCH_ASSOC))))
         {
             $total = $res['total'];
         }
 
         return $total;
+    }
+
+    /** 
+     * Release entry publication status working to waiting
+     */
+    public static function releaseWorking()
+    {
+        self::execute("UPDATE " . self::$table_name . " SET publication_status='" . self::STATUS_WAITING . "', updated_at=NOW() WHERE publication_status='" . self::STATUS_WORKING . "'");
     }
 
     /**
@@ -347,8 +357,6 @@ class BlogEntry extends B_Model
             $entry->publication_status = $published ?
                 self::STATUS_PUBLISHED :
                 self::STATUS_FAILED;
-
-            $entry->publication_lock = 0;
 
             $entry->save();
         }
@@ -624,7 +632,7 @@ class BlogEntry extends B_Model
         foreach($queue = self::findQueue($user, $blog) as $o)
         {
             $o->publication_status = ($publication==true) ? self::STATUS_WAITING :
-                                                            self::STATUS_NEW ;
+                                                            self::STATUS_IDLE ;
             $o->publication_date = ($t+=$interval);
             $o->save();
         }
@@ -689,9 +697,8 @@ class BlogEntry extends B_Model
 
         self::transaction();
 
-        if(is_object($blog = current(self::select($sql, 
-            array(self::STATUS_PUBLISHED), 
-            PDO::FETCH_OBJ)))==false) {
+        if(is_object($blog = current(self::select($sql, array(self::STATUS_PUBLISHED), PDO::FETCH_OBJ)))==false) 
+        {
             self::rollback();
             return 0;
         }

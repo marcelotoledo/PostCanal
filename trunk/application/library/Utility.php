@@ -141,7 +141,7 @@ class L_Utility
         $j = abs($t);
         $x = '0';
 
-        if($j >  0           ) {                     $x = 's'; }
+        if($j >  1           ) {                     $x = 's'; }
         if($j > 60 && $x=='s') { $j = ceil($j / 60); $x = 'i'; }
         if($j > 60 && $x=='i') { $j = ceil($j / 60); $x = 'h'; }
         if($j > 24 && $x=='h') { $j = ceil($j / 24); $x = 'd'; }

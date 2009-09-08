@@ -231,7 +231,7 @@ class L_WebService
     public function blog_publish_reset($args)
     {
         if($this->validate_args($args, array()) == false) return false;
-        BlogEntry::resetLock();
+        BlogEntry::releaseWorking();
     }
 
     /**
