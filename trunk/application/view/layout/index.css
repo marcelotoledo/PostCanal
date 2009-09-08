@@ -317,3 +317,23 @@ div.btn-x
 {
 	clear: left;
 }
+
+button
+{
+	height: 20px;
+    font-size: 0.7em;
+	line-height: 20px;
+	font-weight: bold;
+	padding: 0px 5px 0px 5px;
+    border: 0;
+	background-image: url('./image/index/btn-bg.png');
+	background-repeat: repeat-x;
+	background-position: 0px 0px;
+	background-color: #FF6600;
+	-moz-border-radius: 9px;
+	-webkit-border-radius: 9px;
+    cursor: pointer;
+    cursor: hand;
+}
+
+

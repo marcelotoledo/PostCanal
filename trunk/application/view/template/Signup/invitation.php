@@ -15,9 +15,9 @@
 <style type="text/css"><?php $this->includeLayout('index.css') ?></style>
 <style type="text/css"><?php $this->includeTemplate('css') ?></style>
 
-<h1>Welcome to PostCanal Signup</h1>
+<h1>PostCanal invitation request</h1>
 
-<p id="invitetit">Currently, we are in beta version and accepting registration from invited users only. If you were not invited yet, please enter your name and e-mail address below, and we will contact you in few days.</p>
+<p id="invitetit">Currently we are in beta version and accepting registration from invited users only. If haven't been invited, please leave your name and email address below and we will invite you in the near future.</p>
 
 <div id="inviteform">
 <form>
@@ -38,8 +38,11 @@
 </div>
 
 <div id="invitemsg" style="display:none">
-    <p>Thank you for your interest. We will contact you in few days.</p>
-    <p><a href="#" id="gototour">Click here</a> to learn more about <b>PostCanal</b>!</p>
+    <p>Thank you for contacting us.</p>
+</div>
+
+<div id="learnmoremsg">
+    <p>If you have been invited, just use the url you received to gain access to <b><a href="#" id="gotomain">Postcanal.com</a></b>!</p>
 </div>
 
 <script type="text/javascript">

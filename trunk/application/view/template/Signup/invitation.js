@@ -21,9 +21,9 @@ $(document).ready(function()
         do_request('POST', './signup/invitation', _fd, invitation_cb);
     });
 
-    $("#gototour").click(function()
+    $("#gotomain").click(function()
     {
-        parent.document.location='./tour';
+        parent.document.location='./';
         return false;
     });
 });

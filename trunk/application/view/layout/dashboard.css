@@ -216,6 +216,8 @@ button
 	background-color: #FF6600;
 	-moz-border-radius: 9px;
 	-webkit-border-radius: 9px;
+    cursor: pointer;
+    cursor: hand;
 }
 
 /* flash message */
