@@ -4,6 +4,8 @@ div.midct
 }
 #tplbar
 {
+    height: 54px;
+    line-height: 54px;
     margin-right: 50px;
 }
 #tplbaropt
@@ -23,6 +25,16 @@ button.queuepubbtn
     width: 40px;
     height: 40px;
     font-size: 0.5em;
+	background-image: url('./image/dashboard/queue-pp-btn.png');
+    background-repeat: no-repeat;
+}
+#queuepubplay
+{
+    background-position: 0px 0px;
+}
+#queuepubpause
+{
+    background-position: -40px 0px;
 }
 #tplbarclr
 {
