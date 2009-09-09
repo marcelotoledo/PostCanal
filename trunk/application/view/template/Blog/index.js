@@ -99,7 +99,7 @@ function blog_add()
         return null;
     }
 
-    if(_u.indexOf('http')==-1) 
+    if(_u.indexOf('://')==-1) 
     { 
         _u = 'http://' + _u; 
         my_template.new_blog_url.val(_u);

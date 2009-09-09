@@ -137,6 +137,12 @@ function feed_discover()
         return false;
     }
 
+    if(_data.url.indexOf('://')==-1)
+    {
+        _data.url = 'http://' + _data.url;
+        my_template.new_feed_url.val(_data.url);
+    }
+
     add_message(''); 
     do_request('POST', './feed/discover', _data, feed_discover_callback);
 }
