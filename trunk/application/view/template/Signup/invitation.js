@@ -21,6 +21,12 @@ $(document).ready(function()
         do_request('POST', './signup/invitation', _fd, invitation_cb);
     });
 
+    $("#cancelbtn").click(function()
+    {
+        parent.document.location='./';
+        return false;
+    });
+
     $("#gotomain").click(function()
     {
         parent.document.location='./';

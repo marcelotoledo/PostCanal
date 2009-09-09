@@ -32,7 +32,10 @@
     </div>
 
     <div class="form-bot">
-    <p><button type="button" id="invitemebtn">INVITE-ME!</button></p>
+    <p>
+        <button type="button" id="invitemebtn">INVITE-ME!</button>&nbsp;
+        <button type="button" id="cancelbtn">GO BACK HOME</button>
+    </p>
     </div>
 </form>
 </div>
@@ -42,7 +45,7 @@
 </div>
 
 <div id="learnmoremsg">
-    <p>If you have been invited, just use the url you received to gain access to <b><a href="#" id="gotomain">Postcanal.com</a></b>!</p>
+    <p>If you have been invited, just use the url you received to gain access to Postcanal.com!</p>
 </div>
 
 <script type="text/javascript">
