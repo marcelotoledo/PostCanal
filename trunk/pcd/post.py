@@ -62,7 +62,6 @@ def processPost(url, token, requestQueue, name, module):
     mon = Monitor()
     
     monName = 'thread-' + name
-    name    = funcName() + "-" + name    
     
     try:
         l.log('Opening connection with interface %s' % url, name, monName, 'copy-string', mon)

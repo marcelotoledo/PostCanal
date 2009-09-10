@@ -44,7 +44,7 @@ class PCDModule:
     login_post = 'http://www.livejournal.com/login.bml?ret=1'
     post_entry = 'http://www.livejournal.com/update.bml'
 
-    def __init__(self, url='', adminUrl=None, username='', password=''):
+    def __init__(self, url='', username='', password=''):
         '''initiation method
         parameter url sample: 'http://xxxxx.livejournal.com/', there should be a trailing '/'.
         '''

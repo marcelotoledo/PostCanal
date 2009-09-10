@@ -38,7 +38,7 @@ class PCDModule:
     login_url  = 'http://www.tumblr.com/login'
     post_entry = 'http://www.tumblr.com/new/text'
 
-    def __init__(self, url='', adminUrl=None, username='', password=''):
+    def __init__(self, url='', username='', password=''):
         '''initiation method
         parameter url sample: 'http://xxxxx.tumblr.com/', there should be a trailing '/'.
         '''
@@ -63,10 +63,13 @@ class PCDModule:
         '''This function returns true or false, respectively for sucessful
         authentication or not.'''
 
+        print "Trying to authenticate at %s" % self.url
+
         try:
             self.api.auth_check()
             return True
         except:
+            print "Error authenticating - %s" % (sys.exc_info()[1])
             return False
 
     def setTitle(self, title):
