@@ -25,10 +25,12 @@ server = xmlrpclib.ServerProxy(remote)
 # print "---------------------------------------------------------------------------------"
 # print "blog discover"
 # print "---------------------------------------------------------------------------------"
-url = "http://test.wordpress.com"
-#url = "http://www.uol.com.br"
-result = server.blog_discover({ 'token' : token, 'url' : url })
-print result
+#url = "http://test.wordpress.com"
+#url = "http://www.twitter.com/marcelotoledo"
+
+for url in [ 'http://twitter.com/marcelotoledo', 'http://blog.marcelotoledo.org', 'http://pcanal2.blogspot.com', 'http://postcanal.livejournal.com', 'http://postcanal.tumblr.com' ] :
+    result = server.blog_discover({ 'token' : token, 'url' : url })
+    print result
 # print "url = %s" % (url)
 # print "url accepted = %s" % (result['url_accepted'])
 # print "type = %s" % (result['type'])
