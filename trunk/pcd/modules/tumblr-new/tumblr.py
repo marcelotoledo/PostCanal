@@ -4,7 +4,7 @@
 
 # Version: 1.0
 # Keywords: 
-# Author: Peter Liu
+# Author: Marcelo Toledo <marcelo.toledo@postcanal.com>
 # Maintainer: Marcelo Toledo <marcelo.toledo@postcanal.com>
 # URL: http://
 
@@ -17,27 +17,25 @@
 import os
 import sys
 import re
-import urllib
 
-from util import peterBrowser
+#import urllib
 
-config_path = os.getcwd()[:os.getcwd().find("pcd")] + "pcd"
-sys.path.append(config_path)
+from tumblrapi import Api
+#from util import peterBrowser
+
+#config_path = os.getcwd()[:os.getcwd().find("pcd")] + "pcd"
+#sys.path.append(config_path)
 
 #import log
 #l = log.Log()
 
 class PCDModule:
     '''Class for interacting with tumblr.com'''
-    #logger=LoggerFactory.getLogger('tumblr')
 
     modName = 'tumblr'
 
     # regular expression patterns to extract useful data from web page.
     url_pattern        = re.compile(r'^http://[a-z0-9-]+?\.tumblr\.com$')
-    not_found_pattern  = re.compile(r"(?ius).*?<h1>We couldn't find the page you were looking for\.</h1>")
-    logging_in_pattern = re.compile(r'(?ius).*?<title>Logging in\.\.\.</title>')
-    form_key_pattern   = re.compile(r'(?ius).*?<input type="hidden" id="form_key" name="form_key" value="(.+?)"/>')
 
     # functional urls
     login_url  = 'http://www.tumblr.com/login'
@@ -52,55 +50,27 @@ class PCDModule:
         self.username = username
         self.password = password
         self.entry    = BlogEntry()
+        self.api      = Api(self.url, self.username, self.password)
 
     def isItMe(self):
         '''This function is used to identify if this module can interact
         with the URL passed or not, to do this you need to look for
         clues and return true for positive or false for negative.'''
 
-        #print "Entrei no isItMe do Tumblr."
-
         if not PCDModule.url_pattern.match(self.url):
             #print "URL invalida (%s) nao bate com (%s)" % (self.url, '^http://[a-z0-9-]+?\.tumblr\.com/$')
-            #l.log("Invalid url, it should comply with the regular expression")
-            return False
-        #print "URL Valida!"
-        try:
-            data = peterBrowser.getUrl(self.url)
-        except:
-            return False
-            #print "Erro no geturl!"
-        
-        if PCDModule.not_found_pattern.match(data):
-            #print "Nao ncontramos o pattern (%s)" % ("(?ius).*?<h1>We couldn't find the page you were looking for\.</h1>")
-            #print data
             return False
         return True
-
+    
     def authenticate(self):
         '''This function returns true or false, respectively for sucessful
         authentication or not.'''
-        
-        values = {
-        'email'       : self.username,
-        'password'    : self.password,
-        'redirect_to' : '/dashboard'
-        }
-        
-        try:
-            data = peterBrowser.getUrl(PCDModule.login_url,urllib.urlencode(values))
-        except:
-            print "Error in getUrl."
-            return False
 
-        print "getURL ok, proceeding with match."
-        
-        if PCDModule.logging_in_pattern.match(data):
-            print "match ok!"
+        try:
+            self.api.auth_check()
             return True
-        print "Match NOT ok"
-        print data
-        return False
+        except:
+            return False
 
     def setTitle(self, title):
         "Set title"
@@ -132,32 +102,12 @@ class PCDModule:
 
     def postEntry(self):
         "Post entry"
-        data = peterBrowser.getUrl(PCDModule.post_entry)
-        matcher = PCDModule.form_key_pattern.match(data)
-        if not matcher:
-            #l.log("Can't find the form_key value when trying to post entry")
+        try:
+            post = self.api.write_regular(self.entry.title, self.entry.content)
+            return True
+        except:
+            #print "Erro ao postar artigo no tumblr: %s" % (sys.exc_info()[1])
             return False
-        form_key_value = matcher.group(1)
-        values = {
-            'post[state]'         : '0',
-            'post[publish_on]'    : '',
-            'post[draft_status]'  : '',
-            'post[date]'          : 'now',
-            'post[tags]'          : ','.join(self.entry.tags),
-            'post[slug]'          : '',
-            'is_rich_text[one]'   : '0',
-            'is_rich_text[two]'   : '1',
-            'is_rich_text[three]' : '0',
-            'form_key'            : form_key_value,
-            'post[one]'           : self.entry.title,
-            'post[two]'           : self.entry.content,
-            'post[type]'          : 'regular',
-        }
-        
-        data = peterBrowser.getUrl(PCDModule.post_entry, urllib.urlencode(values))
-        if not data:
-            return False
-        return True
 
     def clear(self):
         "Clear everything"
@@ -180,4 +130,3 @@ class BlogEntry:
         self.tags       = []
         self.categories = []
         self.attachment = None
-
