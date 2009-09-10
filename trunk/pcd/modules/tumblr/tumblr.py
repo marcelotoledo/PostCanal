@@ -24,8 +24,8 @@ from util import peterBrowser
 config_path = os.getcwd()[:os.getcwd().find("pcd")] + "pcd"
 sys.path.append(config_path)
 
-import log
-l = log.Log()
+#import log
+#l = log.Log()
 
 class PCDModule:
     '''Class for interacting with tumblr.com'''
@@ -59,7 +59,7 @@ class PCDModule:
         clues and return true for positive or false for negative.'''
         
         if not PCDModule.url_pattern.match(self.url):
-            l.log("Invalid url, it should comply with the regular expression")
+            #l.log("Invalid url, it should comply with the regular expression")
             return False
         data = peterBrowser.getUrl(self.url)
         if PCDModule.not_found_pattern.match(data):
@@ -114,7 +114,7 @@ class PCDModule:
         data = peterBrowser.getUrl(PCDModule.post_entry)
         matcher = PCDModule.form_key_pattern.match(data)
         if not matcher:
-            l.log("Can't find the form_key value when trying to post entry")
+            #l.log("Can't find the form_key value when trying to post entry")
             return False
         form_key_value = matcher.group(1)
         values = {
