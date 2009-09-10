@@ -60,16 +60,18 @@ class WebService:
         return feeds
 
 if __name__ == '__main__':
-    url = 'http://twitter.com/marcelotoledo'
+    url = ['http://twitter.com/marcelotoledo', 'http://blog.marcelotoledo.org', 'http://pcanal2.blogspot.com', 'http://postcanal.livejournal.com', 'http://postcanal.tumblr.com']
 
-    c = TContainer()
-    c.setURL(url)
-    
-    m = Module()
-    m.loadAllModules()
-    myType = m.myContainerName(url)
-
-    c.setType(myType)
-    c.setURLAccepted(True)
-    
-    print c.getData()
+    for item in url:
+        print "Testing %s..." % item
+        c = TContainer()
+        c.setURL(item)
+        
+        m = Module()
+        m.loadAllModules()
+        myType = m.myContainerName(item)
+        
+        c.setType(myType)
+        c.setURLAccepted(True)
+        
+        print c.getData()

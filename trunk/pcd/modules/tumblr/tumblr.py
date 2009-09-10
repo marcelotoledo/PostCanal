@@ -34,7 +34,7 @@ class PCDModule:
     modName = 'tumblr'
 
     # regular expression patterns to extract useful data from web page.
-    url_pattern        = re.compile(r'^http://[a-z0-9-]+?\.tumblr\.com/$')
+    url_pattern        = re.compile(r'^http://[a-z0-9-]+?\.tumblr\.com$')
     not_found_pattern  = re.compile(r"(?ius).*?<h1>We couldn't find the page you were looking for\.</h1>")
     logging_in_pattern = re.compile(r'(?ius).*?<title>Logging in\.\.\.</title>')
     form_key_pattern   = re.compile(r'(?ius).*?<input type="hidden" id="form_key" name="form_key" value="(.+?)"/>')
@@ -57,12 +57,23 @@ class PCDModule:
         '''This function is used to identify if this module can interact
         with the URL passed or not, to do this you need to look for
         clues and return true for positive or false for negative.'''
-        
+
+        #print "Entrei no isItMe do Tumblr."
+
         if not PCDModule.url_pattern.match(self.url):
+            #print "URL invalida (%s) nao bate com (%s)" % (self.url, '^http://[a-z0-9-]+?\.tumblr\.com/$')
             #l.log("Invalid url, it should comply with the regular expression")
             return False
-        data = peterBrowser.getUrl(self.url)
+        #print "URL Valida!"
+        try:
+            data = peterBrowser.getUrl(self.url)
+        except:
+            return False
+            #print "Erro no geturl!"
+        
         if PCDModule.not_found_pattern.match(data):
+            #print "Nao ncontramos o pattern (%s)" % ("(?ius).*?<h1>We couldn't find the page you were looking for\.</h1>")
+            #print data
             return False
         return True
 

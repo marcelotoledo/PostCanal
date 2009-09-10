@@ -32,7 +32,7 @@ class PCDModule:
     modName = 'livejournal'
 
     #regular expression patterns to extract useful data from web page.
-    url_pattern          = re.compile(r'^http://[a-z0-9_]+?\.livejournal\.com/$')
+    url_pattern          = re.compile(r'^http://[a-z0-9_]+?\.livejournal\.com$')
     home_pattern         = re.compile(r"(?ius).*?><a href='http://[a-z0-9_]+?\.livejournal\.com/profile'><")
     chal_pattern         = re.compile(r"(?ius).*?name='chal' .+? value='(.+?)' />")
     logout_pattern       = re.compile(r"(?ius).*?action='http://www\.livejournal\.com/logout\.bml\?ret=1' method='post'>")
