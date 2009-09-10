@@ -18,10 +18,7 @@ import os
 import sys
 import re
 
-#import urllib
-
 from tumblrapi import Api
-#from util import peterBrowser
 
 #config_path = os.getcwd()[:os.getcwd().find("pcd")] + "pcd"
 #sys.path.append(config_path)
