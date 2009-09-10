@@ -1,5 +1,4 @@
 var my_template = null;
-var txtofw_articletit_max = 500;
 
 var my_feed =
 {
@@ -136,6 +135,8 @@ function article_populate(d, append)
     var _lsdata = Array();
     var _i      = 0;
 
+    var _alw = my_template.article_list.width() * 0.6;
+
     d.each(function()
     {
         _data = 
@@ -170,8 +171,8 @@ function article_populate(d, append)
                     .addClass('arttog-ck');
             }
 
-            _inner.find('span.artch').b_txtoverflow({ buffer: my_template.txtoverflow_buffer, width: txtofw_articletit_max, text: _data.feed_title });
-            _inner.find('span.arttt').b_txtoverflow({ buffer: my_template.txtoverflow_buffer, width: txtofw_articletit_max, text: _data.article_title });
+            _inner.find('span.artch').b_txtoverflow({ buffer: my_template.txtoverflow_buffer, width: _alw, text: _data.feed_title });
+            _inner.find('span.arttt').b_txtoverflow({ buffer: my_template.txtoverflow_buffer, width: _alw, text: _data.article_title });
             _inner.find('div.artdte').text(_i < 5 ? _data.article_time_literal :
                                                     _data.article_date_local);
             _inner.find('div.artlnk > a').attr('href', _data.article_link);

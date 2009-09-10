@@ -1,5 +1,4 @@
 var my_template = null;
-var txtofw_feedtit_max = 600;
 
 function feed_add_show()
 {
@@ -27,6 +26,14 @@ function add_message(m)
 {
     my_template.new_feed_message.text(m);
     (m=='') ? my_template.new_feed_message.hide() : my_template.new_feed_message.show();
+}
+
+function txtoverflow_up()
+{
+    my_template.feed_list_area.find('div.feed').each(function()
+    {
+        $(this).find('div.feedtit').b_txtoverflow({ buffer: my_template.txtoverflow_buffer, width: (my_template.feed_list_area.width() * 0.8) });
+    });
 }
 
 function feed_populate(b, app)
@@ -61,7 +68,7 @@ function feed_populate(b, app)
         item : my_template.feed_list_area.find("div.feed[feed='" + _feed.feed + "']")
     };
     
-    my_template.feed_list_ref[_feed.feed].item.find('div.feedtit').b_txtoverflow({ buffer: my_template.txtoverflow_buffer, width: txtofw_feedtit_max, text: _feed.title });
+    my_template.feed_list_ref[_feed.feed].item.find('div.feedtit').b_txtoverflow({ buffer: my_template.txtoverflow_buffer, width: (my_template.feed_list_area.width()), text: _feed.title });
     my_template.feed_list_ref[_feed.feed].item.find('div.feedurl > span').text(_feed.url);
     my_template.feed_list_ref[_feed.feed].item.find("input[name='title']").val(_feed.title);
 }
@@ -249,7 +256,7 @@ function feed_update_callback(d)
     {
         var _feed = _updated.find('feed').text();
         var _title = _updated.find('feed_title').text();
-        my_template.feed_list_ref[_feed].item.find('div.feedtit').text(_title);
+        my_template.feed_list_ref[_feed].item.find('div.feedtit').b_txtoverflow({ buffer: my_template.txtoverflow_buffer, width: (my_template.feed_list_area.width() * 0.8), text: _title });
         flash_message("<?php echo $this->translation()->saved ?>");
         feed_edit_hide(_feed);
     }
@@ -337,6 +344,21 @@ $(document).ready(function()
         txtoverflow_buffer   : $("#b_txtoverflow-buffer"),
         feed_list_ref        : Array()
     }; 
+
+    function window_update()
+    {
+        txtoverflow_up();
+    }
+
+    $(window).resize(function()
+    {
+        window_update();
+    });
+
+    function initialize()
+    {
+        feed_list();
+    }
     
     my_template.new_feed_button.click(function()
     {
@@ -420,8 +442,6 @@ $(document).ready(function()
         feed_discover();
     });
 
-    feed_list();
-
     $(document).bind('blog_changed' , function(e)
     {
         on_blog_change();
@@ -431,4 +451,6 @@ $(document).ready(function()
     {
         feed_sortable_init();
     });
+
+    initialize();
 });

@@ -20,6 +20,8 @@
 div.art
 {
     height: 45px;
+    overflow: hidden;
+    white-space: nowrap;
 }
 div.art-cl
 {
@@ -57,6 +59,8 @@ div.artlab
     float: left;
     margin-left: 20px;
     margin-top: 5px;
+    overflow: hidden;
+    white-space: nowrap;
 }
 div.artlab a
 {
@@ -71,10 +75,14 @@ span.artch
 {
     font-size: 0.9em;
     font-weight: bold;
+    overflow: hidden;
+    white-space: nowrap;
 }
 span.arttt
 {
     font-size: 0.9em;
+    overflow: hidden;
+    white-space: nowrap;
 }
 div.artlnk
 {
