@@ -71,9 +71,9 @@ $(document).ready(function()
 {
     var my_layout =
     {
-        main_container : $("#mainct"),
-        current_blog   : $("#currentblog"),
-        blog_list      : $("#bloglstsel")
+        main_container     : $("#mainct"),
+        current_blog       : $("#currentblog"),
+        blog_list          : $("#bloglstsel")
     };
 
     function selected_blog()

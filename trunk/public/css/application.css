@@ -5,3 +5,8 @@
 /* spinner */
 
 .b-spinner{z-index:2601;position:absolute;width:120px;padding:10px;background:gold;}.b-spinner-image{float:left;padding:5px;}.b-spinner-message{float:right;padding:5px;line-height:24px;}
+
+/* txtoverflow */
+
+#b_txtoverflow-buffer{position: absolute;display: none;width: auto;height: auto;white-space: nowrap;}
+

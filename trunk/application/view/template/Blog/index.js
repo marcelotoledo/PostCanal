@@ -1,4 +1,5 @@
 var my_template = null;
+var txtofw_blogtit_max = 600;
 
 function toggle_blog_add()
 {
@@ -38,7 +39,7 @@ function blog_populate(b)
         item : my_template.blog_list_area.find("div.blog[blog='" + _blog.blog + "']")
     };
 
-    my_template.blog_list_ref[_blog.blog].item.find('div.blogtit').text(_blog.name);
+    my_template.blog_list_ref[_blog.blog].item.find('div.blogtit').b_txtoverflow({ buffer: my_template.txtoverflow_buffer, width: txtofw_blogtit_max, text: _blog.name });
     my_template.blog_list_ref[_blog.blog].item.find('div.blogurl > span').text(_blog.url);
     my_template.blog_list_ref[_blog.blog].item.find("input[name='name']").val(_blog.name);
     my_template.blog_list_ref[_blog.blog].item.find("input[name='username']").val(_blog.username);
@@ -207,16 +208,17 @@ $(document).ready(function()
 {
     my_template =
     {
-        new_blog_button   : $("#addnewblogbtn"),
-        new_blog_form     : $("#addnewblogform"),
-        new_blog_url      : $("#blogurl"),
-        new_blog_submit   : $("#addsubmit"),
-        new_blog_message  : $("#addmessage"),
-        blog_list_area    : $("#bloglistarea"),
-        blog_item_blank   : $("#blogitemblank"),
-        blog_delete_blank : $("#blogdeleteblank"),
-        blog_type_failed  : $("#blogtypefailedmsg"),
-        blog_list_ref     : Array()
+        new_blog_button    : $("#addnewblogbtn"),
+        new_blog_form      : $("#addnewblogform"),
+        new_blog_url       : $("#blogurl"),
+        new_blog_submit    : $("#addsubmit"),
+        new_blog_message   : $("#addmessage"),
+        blog_list_area     : $("#bloglistarea"),
+        blog_item_blank    : $("#blogitemblank"),
+        blog_delete_blank  : $("#blogdeleteblank"),
+        blog_type_failed   : $("#blogtypefailedmsg"),
+        txtoverflow_buffer : $("#b_txtoverflow-buffer"),
+        blog_list_ref      : Array()
     }; 
     
     my_template.new_blog_button.click(function()

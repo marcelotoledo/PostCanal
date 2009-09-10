@@ -96,6 +96,7 @@
 
 </div>
 <div id="flashmessage"></div>
+<div id="b_txtoverflow-buffer"></div>
 
 <script type="text/javascript">
 var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");

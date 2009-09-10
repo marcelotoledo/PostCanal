@@ -1,12 +1,3 @@
-<?php $bc = count($this->blogs); ?>
-
-<?php if($bc==0) : ?>
-#menubotleft
-{
-    margin-top: 10px;
-}
-<?php endif ?>
-
 div.form-bot button
 {
     margin-right: 5px;
