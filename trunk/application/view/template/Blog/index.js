@@ -1,5 +1,4 @@
 var my_template = null;
-var txtofw_blogtit_max = 600;
 
 function toggle_blog_add()
 {
@@ -16,6 +15,14 @@ function add_message(m)
 {
     my_template.new_blog_message.text(m);
     my_template.new_blog_message.show();
+}
+
+function txtoverflow_up()
+{
+    my_template.blog_list_area.find('div.blog').each(function()
+    {
+        $(this).find('div.blogtit').b_txtoverflow({ buffer: my_template.txtoverflow_buffer, width: (my_template.blog_list_area.width() * 0.8) });
+    });
 }
 
 function blog_populate(b)
@@ -39,7 +46,7 @@ function blog_populate(b)
         item : my_template.blog_list_area.find("div.blog[blog='" + _blog.blog + "']")
     };
 
-    my_template.blog_list_ref[_blog.blog].item.find('div.blogtit').b_txtoverflow({ buffer: my_template.txtoverflow_buffer, width: txtofw_blogtit_max, text: _blog.name });
+    my_template.blog_list_ref[_blog.blog].item.find('div.blogtit').b_txtoverflow({ buffer: my_template.txtoverflow_buffer, width: (my_template.blog_list_area.width() * 0.8), text: _blog.name });
     my_template.blog_list_ref[_blog.blog].item.find('div.blogurl > span').text(_blog.url);
     my_template.blog_list_ref[_blog.blog].item.find("input[name='name']").val(_blog.name);
     my_template.blog_list_ref[_blog.blog].item.find("input[name='username']").val(_blog.username);
@@ -184,7 +191,7 @@ function blog_update_callback(d)
     {
         var _blog = _updated.find('blog').text();
         var _name = _updated.find('name').text();
-        my_template.blog_list_ref[_blog].item.find('div.blogtit').text(_name);
+        my_template.blog_list_ref[_blog].item.find('div.blogtit').b_txtoverflow({ buffer: my_template.txtoverflow_buffer, width: (my_template.blog_list_area.width() * 0.8), text: _name });
         flash_message("<?php echo $this->translation()->saved ?>");
         blog_edit_hide(_blog);
     }
@@ -221,6 +228,21 @@ $(document).ready(function()
         blog_list_ref      : Array()
     }; 
     
+    function window_update()
+    {
+        txtoverflow_up();
+    }
+
+    $(window).resize(function()
+    {
+        window_update();
+    });
+
+    function initialize()
+    {
+        blog_list();
+    }
+
     my_template.new_blog_button.click(function()
     {
         if(active_request==false) { toggle_blog_add(); }
@@ -303,5 +325,5 @@ $(document).ready(function()
         return false;
     });
 
-    blog_list();
+    initialize();
 });

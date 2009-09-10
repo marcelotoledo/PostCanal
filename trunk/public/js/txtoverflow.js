@@ -15,6 +15,7 @@
  *
  * #b_txtoverflow-buffer
  * {
+ *     display: none;
  *     position: absolute;
  *     width: auto;
  *     height: auto;
@@ -25,6 +26,7 @@
 jQuery.fn.b_txtoverflow = function(cf)
 {
     var bf = null;
+    var bw = null;
     var ln = null;
     var tx = null;
     var ap = null;
@@ -39,20 +41,33 @@ jQuery.fn.b_txtoverflow = function(cf)
     if(ln==0)         { ln = 500; }
 
     if(cf!=undefined) { if(cf.text!=undefined)   { tx = cf.text; } }
-    if(tx==null)      { tx = $(this).text(); }
-
-    if(cf!=undefined) { ap = cf.append; }
-    if(ap==null)      { ap = '...'; }
 
     bf.css('font-family',  $(this).css('font-family'));
     bf.css('font-size',    $(this).css('font-size'));
     bf.css('font-style',   $(this).css('font-style'));
     bf.css('font-variant', $(this).css('font-variant'));
     bf.css('font-weight',  $(this).css('font-weight'));
-    bf.text(tx);
 
-    ss = parseInt(ln / (bf.width() / bf.text().length));
-    if(ss >= tx.length) { ss = tx.length; ap = ''; };
+    if(tx!=null)
+    {
+        bf.text(tx);
+    }
+    else
+    {
+        $(this).find('span.hellip').remove();
+        bf.text($(this).text());
+    }
 
-    $(this).text(tx.substring(0, ss - ap.length) + ap);
+    bw = parseInt(bf.width()) + 1; // to avoid zero div
+
+    if(ln < bw)
+    {
+        tx = bf.text();
+        ss = parseInt(ln / (bw / tx.length)) - 1;
+        $(this).html(tx.substring(0, ss) + '<span class="hellip">&hellip;</span><span style="display:none">' + tx.substring(ss) + '</span>');
+    }
+    else
+    {
+        if(tx!=null) { $(this).text(tx); }
+    }
 }
