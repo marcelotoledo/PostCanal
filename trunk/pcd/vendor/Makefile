@@ -1,6 +1,6 @@
 # Makefile --- 
 
-# Copyright  (C)  2009	Postcanal Inc. <http://www.postcanal.com>
+# Copyright  (C)  2009  Postcanal Inc. <http://www.postcanal.com>
 
 # Version: 1.0
 # Keywords: 
@@ -16,5 +16,3 @@
 
 clean:
 	rm -f *.pyc *~*
-	make -C modules
-	make -C vendor
