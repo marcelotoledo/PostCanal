@@ -59,17 +59,17 @@ class WebService:
             feeds.append(aggregator.feed_dump(f))
         return feeds
 
-# if __name__ == '__main__':
-#     url = 'http://twitter.com/marcelotoledo'
+if __name__ == '__main__':
+    url = 'http://twitter.com/marcelotoledo'
 
-#     c = TContainer()
-#     c.setURL(url)
+    c = TContainer()
+    c.setURL(url)
     
-#     m = Module()
-#     m.loadAllModules()
-#     myType = m.myContainerName(url)
+    m = Module()
+    m.loadAllModules()
+    myType = m.myContainerName(url)
 
-#     c.setType(myType)
-#     c.setURLAccepted(True)
+    c.setType(myType)
+    c.setURLAccepted(True)
     
-#     print c.getData()
+    print c.getData()

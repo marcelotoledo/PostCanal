@@ -23,7 +23,8 @@ from tumblr import PCDModule
 Tumblr = PCDModule
 
 #username='peter4test', password='peter2win'
-b = Tumblr('http://peter4test.tumblr.com/', None, 'mituzhishi@gmail.com', 'peter2win')
+#b = Tumblr('http://peter4test.tumblr.com/', None, 'mituzhishi@gmail.com', 'peter2win')
+b = Tumblr('http://postcanal.tumblr.com/', None, 'marcelo@marcelotoledo.org', 'adv70076')
 
 if not b.isItMe():
     print 'isItMe() False: invalid url'

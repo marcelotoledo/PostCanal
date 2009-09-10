@@ -36,7 +36,7 @@ class PCDModule:
 
     # functional urls
     login_url  = 'http://www.tumblr.com/login'
-    post_entry = 'http://www.PCDModule.com/new/text'
+    post_entry = 'http://www.tumblr.com/new/text'
 
     def __init__(self, url='', adminUrl=None, username='', password=''):
         '''initiation method
