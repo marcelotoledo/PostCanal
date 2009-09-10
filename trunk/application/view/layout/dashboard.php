@@ -61,7 +61,7 @@
                 Working on:
                 <select id="bloglstsel">
                 <?php foreach($this->blogs as $b) : ?>
-                <option value="<?php echo $b->hash ?>" <?php if($this->settings->blog->current == $b->hash) echo "selected"; ?>><?php echo $b->name ?></option>
+                <option value="<?php echo $b->hash ?>" <?php if($this->settings->blog->current == $b->hash) echo "selected"; ?>><?php echo (strlen($b->name) > 80) ? (substr($b->name, 0, 80) . '...') : $b->name ?></option>
                 <?php endforeach ?>
                 </select>
                 &nbsp;

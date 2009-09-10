@@ -28,6 +28,7 @@ jQuery.fn.b_txtoverflow = function(cf)
     var ln = null;
     var tx = null;
     var ap = null;
+    var ss = 0;
 
     if(cf!=undefined) { if(cf.buffer!=undefined) { bf = cf.buffer; } }
     if(bf==undefined) { bf = $("#b_txtoverflow-buffer"); }
@@ -50,5 +51,8 @@ jQuery.fn.b_txtoverflow = function(cf)
     bf.css('font-weight',  $(this).css('font-weight'));
     bf.text(tx);
 
-    $(this).text(tx.substring(0, parseInt(ln / (bf.width() / bf.text().length)) - ap.length) + ap);
+    ss = parseInt(ln / (bf.width() / bf.text().length));
+    if(ss >= tx.length) { ss = tx.length; ap = ''; };
+
+    $(this).text(tx.substring(0, ss - ap.length) + ap);
 }

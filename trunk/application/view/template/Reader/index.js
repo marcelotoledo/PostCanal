@@ -1,4 +1,5 @@
 var my_template = null;
+var txtofw_articletit_max = 500;
 
 var my_feed =
 {
@@ -169,8 +170,8 @@ function article_populate(d, append)
                     .addClass('arttog-ck');
             }
 
-            _inner.find('span.artch').text(_data.feed_title);
-            _inner.find('span.arttt').text(_data.article_title);
+            _inner.find('span.artch').b_txtoverflow({ buffer: my_template.txtoverflow_buffer, width: txtofw_articletit_max, text: _data.feed_title });
+            _inner.find('span.arttt').b_txtoverflow({ buffer: my_template.txtoverflow_buffer, width: txtofw_articletit_max, text: _data.article_title });
             _inner.find('div.artdte').text(_i < 5 ? _data.article_time_literal :
                                                     _data.article_date_local);
             _inner.find('div.artlnk > a').attr('href', _data.article_link);
@@ -397,7 +398,8 @@ $(document).ready(function()
         article_list_lnk     : $("#articlelistlnk"),
         article_list_lab     : $("#articlelistlab"),
         article_prev         : $("#articleprev"),
-        article_next         : $("#articlenext")
+        article_next         : $("#articlenext"),
+        txtoverflow_buffer   : $("#b_txtoverflow-buffer")
     }; 
     
     function window_update()

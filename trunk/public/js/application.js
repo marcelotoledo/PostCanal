@@ -8,7 +8,7 @@ jQuery.b_dialog=function(b){var e=$(window).width();var a=$(window).height();var
 
 /* txtoverflow */
 
-jQuery.fn.b_txtoverflow=function(e){var c=null;var d=null;var a=null;var b=null;if(e!=undefined){if(e.buffer!=undefined){c=e.buffer}}if(c==undefined){c=$("#b_txtoverflow-buffer")}if(c==undefined){return false}if(e!=undefined){if(e.width!=undefined){d=parseInt(e.width)}}if(d==null){d=$(this).width()}if(d==0){d=500}if(e!=undefined){if(e.text!=undefined){a=e.text}}if(a==null){a=$(this).text()}if(e!=undefined){b=e.append}if(b==null){b="..."}c.css("font-family",$(this).css("font-family"));c.css("font-size",$(this).css("font-size"));c.css("font-style",$(this).css("font-style"));c.css("font-variant",$(this).css("font-variant"));c.css("font-weight",$(this).css("font-weight"));c.text(a);$(this).text(a.substring(0,parseInt(d/(c.width()/c.text().length))-b.length)+b)};
+jQuery.fn.b_txtoverflow=function(f){var d=null;var e=null;var a=null;var c=null;var b=0;if(f!=undefined){if(f.buffer!=undefined){d=f.buffer}}if(d==undefined){d=$("#b_txtoverflow-buffer")}if(d==undefined){return false}if(f!=undefined){if(f.width!=undefined){e=parseInt(f.width)}}if(e==null){e=$(this).width()}if(e==0){e=500}if(f!=undefined){if(f.text!=undefined){a=f.text}}if(a==null){a=$(this).text()}if(f!=undefined){c=f.append}if(c==null){c="..."}d.css("font-family",$(this).css("font-family"));d.css("font-size",$(this).css("font-size"));d.css("font-style",$(this).css("font-style"));d.css("font-variant",$(this).css("font-variant"));d.css("font-weight",$(this).css("font-weight"));d.text(a);b=parseInt(e/(d.width()/d.text().length));if(b>=a.length){b=a.length;c=""}$(this).text(a.substring(0,b-c.length)+c)};
 
 /* timezone */
 

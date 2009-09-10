@@ -1,4 +1,5 @@
 var my_template = null;
+var txtofw_feedtit_max = 600;
 
 function feed_add_show()
 {
@@ -60,7 +61,7 @@ function feed_populate(b, app)
         item : my_template.feed_list_area.find("div.feed[feed='" + _feed.feed + "']")
     };
     
-    my_template.feed_list_ref[_feed.feed].item.find('div.feedtit').text(_feed.title);
+    my_template.feed_list_ref[_feed.feed].item.find('div.feedtit').b_txtoverflow({ buffer: my_template.txtoverflow_buffer, width: txtofw_feedtit_max, text: _feed.title });
     my_template.feed_list_ref[_feed.feed].item.find('div.feedurl > span').text(_feed.url);
     my_template.feed_list_ref[_feed.feed].item.find("input[name='title']").val(_feed.title);
 }
@@ -333,6 +334,7 @@ $(document).ready(function()
         feed_item_blank      : $("#feeditemblank"),
         feed_delete_blank    : $("#feeddeleteblank"),
         feed_type_failed     : $("#feedtypefailedmsg"),
+        txtoverflow_buffer   : $("#b_txtoverflow-buffer"),
         feed_list_ref        : Array()
     }; 
     

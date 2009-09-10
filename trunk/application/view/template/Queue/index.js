@@ -1,4 +1,5 @@
 var my_template = null;
+var txtofw_entrytit_max = 450;
 
 var my_queue = 
 {
@@ -80,7 +81,9 @@ function entry_populate(d)
 
             entry_set_status(_inner, _data.publication_status);
 
-            _inner.find('span.etytt').text(_data.entry_title);
+            // _inner.find('span.etytt').text(_data.entry_title);
+            _inner.find('span.etytt').b_txtoverflow({ buffer: my_template.txtoverflow_buffer, width: txtofw_entrytit_max, text: _data.entry_title });
+            //_inner.find('span.artch').b_txtoverflow({ buffer: my_template.txtoverflow_buffer, width: txtofw_articletit_max, text: _data.feed_title });
 
             if(parseInt(_data.publication_date_diff) <= 0 &&
                         _data.publication_status != 'published')
@@ -489,7 +492,8 @@ $(document).ready(function()
         queue_pub_pause    : $("#queuepubpause"),
         enqueue_yes        : $("#enqueuelnkyes"),
         enqueue_no         : $("#enqueuelnkno"),
-        queue_interval_sel : $("#pubinterval")
+        queue_interval_sel : $("#pubinterval"),
+        txtoverflow_buffer : $("#b_txtoverflow-buffer")
     }; 
     
     function window_update()
