@@ -2,6 +2,7 @@ body
 {
     margin: 25px;
     background-image: none;
+    overflow: hidden;
 }
 p
 {

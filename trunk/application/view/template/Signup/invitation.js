@@ -23,13 +23,7 @@ $(document).ready(function()
 
     $("#cancelbtn").click(function()
     {
-        parent.document.location='./';
-        return false;
-    });
-
-    $("#gotomain").click(function()
-    {
-        parent.document.location='./';
+        parent.document.location='<?php echo BASE_URL ?>';
         return false;
     });
 });
