@@ -59,8 +59,8 @@ if __name__ == "__main__":
 
     r.printOptions()        
 
-    feedScheduleAll(r.client, r.token)
-    postScheduleAll(r.client, r.token)
+#    feedScheduleAll(r.client, r.token)
+#    postScheduleAll(r.client, r.token)
 
     MAX_THREADS     = 20
     MIN_THREADS     = 3

@@ -15,10 +15,17 @@
 
 # Code:
 
+import os
 import sys
 import gdata.blogger.client
 import gdata.client
 import urlparse
+
+config_path = os.getcwd()[:os.getcwd().find("pcd")] + "pcd"
+sys.path.append(config_path)
+
+import log
+l = log.Log()
 
 class PCDModule():
     """API to http://www.blogger.com
@@ -30,6 +37,7 @@ class PCDModule():
         self._username      = username
         self._password      = password
         self._admin_url     = admin_url
+        self.logBanner      = 'n/a'        
         self._authenticated = False        
         self.api            = gdata.blogger.client.BloggerClient()
 
@@ -86,7 +94,11 @@ class PCDModule():
         self._content    = ''
         self._filepath   = ''
         self._tags       = []
-        self._categories = []    
+        self._categories = []
+
+    def setLogBanner(self, banner):
+        "Set title"
+        self.logBanner = banner        
 
     def postEntry(self):
         if self._authenticated:
@@ -95,6 +107,9 @@ class PCDModule():
         else:
             #print 'Need to authenticate'
             return False
+
+    def setArticleLink(self, url):
+        pass
 
     def domain(self, url):
         """Return domain of passed URL

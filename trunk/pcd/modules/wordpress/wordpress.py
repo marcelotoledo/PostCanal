@@ -15,11 +15,17 @@
 
 # Code:
 
+import os
 import sys
 import urlparse
 import urllib
-
 import pyblog
+
+config_path = os.getcwd()[:os.getcwd().find("pcd")] + "pcd"
+sys.path.append(config_path)
+
+import log
+l = log.Log()
 
 class PCDModule:
     """API for Wordpress instance
@@ -32,6 +38,7 @@ class PCDModule:
         self._username      = username
         self._password      = password
         self._admin_url     = admin_url
+        self.logBanner      = 'n/a'
         self._authenticated = False
 
     def isItMe(self):
@@ -95,7 +102,14 @@ class PCDModule:
         self._content    = ''
         self._filepath   = ''
         self._tags       = []
-        self._categories = []    
+        self._categories = []
+
+    def setLogBanner(self, banner):
+        "Set title"
+        self.logBanner = banner
+
+    def setArticleLink(self, url):
+        pass
 
     def domain(self, url):
         """Return domain of passed URL

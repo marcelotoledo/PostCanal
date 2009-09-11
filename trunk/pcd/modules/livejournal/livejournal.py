@@ -17,6 +17,8 @@
 '''This is the module for interacting with LiveJournal.com.
 It includes the main class LiveJournal'''
 
+import os
+import sys
 import re
 import hashlib
 import urllib
@@ -24,6 +26,12 @@ import urllib
 from datetime import datetime
 from util     import LoggerFactory
 from util     import peterBrowser
+
+config_path = os.getcwd()[:os.getcwd().find("pcd")] + "pcd"
+sys.path.append(config_path)
+
+import log
+l = log.Log()
 
 class PCDModule:
     '''Class for interacting with LiveJournal.com'''
@@ -49,10 +57,11 @@ class PCDModule:
         parameter url sample: 'http://xxxxx.livejournal.com/', there should be a trailing '/'.
         '''
         
-        self.url      = url
-        self.username = username
-        self.password = password
-        self.entry    = BlogEntry()
+        self.url       = url
+        self.username  = username
+        self.password  = password
+        self.logBanner = 'n/a'        
+        self.entry     = BlogEntry()
 
     def isItMe(self):
         '''This function is used to identify if this module can interact
@@ -168,6 +177,13 @@ class PCDModule:
     def clear(self):
         "Clear everything"
         self.entry.clear()
+
+    def setLogBanner(self, banner):
+        "Set title"
+        self.logBanner = banner
+
+    def setArticleLink(self, url):
+        pass        
 
 class BlogEntry:
     '''class for a blog entry'''

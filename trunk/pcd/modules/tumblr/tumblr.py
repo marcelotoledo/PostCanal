@@ -20,34 +20,29 @@ import re
 
 from tumblrapi import Api
 
-#config_path = os.getcwd()[:os.getcwd().find("pcd")] + "pcd"
-#sys.path.append(config_path)
+config_path = os.getcwd()[:os.getcwd().find("pcd")] + "pcd"
+sys.path.append(config_path)
 
-#import log
-#l = log.Log()
+import log
+l = log.Log()
 
 class PCDModule:
-    '''Class for interacting with tumblr.com'''
-
     modName = 'tumblr'
 
     # regular expression patterns to extract useful data from web page.
     url_pattern        = re.compile(r'^http://[a-z0-9-]+?\.tumblr\.com$')
-
-    # functional urls
-    login_url  = 'http://www.tumblr.com/login'
-    post_entry = 'http://www.tumblr.com/new/text'
 
     def __init__(self, url='', username='', password=''):
         '''initiation method
         parameter url sample: 'http://xxxxx.tumblr.com/', there should be a trailing '/'.
         '''
         
-        self.url      = url
-        self.username = username
-        self.password = password
-        self.entry    = BlogEntry()
-        self.api      = Api(self.url, self.username, self.password)
+        self.url       = url
+        self.username  = username
+        self.password  = password
+        self.logBanner = 'n/a'
+        self.entry     = BlogEntry()
+        self.api       = Api(self.url, self.username, self.password)        
 
     def isItMe(self):
         '''This function is used to identify if this module can interact
@@ -55,7 +50,6 @@ class PCDModule:
         clues and return true for positive or false for negative.'''
 
         if not PCDModule.url_pattern.match(self.url):
-            #print "URL invalida (%s) nao bate com (%s)" % (self.url, '^http://[a-z0-9-]+?\.tumblr\.com/$')
             return False
         return True
     
@@ -63,13 +57,11 @@ class PCDModule:
         '''This function returns true or false, respectively for sucessful
         authentication or not.'''
 
-        print "Trying to authenticate at %s" % self.url
-
         try:
             self.api.auth_check()
             return True
         except:
-            print "Error authenticating - %s" % (sys.exc_info()[1])
+            l.log("Error authenticating - %s" % (sys.exc_info()[1]), self.logBanner)
             return False
 
     def setTitle(self, title):
@@ -106,12 +98,19 @@ class PCDModule:
             post = self.api.write_regular(self.entry.title, self.entry.content)
             return True
         except:
-            #print "Erro ao postar artigo no tumblr: %s" % (sys.exc_info()[1])
+            l.log("Error posting article %s" % (sys.exc_info()[1]), self.logBanner)
             return False
 
     def clear(self):
         "Clear everything"
         self.entry.clear()
+
+    def setLogBanner(self, banner):
+        "Set title"
+        self.logBanner = banner
+
+    def setArticleLink(self, url):
+        pass        
 
 class BlogEntry:
     '''class for a blog entry'''

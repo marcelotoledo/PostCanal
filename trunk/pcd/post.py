@@ -93,6 +93,7 @@ def processPost(url, token, requestQueue, name, module):
             blog_password = post['blog_password']
             entry_title   = post['entry_title']
             entry_content = post['entry_content']
+            article_link  = post['article_link']
         except:
             l.log("Invalid post dictionary", name, monName, 'copy-string', mon)
             continue
@@ -100,6 +101,7 @@ def processPost(url, token, requestQueue, name, module):
         l.log("Well publish using: %s (%s) - %s:%s" % (blog_type, manager_url, blog_username, blog_password), name, monName, 'copy-string', mon)
 
         dynClass = module.myClassByName(blog_type, manager_url, blog_username, blog_password)
+        dynClass.setLogBanner(name)
         if dynClass == None:
             l.log("Blog not supported", name, monName, 'copy-string', mon)
             continue
@@ -117,6 +119,7 @@ def processPost(url, token, requestQueue, name, module):
         message = ""
         
         try:
+            dynClass.setArticleLink(article_link)
             dynClass.setTitle(entry_title)
             dynClass.setContent(entry_content)
             if dynClass.postEntry() == False:
@@ -137,6 +140,8 @@ def processPost(url, token, requestQueue, name, module):
         except:
             l.log("Failed to set published for %s - %s" % (id, sys.exc_info()[1]), name, monName, 'copy-string', mon)
             continue
+
+        l.log("Entry %s marked as published" % (id), name, monName, 'copy-string', mon)
 
         time.sleep(1)
 
