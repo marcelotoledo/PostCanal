@@ -33,6 +33,7 @@ div.art-op
     border: 2px solid #48898c;
     border-bottom: 1px solid #e1f0f4;
     background-color: white;
+    margin-top: -2px;
 }
 div.arttog
 {
