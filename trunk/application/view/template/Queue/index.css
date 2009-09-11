@@ -1,3 +1,7 @@
+body
+{
+    overflow: hidden;
+}
 div.midct
 {
     margin-right: 0px;
@@ -52,6 +56,8 @@ button.queuepubbtn
 div.ety
 {
     height: 45px;
+    overflow: hidden;
+    white-space: nowrap;
 }
 div.ety-cl
 {
@@ -101,6 +107,8 @@ div.etylab
     float: left;
     margin-left: 20px;
     margin-top: 5px;
+    overflow: hidden;
+    white-space: nowrap;
 }
 div.etylab a
 {
@@ -116,6 +124,8 @@ span.etytt
     font-size: 1em;
     line-height: 35px;
     font-weight: bold;
+    overflow: hidden;
+    white-space: nowrap;
 }
 div.etyedlnk
 {

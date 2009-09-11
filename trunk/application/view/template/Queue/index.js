@@ -1,5 +1,4 @@
 var my_template = null;
-var txtofw_entrytit_max = 450;
 
 var my_queue = 
 {
@@ -57,6 +56,8 @@ function entry_populate(d)
     var _lsdata = Array();
     var _i      = 0;
 
+    var _alw = my_template.entry_list.width() * 0.6;
+
     d.each(function()
     {
         _data = 
@@ -82,7 +83,7 @@ function entry_populate(d)
             entry_set_status(_inner, _data.publication_status);
 
             // _inner.find('span.etytt').text(_data.entry_title);
-            _inner.find('span.etytt').b_txtoverflow({ buffer: my_template.txtoverflow_buffer, width: txtofw_entrytit_max, text: _data.entry_title });
+            _inner.find('span.etytt').b_txtoverflow({ buffer: my_template.txtoverflow_buffer, width: _alw, text: _data.entry_title });
             //_inner.find('span.artch').b_txtoverflow({ buffer: my_template.txtoverflow_buffer, width: txtofw_articletit_max, text: _data.feed_title });
 
             if(parseInt(_data.publication_date_diff) <= 0 &&
@@ -229,7 +230,7 @@ function entry_edit(e)
         my_template.edit_form
             .css('width',  _rect.W)
             .css('height', _rect.H)
-            .modal({ position   : [ _rect.T, _rect.L ], 
+            .modal({ position   : [ _rect.T, 0 ], 
                      focus      : true, 
                      opacity    : 75, 
                      autoResize : true });
