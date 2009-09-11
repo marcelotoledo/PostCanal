@@ -191,6 +191,7 @@ button.navbtn
     -webkit-border-top-left-radius: 4px;
     -moz-border-radius-bottomleft: 4px;
     -webkit-border-bottom-left-radius: 4px;
+    overflow: hidden;
 }
 #midmenu h1
 {
@@ -207,6 +208,7 @@ div.chlst
     overflow-x: hidden;
     background-color: #e1f0f4;
     max-height: 300px;
+    border-right: 5px solid #e1f0f4;
 }
 div.chlstsc
 {
