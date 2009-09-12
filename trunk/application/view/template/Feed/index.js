@@ -311,7 +311,7 @@ function feed_sortable_init()
         {
             sortable_callback(ui.item.attr('feed'));
         },
-        handle: "div.feedtop",
+        handle: "div.feeddndhdr",
         distance: 10
     });
     my_template.feed_list_area.disableSelection();

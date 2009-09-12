@@ -42,12 +42,22 @@ div.feedtop
     -webkit-border-top-left-radius: 5px;
     -moz-border-radius-topright: 5px;
     -webkit-border-top-right-radius: 5px;
-    cursor: move;
 }
 div.feedtop button
 {
     float: right;
     margin-top: -28px;
+}
+div.feeddndhdr
+{
+    float: left;
+    width: 32px;
+    height: 32px;
+    line-height: 32px;
+    margin-right: 10px;
+    margin-top: 4px;
+    cursor: move;
+    background-image: url('./image/dashboard/btn-dnd.png');
 }
 div.feedtit
 {

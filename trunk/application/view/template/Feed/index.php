@@ -40,6 +40,7 @@
 <div id="feeditemblank">
 <div class="feed" feed="" ord="">
     <div class="feedtop">
+        <div class="feeddndhdr">&nbsp;</div>
         <div class="feedtit"></div>
         <div class="feedurl"><span></span></div>
         <button class="feededitbtn">EDIT</button>
