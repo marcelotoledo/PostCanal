@@ -22,14 +22,17 @@ import threading
 
 from optparse import OptionParser
 
+l = log.Log()
+
 class Usage():
     def __init__(self):
         self.options = {}
         self.version = "1.0.0"
 
     def banner(self):
-        print "PCD - PostCanal Daemon - Version %s" % self.version
-        print "Copyright  (C)  2009, Postcanal Inc. All rights reserved.\n"
+        l.log("PCD - PostCanal Daemon - Version %s" % self.version)
+        l.log("Copyright  (C)  2009, Postcanal Inc. All rights reserved.\n")
+        
         
     def usage(self):
         usage = "Usage: %s [options]" % sys.argv[0]
@@ -89,7 +92,7 @@ def processThreads(newThreads, Class, url, token, queue, currentThreadId, module
         for i in range(newThreads * -1):
             queue.put('kill')
 
-    MAX_THREAD_ID = 9999
+    MAX_THREAD_ID = 10
     if currentThreadId >= MAX_THREAD_ID:
         currentThreadId = 0
 

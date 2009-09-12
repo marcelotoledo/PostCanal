@@ -36,14 +36,13 @@ sys.path.append(os.getcwd())
 sys.path.append(os.getcwd() + '/vendor')
 
 if __name__ == "__main__":
-    u   = Usage()
+    u = Usage()
+    u.usage()
+    l = log.Log(u.options.verbose, u.options.debug, u.options.monitor)    
+    u.banner()
+    
     m   = Module()
     mon = Monitor()
-    
-    u.banner()
-    u.usage()
-
-    l = log.Log(u.options.verbose, u.options.debug, u.options.monitor)
 
     r = runtimeConfig()
     r.addOption("Debug",      str(u.options.debug))
@@ -66,12 +65,8 @@ if __name__ == "__main__":
     MIN_THREADS     = 3
     THREADS_RATIO   = 3
 
-#    MAX_THREADS     = 1
-#    MIN_THREADS     = 1
-#    THREADS_RATIO   = 1
-    
-    feedQueue     = Queue.Queue()
-    postQueue     = Queue.Queue()
+    feedQueue = Queue.Queue()
+    postQueue = Queue.Queue()
 
     currentThreadId = 0
 
@@ -86,9 +81,9 @@ if __name__ == "__main__":
             currentThreadId = processThreads(newFeedThreads, FeedThread, r.frontendWS, r.token, feedQueue, currentThreadId)
 
         l.emptyLine()
-        l.debug("Feed queue size     = %d" % feedQueue.qsize(), None, 'feed_queue_size', feedQueue.qsize(), mon);
+        l.debug("Feed queue size     = %d" % feedQueue.qsize(),                     None, 'feed_queue_size',     feedQueue.qsize(),                     mon)
         l.debug("Feed active threads = %d" % tCount(threading.enumerate(), "feed"), None, 'feed_active_threads', tCount(threading.enumerate(), "feed"), mon)
-        l.debug("Feed new threads    = %d" % newFeedThreads, None, 'feed_new_threads', newFeedThreads, mon)
+        l.debug("Feed new threads    = %d" % newFeedThreads,                        None, 'feed_new_threads',    newFeedThreads,                        mon)
         l.emptyLine()
 
         postCount = pendingPosts(r.client, r.token)
@@ -101,9 +96,9 @@ if __name__ == "__main__":
             currentThreadId = processThreads(newPostThreads, PostThread, r.frontendWS, r.token, postQueue, currentThreadId, m)
 
         l.emptyLine()
-        l.debug("Post queue size     = %d" % postQueue.qsize(), None, 'post_queue_size', postQueue.qsize(), mon)
+        l.debug("Post queue size     = %d" % postQueue.qsize(),                     None, 'post_queue_size',     postQueue.qsize(),                     mon)
         l.debug("Post active threads = %d" % tCount(threading.enumerate(), "post"), None, 'post_active_threads', tCount(threading.enumerate(), "post"), mon)
-        l.debug("Post new threads    = %d" % newPostThreads, None, 'post_new_threads', newPostThreads, mon)
+        l.debug("Post new threads    = %d" % newPostThreads,                        None, 'post_new_threads',    newPostThreads,                        mon)
         l.emptyLine()
                 
         time.sleep(1)

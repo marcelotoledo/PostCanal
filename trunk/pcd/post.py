@@ -98,7 +98,7 @@ def processPost(url, token, requestQueue, name, module):
             l.log("Invalid post dictionary", name, monName, 'copy-string', mon)
             continue
 
-        l.log("Well publish using: %s (%s) - %s:%s" % (blog_type, manager_url, blog_username, blog_password), name, monName, 'copy-string', mon)
+        l.log("Well publish using: %s (%s) - %s:%s" % (blog_type, manager_url, blog_username, "*"*len(blog_password)), name, monName, 'copy-string', mon)
 
         dynClass = module.myClassByName(blog_type, manager_url, blog_username, blog_password)
         dynClass.setLogBanner(name)

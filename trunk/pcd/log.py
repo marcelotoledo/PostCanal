@@ -59,4 +59,4 @@ class Log():
             mon.setStatus(key, value)
 
     def emptyLine(self):
-        print ""
+        self.LogPrint("")
