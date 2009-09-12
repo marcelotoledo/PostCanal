@@ -357,7 +357,7 @@ class BlogEntry extends B_Model
 
         if(is_object($entry))
         {
-            if(in_array($status, array
+            if(!is_bool($status) && in_array($status, array
                 (
                     self::STATUS_PUBLISHED,
                     self::STATUS_UNAUTHORIZED,
