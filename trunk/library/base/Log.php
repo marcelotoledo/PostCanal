@@ -41,20 +41,9 @@ class B_Log
             $values[] = $value;
         }
 
-        try
-        {
-            B_Model::execute("INSERT INTO " . self::$table_name . " " .
-                              "(" . implode(", ", $columns) . ") VALUES " .
-                              "(?" . str_repeat(", ?", count($columns) - 1) . ")",
-                              $values);
-        }
-        catch(Exception $exception)
-        {
-            $message = chop($exception->getMessage()) . ";\n" . chop($message);
-            echo "<pre>";
-            echo $message;
-            echo "</pre>";
-            exit(1);
-        }
+        B_Model::execute("INSERT INTO " . self::$table_name . " " .
+                          "(" . implode(", ", $columns) . ") VALUES " .
+                          "(?" . str_repeat(", ?", count($columns) - 1) . ")",
+                          $values);
     }
 }

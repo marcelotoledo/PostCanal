@@ -1,5 +1,10 @@
 var active_request = 0;
 
+$.ajaxSetup(
+{
+    timeout: 30000
+});
+
 function set_active_request(b)
 {
     active_request+= b ? 1 : -1;
@@ -21,7 +26,7 @@ function do_request(t, u, d, c)
 
 function server_error()
 {
-    console.error("<?php echo $this->translation()->server_error ?>");
+    document.location='./ouch';
 }
 
 function flash_message(m)

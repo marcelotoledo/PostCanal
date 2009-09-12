@@ -529,18 +529,8 @@ abstract class B_Model
      */
     private static function setupConnection($db)
     {
-        try
-        {
-            $uri = $db->driver . ":host=" . $db->host . ";dbname=" . $db->db;
-            $db->connection = new PDO ($uri, $db->username, $db->password);
-            $db->connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        }
-        catch(PDOException $exception)
-        {
-            echo "<pre>";
-            echo "database connection failed;\n" . $exception->getMessage();
-            echo "</pre>";
-            exit(1);
-        }
+        $uri = $db->driver . ":host=" . $db->host . ";dbname=" . $db->db;
+        $db->connection = new PDO ($uri, $db->username, $db->password);
+        $db->connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     }
 }

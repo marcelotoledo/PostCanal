@@ -93,12 +93,25 @@ class B_Bootstrap
                 /* initialize session */
 
                 $session_name = B_Registry::get('session/name');
-                $session = new B_Session($session_name);
+                $session = null;
+
+                try
+                {
+                    $session = new B_Session($session_name);
+                }
+                catch(Exception $e)
+                {
+                    $message = $e->getMessage();
+                    $response->setStatus(B_Response::STATUS_ERROR);
+                    $has_error = true;
+                    $session = null;
+                }
+
                 B_Registry::set('session/object', $session);
 
                 /* initialize translation */
 
-                $culture = $session->getCulture();
+                $culture = $session ? $session->getCulture() : 'en_US';
                 $translation = new B_Translation($culture);
                 B_Registry::set('translation/object', $translation);
 
@@ -107,8 +120,22 @@ class B_Bootstrap
                 $this->translation_load[] = 'application';
                 $this->translation_load[] = $controller_name;
                 $this->translation_load[] = $controller_name . "/" . $action_name;
-                $translation->load($this->translation_load);
 
+                try
+                {
+                    $translation->load($this->translation_load);
+                }
+                catch(Exception $e)
+                {
+                    $message = $e->getMessage();
+                    $response->setStatus(B_Response::STATUS_ERROR);
+                    $has_error = true;
+                    $session = null;
+                }
+            }
+
+            if($has_error==false)
+            {
                 /* run action */
 
                 try
@@ -167,17 +194,17 @@ class B_Bootstrap
 
         if($has_error)
         {
-            if($response->isXML() == false)
-            {
-                $status = $response->getStatus();
-                $response->setBody(self::error($status));
-            }
-
-            /* show error message in browser */
-
             if(error_reporting() > 0)
             {
                 $response->setBody($message);
+            }
+            else
+            {
+                if($response->isXML()==false)
+                {
+                    $status = $response->getStatus();
+                    $response->setBody(self::error($status));
+                }
             }
         }
 
@@ -211,7 +238,7 @@ class B_Bootstrap
      *
      * @param   integer $status
      */
-    protected static function error($status)
+    public static function error($status)
     {
         $path = BASE_PATH . "/public/" . $status . ".html";
         $s = "<h1>error " . $status . "</h2>";
@@ -226,3 +253,5 @@ class B_Bootstrap
         return $s;
     }
 }
+
+

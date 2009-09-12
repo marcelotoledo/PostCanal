@@ -93,12 +93,25 @@ class B_Bootstrap
                 /* initialize session */
 
                 $session_name = B_Registry::get('session/name');
-                $session = new B_Session($session_name);
+                $session = null;
+
+                try
+                {
+                    $session = new B_Session($session_name);
+                }
+                catch(Exception $e)
+                {
+                    $message = $e->getMessage();
+                    $response->setStatus(B_Response::STATUS_ERROR);
+                    $has_error = true;
+                    $session = null;
+                }
+
                 B_Registry::set('session/object', $session);
 
                 /* initialize translation */
 
-                $culture = $session->getCulture();
+                $culture = $session ? $session->getCulture() : 'en_US';
                 $translation = new B_Translation($culture);
                 B_Registry::set('translation/object', $translation);
 
@@ -107,8 +120,22 @@ class B_Bootstrap
                 $this->translation_load[] = 'application';
                 $this->translation_load[] = $controller_name;
                 $this->translation_load[] = $controller_name . "/" . $action_name;
-                $translation->load($this->translation_load);
 
+                try
+                {
+                    $translation->load($this->translation_load);
+                }
+                catch(Exception $e)
+                {
+                    $message = $e->getMessage();
+                    $response->setStatus(B_Response::STATUS_ERROR);
+                    $has_error = true;
+                    $session = null;
+                }
+            }
+
+            if($has_error==false)
+            {
                 /* run action */
 
                 try
@@ -167,17 +194,17 @@ class B_Bootstrap
 
         if($has_error)
         {
-            if($response->isXML() == false)
-            {
-                $status = $response->getStatus();
-                $response->setBody(self::error($status));
-            }
-
-            /* show error message in browser */
-
             if(error_reporting() > 0)
             {
                 $response->setBody($message);
+            }
+            else
+            {
+                if($response->isXML()==false)
+                {
+                    $status = $response->getStatus();
+                    $response->setBody(self::error($status));
+                }
             }
         }
 
@@ -211,7 +238,7 @@ class B_Bootstrap
      *
      * @param   integer $status
      */
-    protected static function error($status)
+    public static function error($status)
     {
         $path = BASE_PATH . "/public/" . $status . ".html";
         $s = "<h1>error " . $status . "</h2>";
@@ -226,6 +253,8 @@ class B_Bootstrap
         return $s;
     }
 }
+
+
 
 /**
  * Base Controller
@@ -672,21 +701,10 @@ class B_Log
             $values[] = $value;
         }
 
-        try
-        {
-            B_Model::execute("INSERT INTO " . self::$table_name . " " .
-                              "(" . implode(", ", $columns) . ") VALUES " .
-                              "(?" . str_repeat(", ?", count($columns) - 1) . ")",
-                              $values);
-        }
-        catch(Exception $exception)
-        {
-            $message = chop($exception->getMessage()) . ";\n" . chop($message);
-            echo "<pre>";
-            echo $message;
-            echo "</pre>";
-            exit(1);
-        }
+        B_Model::execute("INSERT INTO " . self::$table_name . " " .
+                          "(" . implode(", ", $columns) . ") VALUES " .
+                          "(?" . str_repeat(", ?", count($columns) - 1) . ")",
+                          $values);
     }
 }
 
@@ -1219,19 +1237,9 @@ abstract class B_Model
      */
     private static function setupConnection($db)
     {
-        try
-        {
-            $uri = $db->driver . ":host=" . $db->host . ";dbname=" . $db->db;
-            $db->connection = new PDO ($uri, $db->username, $db->password);
-            $db->connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        }
-        catch(PDOException $exception)
-        {
-            echo "<pre>";
-            echo "database connection failed;\n" . $exception->getMessage();
-            echo "</pre>";
-            exit(1);
-        }
+        $uri = $db->driver . ":host=" . $db->host . ";dbname=" . $db->db;
+        $db->connection = new PDO ($uri, $db->username, $db->password);
+        $db->connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     }
 }
 
@@ -2007,22 +2015,10 @@ class B_Session
      */
     public static function read ($id)
     {
-        try
-        {
-            $result = current(B_Model::select("SELECT session_data " . 
-                                              "FROM " . self::$table_name . " " .
-                                              "WHERE id = ?", array($id)));
-        }
-        catch(B_Exception $e)
-        {
-            if(error_reporting() > 0)
-            {
-                echo "<pre>";
-                echo "reading session failed;\n" . $e->getMessage();
-                echo "</pre>";
-                exit(1);
-            }
-        }
+        $result = current(B_Model::select("SELECT session_data " . 
+                                          "FROM " . self::$table_name . " " .
+                                          "WHERE id = ?", array($id)));
+
         return is_object($result) ? $result->session_data : '';
     }
 

@@ -112,22 +112,10 @@ class B_Session
      */
     public static function read ($id)
     {
-        try
-        {
-            $result = current(B_Model::select("SELECT session_data " . 
-                                              "FROM " . self::$table_name . " " .
-                                              "WHERE id = ?", array($id)));
-        }
-        catch(B_Exception $e)
-        {
-            if(error_reporting() > 0)
-            {
-                echo "<pre>";
-                echo "reading session failed;\n" . $e->getMessage();
-                echo "</pre>";
-                exit(1);
-            }
-        }
+        $result = current(B_Model::select("SELECT session_data " . 
+                                          "FROM " . self::$table_name . " " .
+                                          "WHERE id = ?", array($id)));
+
         return is_object($result) ? $result->session_data : '';
     }
 
