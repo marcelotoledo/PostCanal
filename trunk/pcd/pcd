@@ -1,3 +1,6 @@
 #!/bin/sh
 
+#$PATH=/Users/marcelo/Desktop/storage/personal/projects/current/postcanal/trunk/pcd
+$PATH=/var/www/postcanal-app/pcd
+
 python pcd.py $@
