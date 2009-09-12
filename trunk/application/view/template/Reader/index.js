@@ -76,9 +76,18 @@ function feed_populate(d)
     my_template.subscribed_list.append(_lsdata.join("\n"));
 }
 
+function no_feed()
+{
+    $("#midmenu").hide();
+    $("div.midct").hide();
+    $("#nofeedmsg").show();
+}
+
 function feed_list_callback(d)
 {
-    feed_populate(d.find('feeds').children());
+    var _fl = d.find('feeds').children();
+    if(_fl.length==0) { no_feed(); } // tutorial
+    feed_populate(_fl);
 }
 
 function feed_list()
@@ -395,7 +404,7 @@ $(document).ready(function()
         content_blank        : $("#contentblank"),
         right_middle_area    : { x : 0 , y : 0 , w : 0 , h : 0 },
         right_middle_hover   : false,
-        LEFT_MIDDLE_OFFSET_TOP : 275,
+        LEFT_MIDDLE_OFFSET_TOP : 237,
         RIGHT_MIDDLE_OFFSET_TOP : 175,
         //right_footer         : $("#rightfooter"),
         subscribed_list      : $("#chlst"),
@@ -443,8 +452,16 @@ $(document).ready(function()
         }
     }
 
+    function no_blog()
+    {
+        document.location='./blog';
+    }
+
     function initialize()
     {
+        <?php if(count($this->blogs)==0) : ?>
+        no_blog(); // tutorial
+        <?php endif ?>
         set_article_display();
         feed_list();
         article_list(null);

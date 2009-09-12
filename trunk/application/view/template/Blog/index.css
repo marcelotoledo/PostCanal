@@ -128,3 +128,11 @@ button.blogdeleten
     font-size: 14pt;
     line-height: 40px;
 }
+
+div.noblogmsg
+{
+    display: none;
+    text-align: left;
+    font-size: 1.4em;
+    color: gray;
+}

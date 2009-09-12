@@ -6,6 +6,12 @@ function feed_add_show()
     my_template.new_feed_form.show();
     my_template.new_feed_url.val('');
     my_template.new_feed_url.focus();
+
+    if($("#nofeedmsg0").is(':visible')) /* tutorial */
+    {
+        $("#nofeedmsg0").hide(100);
+        $("#nofeedmsg1").show(100);
+    }
 }
 
 function feed_add_hide()
@@ -158,6 +164,12 @@ function feed_discover()
 function feed_add_callback(d)
 {
     feed_populate(d.find('feed'), false);
+
+    if($("#nofeedmsg1").is(':visible')) /* tutorial */
+    {
+        $("#nofeedmsg1").hide(100);
+        $("#nofeedmsg2").show(100);
+    }
 }
 
 function feed_add(u)
@@ -171,6 +183,13 @@ function feed_list_callback(d)
 {
     my_template.feed_list_area.html(''); 
     my_template.feed_list_ref = Array();
+
+    var _fl = d.find('feeds').children();
+
+    if(_fl.length==0)
+    {
+        $("#nofeedmsg0").show(100); // tutorial
+    }
 
     d.find('feeds').children().each(function()
     {
@@ -354,6 +373,11 @@ $(document).ready(function()
     {
         window_update();
     });
+
+    function no_feed()
+    {
+        $("#nofeedmsg0").show(); /* tutorial */
+    }
 
     function initialize()
     {

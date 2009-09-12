@@ -122,13 +122,29 @@ function entry_populate(d)
     my_template.entry_list.scrollTop(0);
 }
 
+function no_entry()
+{
+    $("#noentrymsg").show();
+}
+
 function entry_list_callback(d)
 {
     my_queue.data = Array();
     my_queue.current = null;
     my_template.entry_list.html('');
-    entry_populate(d.find('result').find('queue').children());
-    entry_populate(d.find('result').find('published').children());
+
+    var _qr = d.find('result').find('queue').children();
+    var _pr = d.find('result').find('published').children();
+
+    if((_qr.length + _pr.length)==0)
+    { 
+        no_entry(); // tutorial
+    }
+    else
+    {
+        entry_populate(_qr);
+        entry_populate(_pr);
+    }
 }
 
 function entry_list()

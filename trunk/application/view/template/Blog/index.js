@@ -6,6 +6,12 @@ function toggle_blog_add()
     {
         my_template.new_blog_url.val('');
         my_template.new_blog_url.focus();
+
+        if($("#noblogmsg0").is(':visible')) /* tutorial */
+        {
+            $("#noblogmsg0").hide(100);
+            $("#noblogmsg1").show(100);
+        }
     }
 
     my_template.blog_type_failed.hide();
@@ -72,6 +78,12 @@ function blog_add_callback(d)
         // add new blog to blogs select box
         my_template.blog_list_select.append('<option value="' + _b + '" selected>' + _n + '</option>');
         my_template.blog_list_select.change();
+
+        if($("#noblogmsg1").is(':visible')) /* tutorial */
+        {
+            $("#noblogmsg1").hide(100);
+            $("#noblogmsg2").show(100);
+        }
     }
     if(_status=="<?php echo C_Blog::ADD_STATUS_OVERQUOTA ?>")
     {
@@ -254,8 +266,16 @@ $(document).ready(function()
         window_update();
     });
 
+    function no_blog()
+    {
+        $("#noblogmsg0").show(); /* tutorial */
+    }
+
     function initialize()
     {
+        <?php if(count($this->blogs)==0) : ?>
+        no_blog();
+        <?php endif ?>
         blog_list();
     }
 

@@ -148,3 +148,11 @@ div.inputfeedoption
 {
     line-height: 30px;
 }
+
+div.nofeedmsg
+{
+    display: none;
+    text-align: left;
+    font-size: 1.4em;
+    color: gray;
+}

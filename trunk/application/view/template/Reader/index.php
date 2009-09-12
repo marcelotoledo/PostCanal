@@ -46,3 +46,5 @@
     <div class="artbody"></div>
 </div>
 </div>
+
+<div id="nofeedmsg" class="midct">There is no <b>feeds</b> registered for this <b>site</b>. To start reading feeds, you must register at least one. You can do this by clicking <b>"Manage Feeds"</b> link on top menu.</div>

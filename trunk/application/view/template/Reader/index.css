@@ -237,3 +237,12 @@ div.ch
 {
     display: none;
 }
+
+#nofeedmsg
+{
+    display: none;
+    text-align: left;
+    margin-top: 25px;
+    font-size: 1.4em;
+    color: gray;
+}

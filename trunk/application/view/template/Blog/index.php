@@ -65,3 +65,8 @@
         </form>
     </div>
 </div>
+
+<!-- tutorials -->
+<div id="noblogmsg0" class="noblogmsg midct">There is no <b>site</b> registered on your account. To start using <b>PostCanal.com</b>, you must register one first. You can do this by clicking <b>"add new blog"</a></b> button.</div>
+<div id="noblogmsg1" class="noblogmsg midct">Now you can provide the <b>URL</b> of a site  where you already have account, eg: http://youraccount.wordpress.com.</div>
+<div id="noblogmsg2" class="noblogmsg midct"><p>Congratulations! Now you have a <b>site</b> registered in <b>PostCanal.com</b>. Dont forget to provide an <b>username</b> and <b>password</b> to allow <b>PostCanal.com</b> publish content.</p><p>The next step is to register some <b>feeds</b> for this site. This can be done through <b>"Manage feeds"</b> link on the top menu.</p></div>
