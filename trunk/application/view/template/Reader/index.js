@@ -395,6 +395,7 @@ $(document).ready(function()
         content_blank        : $("#contentblank"),
         right_middle_area    : { x : 0 , y : 0 , w : 0 , h : 0 },
         right_middle_hover   : false,
+        LEFT_MIDDLE_OFFSET_TOP : 275,
         RIGHT_MIDDLE_OFFSET_TOP : 175,
         //right_footer         : $("#rightfooter"),
         subscribed_list      : $("#chlst"),
@@ -425,6 +426,8 @@ $(document).ready(function()
         */
         //my_template.right_middle.height(_w.height - my_template.right_middle.offset().top);
         my_template.right_middle.height(_w.height - my_template.RIGHT_MIDDLE_OFFSET_TOP);
+        my_template.subscribed_list.height(_w.height - my_template.LEFT_MIDDLE_OFFSET_TOP);
+
         my_template.right_middle_area.x = my_template.right_middle.offset().left;
         my_template.right_middle_area.y = my_template.right_middle.offset().top;
         my_template.right_middle_area.w = my_template.right_middle.width();

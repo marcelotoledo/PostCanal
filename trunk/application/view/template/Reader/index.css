@@ -148,8 +148,8 @@ div.artbody
     text-align: left;
     padding-left: 10px;
     background-color: #48898c;
-    /* -moz-border-radius-topright: 5px;
-    -webkit-border-top-right-radius: 5px; */
+    -moz-border-radius-topright: 5px;
+    -webkit-border-top-right-radius: 5px;
 }
 #navbar
 {
@@ -186,8 +186,8 @@ button.navbtn
 {
     position: absolute;
     top: 135px;
-    left: 50px;
-    width: 180px;
+    left: 0px;
+    width: 230px;
     background-color: #48898c;
     text-align: left;
     -moz-border-radius-topleft: 4px;
@@ -210,8 +210,6 @@ div.chlst
     /*white-space: nowrap;*/
     overflow-x: hidden;
     background-color: #e1f0f4;
-    max-height: 300px;
-    border-right: 5px solid #e1f0f4;
 }
 div.chlstsc
 {
