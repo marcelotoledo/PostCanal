@@ -90,34 +90,3 @@ class Monitor:
     def delAll(self):
         self.conn.execute("delete from pcd_monitor")
         self.conn.commit()
-            
-
-# mon = Monitor()
-# mon.delAll()
-
-# mon.setStatus('thread-feed01', '1 - status status status')
-# mon.setStatus('thread-feed02', '1 - status status status')
-# mon.setStatus('thread-feed03', '1 - status status status')
-# mon.setStatus('thread-feed04', '1 - status status status')
-# mon.setStatus('thread-feed05', '1 - status status status')
-
-# mon.printAll()
-
-# print "GetThreads!"
-
-# res = mon.getThreads('feed')
-# if res != None:
-#     for item in res:
-#         print item
-# else:
-#     print "zoated"
-
-# mon.setStatus('thread', 'marcelo')
-# mon.printAll()
-# print ""
-# mon.setStatus('nome', 'toledo')
-# mon.printAll()
-# print ""
-# mon.setStatus('nome', 'dias')
-# mon.setStatus('post-thread-size', '110')
-# mon.printAll()
