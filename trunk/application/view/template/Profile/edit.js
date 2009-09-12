@@ -112,6 +112,10 @@ function timezone_populate(d)
     mytpl.timezone.attr('disabled', false);
 }
 
+function on_blog_change()
+{
+    // document.location='./reader'; TODO
+}
 
 $(document).ready(function()
 {
@@ -149,7 +153,10 @@ $(document).ready(function()
         do_request('GET', './profile/timezone', { territory: selected_territory() }, timezone_populate);
     }
     
-    load_timezone();
+    function initialize()
+    {
+        load_timezone();
+    }
 
     /* triggers */
 
@@ -195,4 +202,11 @@ $(document).ready(function()
     {
         set_tab($(this).attr('related'));
     });
+
+    $(document).bind('blog_changed' , function(e)
+    {
+        on_blog_change();
+    });
+
+    initialize();
 });

@@ -640,8 +640,16 @@ class C_Profile extends B_Controller
     private function G_edit()
     {
         $this->view()->setLayout('dashboard');
-        
         $id = intval($this->session()->user_profile_id);
+
+        /* blog list */
+
+        $blogs = UserBlog::findByUser($id, $enabled=true);
+        $this->view()->blogs = $blogs;
+        $this->view()->settings = UserDashboard::getByUser($id);
+        
+        /* profile */
+
         $this->view()->profile = UserProfile::getByPrimaryKey($id);
 
         if(is_object($this->view()->profile) == false) 

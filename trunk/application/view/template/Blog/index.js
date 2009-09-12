@@ -64,9 +64,14 @@ function blog_add_callback(d)
         blog_edit_show(d.find('result').find('blog').text());
 
         var _b = d.find('blog').text();
+        var _n = d.find('name').text();
 
         my_template.blog_list_ref[_b].item.find('div.donotchangepwd').hide();
         my_template.blog_list_ref[_b].item.find('input[name="password"]').show();
+
+        // add new blog to blogs select box
+        my_template.blog_list_select.append('<option value="' + _b + '" selected>' + _n + '</option>');
+        my_template.blog_list_select.change();
     }
     if(_status=="<?php echo C_Blog::ADD_STATUS_OVERQUOTA ?>")
     {
@@ -150,6 +155,11 @@ function blog_remove_from_list(b)
     //my_template.blog_list_ref[b].item.next('div.blogdeletemsg').remove();
     my_template.blog_list_ref[b].item.remove();
     my_template.blog_list_ref[b] = null;
+
+    // remove blog from blogs select box
+    my_template.blog_list_select.find('option[value="' + b + '"]').remove();
+    my_template.blog_list_select.change();
+
     flash_message("<?php echo $this->translation()->deleted ?>");
 }
 
@@ -211,6 +221,11 @@ function blog_update(b)
     do_request('POST', './blog/update', _up, blog_update_callback);
 }
 
+function on_blog_change()
+{
+    // document.location='./reader'; TODO
+}
+
 $(document).ready(function()
 {
     my_template =
@@ -225,6 +240,7 @@ $(document).ready(function()
         blog_delete_blank  : $("#blogdeleteblank"),
         blog_type_failed   : $("#blogtypefailedmsg"),
         txtoverflow_buffer : $("#b_txtoverflow-buffer"),
+        blog_list_select   : $("#bloglstsel"),
         blog_list_ref      : Array()
     }; 
     
@@ -323,6 +339,11 @@ $(document).ready(function()
     {
         blog_delete_confirm_hide(blog_delete_getid($(this)));
         return false;
+    });
+
+    $(document).bind('blog_changed' , function(e)
+    {
+        on_blog_change();
     });
 
     initialize();

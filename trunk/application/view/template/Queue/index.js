@@ -203,7 +203,9 @@ function queue_editor_init()
     CKEDITOR.replace('entrybody', 
     { 
         toolbar : [ [ 'Source', '-', 'Bold', 'Italic' ] ],
-        height: ($(window).height() - 350)
+        height: ($(window).height() - 350),
+        toolbarCanCollapse : false,
+        resize_enabled : false
     });
 
     /*
