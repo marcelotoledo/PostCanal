@@ -361,7 +361,6 @@ class BlogEntry extends B_Model
                 (
                     self::STATUS_PUBLISHED,
                     self::STATUS_UNAUTHORIZED,
-                    self::STATUS_OVERQUOTA,
                     self::STATUS_UNREACHABLE,
                     self::STATUS_FAILED,
                 )))
