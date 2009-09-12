@@ -127,11 +127,14 @@ class BlogEntry extends B_Model
      * 
      * The ordering here is relevant
      */
-    const STATUS_IDLE      = 'idle';
-    const STATUS_WAITING   = 'waiting';
-    const STATUS_WORKING   = 'working';
-    const STATUS_FAILED    = 'failed';
-    const STATUS_PUBLISHED = 'published';
+    const STATUS_IDLE         = 'idle';
+    const STATUS_WAITING      = 'waiting';
+    const STATUS_WORKING      = 'working';
+    const STATUS_PUBLISHED    = 'published';
+    const STATUS_UNAUTHORIZED = 'unauthorized';
+    const STATUS_OVERQUOTA    = 'overquota';
+    const STATUS_UNREACHABLE  = 'unreachable';
+    const STATUS_FAILED       = 'failed';
 
     const ENQUEUEING_AUTO_MAX_ENTRIES = 10;
 
@@ -343,20 +346,34 @@ class BlogEntry extends B_Model
     }
 
     /**
-     * Set blog entry as published
+     * Set blog entry publication status
      * 
-     * @param   integer     $id             Entry ID
-     * @param   boolean     $published      Entry published?
+     * @param   integer            $id             Entry ID
+     * @param   boolean|string     $status         Publication status?
      */
-    public static function setPublished($id, $published)
+    public static function setPublicationStatus($id, $status=true)
     {
         $entry = self::getByPrimaryKey($id);
 
         if(is_object($entry))
         {
-            $entry->publication_status = $published ?
-                self::STATUS_PUBLISHED :
-                self::STATUS_FAILED;
+            if(in_array($status, array
+                (
+                    self::STATUS_PUBLISHED,
+                    self::STATUS_UNAUTHORIZED,
+                    self::STATUS_OVERQUOTA,
+                    self::STATUS_UNREACHABLE,
+                    self::STATUS_FAILED,
+                )))
+            {
+                $entry->publication_status = $status;
+            }
+            else
+            {
+                $entry->publication_status = ((boolean) $status) ?
+                    self::STATUS_PUBLISHED :
+                    self::STATUS_FAILED;
+            }
 
             $entry->save();
         }

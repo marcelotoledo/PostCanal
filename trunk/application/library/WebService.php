@@ -211,9 +211,20 @@ class L_WebService
     {
         if($this->validate_args($args, array('id','published')) == false) return false;
 
+        $status = null;
+
+        if(array_key_exists('published', $args))
+        {
+            $status = ((boolean) $args['published']);
+        }
+        if(array_key_exists('status', $args))
+        {
+            $status = $args['status'];
+        }
+
         try
         {
-            BlogEntry::setPublished($args['id'], ((boolean) $args['published']));
+            BlogEntry::setPublicationStatus($args['id'], $status);
         }
         catch(B_Exception $_e)
         {

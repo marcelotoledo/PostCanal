@@ -72,7 +72,10 @@ bool.blog_publish_set(dict)  # set publication status for blog entry
 params : str.token           # token
          str.id              # feed identification
          bool.published      # entry was published correctly?
+         string.status       # entry publication status*
          str.message         # error message (optional)
+ 
+notes : you must choose between bool.published or string.status. using both may cause unexpected behavior
 
 .................................................................................
 
