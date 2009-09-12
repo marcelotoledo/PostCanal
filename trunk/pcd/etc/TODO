@@ -3,17 +3,7 @@
   Dessa forma poderemos criar histórico e assim prever o futuro através
    de analise gráfica e estatistica.
 
-* processPost-post08 	 Failed to publish (38) - (UnicodeEncodeError)
-  Entender porque esta falhando para postar dados.
-  Failed to publish (74) - ('ascii' codec can't encode characters in position 18-19: ordinal not in range(128))
-
-
 * Queue
   Nao medir o que for kill
-
-* webservice
-  Quando eu pegar um item com getNext* ele precisa ser marcado como
-  retrieved para que no proximo loop ele não venha novamente. Criar o
-  conceito de timeout.
 
 * Auto Queue

@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+#
 # pcd.py ---  postcanal daemon
 
 # Copyright  (C)  2009  Postcanal Inc. <http://www.postcanal.com>
