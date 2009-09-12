@@ -200,20 +200,30 @@ function entry_show(e)
 
 function queue_editor_init()
 {
+    CKEDITOR.replace('entrybody', 
+    { 
+        toolbar : [ [ 'Source', '-', 'Bold', 'Italic' ] ],
+        height: ($(window).height() - 350)
+    });
+
+    /*
     var _sz = { W : $(window).width()  * 0.75 , 
-                H : $(window).height()   -280 };
+                H :  };
 
     my_queue.editor = new FCKeditor("FCKQueueEntryEditor", _sz.W, _sz.H);
     my_queue.editor.Config["CustomConfigurationsPath"] = "../../js/fckconfig.js?t=<?php echo time() ?>";
     my_queue.editor.Config["EditorAreaCSS"] = "../../css/fck_editorarea.css?t=<?php echo time() ?>";
     my_queue.editor.Config["AutoDetectLanguage"] = false;
     my_queue.editor.Config["DefaultLanguage"] = "<?php echo substr($this->session()->getCulture(), 0, 2) ?>";
+    */
 }
 
 function FCKeditor_OnComplete(i)
 {
+    /*
     i.SetData(my_queue.data[my_queue.current.attr('entry')].content);
     set_active_request(false);
+    */
 }
 
 function entry_edit(e)
@@ -227,18 +237,14 @@ function entry_edit(e)
                       W : $(window).width()  * 0.8 , 
                       H : $(window).height()  -100 };
 
-        my_template.edit_form
-            .css('width',  _rect.W)
-            .css('height', _rect.H)
-            .modal({ position   : [ _rect.T, 0 ], 
-                     focus      : true, 
-                     opacity    : 75, 
-                     autoResize : true });
+        my_template.edit_form.b_modal();
 
         my_template.edit_form.find('div.form-bot').css('top', _rect.H - 55); // position hack
         my_template.edit_form.find("input[name='entrytitle']").val(my_queue.data[e].title).focus();
-        set_active_request(true);
-        my_template.edit_form.find("textarea[name='entrybody']").replaceWith(my_queue.editor.CreateHtml());
+        CKEDITOR.instances.entrybody.setData(my_queue.data[e].content)
+        //set_active_request(true);
+
+        // my_template.edit_form.find("textarea[name='entrybody']").replaceWith(my_queue.editor.CreateHtml());
     }
 }
 
@@ -248,7 +254,7 @@ function entry_save_callback(d)
     my_queue.data[_e].title = d.find('title').text();
     my_queue.data[_e].content = d.find('content').text();
     my_queue.current.find('span.etytt').text(my_queue.data[_e].title);
-    $.modal.close();
+    my_template.edit_form.b_modal_close();
     entry_show(_e);
     flash_message("<?php echo $this->translation()->saved ?>");
 }
@@ -260,7 +266,8 @@ function entry_save_current()
         blog    : my_blog.current , 
         entry   : my_queue.current.attr('entry'),
         title   : my_template.edit_form.find("input[name='entrytitle']").val(),
-        content : FCKeditorAPI.GetInstance("FCKQueueEntryEditor").GetData()
+        // content : FCKeditorAPI.GetInstance("FCKQueueEntryEditor").GetData()
+        content : CKEDITOR.instances.entrybody.getData()
     };
 
     do_request('POST', './queue/update', _data, entry_save_callback);
@@ -621,7 +628,7 @@ $(document).ready(function()
         .live('click', function()
     {
         if(active_request==true) { return false; }
-        $.modal.close();
+        my_template.edit_form.b_modal_close();
     });
 
     my_template.entry_list.find('div.ety')

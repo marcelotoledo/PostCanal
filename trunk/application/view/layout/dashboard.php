@@ -12,8 +12,14 @@
 <script type="text/javascript" src="./jquery/jquery-ui-1.7.1.custom.min.js"></script>
 <?php if($this->request()->getController()=='queue' &&
          $this->request()->getAction()=='index') : ?>
-<script type="text/javascript" src="./jquery/jquery.simplemodal-1.3.min.js"></script>
+<!--         
 <script type="text/javascript" src="./fckeditor/fckeditor.js"></script>
+-->
+<script type="text/javascript" src="./ckeditor/ckeditor.js"></script>
+<!--
+<script type="text/javascript" src="./ckeditor/postcanal.js"></script>
+<link rel="stylesheet" href="./ckeditor/postcanal.css" type="text/css" media="screen"/>
+-->
 <?php endif ?>
 <script type="text/javascript" src="./js/application.js"></script>
 <link rel="stylesheet" href="./css/application.css" type="text/css" media="screen"/>

@@ -188,10 +188,23 @@ div.etybody
 {
     display: none;
 }
-
+div.b-modal
+{
+    position: absolute;
+    z-index: 4001;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: black;
+}
 #editform
 {
     display: none;
+    position: absolute;
+    z-index: 5001;
+    top: 0;
+    left: 0;
     background-color: white;
     text-align: left;
     border: 2px solid #48898c;
@@ -199,10 +212,6 @@ div.etybody
 #editform form
 {
     margin: 20px;
-}
-#simplemodal-overlay
-{
-    background-color: black;
 }
 input.intxt-full
 {

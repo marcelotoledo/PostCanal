@@ -46,7 +46,7 @@
         <p>Title</p><p><input type="text" name="entrytitle" value="" class="intxt intxt-full"></p>
     </div>
     <div class="form-row">
-        <p>Content</p><p><textarea name="entrybody" class="intxa intxa-full" disabled></textarea></p>
+        <p>Content</p><p><textarea name="entrybody" id="entrybody" class="intxa intxa-full"></textarea></p>
     </div>
     <div class="form-bot" id="editform-bot">
         <button type="button" name="editformsave">SAVE</button>

@@ -118,9 +118,9 @@ div.menubotfmt a:hover
     float: left;
     line-height: 35px;
 }
-#menubotleft select
+#bloglstsel
 {
-    width: 180px;
+    width: 200px;
     margin-top: 5px;
 }
 #menubotleft img
