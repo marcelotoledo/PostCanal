@@ -45,8 +45,9 @@ def getNextFeed(client, token, total=1):
     
     return feedList
 
-def processFeed(url, token, requestQueue, name):
-    mon = Monitor()
+def processFeed(url, token, requestQueue, name, isMonitor=False):
+    mon = None
+    if isMonitor: mon = Monitor()
     
     monName = 'thread-' + name
     
@@ -55,7 +56,7 @@ def processFeed(url, token, requestQueue, name):
         client = openConnection(url)
     except:
         l.log("Error opening connection with interface - %s" % (sys.exc_info()[1]), name, monName, 'copy-string', mon)
-        mon.delKey(monName)
+        if isMonitor: mon.delKey(monName)
         return None
     
     while 1:
@@ -65,7 +66,7 @@ def processFeed(url, token, requestQueue, name):
 
         if feed == 'kill':
             l.log("I am done, ending thread", name, monName, 'copy-string', mon)
-            mon.delKey(monName)
+            if isMonitor: mon.delKey(monName)
             return None
         
         if type(feed) != type(dict()):
@@ -131,12 +132,13 @@ def feedScheduleAll(client, token):
         return None
     
 class FeedThread(threading.Thread):
-    def __init__(self, url, token, requestQueue, id):
+    def __init__(self, url, token, requestQueue, id, isMonitor):
         threading.Thread.__init__(self, name="feed%02d" % (id,))
         self.requestQueue = requestQueue
         self.url          = url
         self.token        = token
         self.id           = id
+        self.isMonitor    = isMonitor
         
     def run(self):
-        processFeed(self.url, self.token, self.requestQueue, self.name)
+        processFeed(self.url, self.token, self.requestQueue, self.name, self.isMonitor)

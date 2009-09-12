@@ -58,8 +58,9 @@ def postScheduleAll(client, token):
         l.log("webservice call failed; (%s)" % (sys.exc_info()[0].__name__), funcName())
         return None
 
-def processPost(url, token, requestQueue, name, module):
-    mon = Monitor()
+def processPost(url, token, requestQueue, name, module, isMonitor=False):
+    mon = None
+    if isMonitor: mon = Monitor()
     
     monName = 'thread-' + name
     
@@ -68,7 +69,7 @@ def processPost(url, token, requestQueue, name, module):
         client = openConnection(url)
     except:
         l.log("Error opening connection with interface - %s" % (sys.exc_info()[1]), name, monName, 'copy-string', mon)
-        mon.delKey(monName)
+        if isMonitor: mon.delKey(monName)
         return None
 
     while 1:
@@ -77,7 +78,7 @@ def processPost(url, token, requestQueue, name, module):
 
         if post == 'kill':
             l.log("I am done, ending thread", name, monName, 'copy-string', mon)
-            mon.delKey(monName)
+            if isMonitor: mon.delKey(monName)
             return None        
     
         if type(post) != type(dict()):
@@ -146,13 +147,14 @@ def processPost(url, token, requestQueue, name, module):
         time.sleep(1)
 
 class PostThread(threading.Thread):
-    def __init__(self, url, token, requestQueue, id, module):
+    def __init__(self, url, token, requestQueue, id, module, isMonitor):
         threading.Thread.__init__(self, name="post%02d" % (id,))
         self.requestQueue = requestQueue
         self.url          = url
         self.token        = token
         self.id           = id
         self.module       = module
+        self.isMonitor    = isMonitor
       
     def run(self):
-        processPost(self.url, self.token, self.requestQueue, self.name, self.module)
+        processPost(self.url, self.token, self.requestQueue, self.name, self.module, self.isMonitor)

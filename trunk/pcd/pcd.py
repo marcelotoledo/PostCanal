@@ -44,7 +44,6 @@ if __name__ == "__main__":
     u.banner()
     
     m   = Module()
-    mon = Monitor()
 
     r = runtimeConfig()
     r.addOption("Debug",      str(u.options.debug))
@@ -58,7 +57,11 @@ if __name__ == "__main__":
         m.loadModule(k, v)
         r.addOption(k, v)
 
-    r.printOptions()        
+    r.printOptions()
+
+    mon = None
+    if u.options.monitor:
+        mon = Monitor()    
 
 #    feedScheduleAll(r.client, r.token)
 #    postScheduleAll(r.client, r.token)
@@ -80,7 +83,7 @@ if __name__ == "__main__":
             l.log("Queued %d feed(s)" % int(feedCount))
             newFeedThreads = newThreads(feedQueue.qsize(), tCount(threading.enumerate(), "feed"),
                                         THREADS_RATIO, MAX_THREADS, MIN_THREADS)            
-            currentThreadId = processThreads(newFeedThreads, FeedThread, r.frontendWS, r.token, feedQueue, currentThreadId)
+            currentThreadId = processThreads(newFeedThreads, FeedThread, r.frontendWS, r.token, feedQueue, currentThreadId, None, u.options.monitor)
 
         l.emptyLine()
         feedThreadSize = tCount(threading.enumerate(), "feed")
@@ -97,7 +100,7 @@ if __name__ == "__main__":
             l.log("Queued %d post(s)" % int(postCount))
             newPostThreads = newThreads(postQueue.qsize(), tCount(threading.enumerate(), "post"),
                                         THREADS_RATIO, MAX_THREADS, MIN_THREADS)
-            currentThreadId = processThreads(newPostThreads, PostThread, r.frontendWS, r.token, postQueue, currentThreadId, m)
+            currentThreadId = processThreads(newPostThreads, PostThread, r.frontendWS, r.token, postQueue, currentThreadId, m, u.options.monitor)
 
         l.emptyLine()
         postThreadSize = tCount(threading.enumerate(), "post")

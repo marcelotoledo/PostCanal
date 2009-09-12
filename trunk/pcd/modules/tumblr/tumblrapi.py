@@ -208,14 +208,8 @@ class Api:
 		params['password'] = self.password
 		params['generator'] = GENERATOR
                 try:
-                    #print "#" * 20
-                    #print params
-                    #print "#" * 20                    
                     #data = urlencode(params)
                     data = urlencode(dict([k, v.encode('utf-8')] for k, v in params.items()))
-                    #print "#" * 20
-                    #print data
-                    #print "#" * 20                    
                 except:
                     # my stuff
                     raise TumblrError("Error encoding parameters")
