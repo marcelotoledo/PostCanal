@@ -98,19 +98,3 @@ def processThreads(newThreads, Class, url, token, queue, currentThreadId, module
         currentThreadId = 0
 
     return currentThreadId
-
-def getDirectory():
-    import os
-    try:
-        return os.environ['PCD_DIR']
-    except:
-        return None
-
-def setPath(pcdDir):
-    import sys
-
-    paths = [ pcdDir, pcdDir + '/vendor', pcdDir + '/modules' ]
-
-    for item in paths:
-        #print "Setting %s in path..." % item
-        sys.path.append(item)

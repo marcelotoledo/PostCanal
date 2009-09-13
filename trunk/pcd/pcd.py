@@ -17,8 +17,19 @@
 
 # Code:
 
+import os
 import sys
-from utils import getDirectory, setPath
+
+def getDirectory():
+    try:
+        return os.environ['PCD_DIR']
+    except:
+        return None
+
+def setPath(pcdDir):
+    paths = [ pcdDir, pcdDir + '/vendor', pcdDir + '/modules' ]
+    for item in paths:
+        sys.path.append(item)
 
 pcdDir = getDirectory()
 if pcdDir == None:
@@ -36,7 +47,6 @@ from iface     import openConnection
 from module    import *
 from monitor   import Monitor
 
-import os
 import time
 import log
 import threading
