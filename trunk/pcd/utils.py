@@ -100,12 +100,17 @@ def processThreads(newThreads, Class, url, token, queue, currentThreadId, module
     return currentThreadId
 
 def getDirectory():
+    import os
     try:
         return os.environ['PCD_DIR']
-    except KeyError:
+    except:
         return None
 
 def setPath(pcdDir):
-    sys.path.append(pcdDir)
-    sys.path.append(pcdDir + '/vendor')
-    sys.path.append(pcdDir + '/modules')
+    import sys
+
+    paths = [ pcdDir, pcdDir + '/vendor', pcdDir + '/modules' ]
+
+    for item in paths:
+        #print "Setting %s in path..." % item
+        sys.path.append(item)

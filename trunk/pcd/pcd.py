@@ -17,8 +17,17 @@
 
 # Code:
 
-from conf      import runtimeConfig
+import sys
 from utils     import * 
+
+pcdDir = getDirectory()
+if pcdDir == None:
+    print "Error - Environment variable PCD_DIR not set. Exiting..."
+    sys.exit(1)
+    
+setPath(pcdDir)
+
+from conf      import *
 from feed      import getNextFeed, pendingFeeds, feedScheduleAll, FeedThread
 from post      import getNextPost, pendingPosts, postScheduleAll, PostThread
 from autoQueue import autoQueue
@@ -27,7 +36,6 @@ from module    import *
 from monitor   import Monitor
 
 import os
-import sys
 import time
 import log
 import threading
@@ -41,13 +49,6 @@ if __name__ == "__main__":
     u.usage()
     l = log.Log(u.options.verbose, u.options.debug, u.options.monitor)    
     u.banner()
-    
-    pcdDir = getDirectory()
-    if pcdDir == None:
-        l.log("Error - Environment variable PCD_DIR not set. Exiting...") 
-        sys.exit(1)
-
-    setPath(pcdDir)
     
     m   = Module(pcdDir)
 
