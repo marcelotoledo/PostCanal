@@ -97,6 +97,7 @@ if __name__ == "__main__":
     while True:
         feedCount = pendingFeeds(r.client, r.token)
         feedList  = getNextFeed(r.client, r.token, feedCount)
+        newFeedThreads = 0
         if feedCount > 0:
             addToQueue(feedQueue, feedList)
             l.log("Queued %d feed(s)" % int(feedCount))
@@ -114,6 +115,7 @@ if __name__ == "__main__":
 
         postCount = pendingPosts(r.client, r.token)
         postList  = getNextPost(r.client, r.token, postCount)
+        newPostThreads = 0
         if feedCount > 0:
             addToQueue(postQueue, postList)
             l.log("Queued %d post(s)" % int(postCount))
