@@ -31,6 +31,8 @@ button.queuepubbtn
     font-size: 0.5em;
 	background-image: url('./image/dashboard/queue-pp-btn.png');
     background-repeat: no-repeat;
+	-moz-border-radius: 4px;
+	-webkit-border-radius: 4px;
 }
 #queuepubplay
 {
@@ -82,6 +84,10 @@ div.entrydndhdr
     cursor: move;
 	background-image: url('./image/dashboard/btn-dnd.png');
 }
+div.entrydndhdr-pb
+{
+    background: none;
+}
 div.etytog
 {
     position: relative;
@@ -93,6 +99,14 @@ div.etytog
     cursor: pointer;
     cursor: hand;
     background-repeat: no-repeat;
+    font-weight: bold;
+}
+div.etytog-pb
+{
+    border: 2px solid black;
+    background: none;
+    text-align: center;
+    font-size: 1em;
 }
 div.etytog-un
 {
@@ -241,7 +255,9 @@ textarea.intxa-full
     border: 0;
     -moz-border-radius: 0px;
     -webkit-border-radius: 0px;
-    width: 20px;
+    padding: 0;
+    margin: 0;
+    width: 23px;
     height: 21px;
     cursor: default
 }

@@ -32,16 +32,43 @@ function entry_set_status(e, s)
 
         //if(s=='waiting')
         //{
-        //    e.find('div.etytog').html('<input type="checkbox" checked disabled/>');
         //}
         if(s=='failed')
         {
-            e.find('div.etytog')
-                .html('<nobr><input type="checkbox"/><img src="/image/warning.png"/></nobr>');
+            e.find('div.etylab').append('<nobr><img src="./image/warning.png"/></nobr>');
         }
         if(s=='published')
         {
-            e.find('div.etytog').html("<b>(P)</b>");
+            e.find('div.entrydndhdr').addClass('entrydndhdr-pb');
+            e.find('div.etytog').addClass("etytog-pb").html('P');
+            e.find('div.etyedlnk').remove();
+        }
+    }
+}
+
+function entry_set_publication_date(e, x, d, l, s, b)
+{
+    if(typeof e == 'string' && e.length > 0)
+    {
+        e = my_template.entry_list.find("div.ety[entry='" + e + "']");
+    }
+
+    if(typeof e == 'object')
+    {
+        if(s)
+        {
+            e.find('div.etydte').text(l);
+        }
+        else
+        {
+            if(d<0)
+            {
+                e.find('div.etydte').text('working');
+            }
+            else
+            {
+                e.find('div.etydte').text((b) ? l : x);
+            }
         }
     }
 }
@@ -67,7 +94,7 @@ function entry_populate(d)
             entry_content            : $(this).find('entry_content').text(),
             publication_status       : $(this).find('publication_status').text(),
             publication_date         : $(this).find('publication_date').text(),
-            publication_date_diff    : $(this).find('publication_date_diff').text(),
+            publication_date_diff    : parseInt($(this).find('publication_date_diff').text()),
             publication_date_literal : $(this).find('publication_date_literal').text(),
             publication_date_local   : $(this).find('publication_date_local').text(),
             ordering                 : $(this).find('ordering').text()
@@ -86,16 +113,12 @@ function entry_populate(d)
             _inner.find('span.etytt').b_txtoverflow({ buffer: my_template.txtoverflow_buffer, width: _alw, text: _data.entry_title });
             //_inner.find('span.artch').b_txtoverflow({ buffer: my_template.txtoverflow_buffer, width: txtofw_articletit_max, text: _data.feed_title });
 
-            if(parseInt(_data.publication_date_diff) <= 0 &&
-                        _data.publication_status != 'published')
-            {
-                _inner.find('div.etydte').text("<?php echo $this->translation()->overdue ?>");
-            }
-            else
-            {
-                _inner.find('div.etydte').text(_i < 5 ? _data.publication_date_literal :
-                                                        _data.publication_date_local);
-            }
+            entry_set_publication_date(_inner,
+                                       _data.publication_date_local,
+                                       _data.publication_date_diff,
+                                       _data.publication_date_literal,
+                                      (_data.publication_status=='published'),
+                                      (_i<5));
 
             _lsdata[_i] = _item.html(); _i++;
         }
@@ -425,10 +448,25 @@ function set_queue_interval()
 
 function publication_updater_callback(d)
 {
+    var _updata = null;
+
     d.find('result').children().each(function()
     {
-        entry_set_status($(this).find('entry').text(), 
-                         $(this).find('status').text());
+        _updata = 
+        {
+            entry  : $(this).find('entry').text(),
+            stat   : $(this).find('status').text(),
+            diff   : parseInt($(this).find('publication_date_diff').text()),
+            liter  : $(this).find('publication_date_literal').text()
+        };
+
+        entry_set_status(_updata.entry, _updata.stat);
+        entry_set_publication_date(_updata.entry,
+                                   _updata.liter, // maybe fix?
+                                   _updata.diff,
+                                   _updata.liter,
+                                  (_updata.stat=='published'),
+                                   true);
     });
 }
 

@@ -82,15 +82,24 @@ class C_Queue extends B_Controller
         {
             $zd->setTimestamp($o->publication_date);
 
+            $diff = $o->publication_date - time();
+            $lt = L_Utility::literalTime($diff);
+
+            $local = $zd->toString($zd->toString('YYYMMMdd')==$ct ? 
+                $zd_cfg->formatShort : 
+                $zd_cfg->formatLong);
+
             $results['published'][] = array
             (
-                'entry'                  => $o->hash,
-                'entry_title'            => $o->entry_title,
-                'entry_content'          => $o->entry_content,
-                'publication_status'     => $o->publication_status,
-                'publication_date'       => $o->publication_date,
-                'publication_date_local' => $zd->toString(),
-                'ordering'               => $o->ordering
+                'entry'                    => $o->hash,
+                'entry_title'              => $o->entry_title,
+                'entry_content'            => $o->entry_content,
+                'publication_status'       => $o->publication_status,
+                'publication_date'         => $o->publication_date,
+                'publication_date_diff'    => $diff,
+                'publication_date_literal' => $lt,
+                'publication_date_local'   => $local,
+                'ordering'                 => $o->ordering
             );
         }
 

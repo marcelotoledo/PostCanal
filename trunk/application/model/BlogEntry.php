@@ -531,16 +531,30 @@ class BlogEntry extends B_Model
 
         $_in = "'" . implode("','", $array_entry_hash) . "'";
 
-        $_q = "SELECT hash AS entry, publication_status AS status 
+        $_q = "SELECT hash , publication_status, publication_date 
                FROM " . self::$table_name . "
                WHERE user_blog_id = (
                     SELECT user_blog_id FROM model_user_blog
                     WHERE hash = ? and user_profile_id = ?)
                AND hash IN (" . $_in . ")";
 
-        $result = array();
+        $results = array();
 
-        return self::select($_q, array($blog_hash, $profile_id), PDO::FETCH_ASSOC);
+        foreach(self::select($_q, array($blog_hash, 
+                                        $profile_id), PDO::FETCH_OBJ) as $o)
+        {
+            $diff = strtotime($o->publication_date) - time();
+
+            $results[] = array
+            (
+                'entry'                    => $o->hash,
+                'status'                   => $o->publication_status,
+                'publication_date_diff'    => $diff,
+                'publication_date_literal' => L_Utility::literalTime($diff)
+            );
+        }
+
+        return $results;
     }
 
     /**
