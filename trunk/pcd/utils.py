@@ -14,6 +14,7 @@
 
 # Code:
 
+import os
 import sys
 import conf
 import log
@@ -97,3 +98,14 @@ def processThreads(newThreads, Class, url, token, queue, currentThreadId, module
         currentThreadId = 0
 
     return currentThreadId
+
+def getDirectory():
+    try:
+        return os.environ['PCD_DIR']
+    except KeyError:
+        return None
+
+def setPath(pcdDir):
+    sys.path.append(pcdDir)
+    sys.path.append(pcdDir + '/vendor')
+    sys.path.append(pcdDir + '/modules')

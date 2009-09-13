@@ -18,7 +18,7 @@
 # Code:
 
 from conf      import runtimeConfig
-from utils     import Usage, tCount, addToQueue, newThreads, processThreads
+from utils     import * 
 from feed      import getNextFeed, pendingFeeds, feedScheduleAll, FeedThread
 from post      import getNextPost, pendingPosts, postScheduleAll, PostThread
 from autoQueue import autoQueue
@@ -26,6 +26,7 @@ from iface     import openConnection
 from module    import *
 from monitor   import Monitor
 
+import os
 import sys
 import time
 import log
@@ -34,8 +35,6 @@ import Queue
 import codecs
 
 sys.stdout = codecs.getwriter('utf-8')(sys.stdout)
-sys.path.append(os.getcwd())
-sys.path.append(os.getcwd() + '/vendor')
 
 if __name__ == "__main__":
     u = Usage()
@@ -43,12 +42,20 @@ if __name__ == "__main__":
     l = log.Log(u.options.verbose, u.options.debug, u.options.monitor)    
     u.banner()
     
-    m   = Module()
+    pcdDir = getDirectory()
+    if pcdDir == None:
+        l.log("Error - Environment variable PCD_DIR not set. Exiting...") 
+        sys.exit(1)
 
-    r = runtimeConfig()
+    setPath(pcdDir)
+    
+    m   = Module(pcdDir)
+
+    r = runtimeConfig(pcdDir)
     r.addOption("Debug",      str(u.options.debug))
     r.addOption("Verbose",    str(u.options.verbose))
     r.addOption("Monitor",    str(u.options.monitor))
+    r.addOption("Directory",  pcdDir)
     r.addOption("token",      r.token)
     r.addOption("Frontend",   r.frontend)
     r.addOption("FrontendWS", r.frontendWS)

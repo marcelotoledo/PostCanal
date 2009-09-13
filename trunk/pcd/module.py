@@ -18,17 +18,17 @@ import os
 import sys
 
 class Module:
-    def __init__(self):
-        self.moduleDir        = '/pcd/modules'
+    def __init__(self, pcdDir):
+        self.moduleDir        = pcdDir + '/modules'
         self.ignored          = [ '__init__.py', '__init__.pyc', '.svn', 'ignored', 'Makefile' ]
         self.modules          = { }
         self.classes          = [ ]
-        sys.path.append(os.path.abspath('../') + self.moduleDir)
+        #sys.path.append(pcdDir, os.path.abspath('../') + self.moduleDir)
         
         self.loadModuleData()
 
     def loadModuleData(self):
-        for item in os.listdir(os.path.abspath('../') + self.moduleDir):
+        for item in os.listdir(self.moduleDir):
             if not item in self.ignored:
                 #self.modules[item] = 'modules.' + item + '.' + item
                 self.modules[item] = item + '.' + item
