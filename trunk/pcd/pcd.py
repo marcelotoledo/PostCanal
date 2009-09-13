@@ -18,7 +18,7 @@
 # Code:
 
 import sys
-from utils     import * 
+from utils import getDirectory, setPath
 
 pcdDir = getDirectory()
 if pcdDir == None:
@@ -27,6 +27,7 @@ if pcdDir == None:
     
 setPath(pcdDir)
 
+from utils     import *
 from conf      import *
 from feed      import getNextFeed, pendingFeeds, feedScheduleAll, FeedThread
 from post      import getNextPost, pendingPosts, postScheduleAll, PostThread
