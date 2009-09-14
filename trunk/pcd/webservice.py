@@ -41,11 +41,12 @@ from conf      import runtimeConfig
 from module    import *
 from container import *
 
+import log
 import aggregator
 
-sys.path.append(os.getcwd())
-sys.path.append(os.getcwd() + '/vendor')
-        
+#l = log.Log(True, False)
+l = log.Log(True, True)
+
 class WebService:
     def __init__(self, pcdDir):
         self.r      = runtimeConfig(pcdDir)
@@ -57,6 +58,8 @@ class WebService:
         return (((args['token'] == None or args['token'] != self.token) ^ True) if 'token' in args.keys() else False) and len(filter(lambda n: n in args, names)) == len(names)
 
     def blog_discover(self, args):
+        l.log("Trying to discover blog %s" % args['url'])
+        
         if not self.validate_args(args, ['url']):
             return None
 
@@ -69,16 +72,26 @@ class WebService:
                                    
         c.setType(myType)
         c.setURLAccepted(True)
+
+        l.debug("Got this from the container: ")
+        l.debug(c.getData())
         
         return c.getData()
 
     def feed_discover(self, args):
+        l.log("Trying to discover feed %s" % args['url'])
+        
         if not self.validate_args(args, ['url']):
             return None
         
         feeds = []
         for f in aggregator.guess_feeds(args['url']):
             feeds.append(aggregator.feed_dump(f))
+
+        l.debug("Got this from feed discover: ")
+        for item in feeds:
+            l.debug(item)
+            
         return feeds
 
 if __name__ == '__main__':
