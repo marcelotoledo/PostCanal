@@ -37,7 +37,6 @@ if pcdDir == None:
     
 setPath(pcdDir)
 
-
 from conf      import runtimeConfig
 from module    import *
 from container import *
@@ -48,10 +47,11 @@ sys.path.append(os.getcwd())
 sys.path.append(os.getcwd() + '/vendor')
         
 class WebService:
-    def __init__(self, config_path=None):
-        self.r     = runtimeConfig(config_path)
-        self.token = self.r.token
-        self.m = Module(pcdDir)
+    def __init__(self, pcdDir):
+        self.r      = runtimeConfig(pcdDir)
+        self.token  = self.r.token
+        self.pcdDir = pcdDir 
+        self.m      = Module(self.pcdDir)
 
     def validate_args(self, args, names):
         return (((args['token'] == None or args['token'] != self.token) ^ True) if 'token' in args.keys() else False) and len(filter(lambda n: n in args, names)) == len(names)

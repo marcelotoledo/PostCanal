@@ -1,17 +1,30 @@
 #!/usr/bin/env python
 
-import sys, os
-from SimpleXMLRPCServer import CGIXMLRPCRequestHandler
+import os
+import sys
 
-base_path = os.path.abspath("../")
-config_path = base_path + "/config/environment.xml"
+def getDirectory():
+    try:
+        return os.environ['PCD_DIR']
+    except:
+        return None
 
-sys.path.append(base_path + "/pcd")
-sys.path.append(base_path + "/pcd/vendor")
+def setPath(pcdDir):
+    paths = [ pcdDir, pcdDir + '/vendor', pcdDir + '/modules' ]
+    for item in paths:
+        sys.path.append(item)
+
+pcdDir = getDirectory()
+if pcdDir == None:
+    print "Error - Environment variable PCD_DIR not set. Exiting..."
+    sys.exit(1)
+    
+setPath(pcdDir)
 
 import webservice
-from webservice import WebService
+from SimpleXMLRPCServer import CGIXMLRPCRequestHandler
+from webservice         import WebService
 
 handler = CGIXMLRPCRequestHandler(allow_none=True, encoding=False)
-handler.register_instance(WebService(config_path))
+handler.register_instance(WebService(pcdDir))
 handler.handle_request()
