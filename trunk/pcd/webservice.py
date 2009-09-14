@@ -16,6 +16,28 @@
 
 # Code:
 
+import os
+import sys
+
+def getDirectory():
+    try:
+        return os.environ['PCD_DIR']
+    except:
+        return None
+
+def setPath(pcdDir):
+    paths = [ pcdDir, pcdDir + '/vendor', pcdDir + '/modules' ]
+    for item in paths:
+        sys.path.append(item)
+
+pcdDir = getDirectory()
+if pcdDir == None:
+    print "Error - Environment variable PCD_DIR not set. Exiting..."
+    sys.exit(1)
+    
+setPath(pcdDir)
+
+
 from conf      import runtimeConfig
 from module    import *
 from container import *
@@ -29,7 +51,7 @@ class WebService:
     def __init__(self, config_path=None):
         self.r     = runtimeConfig(config_path)
         self.token = self.r.token
-        self.m = Module()
+        self.m = Module(pcdDir)
 
     def validate_args(self, args, names):
         return (((args['token'] == None or args['token'] != self.token) ^ True) if 'token' in args.keys() else False) and len(filter(lambda n: n in args, names)) == len(names)
@@ -67,7 +89,7 @@ if __name__ == '__main__':
         c = TContainer()
         c.setURL(item)
         
-        m = Module()
+        m = Module(pcdDir)
         m.loadAllModules()
         myType = m.myContainerName(item)
         
