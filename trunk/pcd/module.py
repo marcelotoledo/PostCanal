@@ -20,7 +20,7 @@ import sys
 class Module:
     def __init__(self, pcdDir):
         self.moduleDir        = pcdDir + '/modules'
-        self.ignored          = [ '__init__.py', '__init__.pyc', '.svn', 'ignored', 'Makefile' ]
+        self.ignored          = [ '__init__.py', '__init__.pyc', '.svn', 'ignored', 'Makefile', 'livespaces' ]
         self.modules          = { }
         self.classes          = [ ]
         #sys.path.append(pcdDir, os.path.abspath('../') + self.moduleDir)
