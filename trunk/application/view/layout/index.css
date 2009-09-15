@@ -9,7 +9,6 @@ body
 	background-image: url('./image/index/bg-body.png');
 	background-position: 0px 0px;
 	font-family: "Trebuchet MS", Verdana, Geneva, Arial, Helvetica, sans-serif;
-    overflow: hidden;
 }
 img
 {
