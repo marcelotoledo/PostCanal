@@ -1,7 +1,7 @@
 <div class="midct midct-half">
     <div class="midct-top">&nbsp;</div>
     <div id="midct-home-0">
-        Publish content with Perfection
+        Publish content with perfection
     </div>
     <div id="midct-home-1">
         <div id="midct-home-2">
