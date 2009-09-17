@@ -38,7 +38,8 @@
 </div>
 
 <div id="invitemsg" style="display:none">
-    <p>Thank you for contacting us.</p>
+    <h2>Thank You!</h2>
+    <p>We'll send an invite on the near future.</p>
 </div>
 
 <div id="learnmoremsg">

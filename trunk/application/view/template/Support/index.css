@@ -54,8 +54,6 @@ div.form-row-x
     clear: left;
 }
 
-div > #btn-send { margin-top: 70px; }
-
 /* right */
 
 div.faq-qst
@@ -80,4 +78,24 @@ div.faq-lnk a
 {
     color: #FF6600;
     text-decoration: underline;
+}
+
+div.support-title
+{
+    font-size: 2.6em;
+    font-weight: bold;
+    text-align: left;
+    color: #2780B1;
+    padding-top: 5px;
+    margin-bottom: 10px;
+}
+
+#btn-send
+{
+    width: 100px;
+    height: 25px;
+}
+div.form-bot
+{
+    margin-top: 70px;
 }

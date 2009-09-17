@@ -2,6 +2,7 @@
     <div class="midct-top">&nbsp;</div>
     <div class="midct-cen">
         <div id="signup-ct">
+            <div class="support-title">Support</div>
             <div class="form-row">
             <p>Name</p><p><input type="text" class="intxt intxt-full"></p>
             </div>
@@ -15,11 +16,8 @@
             <p>Message</p><p><textarea type="text" class="intxa intxa-full"></textarea></p>
             </div>
             <br/>
-            <div class="btn" id="btn-send">
-                <div class="btn-brd btn-l">&nbsp;</div>
-                <div class="btn-bg  btn-c"><a href="#">SEND E-MAIL</a></div>
-                <div class="btn-brd btn-r">&nbsp;</div>
-                <div class="btn-x"></div>
+            <div class="form-bot">
+                <button type="button" id="btn-send">SEND EMAIL</button>
             </div>
         </div>
     </div>
