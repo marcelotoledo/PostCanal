@@ -125,7 +125,9 @@ $(document).ready(function()
         $(this).blur();
     });
 
-    my_template.input_email.focus();
+    my_template.input_name.focus();
+    my_template.input_password.focus(function() { $('body').scrollTop(200); });
+    my_template.input_confirm.focus(function() { $('body').scrollTop(300); });
 
     /* invitation (temporary) */
 

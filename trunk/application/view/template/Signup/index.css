@@ -18,11 +18,11 @@ div > div.midct-cen { margin-top: 0px; }
 }
 div.form-title
 {
-    height: 35px;
-    font-size: 1.3em;
+    font-size: 2.8em;
     font-weight: bold;
     text-align: left;
     color: #2780B1;
+    margin-bottom: 20px;
 }
 input.intxt-half
 {
@@ -78,7 +78,37 @@ div.faq-lnk a
 #register-msg
 {
     display: none;
-    text-align: center;
+    text-align: left;
     font-size: 0.9em;
     color: red;
+}
+div.form-bot
+{
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+input.intxt-full
+{
+    width: 800px;
+    height: 43px;
+    line-height: 43px;
+    font-size: 2em;
+}
+select.insel-full
+{
+    width: 800px;
+    height: 43px;
+    line-height: 43px;
+    font-size: 2em;
+}
+div.form-row
+{
+    height: 80px;
+}
+
+#submit-register
+{
+    width: 200px;
+    height: 30px;
 }

@@ -57,10 +57,23 @@ div.midct-home-tr
 }
 #midct-home-rtxt
 {
-    margin: 20px 35px 0px 0px;
+    margin: 20px 0px 0px 28px;
     color: #2780B1;
-    text-align: right;
+    text-align: left;
     font-size: 1.1em;
+}
+#midct-home-rtxt big
+{
+    font-size: 1.4em;
+}
+#midct-home-rtxt ul
+{
+    margin: 5px 0px 10px 25px;
+    line-height: 22px;
+}
+#midct-home-rtxt small
+{
+    font-size: 0.8em;
 }
 #midct-home-4
 {

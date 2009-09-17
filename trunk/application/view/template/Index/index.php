@@ -1,7 +1,7 @@
 <div class="midct midct-half">
     <div class="midct-top">&nbsp;</div>
     <div id="midct-home-0">
-        Publish content with intelligence
+        Publish content with Perfection
     </div>
     <div id="midct-home-1">
         <div id="midct-home-2">
@@ -11,7 +11,15 @@
             <div id="midct-home-sp-3"></div>
         </div>
         <div id="midct-home-3">
-            <div id="midct-home-rtxt">We'll select the content based on your taste and <b>push it automatically</b> to your blog</div>
+            <div id="midct-home-rtxt">
+            <big>INCREASE</big>
+            <ul>
+                <li>Visitors</li>
+                <li>Revenues</li>
+                <li>Quality</li>
+            </ul>
+            <small>AND MUCH MORE!</small>
+            </div>
         </div>
         <div id="midct-home-4">
             <div id="midct-home-sp-4">&nbsp;</div>

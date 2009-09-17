@@ -15,7 +15,7 @@
 <style type="text/css"><?php $this->includeLayout('index.css') ?></style>
 <style type="text/css"><?php $this->includeTemplate('css') ?></style>
 
-<h1>PostCanal invitation request</h1>
+<h1>PostCanal.com is invite only (for now)</h1>
 
 <p id="invitetit">Currently we are in beta version and accepting registration from invited users only. If haven't been invited, please leave your name and email address below and we will invite you in the near future.</p>
 
@@ -32,10 +32,7 @@
     </div>
 
     <div class="form-bot">
-    <p>
-        <button type="button" id="invitemebtn">INVITE-ME!</button>&nbsp;
-        <button type="button" id="cancelbtn">GO BACK HOME</button>
-    </p>
+        <button type="button" id="invitemebtn">INVITE-ME!</button>
     </div>
 </form>
 </div>
@@ -45,7 +42,8 @@
 </div>
 
 <div id="learnmoremsg">
-    <p>If you have been invited, just use the url you received to gain access to Postcanal.com!</p>
+    <p>If you have been invited, just use the url you received to gain access to PostCanal.com!</p>
+    <button type="button" id="cancelbtn">GO BACK HOME</button>
 </div>
 
 <script type="text/javascript">

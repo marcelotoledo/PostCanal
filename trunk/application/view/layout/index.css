@@ -9,6 +9,7 @@ body
 	background-image: url('./image/index/bg-body.png');
 	background-position: 0px 0px;
 	font-family: "Trebuchet MS", Verdana, Geneva, Arial, Helvetica, sans-serif;
+    overflow-x: hidden;
 }
 img
 {
@@ -28,12 +29,13 @@ img
 #toprow
 {
 	margin-top: 20px;
+    margin-left: 100px;
 	margin-bottom: 50px;
-	float: right;
+	float: left;
 }
 div.toprowimg
 {
-	background-image: url('./image/index/top.png');
+	background-image: url('./image/index/top-24.png');
 	background-repeat: no-repeat;
 	background-position: top right;
 }
@@ -45,6 +47,20 @@ div.toprowimg
 	float: left;
 	background-position: 0px 0px;
 }
+#logobeta
+{
+    margin-top: 25px;
+    text-align: right;
+    color: gray;
+}
+#tagline
+{
+    white-space: nowrap;
+    font-size: 0.80em;
+    margin-top: 35px;
+    text-align: left;
+    color: #081C27;
+}
 #topmenu
 {
 	float: left;
@@ -54,6 +70,7 @@ div.menuitm
 	float: left;
 	padding: 0px 20px 0px 20px;
 	margin-top: 38px;
+    height: 45px;
 	line-height: 45px;
 	background-color: #081C27;
 	font-size: 1.1em;
@@ -96,12 +113,14 @@ div.signuparw-dbd { background-position: -195px   0px; background-color: #081C26
 
 #menursp
 {
-	width: 50px;
+    position: absolute;
+    width: 100%;
+    margin-left: 610px;
 }
 
-#menuitmclr { clear: left;  }
-#toprowclr  { clear: left;  }
-#topclr     { clear: right; }
+#menuitmclr { clear: left; }
+#toprowclr  { clear: left; }
+#topclr     { clear: left; }
 
 /* middle */
 
@@ -273,51 +292,6 @@ select.insel
 	font-weight: bold;
 }
 
-/* button */
-
-div.btn { }
-div.btn-brd
-{
-	float: left;
-	background-image: url('./image/index/btn-brd.png');
-}
-div.btn-l
-{
-	width: 15px;
-	height: 30px;
-	background-repeat: no-repeat;
-	background-position: 0px 0px;
-}
-div.btn-c
-{
-	float: left;
-	height: 30px;
-	line-height: 30px;
-	font-weight: bold;
-	padding: 0px 5px 0px 5px;
-	background-image: url('./image/index/btn-bg.png');
-	background-repeat: repeat-x;
-	background-position: 0px 0px;
-	background-color: #FF6600;
-}
-div.btn-c a
-{
-	color: black;
-	font-size: 1em;
-	text-decoration: none;
-}
-div.btn-r
-{
-	width: 15px;
-	height: 30px;
-	background-repeat: no-repeat;
-	background-position: -15px 0px;
-}
-div.btn-x
-{
-	clear: left;
-}
-
 button
 {
 	height: 20px;
@@ -335,5 +309,3 @@ button
     cursor: pointer;
     cursor: hand;
 }
-
-

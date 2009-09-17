@@ -33,7 +33,10 @@
 <div id="mainct">
 
 <div id="toprow">
-    <div class="toprowimg" id="toplogo">&nbsp;</div>
+    <div class="toprowimg" id="toplogo">
+        <div id="logobeta">Beta</div>
+        <div id="tagline">we help you publish content</div>
+    </div>
     <div id="topmenu">
         <!-- home -->
         <?php if($this->request()->getController()=='') : ?>
@@ -67,10 +70,10 @@
 
         <!-- quick tour -->
         <?php if($this->request()->getController()=='tour') : ?>
-        <div class="menuitm menuitm-ebd">Quick Tour</div>
+        <div class="menuitm menuitm-ebd">Tour</div>
         <div class="menuitm toprowimg sepbrd sepbrd-ebd-r">&nbsp;</div>
         <?php else : ?>
-        <div class="menuitm"><a class="menulnk" href="./tour">Quick Tour</a></div>
+        <div class="menuitm"><a class="menulnk" href="./tour">Tour</a></div>
         <?php if($this->request()->getController()=='plans') : ?>
         <div class="menuitm toprowimg sepbrd sepbrd-ebd-l">&nbsp;</div>
         <?php else : ?>
@@ -80,10 +83,10 @@
 
         <!-- plans -->
         <?php if($this->request()->getController()=='plans') : ?>
-        <div class="menuitm menuitm-ebd">Plans &amp; Prices</div>
+        <div class="menuitm menuitm-ebd">Plans <span style="font-family:sans-serif;font-weight:normal">&amp;</span> Prices</div>
         <div class="menuitm toprowimg sepbrd sepbrd-ebd-r">&nbsp;</div>
         <?php else : ?>
-        <div class="menuitm"><a class="menulnk" href="./plans">Plans &amp; Prices</a></div>
+        <div class="menuitm"><a class="menulnk" href="./plans">Plans <span style="font-family:sans-serif;font-weight:normal">&amp;</span> Prices</a></div>
         <?php if($this->request()->getController()=='contact') : ?>
         <div class="menuitm toprowimg sepbrd sepbrd-ebd-l">&nbsp;</div>
         <?php else : ?>
@@ -93,9 +96,9 @@
 
         <!-- contact -->
         <?php if($this->request()->getController()=='contact') : ?>
-        <div class="menuitm menuitm-ebd">Contact</div>
+        <div class="menuitm menuitm-ebd">Support</div>
         <?php else : ?>
-        <div class="menuitm"><a class="menulnk" href="./contact">Contact</a></div>
+        <div class="menuitm"><a class="menulnk" href="./contact">Support</a></div>
         <?php endif ?>
 
         <div class="menuitm" id="menursp">&nbsp;</div>

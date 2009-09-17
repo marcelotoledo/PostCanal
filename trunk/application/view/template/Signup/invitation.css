@@ -1,6 +1,6 @@
 body
 {
-    margin: 25px;
+    margin: 20px;
     background-image: none;
     overflow: hidden;
 }
@@ -13,6 +13,10 @@ a
 {
     color: #2780B1;
     text-decoration: none;
+}
+#mainct
+{
+    background: none;
 }
 #inviteform
 {
@@ -33,7 +37,9 @@ a
 
 div.form-bot
 {
-    margin-top: 25px;
+    margin-top: 20px;
+    margin-bottom: 10px;
+    text-align: center;
 }
 
 h1
@@ -45,6 +51,7 @@ h1
 #invitetit
 {
     margin-top: 15px;
+    line-height: 20px;
 }
 #invitemsg
 {
@@ -52,13 +59,24 @@ h1
 }
 button
 {
+    width: 150px;
     height: 30px;
     line-height: 30px;
     padding-left: 10px;
     padding-right: 10px;
 }
+#cancelbtn
+{
+    margin-top: 25px;
+}
 #learnmoremsg
 {
     margin-top: 25px;
     white-space: nowrap;
+    text-align: center;
+}
+#learnmoremsg p
+{
+    line-height: 20px;
+    font-size: 0.8em;
 }
