@@ -51,15 +51,19 @@ div.toprowimg
 {
     margin-top: 25px;
     text-align: right;
-    color: gray;
+    color: #a4a4a4;
+    font-family: monospace;
+    font-size: 0.7em;
+    height: 25px;
+    line-height: 25px;
 }
 #tagline
 {
     white-space: nowrap;
-    font-size: 0.80em;
+    font-size: 0.84em;
     margin-top: 35px;
     text-align: left;
-    color: #081C27;
+    color: #808080;
 }
 #topmenu
 {
@@ -81,6 +85,18 @@ div.menuitm-ebd
 {
 	background-color: #2780B1;
 }
+div.menuitm-left
+{
+    padding-left: 25px;
+	-moz-border-radius-topleft: 9px;
+	-webkit-border-top-left-radius: 9px;
+	-moz-border-radius-bottomleft: 9px;
+	-webkit-border-bottom-left-radius: 9px;
+}
+div.menuitm-right
+{
+    padding-right: 25px;
+}
 a.menulnk
 {
 	color: white;
@@ -88,15 +104,6 @@ a.menulnk
 	text-decoration: none;
 }
 a.menulnk:hover { color: #FFA800; }
-
-#menubrd 
-{
-	width: 9px;
-	padding: 0px;
-	background-color: transparent;
-}
-div.menubrd-ebd { background-position: -177px -45px; }
-div.menubrd-dbd { background-position: -186px -45px; }
 
 div.sepbrd
 {
@@ -115,7 +122,7 @@ div.signuparw-dbd { background-position: -195px   0px; background-color: #081C26
 {
     position: absolute;
     width: 100%;
-    margin-left: 610px;
+    margin-left: 615px;
 }
 
 #menuitmclr { clear: left; }

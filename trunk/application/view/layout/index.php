@@ -34,18 +34,16 @@
 
 <div id="toprow">
     <div class="toprowimg" id="toplogo">
-        <div id="logobeta">Beta</div>
+        <div id="logobeta">beta</div>
         <div id="tagline">we help you publish content</div>
     </div>
     <div id="topmenu">
         <!-- home -->
         <?php if($this->request()->getController()=='') : ?>
-        <div class="menuitm toprowimg menubrd-ebd" id="menubrd">&nbsp;</div>
-        <div class="menuitm menuitm-ebd">Home</div>
+        <div class="menuitm menuitm-ebd menuitm-left">Home</div>
         <div class="menuitm toprowimg sepbrd sepbrd-ebd-r">&nbsp;</div>
         <?php else : ?>
-        <div class="menuitm toprowimg menubrd-dbd" id="menubrd">&nbsp;</div>
-        <div class="menuitm"><a class="menulnk" href="./">Home</a></div>
+        <div class="menuitm menuitm-left"><a class="menulnk" href="./">Home</a></div>
         <?php if($this->request()->getController()=='signup') : ?>
         <div class="menuitm toprowimg sepbrd sepbrd-ebd-l">&nbsp;</div>
         <?php else : ?>
@@ -87,18 +85,18 @@
         <div class="menuitm toprowimg sepbrd sepbrd-ebd-r">&nbsp;</div>
         <?php else : ?>
         <div class="menuitm"><a class="menulnk" href="./plans">Plans <span style="font-family:sans-serif;font-weight:normal">&amp;</span> Prices</a></div>
-        <?php if($this->request()->getController()=='contact') : ?>
+        <?php if($this->request()->getController()=='support') : ?>
         <div class="menuitm toprowimg sepbrd sepbrd-ebd-l">&nbsp;</div>
         <?php else : ?>
         <div class="menuitm toprowimg sepbrd sepbrd-dbd">&nbsp;</div>
         <?php endif ?>
         <?php endif ?>
 
-        <!-- contact -->
-        <?php if($this->request()->getController()=='contact') : ?>
-        <div class="menuitm menuitm-ebd">Support</div>
+        <!-- support -->
+        <?php if($this->request()->getController()=='support') : ?>
+        <div class="menuitm menuitm-ebd menuitm-right">Support</div>
         <?php else : ?>
-        <div class="menuitm"><a class="menulnk" href="./contact">Support</a></div>
+        <div class="menuitm menuitm-right"><a class="menulnk" href="./support">Support</a></div>
         <?php endif ?>
 
         <div class="menuitm" id="menursp">&nbsp;</div>
