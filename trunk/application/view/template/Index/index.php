@@ -28,7 +28,7 @@
             <div id="midct-home-sp-6"></div>
         </div>
         <div id="midct-home-5">
-            <div id="midct-home-btn"><a href="./tour">QUICK TOUR&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</a></div>
+            <div id="midct-home-btn"><a href="./tour">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;TOUR&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</a></div>
         </div>
         <div id="midct-home-x"></div>
     </div>
@@ -45,13 +45,10 @@
         </div>
         <div class="form-row">
             <p>Password</p><p><input type="password" class="intxt intxt-rgt" name="password" id="login-password"></p>
-            <a href="#" id="link-recovery">Forgot your password?</a>
         </div>
-        <div class="btn" id="btn-login">
-            <div class="btn-brd btn-l">&nbsp;</div>
-            <div class="btn-bg  btn-c"><a href="#" id="submit-login">SIGN IN</a></div>
-            <div class="btn-brd btn-r">&nbsp;</div>
-            <div class="btn-x"></div>
+        <p><a href="#" id="link-recovery">Forgot your password?</a></p>
+        <div class="form-bot">
+            <button type="button" id="submit-login">SIGN IN</button>
         </div>
         </form>
         <div id="login-msg" class="right-msg"></div>
@@ -62,11 +59,8 @@
         <div class="form-row">
             <p>E-mail</p><p><input type="text" class="intxt intxt-rgt" name="email" id="recovery-email"></p>
         </div>
-        <div class="btn" id="btn-recovery">
-            <div class="btn-brd btn-l">&nbsp;</div>
-            <div class="btn-bg  btn-c"><a href="#" id="submit-recovery">RETRIEVE</a></div>
-            <div class="btn-brd btn-r">&nbsp;</div>
-            <div class="btn-x"></div>
+        <div class="form-bot">
+            <button type="button" id="submit-recovery">RETRIEVE</button>
         </div>
         <a href="#" id="link-remembered">Remembered, let me Sign In</a>
         </form>

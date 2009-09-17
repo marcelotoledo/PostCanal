@@ -25,7 +25,7 @@
 }
 div.midct-home-tr
 {
-    background-image: url('./image/index/middle-home-tr-en_US.png'); /* i18n */
+    background-image: url('./image/index/middle-home-24-en_US.png'); /* i18n */
 }
 #midct-home-sp-1
 {
@@ -94,9 +94,10 @@ div.midct-home-tr
 {
     float: left;
     width: 345px;
-    height: 46px;
+    height: 72px;
     background-repeat: no-repeat;
-    background-position: 0px -38px;
+    background-position: 0px -40px;
+    margin-top: -10px;
 }
 #midct-home-sp-6
 {
@@ -134,19 +135,6 @@ div.midct-home-tr
 input.intxt-rgt
 {
     width: 200px;
-}
-#btn-login
-{
-    padding-top: 10px;
-}
-#btn-recovery
-{
-    padding-top: 10px;
-    padding-bottom: 10px;
-}
-form > #btn-login
-{
-    padding-top: 30px;
 }
 #notmember
 {
@@ -188,7 +176,28 @@ div.right-msg
     display: none;
     text-align: center;
     line-height: 20px;
-    padding-top: 8px;
     font-size: 0.9em;
     color: yellow;
+}
+#recovery-msg
+{
+    margin-top: 10px;
+}
+
+div.form-bot
+{
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+#submit-login
+{
+    width: 100px;
+    height: 26px;
+    font-size: 0.9em;
+}
+#submit-recovery
+{
+    width: 100px;
+    height: 26px;
+    font-size: 0.9em;
 }
