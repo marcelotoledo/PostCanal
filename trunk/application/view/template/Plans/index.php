@@ -5,29 +5,29 @@
         <div class="planct" id="plan-free">
             <div class="plantit">Free</div>
             <div class="planopt">
-                &nbsp;
+                available
             </div>
         </div>
         <div class="planct" id="plan-premium">
             <div class="plantit">Premium</div>
             <div class="planopt">
-                &nbsp;
+                not available yet
             </div>
-            <div class="planprc">&nbsp;</div>
+            <div class="planprc">$0/month</div>
         </div>
         <div class="planct" id="plan-standard">
             <div class="plantit">Standard</div>
             <div class="planopt">
-                &nbsp;
+                not available yet
             </div>
-            <div class="planprc">&nbsp;</div>
+            <div class="planprc">$0/month</div>
         </div>
         <div class="planct" id="plan-basic">
             <div class="plantit">Basic</div>
             <div class="planopt">
-                &nbsp;
+                not available yet
             </div>
-            <div class="planprc">&nbsp;</div>
+            <div class="planprc">$0/month</div>
         </div>
         <div class="planclr"></div><br/>
         <div id="signupfree"><a href="./signup">Sign Up FREE!! <img src="./image/index/middle-plans-arw.png"/></a></div>
