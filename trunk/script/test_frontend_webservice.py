@@ -1,21 +1,33 @@
-import sys, os
+#!/usr/bin/env python
 
-base_path = os.path.abspath("../")
-sys_path = base_path + "/backend"
-sys.path.append(sys_path)
+import os
+import sys
+
+pcdDir = '../pcd'
+
+paths = [ pcdDir, pcdDir + '/vendor', pcdDir + '/modules' ]
+for item in paths:
+    sys.path.append(item)
+
+basePath = os.path.abspath("../")
 
 # ==============================================================================
 
-from postcanal import PostCanalConfig
+from conf import runtimeConfig
 
-config_path = base_path + "/config/environment.xml"
-token = PostCanalConfig(config_path).get('webservice/token')
+config = runtimeConfig(pcdDir)
+token = config.token
+remote = "%s%s" % (config.getElement('base/url'),
+                   config.getElement('webservice/frontendUrl'))
 
 import xmlrpclib
 
-remote = "%s%s" % (PostCanalConfig(config_path).get('base/url'),
-                   PostCanalConfig(config_path).get('webservice/frontendUrl'))
 server = xmlrpclib.ServerProxy(remote)
 
+# ==============================================================================
+
+print "---------------------------------------------------------------------------------"
+print "feed update get"
+print "---------------------------------------------------------------------------------"
+
 print server.feed_update_get({ 'token' : token, 'total' : 3 })
-#print server.feed_update_total({ 'token' : token })

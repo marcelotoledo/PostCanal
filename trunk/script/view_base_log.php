@@ -42,9 +42,9 @@ foreach(B_Model::select($sql . " ORDER BY a.id DESC LIMIT " . $limit) AS $l)
     $email = $l->login_email;
     $created = $l->created_at;
 
-    printf(str_repeat("-", $width) . "\n");
+    printf("\n" . str_repeat("-", $width) . "\n\n");
     printf("%-14d%-4s%-" . ($width - 38) . "." . ($width - 38) . "s%-20s\n", $id, $priority, $email, $created);
-    printf(str_repeat("-", $width) . "\n");
-    printf("%-80s\n", wordwrap($message, $width));
+    // printf(str_repeat("-", $width) . "\n");
+    printf("\n%-80s\n", wordwrap($message, $width));
 }
 
