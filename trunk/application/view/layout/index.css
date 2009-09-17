@@ -49,21 +49,18 @@ div.toprowimg
 }
 #logobeta
 {
-    margin-top: 25px;
+    margin-top: 76px;
     text-align: right;
-    color: #a4a4a4;
-    font-family: monospace;
-    font-size: 0.7em;
-    height: 25px;
-    line-height: 25px;
+    color: #2780B1;
+    font-size: 0.8em;
 }
 #tagline
 {
+    margin-top: -2px;
     white-space: nowrap;
     font-size: 0.84em;
-    margin-top: 35px;
     text-align: left;
-    color: #808080;
+    color: #a0a0a0;
 }
 #topmenu
 {
