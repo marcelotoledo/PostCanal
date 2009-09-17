@@ -18,7 +18,6 @@
                 <li>Revenues</li>
                 <li>Quality</li>
             </ul>
-            <small>AND MUCH MORE!</small>
             </div>
         </div>
         <div id="midct-home-4">
