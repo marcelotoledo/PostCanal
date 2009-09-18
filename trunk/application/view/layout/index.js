@@ -15,13 +15,19 @@ $(document).ready(function()
     {
         /* fix top bar position and alignment */
 
-        my_layout.top_row.css('margin-left', my_layout.mid_row.position().left);
+        if(my_layout.mid_row.length>0)
+        {
+            my_layout.top_row.css('margin-left', my_layout.mid_row.position().left);
+        }
 
-        var _trr = $(window).width() -
-                   my_layout.top_menu.position().left -
-                   my_layout.top_menu.width() - 40;
+        if(my_layout.top_menu.length>0)
+        {
+            var _trr = $(window).width() -
+                       my_layout.top_menu.position().left -
+                       my_layout.top_menu.width() - 40;
 
-        my_layout.menu_right_sep.width(_trr);
+            my_layout.menu_right_sep.width(_trr);
+        }
     }
 
     $(window).resize(function()
