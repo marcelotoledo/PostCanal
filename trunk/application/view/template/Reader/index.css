@@ -147,7 +147,7 @@ div.artbody p
 }
 div.artbody img
 {
-    float: left;
+    /*float: left;*/
     padding: 10px;
 }
 /* article view style ] */
