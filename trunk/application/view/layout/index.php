@@ -1,3 +1,5 @@
+<?php $this->browser = L_Utility::browserInfo() ?>
+
 <html>
 <head>
 

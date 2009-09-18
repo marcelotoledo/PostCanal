@@ -150,4 +150,25 @@ class L_Utility
 
         return sprintf($d[($k . $x)], $j); 
     }
+
+    /**
+     * Browser info
+     */
+    public static function browserInfo ($agent=null)
+    {
+        $known = array('msie'  , 'firefox'  , 'safari'    , 'webkit', 
+                       'opera' , 'netscape' , 'konqueror' , 'gecko');
+        $agent = strtolower($agent ? $agent : $_SERVER['HTTP_USER_AGENT']);
+
+        $pattern = '#(?<browser>' . 
+            join('|', $known) . 
+            ')[/ ]+(?<version>[0-9]+(?:\.[0-9]+)?)#';
+
+        if (!preg_match_all($pattern, $agent, $matches)) return '';
+
+        $i = count($matches['browser'])-1;
+        return strtolower(
+            preg_replace('/[^\w]/', '',  $matches['browser'][$i] . ' ' . 
+                                         $matches['version'][$i]));
+    }
 }

@@ -106,8 +106,4 @@ $(document).ready(function()
             save_setting('blog', 'current', my_blog.current);
         }
     });
-
-    /* avoid showing partial loaded content */
-
-    my_layout.main_container.show();
 });

@@ -1,3 +1,5 @@
+<?php $this->is_ie  = (strpos($this->browser, 'msie')===0) ?>
+<?php $this->is_ie6 = (strpos($this->browser, 'msie6')===0) ?>
 *
 {
 	padding: 0;
@@ -29,13 +31,16 @@ img
 #toprow
 {
 	margin-top: 20px;
-    margin-left: 100px;
 	margin-bottom: 50px;
 	float: left;
 }
 div.toprowimg
 {
+    <?php if($this->is_ie6) : ?>
+	background-image: url('./image/index/top-8.png');
+    <?php else : ?>
 	background-image: url('./image/index/top-24.png');
+    <?php endif ?>
 	background-repeat: no-repeat;
 	background-position: top right;
 }
@@ -115,11 +120,14 @@ div.sepbrd-ebd-r { background-position: -177px 0px; }
 div.signuparw-ebd { background-position: -185px -45px; background-color: #2780B1; }
 div.signuparw-dbd { background-position: -186px   0px; background-color: #081C26; }
 
-#menursp
-{
+#menursp 
+{ 
     position: absolute;
-    width: 100%;
-    margin-left: 615px;
+    top: 20px;
+    right: 0px; 
+    <?php if($this->is_ie) : ?>
+    display: none;
+    <?php endif ?>
 }
 
 #menuitmclr { clear: left; }
