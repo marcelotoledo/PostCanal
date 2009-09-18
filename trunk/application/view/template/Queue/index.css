@@ -28,19 +28,22 @@ button.queuepubbtn
 {
     width: 40px;
     height: 40px;
-    font-size: 0.5em;
-	background-image: url('./image/dashboard/queue-pp-btn.png');
-    background-repeat: no-repeat;
+    font-size: 0.6em;
+    overflow: hidden;
+	/*background-image: url('./image/dashboard/queue-pp-btn.png');*/
+    /*background-repeat: no-repeat;*/
+    background-image: none;
 	-moz-border-radius: 4px;
 	-webkit-border-radius: 4px;
 }
 #queuepubplay
 {
-    background-position: 0px 0px;
+    /*background-position: 0px 0px;*/
 }
 #queuepubpause
 {
-    background-position: -40px 0px;
+    /*background-position: -40px 0px;*/
+    background-color: gray;
 }
 #tplbarclr
 {
