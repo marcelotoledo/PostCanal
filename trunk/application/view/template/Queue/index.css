@@ -87,6 +87,7 @@ div.entrydndhdr
 div.entrydndhdr-pb
 {
     background: none;
+    cursor: auto;
 }
 div.etytog
 {
@@ -267,3 +268,11 @@ textarea.intxa-full
     height: 20px;
     background-position: -165px -20px;
 }
+
+<?php if($this->browser_is_ie) : ?>
+div.ui-sortable-helper /* fix wrong IE margin in sortable */
+{
+    margin-top: -150px;
+    margin-left: -250px;
+}
+<?php endif ?>

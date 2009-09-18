@@ -1,5 +1,0 @@
-div.ui-sortable-helper /* fix wrong IE margin in sortable */
-{
-    margin-top: -150px;
-    margin-left: -250px;
-}

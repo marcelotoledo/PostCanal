@@ -167,8 +167,7 @@ class L_Utility
         if (!preg_match_all($pattern, $agent, $matches)) return '';
 
         $i = count($matches['browser'])-1;
-        return strtolower(
-            preg_replace('/[^\w]/', '',  $matches['browser'][$i] . ' ' . 
-                                         $matches['version'][$i]));
+        return preg_replace('/[^\w]/', '',  $matches['version'][$i] . ' ' . 
+                                 strtolower($matches['browser'][$i]));
     }
 }

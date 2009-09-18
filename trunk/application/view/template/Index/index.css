@@ -1,6 +1,3 @@
-<?php $this->is_ie  = (strpos($this->browser, 'msie')===0) ?>
-<?php $this->is_ie6 = (strpos($this->browser, 'msie6')===0) ?>
-
 /* middle */
 
 #midct-home-0
@@ -28,7 +25,7 @@
 }
 div.midct-home-tr
 {
-    <?php if($this->is_ie6) : ?>
+    <?php if($this->browser_is_ie6) : ?>
     background-image: url('./image/index/middle-home-8-en_US.png'); /* i18n */
     <?php else : ?>
     background-image: url('./image/index/middle-home-24-en_US.png'); /* i18n */

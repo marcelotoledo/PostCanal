@@ -153,6 +153,9 @@ div.artbody
 }
 #navbar
 {
+    <?php if($this->browser_is_ie) : ?>
+    margin-top: 10px;
+    <?php endif ?>
 }
 button.navbtn
 {

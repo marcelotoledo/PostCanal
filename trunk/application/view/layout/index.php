@@ -1,5 +1,6 @@
 <?php $this->browser = L_Utility::browserInfo() ?>
-
+<?php $this->browser_is_ie = (strpos($this->browser, 'msie')>0) ?>
+<?php $this->browser_is_ie6 = ($this->browser_is_ie && floor(intval($this->browser)/10)==6) ?>
 <html>
 <head>
 

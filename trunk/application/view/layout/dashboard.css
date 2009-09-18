@@ -173,6 +173,9 @@ div.form-row
 div.form-bot
 {
     margin: 10px 0px 10px 0px;
+    <?php if($this->browser_is_ie) : ?>
+    margin-right: 5px;
+    <?php endif ?>
 }
 input.intxt
 {
