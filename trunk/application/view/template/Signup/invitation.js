@@ -2,9 +2,8 @@ $(document).ready(function()
 {
     function invitation_cb(d)
     {
-        $("#invitetit").hide();
-        $("#inviteform").hide();
-        $("#invitemsg").show();
+        $("#page0").hide();
+        $("#page1").show();
     }
 
     $("#invitemebtn").click(function()

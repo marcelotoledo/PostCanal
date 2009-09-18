@@ -15,10 +15,9 @@
 <style type="text/css"><?php $this->includeLayout('index.css') ?></style>
 <style type="text/css"><?php $this->includeTemplate('css') ?></style>
 
+<div id="page0">
 <h1>PostCanal.com is invite only (for now)</h1>
-
-<p id="invitetit">Currently we are in beta version and accepting registration from invited users only. If haven't been invited, please leave your name and email address below and we will invite you in the near future.</p>
-
+<p class="invitemsg">Currently we are in beta version and accepting registration from invited users only. If haven't been invited, please leave your name and email address below and we will invite you in the near future.</p>
 <div id="inviteform">
 <form>
     <div class="form-row">
@@ -34,19 +33,24 @@
     <div class="form-bot">
         <button type="button" id="invitemebtn">INVITE-ME!</button>
     </div>
+
+    <div id="learnmoremsg">
+        <p>If you have been invited, just use the url you received to gain access to PostCanal.com!</p>
+    </div>
 </form>
 </div>
-
-<div id="invitemsg" style="display:none">
-    <h2>Thank You!</h2>
-    <p>We'll send an invite on the near future.</p>
 </div>
 
-<div id="learnmoremsg">
-    <p>If you have been invited, just use the url you received to gain access to PostCanal.com!</p>
+<div id="page1">
+<h1>Thank you!</h1>
+<p class="invitemsg">We'll send you invite in the near future.</p> 
+</div>
+
+<div id="bottom">
     <button type="button" id="cancelbtn">GO BACK HOME</button>
 </div>
 
+<!-- DISABLED 4 DEV
 <script type="text/javascript">
 var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
 document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
@@ -56,6 +60,7 @@ try {
 var pageTracker = _gat._getTracker("UA-2530933-4");
 pageTracker._trackPageview();
 } catch(err) {}</script>
+-->
 
 </body>
 </html>

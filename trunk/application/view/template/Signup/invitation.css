@@ -47,15 +47,10 @@ h1
     color: #2780b1;
     text-align: left;
 }
-
-#invitetit
+p.invitemsg
 {
     margin-top: 15px;
     line-height: 20px;
-}
-#invitemsg
-{
-    margin-top: 25px;
 }
 button
 {
@@ -65,18 +60,24 @@ button
     padding-left: 10px;
     padding-right: 10px;
 }
-#cancelbtn
-{
-    margin-top: 25px;
-}
 #learnmoremsg
 {
     margin-top: 25px;
     white-space: nowrap;
     text-align: center;
-}
-#learnmoremsg p
-{
     line-height: 20px;
     font-size: 0.8em;
+}
+#bottom
+{
+    margin-top: 25px;
+    text-align: center;
+}
+
+#page0
+{
+}
+#page1
+{
+    display: none;
 }
