@@ -1,9 +1,16 @@
 var my_template = null;
 
+function add_message(m)
+{
+    my_template.new_blog_message.text(m);
+    my_template.new_blog_message.show();
+}
+
 function toggle_blog_add()
 {
     if(my_template.new_blog_form.toggle().css('display')=='block')
     {
+        add_message('');
         my_template.new_blog_url.val('');
         my_template.new_blog_url.focus();
 
@@ -14,13 +21,8 @@ function toggle_blog_add()
         }
     }
 
+    my_template.new_blog_button.toggle();
     my_template.blog_type_failed.hide();
-}
-
-function add_message(m)
-{
-    my_template.new_blog_message.text(m);
-    my_template.new_blog_message.show();
 }
 
 function txtoverflow_up()
@@ -247,6 +249,7 @@ $(document).ready(function()
         new_blog_form      : $("#addnewblogform"),
         new_blog_url       : $("#blogurl"),
         new_blog_submit    : $("#addsubmit"),
+        new_blog_cancel    : $("#addcancel"),
         new_blog_message   : $("#addmessage"),
         blog_list_area     : $("#bloglistarea"),
         blog_item_blank    : $("#blogitemblank"),
@@ -298,6 +301,13 @@ $(document).ready(function()
     my_template.new_blog_submit.click(function()
     {
         if(active_request==false) { blog_add(); }
+        $(this).blur();
+        return false;
+    });
+
+    my_template.new_blog_cancel.click(function()
+    {
+        if(active_request==false) { toggle_blog_add(); }
         $(this).blur();
         return false;
     });

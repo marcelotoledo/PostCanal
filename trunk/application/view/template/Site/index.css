@@ -123,16 +123,28 @@ button.blogdeleten
 {
     /*background-color: tomato;*/
 }
+
 #blogtypefailedmsg
 {
-    font-size: 14pt;
-    line-height: 40px;
+    display: none;
+    margin-top: 10px;
+    text-align: left;
+    font-size: 1.4em;
+    color: gray;
 }
-
 div.noblogmsg
 {
     display: none;
     text-align: left;
     font-size: 1.4em;
     color: gray;
+}
+
+#addsubmit
+{
+    width: 100px;
+}
+#addcancel
+{
+    width: 100px;
 }

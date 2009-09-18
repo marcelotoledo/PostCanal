@@ -11,7 +11,9 @@
     </div>
     <div class="form-bot">
     <button id="addsubmit">CONTINUE</button>
+    <button id="addcancel">CANCEL</button>
     <div class="inputmessage" id="addmessage"></div>
+    <div id="blogtypefailedmsg">This <b>site</b> is not supported.</div>
     </div>
 </form>
 </div>
