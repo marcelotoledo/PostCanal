@@ -1,6 +1,5 @@
 var my_template = null;
 
-
 function register_msg(m)
 {
     my_template.register_msg.text(m).show();

@@ -2,7 +2,7 @@
 
 div.midct-cen
 {
-    padding: 0px 10px 0px 10px;
+    padding: 0px 18px 10px 18px;
     margin-top: -10px;
     margin-bottom: -20px;
     text-align: left;
@@ -99,5 +99,20 @@ div.tour-title
     color: #2780B1;
     padding-top: 5px;
     margin-bottom: 10px;
+    margin-left: -2px;
+}
+div.tour-subtitle
+{
+    font-size: 1.4em;
+    font-weight: bold;
+    text-align: left;
+    color: #2780B1;
+    padding-top: 5px;
+    margin-bottom: 10px;
+    margin-left: 2px;
 }
 
+div.rgtct-lgt img
+{
+    margin-bottom: 2px;
+}
