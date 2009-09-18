@@ -307,7 +307,7 @@ $(document).ready(function()
 
     my_template.new_blog_cancel.click(function()
     {
-        if(active_request==false) { toggle_blog_add(); }
+        my_template.new_blog_button.click();
         $(this).blur();
         return false;
     });

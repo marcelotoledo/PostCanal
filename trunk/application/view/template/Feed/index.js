@@ -1,7 +1,14 @@
 var my_template = null;
 
+function add_message(m)
+{
+    my_template.new_feed_message.text(m);
+    (m=='') ? my_template.new_feed_message.hide() : my_template.new_feed_message.show();
+}
+
 function feed_add_show()
 {
+    add_message('');
     my_template.feed_type_failed.hide();
     my_template.new_feed_form.show();
     my_template.new_feed_url.val('');
@@ -21,17 +28,18 @@ function feed_add_hide()
     my_template.feed_options_form.hide();
 }
 
+function feed_add_reset()
+{
+    feed_add_hide();
+    my_template.new_feed_button.show();
+}
+
 function feed_add_toggle()
 {
     (my_template.new_feed_form.css('display')=='block') ?
         feed_add_hide() :
         feed_add_show() ;
-}
-
-function add_message(m)
-{
-    my_template.new_feed_message.text(m);
-    (m=='') ? my_template.new_feed_message.hide() : my_template.new_feed_message.show();
+    my_template.new_feed_button.toggle();
 }
 
 function txtoverflow_up()
@@ -133,7 +141,7 @@ function feed_discover_callback(d)
     if(_status=="200")
     {
         feed_add(_results.find('feed_url').text());
-        feed_add_hide();
+        feed_add_reset();
     }
     else
     {
@@ -350,11 +358,13 @@ $(document).ready(function()
         new_feed_form        : $("#addnewfeedform"),
         feed_options_form    : $("#feedoptionsform"),
         feed_options_submit  : $("#optsubmit"),
+        feed_options_cancel  : $("#optcancel"),
         feed_options_message : $("#optmessage"),
         feed_option_blank    : $("#feedoptionblank"),
         feed_option_selector : "input[name='inputfeedoption']",
         new_feed_url         : $("#feedurl"),
         new_feed_submit      : $("#addsubmit"),
+        new_feed_cancel      : $("#addcancel"),
         new_feed_message     : $("#addmessage"),
         feed_list_area       : $("#feedlistarea"),
         feed_item_blank      : $("#feeditemblank"),
@@ -388,7 +398,7 @@ $(document).ready(function()
     {
         if(active_request==false)
         {
-           if(my_template.feed_options_form.is(':visible')) { feed_add_hide();   }
+           if(my_template.feed_options_form.is(':visible')) { feed_add_reset();   }
            else                                             { feed_add_toggle(); }
         }
     });
@@ -407,6 +417,22 @@ $(document).ready(function()
         $(this).blur();
         return false;
     });
+
+    my_template.feed_options_cancel.click(function()
+    {
+        my_template.new_feed_button.click();
+        $(this).blur();
+        return false;
+    });
+
+    my_template.new_feed_cancel.click(function()
+    {
+        my_template.new_feed_button.click();
+        $(this).blur();
+        return false;
+    });
+
+
 
     function feed_item_getid(i)
     {

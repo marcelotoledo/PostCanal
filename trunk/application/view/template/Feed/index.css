@@ -156,3 +156,20 @@ div.nofeedmsg
     font-size: 1.4em;
     color: gray;
 }
+
+#addsubmit
+{
+    width: 100px;
+}
+#addcancel
+{
+    width: 100px;
+}
+#optsubmit
+{
+    width: 100px;
+}
+#optcancel
+{
+    width: 100px;
+}
