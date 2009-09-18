@@ -116,6 +116,8 @@ div.artclr
 {
     clear: both;
 }
+
+/* article view style [ */
 div.artview
 {
     border: 2px solid #48898c;
@@ -132,12 +134,23 @@ div.artview h1
 }
 div.artbody
 {
-    font-size: 1em;
+    font-size: 90%;
     /*text-align: justify;*/
     padding-bottom: 15px;
     max-width: 650px;
-    overflow: visible;
+    overflow: hidden;
 }
+div.artbody p
+{
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+div.artbody img
+{
+    float: left;
+    padding: 10px;
+}
+/* article view style ] */
 
 #arttop
 {

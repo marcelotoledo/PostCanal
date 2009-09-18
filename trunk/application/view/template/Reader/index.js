@@ -281,7 +281,7 @@ function article_show(a)
         {
             var _content = my_template.content_blank.clone();
             _content.find('h1').html(my_article.data[a].title);
-            _content.find('div.artbody').html(my_article.data[a].content);
+            _content.find('div.artbody').html(my_article.data[a].content + '<div style="clear:both"></div>'); /* div clear both for img float left in artbody css */
             _content.find('div.artbody').find('a').attr('target', '_blank'); /* add target _blank to all links */
             my_article.current.after(_content.html()).addClass('art-op');
         }
