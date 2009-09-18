@@ -48,10 +48,25 @@ div.sprites-img
     left: 50px;
     width: 165px;
     height: 80px;
-    line-height: 80px;
 	background-repeat: no-repeat;
 	background-position: top left;
 }
+#logobeta
+{
+    margin-top: 76px;
+    text-align: right;
+    color: #2780B1;
+    font-size: 0.8em;
+}
+#tagline
+{
+    margin-top: -2px;
+    white-space: nowrap;
+    font-size: 0.84em;
+    text-align: left;
+    color: #a0a0a0;
+}
+
 #rightmenu
 {
     margin-left: 240px;

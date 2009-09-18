@@ -36,7 +36,10 @@
 <div id="mainct">
 
 <div id="toprow">
-    <div class="sprites-img" id="leftlogo">&nbsp;</div>
+    <div class="sprites-img" id="leftlogo">
+        <div id="logobeta">beta</div>
+        <div id="tagline">we help you publish content</div>
+    </div>
     <div id="rightmenu">
         <div id="menutop">
             <div class="menutopfmt" id="menutopleft">

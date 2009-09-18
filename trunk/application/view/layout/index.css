@@ -1,5 +1,3 @@
-<?php $this->is_ie  = (strpos($this->browser, 'msie')===0) ?>
-<?php $this->is_ie6 = (strpos($this->browser, 'msie6')===0) ?>
 *
 {
 	padding: 0;
@@ -36,7 +34,7 @@ img
 }
 div.toprowimg
 {
-    <?php if($this->is_ie6) : ?>
+    <?php if($this->browser_is_ie6) : ?>
 	background-image: url('./image/index/top-8.png');
     <?php else : ?>
 	background-image: url('./image/index/top-24.png');
@@ -125,7 +123,7 @@ div.signuparw-dbd { background-position: -186px   0px; background-color: #081C26
     position: absolute;
     top: 20px;
     right: 0px; 
-    <?php if($this->is_ie) : ?>
+    <?php if($this->browser_is_ie) : ?>
     display: none;
     <?php endif ?>
 }
