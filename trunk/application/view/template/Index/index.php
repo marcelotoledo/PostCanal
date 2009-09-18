@@ -12,7 +12,7 @@
         </div>
         <div id="midct-home-3">
             <div id="midct-home-rtxt">
-            <big>INCREASE</big>
+            <big>Increase</big>
             <ul>
                 <li>Visitors</li>
                 <li>Revenues</li>
