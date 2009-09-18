@@ -145,11 +145,6 @@ function entry_populate(d)
     my_template.entry_list.scrollTop(0);
 }
 
-function no_entry()
-{
-    $("#noentrymsg").show();
-}
-
 function entry_list_callback(d)
 {
     my_queue.data = Array();
@@ -159,9 +154,11 @@ function entry_list_callback(d)
     var _qr = d.find('result').find('queue').children();
     var _pr = d.find('result').find('published').children();
 
+    my_template.no_entry_tutorial.hide();
+
     if((_qr.length + _pr.length)==0)
     { 
-        no_entry(); // tutorial
+        my_template.no_entry_tutorial.show();
     }
     else
     {
@@ -511,6 +508,15 @@ function updater_init()
     setTimeout('updater_run()', my_updater.interval);
 }
 
+function set_queue_header_title()
+{
+    var _tts = my_template.queue_toolbar.position().left - 
+               my_template.queue_header_title.position().left -
+               80;
+
+    my_template.queue_header_title.find('span').b_txtoverflow({ buffer: my_template.txtoverflow_buffer, width: _tts, text: (' - ' + my_template.blog_list.find('option:selected').text()) });
+}
+
 function initialize()
 {
     my_queue.data        = Array();
@@ -519,6 +525,8 @@ function initialize()
     my_queue.publication = null;
     my_queue.interval    = 0;
     my_queue.enqueueing  = null;
+
+    set_queue_header_title();
 
     set_queue_publication();
     // set_queue_enqueueing();
@@ -543,8 +551,11 @@ $(document).ready(function()
     my_template =
     {
         main_container     : $("#mainct"),
+        blog_list          : $("#bloglstsel"),
         // queue_container    : $("#queuecontainer"),
         queue_header       : $("#tplbar"),
+        queue_header_title : $("#tplbartt"),
+        queue_toolbar      : $("#tplbaropt"),
         queue_middle       : $("#etylst"),
         entry_list         : $("#etylst"),
         entry_blank        : $("#entryblank"),
@@ -557,7 +568,8 @@ $(document).ready(function()
         enqueue_yes        : $("#enqueuelnkyes"),
         enqueue_no         : $("#enqueuelnkno"),
         queue_interval_sel : $("#pubinterval"),
-        txtoverflow_buffer : $("#b_txtoverflow-buffer")
+        txtoverflow_buffer : $("#b_txtoverflow-buffer"),
+        no_entry_tutorial  : $("#noentrymsg")
     }; 
     
     function window_update()

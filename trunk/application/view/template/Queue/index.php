@@ -1,5 +1,5 @@
 <div id="tplbar" class="midct">
-    <div id="tplbartt">Queue</div>
+    <div id="tplbartt">Queue <span></span></div>
     <div id="tplbaropt">
         <b>Publication:</b> <button class="queuepubbtn" id="queuepubplay">active</button><button class="queuepubbtn" id="queuepubpause" style="display:none">paused</button>
         <img>
