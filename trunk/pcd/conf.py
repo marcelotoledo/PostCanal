@@ -35,7 +35,8 @@ class runtimeConfig():
 
         self.xmldoc     = minidom.parse(config_path)                
         self.token      = self.getElement('webservice/token')
-        self.frontend   = "http://www.postcanal.com"
+        #self.frontend   = "http://www.postcanal.com"
+        self.frontend   = self.getElement('base/url')
         self.frontendWS = self.frontend + "/webservice"
         self.client     = openConnection(self.frontendWS)
 

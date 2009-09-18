@@ -74,15 +74,14 @@ div.artlab a:hover
 }
 span.artch
 {
-    font-size: 0.9em;
-    font-weight: bold;
+    font-size: 0.8em;
     overflow: hidden;
     white-space: nowrap;
     color: #91a0aa;
 }
 span.arttt
 {
-    font-size: 0.9em;
+    font-size: 1em;
     overflow: hidden;
     white-space: nowrap;
 }

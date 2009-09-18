@@ -32,7 +32,7 @@
 <div class="art art-cl" feed="" article="" entry="">
     <div class="sprites-img arttog arttog-un">&nbsp;</div>
     <div class="artlab">
-        <a href="#"><span class="artch"></span><br/><span class="arttt"></span></a>
+        <a href="#"><span class="arttt"></span><br/><span class="artch"></span></a>
     </div>
     <div class="artdte"></div>
     <div class="sprites-img artlnk"><a href="#" target="_blank">&nbsp;</a></div>
