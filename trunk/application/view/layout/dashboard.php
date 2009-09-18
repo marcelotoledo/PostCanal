@@ -40,10 +40,10 @@
     <div id="rightmenu">
         <div id="menutop">
             <div class="menutopfmt" id="menutopleft">
-                <?php if($this->request()->getController()=='blog') : ?>
-                Manage Blogs
+                <?php if($this->request()->getController()=='site') : ?>
+                Manage your Sites
                 <?php else : ?>
-                <a href="./blog">Manage Blogs</a>
+                <a href="./site">Manage your Sites</a>
                 <?php endif ?>
             </div>
             <div class="menutopfmt" id="menutopright">

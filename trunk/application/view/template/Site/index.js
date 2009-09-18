@@ -63,7 +63,7 @@ function blog_add_callback(d)
 {
     var _status = d.find('status').text();
 
-    if(_status=="<?php echo C_Blog::ADD_STATUS_OK ?>")
+    if(_status=="<?php echo C_Site::ADD_STATUS_OK ?>")
     {
         blog_populate(d.find('result'));
         toggle_blog_add();
@@ -85,27 +85,27 @@ function blog_add_callback(d)
             $("#noblogmsg2").show(100);
         }
     }
-    if(_status=="<?php echo C_Blog::ADD_STATUS_OVERQUOTA ?>")
+    if(_status=="<?php echo C_Site::ADD_STATUS_OVERQUOTA ?>")
     {
         add_message("<?php echo $this->translation()->overquota ?>");
     }
-    if(_status=="<?php echo C_Blog::ADD_STATUS_FAILED ?>")
+    if(_status=="<?php echo C_Site::ADD_STATUS_FAILED ?>")
     {
         add_message("<?php echo $this->translation()->discover_failed ?>");
     }
-    if(_status=="<?php echo C_Blog::ADD_STATUS_TIMEOUT ?>")
+    if(_status=="<?php echo C_Site::ADD_STATUS_TIMEOUT ?>")
     {
         add_message("<?php echo $this->translation()->discover_timeout ?>");
     }
-    if(_status=="<?php echo C_Blog::ADD_STATUS_URL_FAILED ?>")
+    if(_status=="<?php echo C_Site::ADD_STATUS_URL_FAILED ?>")
     {
         add_message("<?php echo $this->translation()->url_failed ?>");
     }
-    if(_status=="<?php echo C_Blog::ADD_STATUS_TYPE_FAILED ?>")
+    if(_status=="<?php echo C_Site::ADD_STATUS_TYPE_FAILED ?>")
     {
         my_template.blog_type_failed.show();
     }
-    if(_status=="<?php echo C_Blog::ADD_STATUS_MAINTENANCE ?>")
+    if(_status=="<?php echo C_Site::ADD_STATUS_MAINTENANCE ?>")
     {
         add_message("<?php echo $this->translation()->blog_type_maintenance ?>");
     }
@@ -130,7 +130,7 @@ function blog_add()
         my_template.new_blog_url.val(_u);
     }
 
-    do_request('POST', './blog/add', { url: _u }, blog_add_callback);
+    do_request('POST', './site/add', { url: _u }, blog_add_callback);
 }
 
 function blog_list_callback(d)
@@ -143,7 +143,7 @@ function blog_list_callback(d)
 
 function blog_list()
 {
-    do_request('GET', './blog/list', { }, blog_list_callback);
+    do_request('GET', './site/list', { }, blog_list_callback);
 }
 
 function blog_edit_show(b)
@@ -202,7 +202,7 @@ function blog_delete_callback(d)
 
 function blog_delete(b)
 {
-    do_request('POST', './blog/delete', { blog: b }, blog_delete_callback);
+    do_request('POST', './site/delete', { blog: b }, blog_delete_callback);
 }
 
 function blog_update_callback(d)
@@ -214,6 +214,7 @@ function blog_update_callback(d)
         var _blog = _updated.find('blog').text();
         var _name = _updated.find('name').text();
         my_template.blog_list_ref[_blog].item.find('div.blogtit').b_txtoverflow({ buffer: my_template.txtoverflow_buffer, width: (my_template.blog_list_area.width() * 0.8), text: _name });
+        my_template.blog_list_select.find('option[value="' + _blog + '"]').text(_name);
         flash_message("<?php echo $this->translation()->saved ?>");
         blog_edit_hide(_blog);
     }
@@ -230,7 +231,7 @@ function blog_update(b)
         // keywords      : my_template.blog_list_ref[b].item.find("input[name='keywords']").val()
     }
 
-    do_request('POST', './blog/update', _up, blog_update_callback);
+    do_request('POST', './site/update', _up, blog_update_callback);
 }
 
 function on_blog_change()

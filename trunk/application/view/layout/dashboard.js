@@ -40,7 +40,7 @@ function blog_update(k, v)
     $.ajax
     ({
         type: "POST",
-        url: "./blog/update",
+        url: "./site/update",
         dataType: "xml",
         data: _par,
         beforeSend: function() { set_active_request(true); },
@@ -64,7 +64,7 @@ function blog_load_callback(d)
 function blog_load()
 {
     if(my_blog.current==undefined) { return false; }
-    do_request('GET', './blog/load', { blog: my_blog.current }, blog_load_callback);
+    do_request('GET', './site/load', { blog: my_blog.current }, blog_load_callback);
 }
 
 $(document).ready(function()

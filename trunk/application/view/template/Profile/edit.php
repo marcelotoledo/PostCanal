@@ -73,7 +73,7 @@
 <div class="tabcontainer" id="tabquota" style="display:none">
     <table id="quotatable">
         <tr>
-            <th><?php echo $this->translation()->blog ?></th>
+            <th>Sites</th>
             <td><?php echo $this->blog_total ?> / <?php echo $this->session()->user_profile_quota_blog ?></td>
         </tr>
         <tr>

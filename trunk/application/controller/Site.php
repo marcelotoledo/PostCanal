@@ -1,14 +1,14 @@
 <?php
 
 /**
- * Blog controller class
+ * Site controller class
  * 
  * @category    PostCanal
  * @package     Application Controller
  * @author      Rafael Castilho <rafael@castilho.biz>
  */
 
-class C_Blog extends B_Controller
+class C_Site extends B_Controller
 {
     /**
      * Discover status
@@ -135,7 +135,7 @@ class C_Blog extends B_Controller
 
             if(strlen($blog->name)==0)
             {
-                $blog->name = $this->translation()->my_new_blog;
+                $blog->name = $this->translation()->my_new_site;
             }
 
             $blog->blog_manager_url = $discover->manager_url;

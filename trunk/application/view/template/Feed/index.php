@@ -76,4 +76,4 @@
 <!-- tutorials -->
 <div id="nofeedmsg0" class="nofeedmsg midct">There is no <b>feeds</b> registered for this <b>site</b>. To start reading feeds, you must register at least one. You can do this by clicking <b>"add new feed"</a></b> button.</div>
 <div id="nofeedmsg1" class="nofeedmsg midct">Now you can provide the <b>URL</b> of a site or RSS where you usually read news, posts, etc., eg: http://news.google.com/?output=rss.</div>
-<div id="nofeedmsg2" class="nofeedmsg midct"><p>Congratulations! Now you have a <b>feed</b> registered to this blog. Now you can start reading feeds by clicking on <b>Reader</b> link on the top menu.</div>
+<div id="nofeedmsg2" class="nofeedmsg midct"><p>Congratulations! Now you have added a <b>feed</b> to this site. Now you can start reading feeds by clicking on <b>Reader</b> link on the top menu.</div>

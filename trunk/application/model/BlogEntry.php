@@ -208,7 +208,7 @@ class BlogEntry extends B_Model
      *
      * @return array
      */
-    public static function findPublished($profile_id, $blog_hash, $last=10)
+    public static function findPublished($profile_id, $blog_hash, $last=1)
     {
         $sql = "SELECT * FROM " . self::$table_name . "
                 WHERE user_blog_id = (
