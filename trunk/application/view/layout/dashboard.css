@@ -272,7 +272,7 @@ div.tabitem
     line-height: 30px;
     border: 1px solid #48898C;
     /*border-top: 2px solid silver;*/
-    margin-right: 25px;
+    margin-right: 5px;
     cursor: pointer;
     cursor: hand;
     -moz-border-radius-topleft: 5px;
