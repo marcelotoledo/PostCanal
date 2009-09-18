@@ -148,3 +148,9 @@ div.noblogmsg
 {
     width: 100px;
 }
+
+#supportlist
+{
+    font-size: 0.8em;
+    color: gray;
+}
