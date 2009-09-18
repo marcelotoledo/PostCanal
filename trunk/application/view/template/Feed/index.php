@@ -9,6 +9,7 @@
     <div class="form-row">
     <p>URL</p><p><input type="text" class="intxt intxt-full" id="feedurl"></p>
     </div>
+    <div id="supportlist">Today we support RSS and Atom feeds.</div>
     <div class="form-bot">
     <button id="addsubmit">CONTINUE</button>
     <button id="addcancel">CANCEL</button>
