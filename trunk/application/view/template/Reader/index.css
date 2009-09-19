@@ -152,7 +152,7 @@ div.artbody p
 div.artbody img
 {
     /*float: left;*/
-    padding: 10px;
+    padding: 0px 10px 0px 10px;
 }
 /* article view style ] */
 
