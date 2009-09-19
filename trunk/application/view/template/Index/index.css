@@ -141,6 +141,9 @@ input.intxt-rgt
     width: 200px;
     font-size: 1em;
     font-weight: normal;
+    <?php if(!$this->browser_is_ie) : ?>
+    padding-top: 2px;
+    <?php endif ?>
 }
 #notmember
 {

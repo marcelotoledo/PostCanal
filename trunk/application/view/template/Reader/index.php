@@ -11,7 +11,7 @@
     <div class="chlst" id="chtop">
         <div class="ch" id="chall">&raquo; <a href="#" id="chall">All items</a></div>
     </div>
-    <div class="chlst" id="chlst"></div><!-- .chlstsc 2 scroll -->
+    <div class="chlst" id="chlst"></div>
 </div>
 
 <div id="arttop" class="midct">

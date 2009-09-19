@@ -1,3 +1,7 @@
+body
+{
+    overflow: hidden;
+}
 #tplbaropt
 {
     float: right;
@@ -225,11 +229,6 @@ div.chlst
     /*white-space: nowrap;*/
     overflow-x: hidden;
     background-color: #e1f0f4;
-}
-div.chlstsc
-{
-    height: 200px;
-    overflow-y: auto;
 }
 div.ch
 {

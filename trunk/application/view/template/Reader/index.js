@@ -78,9 +78,9 @@ function feed_populate(d)
 
 function no_feed()
 {
-    $("#midmenu").hide();
+    my_template.middle_menu.hide();
     $("div.midct").hide();
-    $("#nofeedmsg").show();
+    my_template.no_feed_message.show();
 }
 
 function feed_list_callback(d)
@@ -405,9 +405,13 @@ $(document).ready(function()
         content_blank        : $("#contentblank"),
         right_middle_area    : { x : 0 , y : 0 , w : 0 , h : 0 },
         right_middle_hover   : false,
-        LEFT_MIDDLE_OFFSET_TOP : 237,
-        RIGHT_MIDDLE_OFFSET_TOP : 175,
+        <?php if($this->browser_is_ie) : ?>
+        LEFT_MIDDLE_OFFSET_TOP : 10,
+        <?php else : ?>
+        LEFT_MIDDLE_OFFSET_TOP : 20,
+        <?php endif ?>
         //right_footer         : $("#rightfooter"),
+        middle_menu          : $("#midmenu"),
         subscribed_list      : $("#chlst"),
         feed_item_blank      : $("#feeditemblank"),
         article_expanded_lnk : $("#articleexpandedlnk"),
@@ -416,7 +420,8 @@ $(document).ready(function()
         article_list_lab     : $("#articlelistlab"),
         article_prev         : $("#articleprev"),
         article_next         : $("#articlenext"),
-        txtoverflow_buffer   : $("#b_txtoverflow-buffer")
+        txtoverflow_buffer   : $("#b_txtoverflow-buffer"),
+        no_feed_message      : $("#nofeedmsg")
     }; 
     
     function window_update()
@@ -424,19 +429,12 @@ $(document).ready(function()
         var _w = { height : $(window).height(),
                    width  : $(window).width() };
 
-        /*
-        my_template.left_container.height(_w.height);
-        my_template.right_container.width(_w.width -
-                                    my_template.left_container.width());
-        my_template.right_container.height(_w.height);
-        my_template.right_container.css('left', my_template.left_container.width());
+        my_template.right_middle.height(_w.height - 
+                                        my_template.right_middle.position().top);
+
         my_template.subscribed_list.height(_w.height - 
-                                     my_template.subscribed_list.position().top - 
-                                     magic_slh);
-        */
-        //my_template.right_middle.height(_w.height - my_template.right_middle.offset().top);
-        my_template.right_middle.height(_w.height - my_template.RIGHT_MIDDLE_OFFSET_TOP);
-        my_template.subscribed_list.height(_w.height - my_template.LEFT_MIDDLE_OFFSET_TOP);
+                                           my_template.subscribed_list.offset().top -
+                                           my_template.LEFT_MIDDLE_OFFSET_TOP);
 
         my_template.right_middle_area.x = my_template.right_middle.offset().left;
         my_template.right_middle_area.y = my_template.right_middle.offset().top;
