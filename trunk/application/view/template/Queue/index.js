@@ -241,8 +241,10 @@ function queue_editor_init()
         toolbar : [ [ 'Source', '-', 'Bold', 'Italic' ] ],
         height: ($(window).height() - 350),
         toolbarCanCollapse : false,
-        resize_enabled : false
+        resize_enabled : false,
+        contentsCss : './css/ck_content.css'
     });
+    //CKEDITOR.config.contentCss = './css/ck_content.css';
 
     /*
     var _sz = { W : $(window).width()  * 0.75 , 

@@ -176,6 +176,8 @@ div.etyclr
 {
     clear: both;
 }
+
+/* entry view style [ */
 div.etyview
 {
     border: 2px solid #48898c;
@@ -186,17 +188,29 @@ div.etyview
 }
 div.etyview h1
 {
-    line-height: 50px;
-    font-size: 1.6em;
+    font-size: 1.5em;
+    padding: 10px 0 10px 0;
+    max-width: 650px;
 }
 div.etybody
 {
-    font-size: 0.9em;
+    font-size: 90%;
     /*text-align: justify;*/
-    line-height: 1.3em;
     padding-bottom: 15px;
     max-width: 650px;
+    overflow: hidden;
 }
+div.etybody p
+{
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+div.etybody img
+{
+    /* float: left */
+    padding: 10px;
+}
+/* entry view style ] */
 
 #entryblank
 {
@@ -233,7 +247,7 @@ div.b-modal
 }
 input.intxt-full
 {
-    width: 400px;
+    width: 700px;
 }
 textarea.intxa-full
 {
