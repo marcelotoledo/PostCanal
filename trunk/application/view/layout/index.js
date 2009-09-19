@@ -17,12 +17,17 @@ $(document).ready(function()
 
         if(my_layout.mid_row.length>0)
         {
+            /*
+            alert(my_layout.mid_row.offset().left);
             <?php if($this->browser_is_safari) : ?>
             var _ml = parseInt(my_layout.mid_row.css('margin-left'));
             <?php else : ?>
             var _ml = my_layout.mid_row.position().left;
             <?php endif ?>
             my_layout.top_row.css('margin-left', _ml);
+            */
+            alert(my_layout.mid_row.offset().left);
+            my_layout.top_row.css('margin-left', my_layout.mid_row.offset().left);
         }
 
         if(my_layout.top_menu.length>0)
