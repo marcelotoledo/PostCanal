@@ -1,7 +1,7 @@
 <div id="tplbar" class="midct">
     <div id="tplbartt">Queue <span></span></div>
     <div id="tplbaropt">
-        <b>Publication:</b> <button class="queuepubbtn" id="queuepubplay">active</button><button class="queuepubbtn" id="queuepubpause" style="display:none">paused</button>
+        <b>Publication:</b> <button class="queuepubbtn" id="queuepubplay">paused</button><button class="queuepubbtn" id="queuepubpause" style="display:none">active</button>
         <img>
         <b>Publication Interval:</b>
         <select id="pubinterval">

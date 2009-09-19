@@ -39,11 +39,11 @@ button.queuepubbtn
 #queuepubplay
 {
     /*background-position: 0px 0px;*/
+    background-color: gray;
 }
 #queuepubpause
 {
     /*background-position: -40px 0px;*/
-    background-color: gray;
 }
 #tplbarclr
 {
