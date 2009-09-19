@@ -192,6 +192,8 @@ function feed_list_callback(d)
     my_template.feed_list_area.html(''); 
     my_template.feed_list_ref = Array();
 
+    $("#nofeedmsg0").hide(); // tutorial
+
     var _fl = d.find('feeds').children();
 
     if(_fl.length==0)
@@ -199,7 +201,7 @@ function feed_list_callback(d)
         $("#nofeedmsg0").show(100); // tutorial
     }
 
-    d.find('feeds').children().each(function()
+    _fl.each(function()
     {
         feed_populate($(this), true);
     })
@@ -341,7 +343,6 @@ function feed_sortable_init()
         handle: "div.feeddndhdr",
         distance: 10
     });
-    my_template.feed_list_area.disableSelection();
 }
 
 function on_blog_change()

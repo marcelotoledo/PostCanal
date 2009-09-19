@@ -1,7 +1,8 @@
 <?xml version="1.0"?>
 <environment>
     <base>
-        <url>http://localhost:82</url>
+        <!--<url>http://localhost:82</url>-->
+        <url>http://192.168.0.147:82</url>
     </base>
     <database>
         <default>

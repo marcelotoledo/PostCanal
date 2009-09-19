@@ -9,7 +9,7 @@
     <div class="form-row">
     <p>URL</p><p><input type="text" class="intxt intxt-full" id="blogurl"></p>
     </div>
-    <div id="supportlist">Today we support wordpress.org, wordpress.org, blogger, blogspot, tumblr and twitter.div>
+    <div id="supportlist">Today we support wordpress.org, wordpress.org, blogger, blogspot, tumblr and twitter.</div>
     <div class="form-bot">
     <button id="addsubmit">CONTINUE</button>
     <button id="addcancel">CANCEL</button>
