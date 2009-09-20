@@ -8,7 +8,7 @@
     <div class="tabitem tabitem-selected" related="tabpersonal"><?php echo $this->translation()->tab_personal_information ?></div>
     <div class="tabitem" related="tabpassword"><?php echo $this->translation()->tab_password ?></div>
     <div class="tabitem" related="tabemail"><?php echo $this->translation()->tab_email ?></div>
-    <div class="tabitem" related="tabquota"><?php echo $this->translation()->tab_quota ?></div>
+    <div class="tabitem" related="tabquota" style="display:none"><?php echo $this->translation()->tab_quota ?></div>
 </div>
 
 <div class="tabgroup midct" id="edittabgroup">
