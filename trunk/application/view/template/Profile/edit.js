@@ -1,16 +1,16 @@
-var mytpl = null;
+var my_template = null;
 
 function set_tab(i)
 {
-    mytpl.tabhead.find("div.tabitem").removeClass('tabitem-selected');
-    mytpl.tabgroup.find("div.tabcontainer").hide();
-    mytpl.tabhead.find("div.tabitem[related='" + i + "']").addClass('tabitem-selected');
-    mytpl.tabgroup.find("#" + i).show();
+    my_template.tabhead.find("div.tabitem").removeClass('tabitem-selected');
+    my_template.tabgroup.find("div.tabcontainer").hide();
+    my_template.tabhead.find("div.tabitem[related='" + i + "']").addClass('tabitem-selected');
+    my_template.tabgroup.find("#" + i).show();
 }
 
 function edit_message(m)
 {
-    mytpl.editmessage.text(m);
+    my_template.editmessage.text(m);
 }
 
 function edit_submit_callback(d)
@@ -21,24 +21,24 @@ function edit_submit_callback(d)
 
 function edit_submit()
 {
-    var _data = { name            : mytpl.name.val(),
-                  local_territory : mytpl.territory.val(),
-                  local_timezone  : mytpl.timezone.val() // ,
-               /* local_culture   : mytpl.culture.val() */ };
+    var _data = { name            : my_template.name.val(),
+                  local_territory : my_template.territory.val(),
+                  local_timezone  : my_template.timezone.val() // ,
+               /* local_culture   : my_template.culture.val() */ };
 
     do_request('POST', './profile/edit', _data, edit_submit_callback);
 }
 
 function pwdchange_message(m)
 {
-    mytpl.pwdchangemessage.text(m);
+    my_template.pwdchangemessage.text(m);
 }
 
 function pwdchange_after()
 {
-    mytpl.currentpwd.val('');
-    mytpl.newpwd.val('');
-    mytpl.confirmpwd.val('');
+    my_template.currentpwd.val('');
+    my_template.newpwd.val('');
+    my_template.confirmpwd.val('');
 }
 
 function pwdchange_submit_callback(d)
@@ -50,9 +50,9 @@ function pwdchange_submit_callback(d)
 
 function pwdchange_submit()
 {
-    var _data = { current   : mytpl.currentpwd.val(),
-                  password  : mytpl.newpwd.val(), 
-                  passwordc : mytpl.confirmpwd.val() };
+    var _data = { current   : my_template.currentpwd.val(),
+                  password  : my_template.newpwd.val(), 
+                  passwordc : my_template.confirmpwd.val() };
 
     if(_data.current   == "" || _data.password  == "" || _data.passwordc == "")
     {
@@ -71,18 +71,18 @@ function pwdchange_submit()
 
 function emlchange_message(m)
 {
-    mytpl.emlchangemessage.text(m);
+    my_template.emlchangemessage.text(m);
 }
 
 function emlchange_submit_callback(d)
 {
     if(d.length==0) { server_error(); return false; }
-    if(d.find('accepted').text()=="true") { flash_message("<?php echo $this->translation()->saved ?><br><small><?php echo $this->translation()->check_your_inbox_to_validate ?></small>"); } else { emlchange_message(d.find('message').text()); }
+    if(d.find('accepted').text()=="true") { flash_message("<?php echo $this->translation()->saved ?><br><small><?php echo $this->translation()->check_your_inbox_to_validate ?></small>"); my_template.emlvermsg.text("<?php echo $this->translation()->check_your_inbox_to_validate ?>"); } else { emlchange_message(d.find('message').text()); }
 }
 
 function emlchange_submit()
 {
-    var _data = { new_email : mytpl.neweml.val() };
+    var _data = { new_email : my_template.neweml.val() };
 
     if(_data.new_email=="")
     {
@@ -108,8 +108,8 @@ function timezone_populate(d)
         _l[_i] = "<option value=\"" + _j + "\"" + _s + ">" + _j.replace('_',' ') + "</option>";
     }
 
-    mytpl.timezone.html(_l.join("\n"));
-    mytpl.timezone.attr('disabled', false);
+    my_template.timezone.html(_l.join("\n"));
+    my_template.timezone.attr('disabled', false);
 }
 
 function on_blog_change()
@@ -119,7 +119,7 @@ function on_blog_change()
 
 $(document).ready(function()
 {
-    mytpl =
+    my_template =
     {
         tabhead          : $("#edittab"),
         tabgroup         : $("#edittabgroup"),
@@ -128,6 +128,7 @@ $(document).ready(function()
         emlchangesubmit  : $("#emlchangesubmit"),
         emlchangecancel  : $("#emlchangecancel"),
         emlchangemessage : $("#emlchangemessage"),
+        emlvermsg        : $("#emlvermsg"),
         pwdchangelnk     : $("#pwdchangelnk"),
         currentpwd       : $("#currentpwd"),
         newpwd           : $("#newpwd"),
@@ -145,7 +146,7 @@ $(document).ready(function()
 
     function selected_territory()
     {
-        return mytpl.territory.find("option:selected").val();
+        return my_template.territory.find("option:selected").val();
     }
 
     function load_timezone()
@@ -160,45 +161,45 @@ $(document).ready(function()
 
     /* triggers */
 
-    mytpl.editsubmit.click(function()
+    my_template.editsubmit.click(function()
     {
         if(active_request==false) { edit_message(''); edit_submit(); }
         $(this).blur();
         return false;
     });
 
-    mytpl.pwdchangesubmit.click(function()
+    my_template.pwdchangesubmit.click(function()
     {
         if(active_request==false) { pwdchange_message(''); pwdchange_submit(); }
         $(this).blur();
         return false;
     });
 
-    mytpl.neweml.keypress(function(e) 
+    my_template.neweml.keypress(function(e) 
     {
         if((e.which && e.which == 13) || (e.keyCode && e.keyCode == 13))
         {
-            mytpl.emlchangesubmit.click();
+            my_template.emlchangesubmit.click();
         }
     });
 
-    mytpl.emlchangesubmit.click(function()
+    my_template.emlchangesubmit.click(function()
     {
         if(active_request==false) { emlchange_message(''); emlchange_submit(); }
     });
 
-    mytpl.territory.change(function()
+    my_template.territory.change(function()
     {
         load_timezone();
         $(this).blur();
     });
 
-    mytpl.timezone.change(function()
+    my_template.timezone.change(function()
     {
         $(this).blur();
     });
 
-    mytpl.tabhead.find("div.tabitem").click(function()
+    my_template.tabhead.find("div.tabitem").click(function()
     {
         set_tab($(this).attr('related'));
     });

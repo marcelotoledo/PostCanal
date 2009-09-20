@@ -1,3 +1,4 @@
+<?php $this->has_update_email_to = (strlen($this->profile->update_email_to)>0) ?>
 <div id="tplbar" class="midct">
     <div id="tplbartt">Edit Settings</div>
     <div id="tplbarclr"></div>
@@ -55,13 +56,15 @@
     <div class="form-row">
         <p>Email</p>
         <p>
-        <input type="text" id="neweml" class="intxt intxt-full" value="<?php echo $this->profile->update_email_to ?>">
+        <input type="text" id="neweml" class="intxt intxt-full" value="<?php echo ($this->has_update_email_to) ? $this->profile->update_email_to : ($this->profile->login_email) ?>">
         &nbsp;&nbsp;&nbsp;
-        <?php if($this->profile->update_email_to==($this->profile->login_email_local . '@' . $this->profile->login_email_domain)) : ?>
+        <span id="emlvermsg">
+        <?php if(!$this->has_update_email_to || $this->profile->update_email_to==($this->profile->login_email)) : ?>
         <?php echo $this->translation()->verified ?>
         <?php else : ?>
         <?php echo $this->translation()->not_verified ?>
         <?php endif ?>
+        </span>
         </p>
     </div>
     <div class="form-bot">
