@@ -19,6 +19,7 @@
     </session>
     <view>
         <compression>false</compression>
+        <googleAnalytics>false</googleAnalytics>
     </view>
     <mailer>
         <default>
