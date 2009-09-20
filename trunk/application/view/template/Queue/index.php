@@ -5,8 +5,7 @@
         <img>
         <b>Publication Interval:</b>
         <select id="pubinterval">
-        <option value="0"><?php echo $this->translation()->as_soon_as_possible ?></option>
-        <option value="300"><?php echo $this->translation()->_05_minutes ?></option>
+        <option value="0">ASAP</option>
         <option value="900"><?php echo $this->translation()->_15_minutes ?></option>
         <option value="1800"><?php echo $this->translation()->_30_minutes ?></option>
         <option value="3600"><?php echo $this->translation()->_01_hour ?></option>
