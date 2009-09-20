@@ -18,7 +18,6 @@ var my_updater =
     request  : false
 }
 
-
 function entry_set_status(e, s)
 {
     if(typeof e == 'string' && e.length > 0)
@@ -39,9 +38,19 @@ function entry_set_status(e, s)
         }
         if(s=='published')
         {
+            e.addClass('ety-pub');
             e.find('div.entrydndhdr').addClass('entrydndhdr-pb');
-            e.find('div.etytog').addClass("etytog-pb").html('P');
+            e.find('div.etytog').die('click').addClass("etytog-pb").html('P');
             e.find('div.etyedlnk').remove();
+
+            if(e.is(':visible')) /* move to bottom */
+            {
+                e.fadeOut(100, function() 
+                { 
+                   my_template.entry_list.append($(this).clone().fadeIn(100));
+                   $(this).remove();
+                });
+            }
         }
     }
 }

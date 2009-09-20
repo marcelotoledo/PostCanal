@@ -81,6 +81,10 @@ div.ety-op
     border-bottom: 1px solid #e1f0f4;
     background-color: white;
 }
+div.ety-pub
+{
+    background-color: silver;
+}
 div.entrydndhdr
 {
     float: left;
@@ -117,6 +121,7 @@ div.etytog-pb
     background: none;
     text-align: center;
     font-size: 1em;
+    cursor: auto;
 }
 div.etytog-un
 {
