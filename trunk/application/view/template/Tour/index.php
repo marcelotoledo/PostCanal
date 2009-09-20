@@ -4,13 +4,13 @@
         <div class="tour-title">Tour</div>
         <div class="tour-subtitle">Video</div>
         <div id="vidct">
-            <script type='text/javascript'>var flashvars = {src: 'http%3A//products.edgeboss.net/download/products/content/demo/video/elephants_dream_768x428_24.0fps_608kbps.mp4',autostart: 'false',themeColor: '2780b1',mode: 'sidebyside',scaleMode: 'fit',frameColor: '333333',fontColor: 'cccccc',link: '',embed: ''};var params = {allowFullScreen: 'true', wmode: 'opaque'};var attributes = {id: 'myPlayer',name: 'myPlayer'};swfobject.embedSWF('./ovp/AkamaiFlashPlayer.swf', 'myPlayerGoesHere', '480', '360', '9.0.0', './ovp/expressInstall.swf', flashvars, params, attributes);</script>
+            <script type='text/javascript'>var flashvars = {src: 'http://dl.getdropbox.com/u/2024254/pcc_003-edited.mov',autostart: 'false',themeColor: '2780b1',mode: 'sidebyside',scaleMode: 'fit',frameColor: '333333',fontColor: 'cccccc',link: '',embed: ''};var params = {allowFullScreen: 'true', wmode: 'opaque'};var attributes = {id: 'myPlayer',name: 'myPlayer'};swfobject.embedSWF('./ovp/AkamaiFlashPlayer.swf', 'myPlayerGoesHere', '576', '410', '9.0.0', './ovp/expressInstall.swf', flashvars, params, attributes);</script>
             <div id='myPlayerGoesHere'><a href='http://www.adobe.com/go/getflashplayer'><img src='http://www.adobe.com/images/shared/download_buttons/get_flash_player.gif' alt='Get Adobe Flash player' /></a></div>
         </div>
         <div id="morevid">More videos</div>
         <div id="vidgal">
             <div class="viditm">
-                <div class="vidscr"><img src="" alt=""/></div>
+                <div class="vidscr"><img src="./video/pcc_003-edited.jpg" alt=""/></div>
                 <div class="viddsc-sel viddsc">Welcome to PostCanal.com</div>
                 <div class="vidclr"></div>
             </div>
