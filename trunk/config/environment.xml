@@ -23,7 +23,7 @@
     <mailer>
         <default>
             <transport>smtp</transport>
-            <server>smtp.postcanal.com</server>
+            <server>mail.postcanal.com</server>
             <auth>login</auth>
             <ssl>ssl</ssl>
             <port>465</port>
@@ -34,6 +34,20 @@
                     <email>noreply@postcanal.com</email>
                 </default>
             </sender>
+            <!--
+            <transport>smtp</transport>
+            <server>smtp.gmail.com</server>
+            <auth>login</auth>
+            <ssl>ssl</ssl>
+            <port>465</port>
+            <sender>
+                <default>
+                    <username>john.doe@castilho.biz</username>
+                    <password>fulano</password>
+                    <email>john.doe@castilho.biz</email>
+                </default>
+            </sender>
+            -->
             <!-- relay time and count prevent mailer spamming
                  blocking excessive number of messages from the same sender -->
             <relay>
