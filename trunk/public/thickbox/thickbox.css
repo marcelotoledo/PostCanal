@@ -83,7 +83,7 @@ margin-top: expression(0 - parseInt(this.offsetHeight / 2) + (TBWindowMargin = d
 	height:25px;
 	padding:11px 25px 10px 0;
 	float:right;
-	display: none;
+	display: block;
 }
 
 #TB_closeAjaxWindow{

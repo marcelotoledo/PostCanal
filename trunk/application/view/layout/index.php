@@ -15,14 +15,14 @@
 <link rel="stylesheet" href="./css/application.css" type="text/css" media="screen"/>
 
 <?php if($this->request()->getController()=='tour') : ?>
-<script type="text/javascript" src="./jquery/thickbox/thickbox-compressed.js"></script>
-<link rel="stylesheet" href="./jquery/thickbox/thickbox.css" type="text/css" media="screen"/>
+<script type="text/javascript" src="./thickbox/thickbox-compressed.js"></script>
+<link rel="stylesheet" href="./thickbox/thickbox.css" type="text/css" media="screen"/>
 <script type='text/javascript' src='./ovp/swfobject.js'></script>
 <?php endif ?>
 
 <?php if($this->request()->getController()=='signup') : ?>
-<script type="text/javascript" src="./jquery/thickbox/thickbox-compressed.js"></script>
-<link rel="stylesheet" href="./jquery/thickbox/thickbox.css" type="text/css" media="screen"/>
+<script type="text/javascript" src="./thickbox/thickbox-compressed.js"></script>
+<link rel="stylesheet" href="./thickbox/thickbox.css" type="text/css" media="screen"/>
 <?php endif ?>
 
 <script type="text/javascript"><?php $this->includeLayout('general.js') ?></script>
