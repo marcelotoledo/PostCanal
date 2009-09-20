@@ -35,7 +35,7 @@
         <span class="arttt"></span><br/><span class="artch"></span>
     </div>
     <div class="artdte"></div>
-    <div class="artlnk"><a href="#" target="_blank" title="view original">&raquo;</a></div>
+    <div class="artlnk"><a href="#" target="_blank" title="view original">&nbsp;</a></div>
     <div class="artclr"></div>
 </div>
 </div>

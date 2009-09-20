@@ -156,6 +156,7 @@ span.etytt
     overflow: hidden;
     white-space: nowrap;
 }
+/*
 div.etyedlnk
 {
     position: relative;
@@ -168,6 +169,18 @@ div.etyedlnk
     cursor: hand;
     background-repeat: no-repeat;
     background-position: -165px -40px;
+}
+*/
+div.etyedlnk
+{
+    float: left;
+	background-image: url('./image/dashboard/page_text_edit.png');
+	background-position: 0px 0px;
+    background-repeat: no-repeat;
+    width: 24px;
+    height: 24px;
+    margin-top: 14px;
+    margin-left: 5px;
 }
 div.etyedlnk a
 {

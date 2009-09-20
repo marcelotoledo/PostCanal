@@ -4,11 +4,12 @@ $(document).ready(function()
 {
     var my_layout =
     {
-        main_container : $("#mainct"),
-        top_row        : $("#toprow"),
-        top_menu       : $("#topmenu"),
-        mid_row        : $("#midrow"),
-        menu_right_sep : $("#menursp")
+        main_container   : $("#mainct"),
+        top_row          : $("#toprow"),
+        top_menu         : $("#topmenu"),
+        RIGHT_SEP_OFFSET : 40,
+        mid_row          : $("#midrow"),
+        menu_right_sep   : $("#menursp")
     };
 
     function window_update()
@@ -24,7 +25,8 @@ $(document).ready(function()
         {
             var _trr = $(window).width() -
                        my_layout.top_menu.position().left -
-                       my_layout.top_menu.width() - 40;
+                       my_layout.top_menu.width() -
+                       my_layout.RIGHT_SEP_OFFSET;
 
             my_layout.menu_right_sep.width(_trr);
         }
