@@ -23,15 +23,15 @@
     <mailer>
         <default>
             <transport>smtp</transport>
-            <server>smtp.gmail.com</server>
+            <server>smtp.postcanal.com</server>
             <auth>login</auth>
             <ssl>ssl</ssl>
             <port>465</port>
             <sender>
                 <default>
-                    <username>john.doe@castilho.biz</username>
-                    <password>fulano</password>
-                    <email>john.doe@castilho.biz</email>
+                    <username>noreply@postcanal.com</username>
+                    <password>irKYjCW4</password>
+                    <email>noreply@postcanal.com</email>
                 </default>
             </sender>
             <!-- relay time and count prevent mailer spamming
