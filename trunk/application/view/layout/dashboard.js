@@ -71,9 +71,11 @@ $(document).ready(function()
 {
     var my_layout =
     {
-        main_container     : $("#mainct"),
-        current_blog       : $("#currentblog"),
-        blog_list          : $("#bloglstsel")
+        main_container      : $("#mainct"),
+        menu_top            : $("#menutop"),
+        current_blog        : $("#currentblog"),
+        blog_list           : $("#bloglstsel"),
+        SPINNER_OFFSET_DIFF : 70
     };
 
     function selected_blog()
@@ -84,7 +86,8 @@ $(document).ready(function()
         return _s;
     }
 
-    spinner_init();
+    spinner_init( my_layout.SPINNER_OFFSET_DIFF + 
+                 (my_layout.menu_top.offset().left * -1));
     disable_submit();
     my_blog.current = selected_blog();
 

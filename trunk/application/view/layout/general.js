@@ -35,12 +35,13 @@ function flash_message(m)
     setTimeout("$(\"#flashmessage\").fadeOut(1900)", 100); // IE fix
 }
 
-function spinner_init()
+function spinner_init(offset)
 {
     $.b_spinner
     ({
-        image: "/image/spinner.gif", 
-        message: "... <?php echo $this->translation()->loading ?>"
+        image: "/image/ajax-loader.gif", 
+        message: "... <?php echo $this->translation()->loading ?>",
+        offset : offset
     });
 }
 

@@ -35,7 +35,7 @@ $(document).ready(function()
         window_update();
     });
 
-    spinner_init();
+    spinner_init(0);
     disable_submit();
     window_update();
 });
