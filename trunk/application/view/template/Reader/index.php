@@ -32,10 +32,10 @@
 <div class="art art-cl" feed="" article="" entry="">
     <div class="sprites-img arttog arttog-un">&nbsp;</div>
     <div class="artlab">
-        <a href="#"><span class="arttt"></span><br/><span class="artch"></span></a>
+        <span class="arttt"></span><br/><span class="artch"></span>
     </div>
     <div class="artdte"></div>
-    <div class="sprites-img artlnk"><a href="#" target="_blank">&nbsp;</a></div>
+    <div class="artlnk"><a href="#" target="_blank" title="view original">&raquo;</a></div>
     <div class="artclr"></div>
 </div>
 </div>

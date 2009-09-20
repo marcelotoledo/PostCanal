@@ -525,11 +525,6 @@ $(document).ready(function()
 
     window.onmousewheel = document.onmousewheel = on_mouse_wheel; /* IE */
 
-    $('object').live('focus', function()
-    {
-        alert('goiasd');
-    });
-
     my_template.right_middle.scroll(function()
     {
         // if(my_template.article_list.scrollTop() > (my_article.bottom * 2/3) && /* fails when threaded */
@@ -583,9 +578,9 @@ $(document).ready(function()
 
     my_template.article_list.find('div.art')
         .find('div.artlab')
-        .find('a').live('click', function()
+        .live('click', function()
     {
-        var _pt = $(this).parent().parent();
+        var _pt = $(this).parent();
 
         if(_pt.hasClass('art-op'))
         {

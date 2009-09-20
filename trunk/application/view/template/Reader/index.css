@@ -63,9 +63,10 @@ div.artlab
 {
     float: left;
     margin-left: 20px;
-    margin-top: 5px;
     overflow: hidden;
     white-space: nowrap;
+    cursor: pointer;
+    cursor: hand;
 }
 div.artlab a
 {
@@ -79,28 +80,30 @@ div.artlab a:hover
 span.artch
 {
     font-size: 0.8em;
+    color: #91a0aa;
+    line-height: 15px;
     overflow: hidden;
     white-space: nowrap;
-    color: #91a0aa;
 }
 span.arttt
 {
     font-size: 1em;
+    color: #21303a;
+    font-weight: bolder;
+    line-height: 25px;
     overflow: hidden;
     white-space: nowrap;
 }
 div.artlnk
 {
-    position: relative;
     float: left;
-    top: 15px;
-    left: 10px;
-    width: 23px;
-    height: 20px;
-    cursor: pointer;
-    cursor: hand;
-    background-repeat: no-repeat;
-    background-position: -165px -40px;
+    font-size: 1.6em;
+    font-weight: bolder;
+    font-family: cursive;
+    width: 30px;
+    margin-left: 5px;
+    margin-top: -8px;
+    
 }
 div.artlnk a
 {
