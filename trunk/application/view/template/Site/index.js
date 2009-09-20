@@ -308,6 +308,7 @@ $(document).ready(function()
     my_template.new_blog_cancel.click(function()
     {
         my_template.new_blog_button.click();
+        $("#noblogmsg1").hide();
         $(this).blur();
         return false;
     });

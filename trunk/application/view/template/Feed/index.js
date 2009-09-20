@@ -422,6 +422,7 @@ $(document).ready(function()
     my_template.feed_options_cancel.click(function()
     {
         my_template.new_feed_button.click();
+        $("#nofeedmsg1").hide();
         $(this).blur();
         return false;
     });
@@ -429,6 +430,7 @@ $(document).ready(function()
     my_template.new_feed_cancel.click(function()
     {
         my_template.new_feed_button.click();
+        $("#nofeedmsg1").hide();
         $(this).blur();
         return false;
     });
