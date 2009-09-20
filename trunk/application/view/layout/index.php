@@ -114,7 +114,7 @@
 <div id="btmrow">
     <div id="btmdsh">&nbsp;</div>
     <div id="btmtxt">
-        Copyright (C) 2009, PostCanal.com Inc. &nbsp;&bull;&nbsp; <a href="#">Terms of Use</a> &nbsp;&bull;&nbsp; <a href="#">Privacy Policy</a>
+        Copyright (C) 2009, PostCanal.com Inc. &nbsp;&bull;&nbsp; <a href="http://blog.postcanal.com" target="_blank">Blog</a> &nbsp;&bull;&nbsp; <a href="#">Terms of Use</a> &nbsp;&bull;&nbsp; <a href="#">Privacy Policy</a>
     </div>
 </div>
 
