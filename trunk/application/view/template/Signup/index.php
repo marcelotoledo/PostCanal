@@ -7,7 +7,7 @@
             <p>Name</p><p><input type="text" class="intxt intxt-full" name="name" id="input-name" value="<?php echo $this->request()->name ?>"></p>
             </div>
             <div class="form-row">
-            <p>E-mail</p><p><input type="text" class="intxt intxt-full" name="email" id="input-email" value="<?php echo $this->request()->email ?>"></p>
+            <p>Email</p><p><input type="text" class="intxt intxt-full" name="email" id="input-email" value="<?php echo $this->request()->email ?>"></p>
             </div>
             <div class="form-row">
             <p>Password</p><p><input type="password" class="intxt intxt-full" name="password" id="input-password"></p>

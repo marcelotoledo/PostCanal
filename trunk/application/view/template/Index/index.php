@@ -40,7 +40,7 @@
     <div class="rgtct-lgt" id="login-form">
         <form>
         <div class="form-row">
-            <p>E-mail</p><p><input type="text" class="intxt intxt-rgt" name="email" id="login-email"></p>
+            <p>Email</p><p><input type="text" class="intxt intxt-rgt" name="email" id="login-email"></p>
         </div>
         <div class="form-row">
             <p>Password</p><p><input type="password" class="intxt intxt-rgt" name="password" id="login-password"></p>
@@ -56,7 +56,7 @@
     <div class="rgtct-lgt" id="recovery-form">
         <form>
         <div class="form-row">
-            <p>E-mail</p><p><input type="text" class="intxt intxt-rgt" name="email" id="recovery-email"></p>
+            <p>Email</p><p><input type="text" class="intxt intxt-rgt" name="email" id="recovery-email"></p>
         </div>
         <div class="form-bot">
             <button type="button" id="submit-recovery">RETRIEVE</button>

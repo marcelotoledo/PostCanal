@@ -53,7 +53,7 @@
 
 <div class="tabcontainer" id="tabemail" style="display:none">
     <div class="form-row">
-        <p>E-mail</p>
+        <p>Email</p>
         <p>
         <input type="text" id="neweml" class="intxt intxt-full" value="<?php echo $this->profile->update_email_to ?>">
         &nbsp;&nbsp;&nbsp;

@@ -26,7 +26,7 @@
     </div>
 
     <div class="form-row">
-    <p>E-mail</p>
+    <p>Email</p>
     <p><input type="text" name="email" value="" class="intxt" id="input-email" size="40"></p>
     </div>
 
