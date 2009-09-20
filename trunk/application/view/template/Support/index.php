@@ -7,7 +7,7 @@
             <p>Name</p><p><input type="text" class="intxt intxt-full"></p>
             </div>
             <div class="form-row">
-            <p>E-mail</p><p><input type="text" class="intxt intxt-full"></p>
+            <p>Email</p><p><input type="text" class="intxt intxt-full"></p>
             </div>
             <div class="form-row">
             <p>Subject</p><p><input type="text" class="intxt intxt-full"></p>

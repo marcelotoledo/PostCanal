@@ -97,5 +97,36 @@ div.support-title
 }
 div.form-bot
 {
-    margin-top: 70px;
+    margin-top: 150px;
+}
+
+input.intxt-full
+{
+    width: 800px;
+    height: 43px;
+    line-height: 43px;
+    font-size: 2em;
+}
+textarea.intxa-full
+{
+    width: 800px;
+    height: 200px;
+    line-height: 43px;
+    font-size: 2em;
+}
+select.insel-full
+{
+    width: 800px;
+    height: 43px;
+    line-height: 43px;
+    font-size: 2em;
+}
+div.form-row
+{
+    height: 80px;
+}
+#btn-send
+{
+    width: 200px;
+    height: 30px;
 }
