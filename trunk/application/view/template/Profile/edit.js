@@ -77,7 +77,7 @@ function emlchange_message(m)
 function emlchange_submit_callback(d)
 {
     if(d.length==0) { server_error(); return false; }
-    if(d.find('accepted').text()=="true") { flash_message("<?php echo $this->translation()->saved ?><br><small><?php echo $this->translation()->check_your_inbox_to_validate ?></small>"); my_template.emlvermsg.text("<?php echo $this->translation()->check_your_inbox_to_validate ?>"); } else { emlchange_message(d.find('message').text()); }
+    if(d.find('accepted').text()=="true") { flash_message("<?php echo $this->translation()->saved ?>"); my_template.emlvermsg.text("<?php echo $this->translation()->check_your_inbox_to_validate ?>"); } else { emlchange_message(d.find('message').text()); }
 }
 
 function emlchange_submit()

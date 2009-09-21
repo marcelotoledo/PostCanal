@@ -9,6 +9,7 @@ body
 	/*background-image: url('./image/dashboard/bg-body.png');
 	background-position: 0px 0px;*/
 	font-family: "Trebuchet MS", Verdana, Geneva, Arial, Helvetica, sans-serif;
+    overflow-x: hidden;
 }
 img
 {
@@ -243,16 +244,19 @@ button
 #flashmessage
 {
     position: absolute;
-    top: 5px;
-    left: 5%;
-    width: 84%;
-    padding: 2%;
-    font-size: 2em;
+    top: 0px;
+    left: 50%;
+    width: 25%;
+    height: 40px;
+    line-height: 40px;
+    font-size: 1em;
     color: black;
-    background-color: gold;
+    background-color: #FFCC00;
     text-align: center;
-    -moz-border-radius: 5px;
-    -webkit-border-radius: 5px;
+    -moz-border-radius-bottomleft: 5px;
+    -webkit-border-bottom-left-radius: 5px;
+    -moz-border-radius-bottomright: 5px;
+    -webkit-border-bottom-right-radius: 5px;
     display: none;
 }
 
@@ -293,4 +297,11 @@ div.tabcontainer
     /*border: 1px solid silver;*/
     /*border-top: 0;*/
     margin-top: -1px;
+}
+
+div.b-spinner
+{
+    <?php if($this->browser_is_ie) : ?>
+    width: 105px;
+    <?php endif ?>
 }

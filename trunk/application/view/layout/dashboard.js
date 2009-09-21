@@ -75,7 +75,9 @@ $(document).ready(function()
         menu_top         : $("#menutop"),
         current_blog     : $("#currentblog"),
         blog_list        : $("#bloglstsel"),
-        SPINNER_OFFSET_X : 70
+        flash_message    : $("#flashmessage"),
+        SPINNER_OFFSET_X : 70,
+        FLASH_OFFSET_X   : 200
     };
 
     function selected_blog()
@@ -86,11 +88,33 @@ $(document).ready(function()
         return _s;
     }
 
-    spinner_init({ x : my_layout.menu_top.offset().left - 
-                       my_layout.SPINNER_OFFSET_X, y : 0 });
+    function window_update()
+    {
+        /* fix spinner and flash message position / width */
 
-    disable_submit();
-    my_blog.current = selected_blog();
+        $('body').find('div.b-spinner').remove();
+
+        spinner_init({ x : my_layout.menu_top.offset().left - 
+                           my_layout.SPINNER_OFFSET_X, y : 0 });
+
+        my_layout.flash_message.css('left', 
+            my_layout.menu_top.offset().left + 
+          ((my_layout.menu_top.width() - my_layout.flash_message.width()) / 2));
+    }
+
+    function initialize()
+    {
+        window_update();
+        disable_submit();
+        my_blog.current = selected_blog();
+    }
+
+    initialize();
+
+    $(window).resize(function()
+    {
+        window_update();
+    });
 
     $(document).bind('setting_blog_current_saved', function(e)
     {

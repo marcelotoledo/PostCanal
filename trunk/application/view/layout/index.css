@@ -319,3 +319,10 @@ button
     cursor: pointer;
     cursor: hand;
 }
+
+div.b-spinner
+{
+    <?php if($this->browser_is_ie) : ?>
+    width: 105px;
+    <?php endif ?>
+}
