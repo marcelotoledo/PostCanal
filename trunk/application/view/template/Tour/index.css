@@ -112,7 +112,13 @@ div.tour-subtitle
     margin-left: 2px;
 }
 
+div.rgtct-lgt
+{
+    max-height: 400px;
+    overflow-y: scroll;
+}
 div.rgtct-lgt img
 {
-    margin-bottom: 2px;
+    margin-bottom: 5px;
+    border: 1px solid #303030;
 }

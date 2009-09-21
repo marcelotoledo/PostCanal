@@ -34,11 +34,12 @@
 <div class="rgtct">
     <div class="rgtct-ttl">Screenshots</div>
     <div class="rgtct-lgt">
-        <a href="./image/screenshot/screenshot_01.jpg" title="Home Page" class="thickbox"><img src="./image/screenshot/screenshot_01_thumb.jpg" alt="Home Page" width="100" height="75" /></a>
-        <a href="./image/screenshot/screenshot_01.jpg" title="Home Page" class="thickbox"><img src="./image/screenshot/screenshot_01_thumb.jpg" alt="Home Page" width="100" height="75" /></a>
-        <a href="./image/screenshot/screenshot_01.jpg" title="Home Page" class="thickbox"><img src="./image/screenshot/screenshot_01_thumb.jpg" alt="Home Page" width="100" height="75" /></a>
-        <a href="./image/screenshot/screenshot_01.jpg" title="Home Page" class="thickbox"><img src="./image/screenshot/screenshot_01_thumb.jpg" alt="Home Page" width="100" height="75" /></a>
-        <a href="./image/screenshot/screenshot_01.jpg" title="Home Page" class="thickbox"><img src="./image/screenshot/screenshot_01_thumb.jpg" alt="Home Page" width="100" height="75" /></a>
+        <a href="./image/screenshot/001-manage_your_sites.png" title="Manage your sites" class="thickbox"><img src="./image/screenshot/001-manage_your_sites-thumb.png" alt="Manage your sites" width="180" /></a>
+        <a href="./image/screenshot/002-manage_feeds.png" title="Manage feeds" class="thickbox"><img src="./image/screenshot/002-manage_feeds-thumb.png" alt="Manage feeds" width="180" /></a>
+        <a href="./image/screenshot/003-reader01.png" title="Reader (1)" class="thickbox"><img src="./image/screenshot/003-reader01-thumb.png" alt="Reader (1)" width="180" /></a>
+        <a href="./image/screenshot/004-reader02.png" title="Reader (2)" class="thickbox"><img src="./image/screenshot/004-reader02-thumb.png" alt="Reader (2)" width="180" /></a>
+        <a href="./image/screenshot/005-queue01.png" title="Queue (1)" class="thickbox"><img src="./image/screenshot/005-queue01-thumb.png" alt="Queue (1)" width="180" /></a>
+        <a href="./image/screenshot/006-queue02.png" title="Queue (2)" class="thickbox"><img src="./image/screenshot/006-queue02-thumb.png" alt="Queue (2)" width="180" /></a>
         <!--<a href="http://farm4.static.flickr.com/3475/3362755851_32d2432681.jpg" title="Canal" class="thickbox"><img src="./image/screenshot/screenshot_02_thumb.jpg" alt="Home Page"/></a>-->
     </div>
     <div class="rgtct-hrd">
