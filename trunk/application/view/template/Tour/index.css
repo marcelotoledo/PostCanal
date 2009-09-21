@@ -15,6 +15,7 @@ div > div.midct-cen { margin-top: 0px; }
 }
 #morevid
 {
+    display: none; /* when only one video */
     height: 50px;
     line-height: 50px;
     font-size: 1.2em;
@@ -22,7 +23,10 @@ div > div.midct-cen { margin-top: 0px; }
     text-align: left;
     color: #2780B1;
 }
-#vidgal { }
+#vidgal 
+{ 
+    display: none; /* when only one video */
+}
 div.viditm
 {
     float: left;
