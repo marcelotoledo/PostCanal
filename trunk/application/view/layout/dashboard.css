@@ -39,7 +39,7 @@ a:hover
 }
 div.sprites-img
 {
-    background-image: url('./image/dashboard/sprites.png');
+    background-image: url('./image/dashboard/sprites.png?v=1253527293');
 }
 #leftlogo
 {
@@ -228,7 +228,7 @@ button
 	font-weight: bold;
 	padding: 0px 5px 0px 5px;
     border: 0;
-	background-image: url('./image/index/btn-bg.png');
+	background-image: url('./image/index/btn-bg.png?v=1253527293');
 	background-repeat: repeat-x;
 	background-position: 0px 0px;
 	background-color: #FF6600;

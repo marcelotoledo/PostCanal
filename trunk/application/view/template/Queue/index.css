@@ -95,7 +95,7 @@ div.entrydndhdr
     margin-right: 5px;
     margin-top: 7px;
     cursor: move;
-	background-image: url('./image/dashboard/btn-dnd.png');
+	background-image: url('./image/dashboard/btn-dnd.png?v=1253527293');
 }
 div.entrydndhdr-pb
 {
@@ -174,7 +174,7 @@ div.etyedlnk
 div.etyedlnk
 {
     float: left;
-	background-image: url('./image/dashboard/page_text_edit.png');
+	background-image: url('./image/dashboard/page_text_edit.png?v=1253527293');
 	background-position: 0px 0px;
     background-repeat: no-repeat;
     width: 24px;

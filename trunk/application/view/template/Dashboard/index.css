@@ -137,7 +137,7 @@ div.articlelabel
     width: 70%;
     cursor: pointer;
     cursor: hand;
-    background-image: url("/image/transparent.png"); /* fix div hover IE bug */
+    background-image: url("/image/transparent.png?v=1253527293"); /* fix div hover IE bug */
 }
 /*"**/
 div.articlefeed
@@ -156,7 +156,7 @@ div.articleinfo
     float: left;
     text-align: right;
     margin-right: 15px;
-    background-image: url("/image/transparent.png"); /* fix div hover IE bug */
+    background-image: url("/image/transparent.png?v=1253527293"); /* fix div hover IE bug */
 }
 /*"**/
 div.articlebuttons
@@ -164,7 +164,7 @@ div.articlebuttons
     float: right;
     text-align: right;
     margin-right: 15px;
-    background-image: url("/image/transparent.png"); /* fix div hover IE bug */
+    background-image: url("/image/transparent.png?v=1253527293"); /* fix div hover IE bug */
 }
 /*"**/
 div.articlebuttons a

@@ -11,18 +11,16 @@
 <title>PostCanal.com</title>
 
 <script type="text/javascript" src="./jquery/jquery-1.3.2.min.js"></script>
-<script type="text/javascript" src="./js/application.js"></script>
-<link rel="stylesheet" href="./css/application.css" type="text/css" media="screen"/>
+<script type="text/javascript" src="./js/application.js?v=1253526829"></script>
+<link rel="stylesheet" href="./css/application.css?v=1253526829" type="text/css" media="screen"/>
 
-<?php if($this->request()->getController()=='tour') : ?>
-<script type="text/javascript" src="./thickbox/thickbox-compressed.js"></script>
-<link rel="stylesheet" href="./thickbox/thickbox.css" type="text/css" media="screen"/>
-<script type='text/javascript' src='./ovp/swfobject.js'></script>
+<?php if($this->request()->getController()=='tour' ||
+         $this->request()->getController()=='signup') : ?>
+<script type="text/javascript" src="./thickbox/thickbox-compressed.js?v=1253526829"></script>
+<link rel="stylesheet" href="./thickbox/thickbox.css?v=1253526829" type="text/css" media="screen"/>
 <?php endif ?>
-
-<?php if($this->request()->getController()=='signup') : ?>
-<script type="text/javascript" src="./thickbox/thickbox-compressed.js"></script>
-<link rel="stylesheet" href="./thickbox/thickbox.css" type="text/css" media="screen"/>
+<?php if($this->request()->getController()=='tour') : ?>
+<script type='text/javascript' src='./ovp/swfobject.js?v=1253526829'></script>
 <?php endif ?>
 
 <script type="text/javascript"><?php $this->includeLayout('general.js') ?></script>
