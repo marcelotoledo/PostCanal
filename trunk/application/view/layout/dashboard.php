@@ -17,7 +17,7 @@
 <script type="text/javascript" src="./ckeditor/ckeditor.js?v=1253526829"></script>
 <?php endif ?>
 <script type="text/javascript" src="./js/application.js?v=1253526829"></script>
-<link rel="stylesheet" href="./css/application.css?v=1253526829" type="text/css" media="screen"/>
+<link rel="stylesheet" href="./css/application.css?v=1253528121" type="text/css" media="screen"/>
 
 <script type="text/javascript"><?php $this->includeLayout('general.js') ?></script>
 <script type="text/javascript"><?php $this->includeLayout('dashboard.js') ?></script>
