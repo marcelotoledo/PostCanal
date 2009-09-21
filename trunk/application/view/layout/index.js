@@ -9,7 +9,8 @@ $(document).ready(function()
         top_menu         : $("#topmenu"),
         RIGHT_SEP_OFFSET : 40,
         mid_row          : $("#midrow"),
-        menu_right_sep   : $("#menursp")
+        menu_right_sep   : $("#menursp"),
+        SPINNER_OFFSET_Y : 5
     };
 
     function window_update()
@@ -37,7 +38,7 @@ $(document).ready(function()
         window_update();
     });
 
-    spinner_init(0);
+    spinner_init({ x: 0, y: my_layout.SPINNER_OFFSET_Y });
     disable_submit();
     window_update();
 });

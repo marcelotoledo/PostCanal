@@ -9,8 +9,8 @@ jQuery.b_spinner = function(config)
                       "</div></div>");
 
     spinner = $(".b-spinner");
-    spinner.css('top', 0);
-    spinner.css('left', ((ww - config.offset) * 0.5) - (spinner.outerWidth() * 0.5));
+    spinner.css('top', config.offset.y);
+    spinner.css('left', ((ww + config.offset.x) * 0.5) - (spinner.outerWidth() * 0.5));
 
     $.b_spinner_start = function()
     {

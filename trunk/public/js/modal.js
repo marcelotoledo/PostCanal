@@ -1,8 +1,6 @@
 /**
  * jQuery modal plugin
  *
- * author : Rafael Castilho <rafael@castilho.biz>
- *
  * usage:
  * 
  * $("#myoriginal").b_modal(), 

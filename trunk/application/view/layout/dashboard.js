@@ -71,11 +71,11 @@ $(document).ready(function()
 {
     var my_layout =
     {
-        main_container      : $("#mainct"),
-        menu_top            : $("#menutop"),
-        current_blog        : $("#currentblog"),
-        blog_list           : $("#bloglstsel"),
-        SPINNER_OFFSET_DIFF : 70
+        main_container   : $("#mainct"),
+        menu_top         : $("#menutop"),
+        current_blog     : $("#currentblog"),
+        blog_list        : $("#bloglstsel"),
+        SPINNER_OFFSET_X : 70
     };
 
     function selected_blog()
@@ -86,8 +86,9 @@ $(document).ready(function()
         return _s;
     }
 
-    spinner_init( my_layout.SPINNER_OFFSET_DIFF + 
-                 (my_layout.menu_top.offset().left * -1));
+    spinner_init({ x : my_layout.menu_top.offset().left - 
+                       my_layout.SPINNER_OFFSET_X, y : 0 });
+
     disable_submit();
     my_blog.current = selected_blog();
 

@@ -16,7 +16,7 @@
          $this->request()->getAction()=='index') : ?>
 <script type="text/javascript" src="./ckeditor/ckeditor.js?v=1253526829"></script>
 <?php endif ?>
-<script type="text/javascript" src="./js/application.js?v=1253526829"></script>
+<script type="text/javascript" src="./js/application.js?v=1253528538"></script>
 <link rel="stylesheet" href="./css/application.css?v=1253528121" type="text/css" media="screen"/>
 
 <script type="text/javascript"><?php $this->includeLayout('general.js') ?></script>
