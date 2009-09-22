@@ -129,7 +129,7 @@ class URLGatekeeper:
         return allow
 
     @timelimit(10)
-    def get(self, url, check=True):
+    def get(self, url, check=False):
         if check and not self.can_fetch(url): return ''
         try:
             return self.urlopener.open(url).read()
