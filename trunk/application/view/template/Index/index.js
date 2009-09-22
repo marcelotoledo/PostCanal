@@ -37,7 +37,7 @@ function login_show()
 {
     my_template.login_ttl.show();
     my_template.recovery_ttl.hide();
-    my_template.login_form.show();
+    my_template.login_container.show();
     my_template.recovery_form.hide();
     my_template.retrieved_ttl.hide();
     my_template.retrieved_notice.hide();
@@ -47,7 +47,7 @@ function recovery_toggle()
 {
     my_template.login_ttl.toggle();
     my_template.recovery_ttl.toggle();
-    my_template.login_form.toggle();
+    my_template.login_container.toggle();
     my_template.recovery_form.toggle();
 }
 
@@ -61,7 +61,7 @@ function recovery_submit_cb(d)
     if(d.length==0) { server_error(); return false; }
     my_template.login_ttl.hide();
     my_template.recovery_ttl.hide();
-    my_template.login_form.hide();
+    my_template.login_container.hide();
     my_template.recovery_form.hide();
     my_template.retrieved_ttl.show();
     my_template.retrieved_notice.show();
@@ -94,6 +94,7 @@ $(document).ready(function()
         submit_login     : $("#submit-login"),
         submit_recovery  : $("#submit-recovery"),
         login_ttl        : $("#login-ttl"),
+        login_container  : $("#login-fc"),
         login_form       : $("#login-form"),
         login_email      : $("#login-email"),
         login_password   : $("#login-password"),
@@ -107,6 +108,13 @@ $(document).ready(function()
     };
 
     /* triggers */
+
+    my_template.login_form.submit(function()
+    {
+        if(active_request==false) { login_submit(); }
+        $(this).blur();
+        return null;
+    });
 
     my_template.link_recovery.click(function()
     {
@@ -137,13 +145,6 @@ $(document).ready(function()
         return false;
     });
 
-    my_template.submit_login.click(function()
-    {
-        if(active_request==false) { login_submit(); }
-        $(this).blur();
-        return false;
-    });
-
     my_template.submit_recovery.click(function()
     {
         if(active_request==false) { recovery_submit(); }
@@ -155,7 +156,7 @@ $(document).ready(function()
     {
         if((e.which && e.which == 13) || (e.keyCode && e.keyCode == 13))
         {
-            my_template.submit_login.click();
+            my_template.login_form.submit();
         }
     });
 

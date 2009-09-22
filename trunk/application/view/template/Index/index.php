@@ -37,8 +37,8 @@
     <div class="rgtct-ttl" id="recovery-ttl">Forgot password?</div>
     <div class="rgtct-ttl" id="retrieved-ttl">Retrieved password!</div>
 
-    <div class="rgtct-lgt" id="login-form">
-        <form>
+    <div class="rgtct-lgt" id="login-fc">
+        <form id="login-form">
         <div class="form-row">
             <p>Email</p><p><input type="text" class="intxt intxt-rgt" name="email" id="login-email"></p>
         </div>
@@ -47,7 +47,7 @@
         </div>
         <p><a href="#" id="link-recovery">Forgot your password?</a></p>
         <div class="form-bot">
-            <button type="button" id="submit-login">SIGN IN</button>
+            <button type="submit" id="submit-login">SIGN IN</button>
         </div>
         </form>
         <div id="login-msg" class="right-msg"></div>
