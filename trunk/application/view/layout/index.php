@@ -15,6 +15,7 @@ $this->browser_is_opera = (strpos($this->browser, 'opera')>0);
 
 <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
 <meta http-equiv="X-UA-Compatible" content="IE=EmulateIE7"/>
+<link rel="alternate" type="application/rss+xml" title="RSS 2.0" href="http://blog.postcanal.com/feed/" />
 <base href="<?php echo BASE_URL ?>" />
 
 <title>PostCanal.com</title>
