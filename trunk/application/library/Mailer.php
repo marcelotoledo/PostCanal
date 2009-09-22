@@ -29,6 +29,12 @@ class L_Mailer
     private $body;
 
     /**
+     * Body is HTML?
+     * @var boolean
+     */
+    private $is_html;
+
+    /**
      * Mail transport
      * @var Zend_Mail_Transport
      */
@@ -102,6 +108,17 @@ class L_Mailer
     }
 
     /**
+     * Body is HTML?
+     *
+     * @param   string  $body
+     * @return  void
+     */
+    public function isHTML($b)
+    {
+        $this->is_html = ((boolean) $b);
+    }
+
+    /**
      * Set body
      *
      * @param   string  $body
@@ -111,6 +128,8 @@ class L_Mailer
     {
         $this->body = $body;
     }
+
+
 
     /**
      * Send email
@@ -126,14 +145,32 @@ class L_Mailer
         $mail->setFrom($this->from);
         $sent = false;
 
-        if(self::allowRelay($recipient, 
+        $rspl = array();
+        preg_match("#^(.*\s)*([^\s@]+@[^\s@]+)$#", $recipient, $rspl);
+        
+        $recipient_name = '';
+        $recipient_email = '';
+
+        if(count($rspl)==3) // cases in regular expression
+        {
+            list($recipient,
+                 $recipient_name,
+                 $recipient_address) = $rspl;
+        }
+
+        if(self::allowRelay($recipient_address, 
                             $identifier,
                             $this->relay_time, 
                             $this->relay_count))
         {
-            $mail->addTo($recipient);
+            (strlen($recipient_name)>0) ?
+                $mail->addTo($recipient_address, $recipient_name) :
+                $mail->addTo($recipient_address);
             $mail->setSubject($this->subject);
-            $mail->setBodyHtml($this->body);
+
+            ($this->is_html)  ? 
+                $mail->setBodyHtml($this->body) :
+                $mail->setBodyText($this->body);
 
             try
             {
@@ -171,9 +208,10 @@ class L_Mailer
         list($local, $domain) = explode('@', strtolower($recipient));
         return B_Model::execute("INSERT INTO " . self::$relay_table . " " .
                                  "(recipient_email_local, recipient_email_domain, " .
-                                 " identifier_md5, created_at) " .
-                                 "VALUES (?, ?, ?, ?)",
-                                 array($local, $domain, md5($identifier), date("Y-m-d H:i:s")));
+                                 "identifier, identifier_md5, created_at) " .
+                                 "VALUES (?, ?, ?, ?, ?)",
+                                 array($local, $domain, $identifier, 
+                                    md5($identifier), date("Y-m-d H:i:s")));
     }
 
     /**

@@ -63,6 +63,7 @@ CREATE TABLE application_mailer_relay
     id INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
     recipient_email_local VARCHAR(64) NOT NULL,
     recipient_email_domain VARCHAR(255) NOT NULL,
+    identifier VARCHAR(100) DEFAULT NULL,
     identifier_md5 VARCHAR(32) DEFAULT NULL,
     created_at TIMESTAMP NOT NULL DEFAULT '1970-01-01 00:00:00',
     PRIMARY KEY (id)

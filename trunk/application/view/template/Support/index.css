@@ -130,3 +130,9 @@ div.form-row
     width: 200px;
     height: 30px;
 }
+
+#emailmsg
+{
+    margin-top: 25px;
+    margin-bottom: 25px;
+}

@@ -1,7 +1,6 @@
 <?xml version="1.0"?>
 <environment>
     <base>
-        <!--<url>http://localhost:82</url>-->
         <url>http://192.168.0.147:82</url>
     </base>
     <database>
@@ -100,6 +99,10 @@
             <suggestMaxEntries>10</suggestMaxEntries>
             <entryWorkingTimeout>60</entryWorkingTimeout>
         </queue>
+        <support>
+            <email>help@postcanal.com</email>
+            <subjectPrefix>[support]</subjectPrefix>
+        </support>
     </application>
     <zend>
         <date>
