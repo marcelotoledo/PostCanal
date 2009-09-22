@@ -1,6 +1,15 @@
-<?php $this->browser = L_Utility::browserInfo() ?>
-<?php $this->browser_is_ie = (strpos($this->browser, 'msie')>0) ?>
-<?php $this->browser_is_ie6 = ($this->browser_is_ie && floor(intval($this->browser)/10)==6) ?>
+<?php 
+
+/* browser detection */
+
+$this->browser = L_Utility::browserInfo();
+$this->browser_is_ie = (strpos($this->browser, 'msie')>0);
+$this->browser_is_ie6 = ($this->browser_is_ie && floor(intval($this->browser)/10)==6);
+$this->browser_is_firefox = (strpos($this->browser, 'firefox')>0);
+$this->browser_is_safari = (strpos($this->browser, 'safari')>0);
+$this->browser_is_opera = (strpos($this->browser, 'opera')>0);
+
+?>
 <html>
 <head>
 
@@ -34,6 +43,7 @@
 <div id="mainct">
 
 <div id="toprow">
+    <div class="menuitm" id="menursp">&nbsp;</div>
     <div class="toprowimg" id="toplogo">
         <div id="logobeta">beta</div>
         <div id="tagline">we help you publish content</div>
@@ -99,8 +109,6 @@
         <?php else : ?>
         <div class="menuitm menuitm-right"><a class="menulnk" href="./support">Support</a></div>
         <?php endif ?>
-
-        <div class="menuitm" id="menursp">&nbsp;</div>
         <div id="menuitmclr"></div>
     </div>
     <div id="toprowclr"></div>
