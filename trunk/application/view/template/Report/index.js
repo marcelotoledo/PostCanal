@@ -8,7 +8,7 @@ function report_populate(i)
         name : i.find('name').text()
     };
 
-    my_template.report_list.append('<li report="' + d.id + '"><span class="title">' + d.name + '</span>[<a href="#view">view</a>][<a href="#edit">edit</a>][<a href="#delete">delete</a>]</li>' + "\n");
+    my_template.report_list.append('<li report="' + d.id + '"><span class="title">' + d.name + '</span>[<a href="#view">view</a>][<a href="#edit">edit</a>][<a href="#delete">delete</a>]<span style="clear:left"></span></li>' + "\n");
 }
 
 function report_list_callback(d)
