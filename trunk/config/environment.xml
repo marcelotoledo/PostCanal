@@ -103,6 +103,10 @@
             <email>help@postcanal.com</email>
             <subjectPrefix>[support]</subjectPrefix>
         </support>
+        <report>
+            <username>pcreport</username>
+            <password>nRa82McFyT</password>
+        </report>
     </application>
     <zend>
         <date>
