@@ -107,7 +107,6 @@ class C_Profile extends B_Controller
         /* check for existing profile */
 
         $profile = null;
-        $information = null;
 
         if(strpos($email, '@') > 0 && 
            strlen($password) > 0 && strlen($confirm) > 0 && $password == $confirm)
@@ -151,12 +150,8 @@ class C_Profile extends B_Controller
                 else
                 {
                     $this->notify($profile->login_email, "register_new", $profile);
-
-                    if(is_object($information))
-                    {
-                        $information->register_message_time = time();
-                        $information->save();
-                    }
+                    $profile->register_message_time = time();
+                    $profile->save();
                 }
 
                 $this->view()->register = true;
@@ -747,7 +742,7 @@ class C_Profile extends B_Controller
         }
         catch(B_Exception $exception)
         {
-            $_m = "failed to save information after editing";
+            $_m = "failed to save profile after editing";
             $_d = array('method' => __METHOD__, 'user_profile_id' => $id);
             B_Exception::forward($_m, E_WARNING, $exception, $_d);
         }
