@@ -156,6 +156,7 @@ class C_Report extends B_Controller
 
         if(is_object($report = Report::getByPrimaryKey($this->request()->id)))
         {
+            $this->view()->report_name = $report->name;
             $this->view()->result = B_Model::select($report->query, 
                                                     array(), 
                                                     PDO::FETCH_ASSOC);

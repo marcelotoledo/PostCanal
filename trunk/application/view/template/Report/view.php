@@ -1,6 +1,6 @@
 <h1>Report</h1>
 
-<h2>View</h2>
+<h2>View report :: <?php echo $this->report_name ?></h2>
 
 <p><a href="./report">go back</a></p>
 
