@@ -65,12 +65,16 @@ li
     height: 25px;
     line-height: 25px;
 }
-li span.title
+li div.title
 {
     float: left;
-    display: block;
     border-bottom: 1px dotted silver;
     width: 600px;
+}
+li div.control
+{
+    float: left;
+    font-size: 0.8em;
 }
 
 input, select
