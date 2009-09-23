@@ -2,7 +2,7 @@
 
 <h2>Report list</h2>
 
-<ul id="report-list"></ul>
+<div id="report-list"></div>
 
 <hr/>
 

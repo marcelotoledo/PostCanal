@@ -8,7 +8,7 @@ function report_populate(i)
         name : i.find('name').text()
     };
 
-    my_template.report_list.append('<li report="' + d.id + '"><div class="title">' + d.name + '</div><div class="control">[<a href="#view">view</a>][<a href="#edit">edit</a>][<a href="#delete">delete</a>]</div><div style="clear:left"></div></li>' + "\n");
+    my_template.report_list.append('<div report="' + d.id + '"><div class="item-title">' + d.name + '</div><div class="item-control">[<a href="#view">view</a>][<a href="#edit">edit</a>][<a href="#delete">delete</a>]</div><div class="item-clear"></div></div>' + "\n");
 }
 
 function report_list_callback(d)
@@ -180,23 +180,28 @@ $(document).ready(function()
         return null;
     });
 
-    my_template.report_list.find('li > a[href="#view"]').live('click', function()
+    $.fn.get_report_id_from_parent = function()
     {
-        document.location='./report/view?id=' + $(this).parent().attr('report');
+        return $(this).parent().parent().attr('report');
+    }
+
+    my_template.report_list.find('a[href="#view"]').live('click', function()
+    {
+        document.location='./report/view?id=' + $(this).get_report_id_from_parent();
         $(this).blur();
         return false;
     });
 
-    my_template.report_list.find('li > a[href="#edit"]').live('click', function()
+    my_template.report_list.find('a[href="#edit"]').live('click', function()
     {
-        report_edit($(this).parent().attr('report'));
+        report_edit($(this).get_report_id_from_parent());
         $(this).blur();
         return false;
     });
 
-    my_template.report_list.find('li > a[href="#delete"]').live('click', function()
+    my_template.report_list.find('a[href="#delete"]').live('click', function()
     {
-        report_delete($(this).parent().attr('report'));
+        report_delete($(this).get_report_id_from_parent());
         $(this).blur();
         return false;
     });

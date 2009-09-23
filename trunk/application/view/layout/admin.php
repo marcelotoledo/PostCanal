@@ -59,22 +59,24 @@ hr
     margin-top: 25px;
     margin-bottom: 25px;
 }
-li
-{
-    list-style-type: none;
-    height: 25px;
-    line-height: 25px;
-}
-li div.title
+div.item-title
 {
     float: left;
     border-bottom: 1px dotted silver;
     width: 600px;
+    height: 25px;
+    line-height: 25px;
 }
-li div.control
+div.item-control
 {
     float: left;
     font-size: 0.8em;
+    height: 25px;
+    line-height: 25px;
+}
+div.item-clear
+{
+    clear: left;
 }
 
 input, select
