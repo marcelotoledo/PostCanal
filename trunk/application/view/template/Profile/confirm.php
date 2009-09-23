@@ -1,10 +1,18 @@
+<div class="midct midct-full">
+    <div class="midct-top">&nbsp;</div>
+    <div class="midct-cen">
+        <div class="conf-title">New Profile registration</div>
+
 <?php if ($this->accepted == true) : ?>
 
-<p><?php echo $this->message ?></p>
-<p><a href="/"><?php echo $this->translation()->main_page ?></a></p>
+<p>New profile registration accepted. To start using PostCanal.com, click Home and sign in.</p>
 
 <?php else : ?>
 
-<p><?php echo $this->translation()->invalid_profile ?></p>
+<p>This URL is no longer valid.</p>
 
 <?php endif ?>
+
+    </div>
+    <div class="midct-bot">&nbsp;</div>
+</div>

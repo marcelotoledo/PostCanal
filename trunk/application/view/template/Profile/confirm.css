@@ -1,0 +1,30 @@
+/* middle */
+
+div.midct-cen
+{
+    padding: 0px 20px 25px 20px;
+    margin-top: -10px;
+    margin-bottom: -20px;
+}
+div > div.midct-cen { margin-top: 0px; }
+
+div.confct
+{
+    float: left;
+    width: 200px;
+    height: 270px;
+    color: white;
+    margin-right: 20px;
+    padding-bottom: 10px;
+    -moz-border-radius: 9px;
+    -webkit-border-radius: 9px;
+}
+div.conf-title
+{
+    font-size: 2.6em;
+    font-weight: bold;
+    color: #2780B1;
+    padding-top: 5px;
+    margin-bottom: 25px;
+}
+

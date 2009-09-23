@@ -6,7 +6,7 @@ $(document).ready(function()
 
     mytpl = 
     {
-        signinbtn    : $("#signin_button")
+        signinbtn : $("#signin-button")
     };
 
     mytpl.signinbtn.click(function() 

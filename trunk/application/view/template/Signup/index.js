@@ -14,7 +14,9 @@ function register_submit_cb(d)
     }
     else
     {
-        register_msg(d.find('message').text());
+        //register_msg(d.find('message').text());
+        alert(d.find('message').text());
+        window.location="./signup";
     }
 }
 
@@ -43,22 +45,23 @@ function register_submit()
        _data.name      == "" ||
        _data.country   == "")
     {
-        register_msg("<?php echo $this->translation()->form_incomplete ?>");
+        register_msg("Please fill up the form correctly.");
         return false;
     }
 
     if(_data.password != _data.passwordc)
     {
-        register_msg("<?php echo $this->translation()->password_not_match ?>");
+        register_msg("Password and confirmation does not match.");
         return false;
     }
 
     if(_data.password.length < 6 || _data.passwordc.length > 32)
     {
-        register_msg("<?php echo $this->translation()->password_length_invalid ?>");
+        register_msg("Invalid password length. Please use 6 to 32 characters.");
         return false;
     }
 
+    $(window).scrollTop(0);
     do_request('POST', './profile/register', _data, register_submit_cb);
 }
 

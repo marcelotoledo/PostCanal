@@ -17,12 +17,7 @@
             </div>
 
             <br/>
-            <div class="btn" id="btn-create">
-                <div class="btn-brd btn-l">&nbsp;</div>
-                <div class="btn-bg  btn-c"><a href="./">SIGN IN</a></div>
-                <div class="btn-brd btn-r">&nbsp;</div>
-                <div class="btn-x"></div>
-            </div>
+            <button type="button" id="signin-button">SIGN IN</button>
         </div>
     </div>
     <div class="midct-bot">&nbsp;</div>

@@ -4,8 +4,8 @@ var mytpl = null;
 function form_message(m)
 {
     (m=="") ? 
-        mytpl.msgcontainer.hide().find("td").html("") :
-        mytpl.msgcontainer.show().find("td").html(m) ;
+        mytpl.msgcontainer.hide().html("") :
+        mytpl.msgcontainer.show().html(m) ;
 }
 
 function password_recovery_callback(d)
@@ -32,13 +32,13 @@ function password_recovery()
 
     if(_data.password=="" || _data.passwordc=="")
     {
-        form_message("<?php echo $this->translation()->form_incomplete ?>");
+        form_message("Please fill up the form correctly.");
         return false;
     }
 
     if(_data.password != _data.passwordc)
     {
-        form_message("<?php echo $this->translation()->password_not_match ?>");
+        form_message("Password and confirmation does not match.");
         return false;
     }
 
@@ -57,7 +57,7 @@ $(document).ready(function()
         password     : $("#password"),
         passwordc    : $("#passwordc"),
         pwdcsubmit   : $("#pwdchangesubmit"),
-        msgcontainer : $("#message"),
+        msgcontainer : $("#pwdchange-msg"),
         pwdform      : $("#pwdform"),
         changenotice : $("#changenotice")
     };

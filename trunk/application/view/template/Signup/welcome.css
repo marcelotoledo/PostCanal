@@ -3,11 +3,6 @@
     padding: 20px 80px 20px 80px;
 }
 
-div.btn
-{
-    padding-left: 330px;
-}
-
 div.inputleft
 {
     float: left;
@@ -21,4 +16,10 @@ div.inputright
 div.inputclear
 {
     clear: both;
+}
+
+#signin-button
+{
+    width: 200px;
+    height: 30px;
 }

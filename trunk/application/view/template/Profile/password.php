@@ -1,41 +1,41 @@
-<?php if(is_object($this->profile)) : ?>
+<div class="midct midct-full">
+    <div class="midct-top">&nbsp;</div>
+    <div class="midct-cen">
+        <div id="pwdchange-ct">
+        <div class="conf-title">Password update</div>
 
-<div id="pwdform">
-<form>
-    <h1><?php echo $this->translation()->password_change ?></h1>
-    <input type="hidden" id="email" value="<?php echo $this->profile->login_email ?>">
-    <input type="hidden" id="user" value="<?php echo $this->profile->hash ?>">
-    <table>
-        <tr>
-        <th><?php echo $this->translation()->email ?>: </th>
-        <td><i><?php echo $this->profile->login_email ?></i></td>
-        </tr>
-        <tr>
-        <th><?php echo $this->translation()->password ?>: </th>
-        <td><input type="password" id="password"></td>
-        </tr>
-        <tr>
-        <th><?php echo $this->translation()->confirm_password ?>: </th>
-        <td><input type="password" id="passwordc"></td>
-        </tr>
-        <tr>
-        <th>&nbsp;</th>
-        <td class="buttons">
-            <input id="pwdchangesubmit" type="button" value="<?php echo $this->translation()->submit ?>">
-        </td>
-        </tr>
-        <tr id="message" style="display:none">
-        <th>&nbsp;</th>
-        <td class="message"></td>
-        </tr>
-    </table>
-</form>
+        <?php if(is_object($this->profile)) : ?>
+
+            <div id="pwdform"><form>
+<input type="hidden" id="email" value="<?php echo $this->profile->login_email ?>">
+<input type="hidden" id="user" value="<?php echo $this->profile->hash ?>">
+            <div class="form-row">
+            <p>Email</p><p><input type="text" class="intxt intxt-full" value="<?php echo $this->profile->login_email ?>" disabled></p>
+            </div>
+            <div class="form-row">
+            <p>Password</p><p><input type="password" class="intxt intxt-full" id="password" value=""></p>
+            </div>
+            <div class="form-row">
+            <p>Confirm password</p><p><input type="password" class="intxt intxt-full" id="passwordc"></p>
+            </div>
+            <br/>
+            <div class="form-bot">
+                <button type="button" id="pwdchangesubmit">CHANGE MY PASSWORD</button>
+            </div>
+            <div id="pwdchange-msg"></div>
+            </form></div>
+
+            <div id="changenotice" style="display:none">
+                <p>Password was successfully updated. To continue using PostCanal.com, click Home and sign in.</p>
+            </div>
+
+        <?php else : ?>
+
+        <p>This URL is no longer valid.</p>
+
+        <?php endif ?>
+
+    </div>
+    </div>
+    <div class="midct-bot">&nbsp;</div>
 </div>
-
-<p id="changenotice" style="display:none"><?php echo $this->translation()->password_change_msg_1 ?>. <a href="/"><?php echo $this->translation()->click_here ?></a> <?php echo $this->translation()->password_change_msg_2 ?></p>
-
-<?php else : ?>
-
-<p><?php echo $this->translation()->link_expired_1 ?> <a href="/"><?php echo $this->translation()->main_page ?></a> <?php echo $this->translation()->link_expired_2 ?>.</p>
-
-<?php endif ?>

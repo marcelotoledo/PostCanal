@@ -13,7 +13,7 @@ $(document).ready(function()
 
         if(_fd.name=='' || _fd.email.indexOf('@')==-1)
         {
-            alert('please fill up the form correctly');
+            alert('Please fill up the form correctly.');
             return false;
         }
 

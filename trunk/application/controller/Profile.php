@@ -100,6 +100,7 @@ class C_Profile extends B_Controller
         {
             B_Log::write(sprintf('trying to register (%s) without invitation blocked', $email), E_WARNING, array('method' => __METHOD__));
             $email = '';
+            $this->view()->message = "This email was not yet accepted for registration.";
         }
         /* TEMPORARY FOR BETA VERSION **********/
 
@@ -262,7 +263,7 @@ class C_Profile extends B_Controller
         $email = $this->request()->email;
         $hash = $this->request()->user;
         $this->view()->accepted = false;
-        $this->view()->message = $this->translation()->confirmation_failed;
+        $this->view()->message = 'New profile registration failed.';
 
         $profile = null;
 
@@ -275,7 +276,7 @@ class C_Profile extends B_Controller
         {
             if($profile->register_confirmation == true)
             {
-                $this->view()->message = $this->translation()->confirmation_already_done;
+                $this->view()->message = 'New profile registration accepted (already done before).';
             }
             else
             {
@@ -284,7 +285,7 @@ class C_Profile extends B_Controller
                 $profile->register_confirmation_time = time();
                 $profile->save();
 
-                $this->view()->message = $this->translation()->confirmation_accepted;
+                $this->view()->message = 'New profile registration accepted.';
             }
 
             $this->view()->accepted = true;
@@ -833,6 +834,7 @@ class C_Profile extends B_Controller
 
         ob_start();
         include APPLICATION_PATH . "/view/template/" . $template . ".php";
+        $mailer->isHTML(true);
         $mailer->setBody(ob_get_clean());
 
         return $mailer->send($email, $template);

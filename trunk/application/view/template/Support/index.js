@@ -14,8 +14,6 @@ function send_email_cb(d)
 
 function send_email()
 {
-    $(window).scrollTop(0);
-
     var _data = { name    : my_template.input_name.val(),
                   email   : my_template.input_email.val(),
                   subject : my_template.input_subject.val(),
@@ -31,6 +29,7 @@ function send_email()
         return false;
     }
 
+    $(window).scrollTop(0);
     do_request('POST', './support', _data, send_email_cb);
 }
 
