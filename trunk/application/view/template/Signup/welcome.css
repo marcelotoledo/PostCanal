@@ -7,11 +7,13 @@ div.inputleft
 {
     float: left;
     width: 350px;
+    text-align: left;
 }
 div.inputright
 {
     float: right;
     width: 350px;
+    text-align: left;
 }
 div.inputclear
 {
