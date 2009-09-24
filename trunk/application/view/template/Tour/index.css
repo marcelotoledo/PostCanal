@@ -2,16 +2,25 @@
 
 div.midct-cen
 {
-    padding: 0px 18px 10px 18px;
+    padding: 0px 10px 0px 10px;
     margin-top: -10px;
     margin-bottom: -20px;
     text-align: left;
 }
 div > div.midct-cen { margin-top: 0px; }
 
+#tour-ct
+{
+    padding: 20px 40px 20px 20px;
+    -moz-border-radius: 9px;
+    -webkit-border-radius: 9px;
+    background-color: #EEF1F2;
+}
+
+
 #vidct
 {
-    text-align: center;
+    text-align: left;
 }
 #morevid
 {
@@ -103,7 +112,6 @@ div.tour-title
     color: #2780B1;
     padding-top: 5px;
     margin-bottom: 10px;
-    margin-left: -2px;
 }
 div.tour-subtitle
 {
@@ -113,7 +121,6 @@ div.tour-subtitle
     color: #2780B1;
     padding-top: 5px;
     margin-bottom: 10px;
-    margin-left: 2px;
 }
 
 div.rgtct-lgt

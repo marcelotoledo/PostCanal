@@ -115,7 +115,11 @@ div.midct-home-tr
 }
 #midct-home-btn
 {
-    background-image: url('./image/index/middle-home-btn.png?v=1253527293');
+    <?php if($this->browser_is_ie6) : ?>
+    background-image: url('./image/index/middle-home-btn-8.png?v=1253813355');
+    <?php else : ?>
+    background-image: url('./image/index/middle-home-btn-24.png?v=1253813355');
+    <?php endif ?>
     width: 208px;
     height: 63px;
     line-height: 58px;

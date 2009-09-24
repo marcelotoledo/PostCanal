@@ -1,32 +1,34 @@
 <div class="midct midct-half">
     <div class="midct-top">&nbsp;</div>
     <div class="midct-cen">
-        <div class="tour-title">Tour</div>
-        <div class="tour-subtitle">Video</div>
-        <div id="vidct">
-            <script type="text/javascript">function playerReady(o) { alert('ok'); }; var flashvars = { src: 'http://dl.getdropbox.com/u/2024254/postcanal_coming_soon-640x360.m4v', themeColor: '2780b1', mode: 'sidebyside', frameColor: '333333', fontColor: 'cccccc', link: '', embed: ''}; var params = { allowFullScreen: 'true', wmode: 'opaque' }; var attributes = { id: 'myPlayer',name: 'myPlayer' }; swfobject.embedSWF('./ovp/AkamaiFlashPlayer.swf', 'myPlayerGoesHere', '544', '408', '9.0.0', './ovp/expressInstall.swf', flashvars, params, attributes);</script>
-            <div id='myPlayerGoesHere'><a href='http://www.adobe.com/go/getflashplayer'><img src='http://www.adobe.com/images/shared/download_buttons/get_flash_player.gif' alt='Get Adobe Flash player' /></a></div>
-        </div>
-        <div id="morevid">More videos</div>
-        <div id="vidgal">
-            <div class="viditm">
-                <div class="vidscr"><img src="./video/pcc_003-edited.jpg" alt=""/></div>
-                <div class="viddsc-sel viddsc">Coming soon</div>
-                <div class="vidclr"></div>
+        <div id="tour-ct">
+            <div class="tour-title">Tour</div>
+            <div class="tour-subtitle">Video</div>
+            <div id="vidct">
+                <script type="text/javascript">function playerReady(o) { alert('ok'); }; var flashvars = { src: 'http://dl.getdropbox.com/u/2024254/postcanal_coming_soon-640x360.m4v', themeColor: '2780b1', mode: 'sidebyside', frameColor: '333333', fontColor: 'cccccc', link: '', embed: ''}; var params = { allowFullScreen: 'true', wmode: 'opaque' }; var attributes = { id: 'myPlayer',name: 'myPlayer' }; swfobject.embedSWF('./ovp/AkamaiFlashPlayer.swf', 'myPlayerGoesHere', '560', '420', '9.0.0', './ovp/expressInstall.swf', flashvars, params, attributes);</script>
+                <div id='myPlayerGoesHere'><a href='http://www.adobe.com/go/getflashplayer'><img src='http://www.adobe.com/images/shared/download_buttons/get_flash_player.gif' alt='Get Adobe Flash player' /></a></div>
             </div>
-            <!--
-            <div class="viditm">
-                <div class="vidscr"><a href="#"><img src="" alt=""/></a></div>
-                <div class="viddsc">Description Lorem ipsum dolor sit amet?</div>
-                <div class="vidclr"></div>
+            <div id="morevid">More videos</div>
+            <div id="vidgal">
+                <div class="viditm">
+                    <div class="vidscr"><img src="./video/pcc_003-edited.jpg" alt=""/></div>
+                    <div class="viddsc-sel viddsc">Coming soon</div>
+                    <div class="vidclr"></div>
+                </div>
+                <!--
+                <div class="viditm">
+                    <div class="vidscr"><a href="#"><img src="" alt=""/></a></div>
+                    <div class="viddsc">Description Lorem ipsum dolor sit amet?</div>
+                    <div class="vidclr"></div>
+                </div>
+                <div class="viditm">
+                    <div class="vidscr"><a href="#"><img src="" alt=""/></a></div>
+                    <div class="viddsc">Description</div>
+                    <div class="vidclr"></div>
+                </div>
+                -->
+                <div class="viditc"></div>
             </div>
-            <div class="viditm">
-                <div class="vidscr"><a href="#"><img src="" alt=""/></a></div>
-                <div class="viddsc">Description</div>
-                <div class="vidclr"></div>
-            </div>
-            -->
-            <div class="viditc"></div>
         </div>
     </div>
     <div class="midct-bot">&nbsp;</div>

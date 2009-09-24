@@ -9,7 +9,7 @@ div.midct-cen
 }
 div > div.midct-cen { margin-top: 0px; }
 
-#signup-ct
+#support-ct
 {
     padding: 20px 40px 20px 20px;
     -moz-border-radius: 9px;
@@ -97,7 +97,9 @@ div.support-title
 }
 div.form-bot
 {
+    <?php if($this->browser_is_ie==false) : ?>
     margin-top: 150px;
+    <?php endif ?>
 }
 
 input.intxt-full

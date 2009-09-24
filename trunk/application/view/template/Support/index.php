@@ -1,7 +1,7 @@
 <div class="midct midct-full">
     <div class="midct-top">&nbsp;</div>
     <div class="midct-cen">
-        <div id="signup-ct">
+        <div id="support-ct">
             <div class="support-title">Support</div>
 
             <div id="emailfrm"><form>

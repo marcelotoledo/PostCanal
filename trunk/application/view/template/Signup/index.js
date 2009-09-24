@@ -135,7 +135,7 @@ $(document).ready(function()
 
     if(my_template.input_email.val()=='')
     {
-        my_template.input_email.blur();
+        my_template.input_name.blur();
         $("#invitationlnk").click();
     }
 });
