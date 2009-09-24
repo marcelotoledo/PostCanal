@@ -40,7 +40,11 @@ a:hover
 }
 div.sprites-img
 {
+    <?php if($this->browser_is_ie6): ?>
+    background-image: url('./image/dashboard/sprites-8.png?v=1253819580');
+    <?php else : ?>
     background-image: url('./image/dashboard/sprites.png?v=1253527293');
+    <?php endif ?>
 }
 #leftlogo
 {
@@ -221,7 +225,7 @@ select.insel
 	color: #464646;
 	font-weight: bold;
 }
-button
+button, input.button-ie
 {
 	height: 20px;
     font-size: 0.7em;

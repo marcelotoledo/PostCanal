@@ -11,7 +11,7 @@
     </div>
     <div id="supportlist">Today we support RSS and Atom feeds.</div>
     <div class="form-bot">
-    <button id="addsubmit">CONTINUE</button>
+    <button id="addsubmit">CONTINUE</button>&nbsp;
     <button id="addcancel">CANCEL</button>
     <div class="inputmessage" id="addmessage"></div>
     </div>
@@ -25,7 +25,7 @@
 <div id="feedoptionsform" class="midct" style="display:none">
 <form>
     <div class="form-bot">
-        <button id="optsubmit" type="button">SAVE</button>
+        <button id="optsubmit" type="button">SAVE</button>&nbsp;
         <button id="optcancel">CANCEL</button>
     </div>
     <div class="inputmessage" id="optmessage"></div>

@@ -47,6 +47,7 @@ div.arttog
     left: 12px;
     width: 20px;
     height: 20px;
+    font-size: 0.1em;
     cursor: pointer;
     cursor: hand;
     background-repeat: no-repeat;
@@ -110,7 +111,11 @@ div.artlnk
 div.artlnk
 {
     float: left;
+    <?php if($this->browser_is_ie6) : ?>
+	background-image: url('./image/dashboard/world_go_blue-8.png?v=1253819580');
+    <?php else : ?>
 	background-image: url('./image/dashboard/world_go_blue.png?v=1253527293');
+    <?php endif ?>
 	background-position: 0px 0px;
     background-repeat: no-repeat;
     width: 24px;
@@ -194,6 +199,12 @@ button.navbtn
     width: 100px;
     margin-left: 5px;
 }
+input.navbtn /* for ie browsers */
+{
+    width: 100px;
+    margin-left: 5px;
+}
+
 #articleprev
 {
     /*

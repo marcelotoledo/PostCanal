@@ -11,7 +11,7 @@
     </div>
     <div id="supportlist">Today we support wordpress.com, wordpress.org, blogger, blogspot, tumblr and twitter.</div>
     <div class="form-bot">
-    <button id="addsubmit">CONTINUE</button>
+    <button id="addsubmit">CONTINUE</button>&nbsp;
     <button id="addcancel">CANCEL</button>
     <div class="inputmessage" id="addmessage"></div>
     <div id="blogtypefailedmsg">This <b>site</b> is not supported.</div>
@@ -46,7 +46,7 @@
         </div>
         -->
         <div class="form-bot">
-        <button class="blogupdatebtn">SAVE</button>
+        <button class="blogupdatebtn">SAVE</button>&nbsp;
         <button class="blogcancelbtn">CANCEL</button>
         </div>
     </form>

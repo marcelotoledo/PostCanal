@@ -16,8 +16,13 @@
 
 <div id="arttop" class="midct">
     <div id="navbar">
+        <?php if($this->browser_is_ie) : ?>
+        <input type="button" class="button-ie navbtn" id="articleprev" value="PREVIOUS">
+        <input type="button" class="button-ie navbtn" id="articlenext" value="NEXT">
+        <?php else : ?>
         <button class="navbtn" type="button" id="articleprev">PREVIOUS</button>
         <button class="navbtn" type="button" id="articlenext">NEXT</button>
+        <?php endif ?>
     </div>
     <div id="navclr"></div>
 </div>
