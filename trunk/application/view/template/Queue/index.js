@@ -40,7 +40,7 @@ function entry_set_status(e, s)
         {
             e.addClass('ety-pub');
             e.find('div.entrydndhdr').addClass('entrydndhdr-pb');
-            e.find('div.etytog').die('click').addClass("etytog-pb").html('P');
+            e.find('div.etytog').replaceWith('<div class="etytog-pb">P</div>');
             e.find('div.etyedlnk').remove();
 
             if(e.is(':visible')) /* move to bottom */
