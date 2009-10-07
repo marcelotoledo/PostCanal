@@ -1,0 +1,102 @@
+================================================================================
+POSTCANAL WEBSERVICES
+Rafael Castilho <rafael@castilho.biz>
+================================================================================
+
+This manual explain how PostCanal Backend should access PostCanal Frontend
+WebServices.
+
+
+1) EXAMPLE OF USAGE
+
+
+   import xmlrpclib
+   server = xmlrpclib.ServerProxy('http://www.postcanal.com/webservice')
+   print server.feed_update_get({ 'token' : 'k20Wuo3W1pYWwuD1Bc4...' })
+   # [{'id': '234', 'feed_url': 'http://rss.home.uol.com.br/index.xml'}]
+
+
+2) METHOD REFERENCE
+
+
+list.feed_update_get(dict)   # get a 'must update' list of feeds 
+
+params : str.token           # token
+         int.total           # total items in return list (optional) default = 1
+return : str.id              # feed identification
+         str.feed_url        # feed url
+
+................................................................................
+
+int.feed_update_post(dict)   # send updates to a feed
+
+params : str.token           # token
+         str.id              # feed identification
+         dict.data           # feed data
+                               see backend/aggregator.py/feed_dump dict format
+return : int                 # total affected (updated) articles
+
+................................................................................
+
+bool.feed_update_reset(dict) # reset the update time for all feeds
+
+params : str.token           # token
+
+.................................................................................
+
+int.feed_update_total(dict)  # total feeds for update
+
+params : str.token           # token
+
+return : int
+
+...............................................................................
+
+list.blog_publish_get(dict)  # get a 'must publish' list of blog entry
+
+params : str.token           # token
+         int.total           # total items in return list (optional) default = 1
+return : str.id              # entry identification
+         str.blog_type       # blog type. see backend/blogtype
+         str.blog_version    # blog type version
+         str.blog_manager_url # blog manager url
+         str.blog_username   # blog publisher username
+         str.blog_password   # blog published password
+         str.entry_title     # entry title
+         str.entry_content   # entry content
+
+................................................................................
+
+bool.blog_publish_set(dict)  # set publication status for blog entry
+
+params : str.token           # token
+         str.id              # feed identification
+         bool.published      # entry was published correctly?
+         string.status       # entry publication status*
+         str.message         # error message (optional)
+ 
+notes : you must choose between bool.published or string.status. using both may cause unexpected behavior
+
+.................................................................................
+
+int.blog_publish_total(dict) # get a total for 'must publish' blog entry
+
+params : str.token           # token
+
+return : int
+
+................................................................................
+
+bool.queue_suggest_do(dict)  # do queue entry suggestion
+
+params : str.token
+
+................................................................................
+
+
+3) MULTI-TASK DATABASE LOCK
+
+feed_update_get  : model_aggregator_feed.updated_at=NOW()
+blog_publish_get : model_user_blog_entry.publication_lock=true
+blog_publish_set : model_user_blog_entry.publication_lock=false
+queue_suggest_do : model_user_blog.enqueueing_auto_updated_at=NOW()

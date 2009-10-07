@@ -1,0 +1,7 @@
+  
+* Criar espelhamento de dados no db (queue, threads, ...)
+  Dessa forma poderemos criar histórico e assim prever o futuro através
+   de analise gráfica e estatistica.
+
+* processPost-post08 	 Failed to publish (38) - (UnicodeEncodeError)
+  Entender porque esta falhando para postar dados.

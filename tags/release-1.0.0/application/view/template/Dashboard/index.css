@@ -1,0 +1,356 @@
+/* avoid unwanted scrollbars */
+
+#maincontainer
+{
+    overflow: hidden;
+}
+
+/* containers */
+
+div.containerhead
+{
+    padding: 10px 0px 10px 15px;
+    background-color: slategray;
+    color: white;
+}
+div.containerhead a
+{
+    color: azure;
+}
+div.containerhead a:hover
+{
+    color: white;
+}
+
+/* feeds */
+
+#feedareahead.areadisabled
+{
+    background-color: gray;
+}
+#feedareatitle
+{
+    float: left;
+    font-size: medium;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+#feeddisplay
+{
+    float: left;
+    padding-left: 30px;
+}
+#articledisplay
+{
+    float: left;
+    padding-left: 15px;
+}
+#feedrefresh
+{
+    float: right;
+    padding-right: 15px;
+}
+#feednavigation
+{
+    float: right;
+    padding-right: 15px;
+}
+
+#feedlistarea
+{
+    overflow: auto;
+    overflow-x: hidden; /* IE scrollbars fixes */
+    overflow-y: scroll;
+}
+
+div.feeditem
+{
+    font-weight: bold;
+    padding: 5px;
+    padding-left: 15px;
+    border-bottom: 1px solid silver;
+    cursor: pointer;
+    cursor: hand;
+    background-color: white; /* fix div hover IE bug */
+}
+div.feeditem:hover
+{
+    background-color: lavender;
+}
+div.feeditemarticles
+{
+    display: none;
+    border-bottom: 2px solid gray;
+}
+div.feeditemthreaded
+{
+    background-color: lavender;
+}
+
+/* article */
+
+div.article
+{
+    padding: 2px;
+    padding-left: 15px;
+    border-bottom: 1px solid silver;
+    vertical-align: middle;
+    background-color: white;
+}
+div.articlehover
+{
+    background-color: khaki;
+}
+div.articleall
+{
+    line-height: 2.4em;
+}
+div.articlethreaded
+{
+    line-height: 1.5em;
+}
+div.articlemore
+{
+    line-height: 2.4em;
+    background-color: lightgray;
+    color: black;
+    cursor: pointer;
+    cursor: hand;
+}
+div.articlemore:hover
+{
+    background-color: khaki;
+    font-weight: bold;
+}
+div.articlequeue
+{
+    float: left;
+    width: 20px;
+    padding-right: 15px;
+}
+div.articlelabel
+{
+    float: left;
+    text-align: left;
+    overflow: hidden;
+    margin-right: 10px;
+    width: 70%;
+    cursor: pointer;
+    cursor: hand;
+    background-image: url("/image/transparent.png?v=1253527293"); /* fix div hover IE bug */
+}
+/*"**/
+div.articlefeed
+{
+    font-weight: xx-small;
+    font-style: oblique; 
+    color: gray;
+    line-height: 1.2em;
+}
+div.articletitle
+{
+    line-height: 1.5em;
+}
+div.articleinfo
+{
+    float: left;
+    text-align: right;
+    margin-right: 15px;
+    background-image: url("/image/transparent.png?v=1253527293"); /* fix div hover IE bug */
+}
+/*"**/
+div.articlebuttons
+{
+    float: right;
+    text-align: right;
+    margin-right: 15px;
+    background-image: url("/image/transparent.png?v=1253527293"); /* fix div hover IE bug */
+}
+/*"**/
+div.articlebuttons a
+{
+    padding-left: 10px;
+}
+div.articlecontent
+{
+    display: none;
+    padding: 15px;
+    border: 2px solid dimgray;
+    border-top: 0;
+    background-image: url("/image/transparent.png"); /* fix div hover IE bug */
+}
+/*"**/
+div.articlecontent h1
+{
+    font-size: large;
+}
+div.articlecontent h2
+{
+    font-size: small;
+    color: gray;
+}
+div.articlecontentshow
+{
+    background-color: khaki;
+    border-bottom: 0;
+    border: 2px solid dimgray;
+    border-bottom: 1px solid gainsboro;
+}
+
+/* queue */
+
+#queuearea
+{
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+}
+#queueareaheightbar
+{
+    background-color: lightgray;
+    line-height: 5px;
+    vertical-align: top;
+}
+/*
+#queueareaheightbar:hover
+{
+    background-color: cyan;
+}
+*/
+#queueareatitle
+{
+    float: left;
+    font-size: medium;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+#queueheightlnks
+{
+    float: right;
+    padding-right: 15px;
+}
+
+#queuelistarea
+{
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    overflow: auto;
+    overflow-x: hidden; /* IE scrollbars fixes */
+    overflow-y: scroll;
+}
+#queuepublication
+{
+    float: left;
+    padding-left: 30px;
+}
+#queueinterval
+{
+    float: left;
+    padding-left: 15px;
+    margin-top: -5px;
+}
+#enqueueing
+{
+    float: left;
+    padding-left: 30px;
+}
+
+/* entry */
+
+div.entry
+{
+    padding: 2px;
+    padding-left: 15px;
+    border-bottom: 1px solid silver;
+    vertical-align: middle;
+    background-color: white;
+}
+div.entryhover
+{
+    background-color: khaki;
+}
+div.entrypublish
+{
+    float: left;
+    width: 20px;
+    padding-right: 15px;
+}
+div.entrylabel
+{
+    float: left;
+    text-align: left;
+    overflow: hidden;
+    margin-right: 10px;
+    width: 70%;
+    cursor: pointer;
+    cursor: hand;
+    background-image: url("/image/transparent.png"); /* fix div hover IE bug */
+}
+/*"**/
+div.entrytitle
+{
+    line-height: 1.5em;
+}
+div.entryinfo
+{
+    float: left;
+    text-align: right;
+    margin-right: 15px;
+    background-image: url("/image/transparent.png"); /* fix div hover IE bug */
+}
+/*"**/
+div.entrybuttons
+{
+    float: right;
+    text-align: right;
+    margin-right: 15px;
+    background-image: url("/image/transparent.png"); /* fix div hover IE bug */
+}
+/*"**/
+div.entrybuttons a
+{
+    padding-left: 10px;
+}
+div.entrycontent
+{
+    padding: 15px;
+    border: 2px solid dimgray;
+    border-top: 0;
+    background-image: url("/image/transparent.png"); /* fix div hover IE bug */
+}
+/*"**/
+div.entrycontent h1
+{
+    font-size: large;
+}
+div.entrycontent h2
+{
+    font-size: small;
+    color: gray;
+}
+div.entrycontentshow
+{
+    background-color: khaki;
+    border-bottom: 0;
+    border: 2px solid dimgray;
+    border-bottom: 1px solid gainsboro;
+}
+
+span.entryeditlabel
+{
+    font-size: large;
+    font-weight: bold;
+    text-transform: capitalize;
+    line-height: 30px;
+}
+form.entryeditform input
+{
+    padding: 5px 2px 5px 2px;
+}
+form.entryeditform textarea
+{
+    padding: 5px 2px 5px 2px;
+}

@@ -1,0 +1,148 @@
+/* middle */
+
+#midct-home-0
+{
+	height: 64px;
+	line-height: 64px;
+	border-left: 1px solid #ACACAC;
+	border-right: 1px solid #ACACAC;
+	font-size: 2.4em;
+	font-weight: bold;
+	color: #124367;
+}
+#midct-home-1
+{
+	height: 276px;
+	background-image: url('image/middle-home.png');
+	background-repeat: no-repeat;
+	background-position: top left;
+}
+#midct-home-2
+{
+	float: left;
+	width: 450px;
+	height: 180px;
+}
+div.midct-home-tr
+{
+	background-image: url('image/middle-home-tr-en_US.png'); /* i18n */
+}
+#midct-home-sp-1
+{
+	height: 125px;
+}
+#midct-home-sp-2
+{
+	float: left;
+	width: 170px;
+	height: 38px;
+}
+#midct-home-sp-3
+{
+	clear: left;
+}
+#midct-home-intl
+{
+	float: left;
+	width: 250px;
+	height: 38px;
+	background-repeat: no-repeat;
+	background-position: top left;
+}
+#midct-home-3
+{
+	float: right;
+	width: 180px;
+	height: 180px;
+}
+#midct-home-rtxt
+{
+	margin: 20px 35px 0px 0px;
+	color: #2780B1;
+	text-align: right;
+	font-size: 1.1em;
+}
+#midct-home-4
+{
+	float: left;
+}
+#midct-home-sp-4
+{
+	width: 380px;
+	height: 20px;
+}
+#midct-home-sp-5
+{
+	float: left;
+	width: 25px;
+	height: 46px;
+}
+#midct-home-yb
+{
+	float: left;
+	width: 345px;
+	height: 46px;
+	background-repeat: no-repeat;
+	background-position: 0px -38px;
+}
+#midct-home-sp-6
+{
+	clear: left;
+}
+#midct-home-5
+{
+	float: right;
+	width: 240px;
+	text-align: left;
+}
+#midct-home-btn
+{
+	background-image: url('image/middle-home-btn.png');
+	width: 208px;
+	height: 63px;
+	line-height: 58px;
+	text-align: left;
+	text-indent: 30px;
+}
+#midct-home-btn a
+{
+	color: white;
+	font-size: 1.2em;
+	font-weight: bold;
+	text-decoration: none;
+}
+#mict-home-x
+{
+	clear: both;
+}
+
+/* right */
+
+input.intxt-rgt
+{
+	width: 200px;
+}
+#btn-signin
+{
+	padding-top: 10px;
+}
+form > #btn-signin
+{
+	padding-top: 30px;
+}
+#notmember
+{
+	padding: 5px 5px 0px 10px;
+	font-size: 1.2em;
+}
+#learnmore
+{
+	padding: 0px 5px 0px 10px;
+}
+#learnmore a
+{
+	color: #FFA800;
+	font-size: 1.6em;
+	font-weight: bold;
+	text-decoration: none;
+}

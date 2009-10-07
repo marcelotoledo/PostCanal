@@ -1,0 +1,142 @@
+#tplbarch
+{
+    float: left;
+    font-weight: bold;
+}
+#tplbarpub
+{
+    float: right;
+    font-size: 0.9em;
+}
+#tplbarint
+{
+    float: right;
+    font-size: 0.9em;
+}
+img.tplbarsep
+{
+    float: right;
+    width: 1px;
+    height: 20px;
+    border-left: 1px solid black;
+    margin: 15px 10px 0px 15px; 
+}
+#tplbarclr
+{
+    clear: both;
+}
+
+#etylst
+{
+    height: 400px;
+    margin-left: 250px;
+    margin-right: 50px;
+    text-align: left;
+    white-space: nowrap;
+    overflow-x: hidden;
+}
+div.ety
+{
+    height: 45px;
+}
+div.ety-cl
+{
+    border-bottom: 2px solid white;
+    background-color: #e1f0f4;
+}
+div.ety-op
+{
+    border: 2px solid #48898c;
+    border-bottom: 1px solid #e1f0f4;
+    background-color: white;
+}
+div.etytog
+{
+    position: relative;
+    float: left;
+    top: 12px;
+    left: 12px;
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    cursor: hand;
+    background-repeat: no-repeat;
+}
+div.etytog-un
+{
+    background-position: -165px 0px;
+}
+div.etytog-ck
+{
+    background-position: -165px -20px;
+}
+div.etylab
+{
+    float: left;
+    margin-left: 20px;
+    margin-top: 5px;
+}
+div.etylab a
+{
+    text-decoration: none;
+    color: black;
+}
+div.etylab a:hover
+{
+    color: #164a66;
+}
+span.etych
+{
+    font-size: 0.9em;
+    font-weight: bold;
+}
+span.etytt
+{
+    font-size: 0.9em;
+}
+div.etylnk
+{
+    position: relative;
+    float: left;
+    top: 16px;
+    left: 10px;
+    width: 23px;
+    height: 20px;
+    cursor: pointer;
+    cursor: hand;
+    background-repeat: no-repeat;
+    background-position: -165px -40px;
+}
+div.etydte
+{
+    float: right;
+    font-size: 0.9em;
+    height: 45px;
+    line-height: 45px;
+    margin-right: 10px;
+}
+div.etyclr
+{
+    clear: both;
+}
+div.etyview
+{
+    border: 2px solid #48898c;
+    border-top: 0;
+    padding: 0px 10px 0px 38px;
+    white-space: normal;
+    background-color: white;
+}
+div.etyview h1
+{
+    line-height: 50px;
+    font-size: 1.6em;
+}
+div.etybody
+{
+    font-size: 0.9em;
+    /*text-align: justify;*/
+    line-height: 1.3em;
+    padding-bottom: 15px;
+    max-width: 650px;
+}

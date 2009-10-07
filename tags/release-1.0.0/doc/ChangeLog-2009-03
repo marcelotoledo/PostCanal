@@ -1,0 +1,150 @@
+==========
+02/03/2009
+==========
+
+- Atualizacoes e melhorias no codigo base
+- Inclusao de classe para gerenciamento de mensagens
+
+HORAS TRABALHADAS: 8h
+
+==========
+04/03/2009
+==========
+
+- Atualizacoes e melhorias no codigo base
+
+HORAS TRABALHADAS: 4h
+
+==========
+06/03/2009
+==========
+
+- Bugfixes
+
+HORAS TRABALHADAS: 8h
+
+==========
+07/03/2009
+==========
+
+- Bugfixes
+
+HORAS TRABALHADAS: 7h
+
+==========
+08/03/2009
+==========
+
+- Bugfixes
+- Novas implementacoes no dashboard
+
+HORAS TRABALHADAS: 5h
+
+==========
+13/03/2009
+==========
+
+- Atualizacoes no layout e javascript do dashboard
+
+HORAS TRABALHADAS: 4h
+
+==========
+14/03/2009
+==========
+
+- Bugfixes
+
+HORAS TRABALHADAS: 4h
+
+==========
+18/03/2009
+==========
+
+- Atualizações no Dashboard
+
+HORAS TRABALHADAS: 6h
+
+==========
+21/03/2009
+==========
+
+- Atualizações no Dashboard
+
+HORAS TRABALHADAS: 7h
+
+==========
+22/03/2009
+==========
+
+- Atualizações no Dashboard
+- Renames (cms > blog, channel > feed)
+- Inclusao de actions para listagem de FEEDS e QUEUE
+
+HORAS TRABALHADAS: 4h
+
+==========
+23/03/2009
+==========
+
+- Atualizações no Dashboard
+
+HORAS TRABALHADAS: 5h
+
+==========
+24/03/2009
+==========
+
+- Inclusão do formulário para adicionar feeds
+
+HORAS TRABALHADAS: 2h
+
+==========
+25/03/2009
+==========
+
+- Inclusao de diagrama de carga de classes (inclued)
+- Implementacao de codigo base monolitico
+- Ajustes nos Javascripts
+
+HORAS TRABALHADAS: 2h
+
+==========
+27/03/2009
+==========
+
+- Implementação de webservice para cadastro de feeds
+
+HORAS TRABALHADAS: 8h
+
+==========
+28/03/2009
+==========
+
+- Implementação de webservice para cadastro de feeds
+
+HORAS TRABALHADAS: 7h
+
+==========
+29/03/2009
+==========
+
+- Implementação de webservice para cadastro de feeds
+
+HORAS TRABALHADAS: 8h
+
+==========
+30/03/2009
+==========
+
+- Implementação de webservice para cadastro de feeds
+
+HORAS TRABALHADAS: 3h
+
+==========
+31/03/2009
+==========
+
+- Correcao de bug com enter keypress / form submit
+- Ajustes na escolha de feeds durante o cadastro de um novo feed no dashboard
+
+HORAS TRABALHADAS: 3h

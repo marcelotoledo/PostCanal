@@ -1,0 +1,140 @@
+/* middle */
+
+div.midct-cen
+{
+    padding: 0px 10px 0px 10px;
+    margin-top: -10px;
+    margin-bottom: -20px;
+    text-align: left;
+}
+div > div.midct-cen { margin-top: 0px; }
+
+#support-ct
+{
+    padding: 20px 40px 20px 20px;
+    -moz-border-radius: 9px;
+    -webkit-border-radius: 9px;
+    background-color: #EEF1F2;
+}
+div.form-title
+{
+    height: 35px;
+    font-size: 1.3em;
+    font-weight: bold;
+    text-align: left;
+    color: #2780B1;
+}
+input.intxt-half
+{
+    width: 270px;
+}
+input.intxt-full
+{
+    width: 565px;
+}
+textarea.intxa-full
+{
+    width: 565px;
+    height: 100px;
+}
+select.insel
+{
+    width: 270px;
+}
+div.form-row-lft
+{
+    float: left;
+}
+div.form-row-rgt
+{
+    float: right;
+}
+div.form-row-x
+{
+    clear: left;
+}
+
+/* right */
+
+div.faq-qst
+{
+    color: white;
+    font-size: 0.8em;
+}
+div.faq-ans
+{
+    color: silver;
+    font-size: 0.8em;
+}
+div.faq-lnk
+{
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid #48898C;
+    font-size: 0.8em;
+    font-weight: bold;
+}
+div.faq-lnk a
+{
+    color: #FF6600;
+    text-decoration: underline;
+}
+
+div.support-title
+{
+    font-size: 2.6em;
+    font-weight: bold;
+    text-align: left;
+    color: #2780B1;
+    padding-top: 5px;
+    margin-bottom: 10px;
+}
+
+#btn-send
+{
+    width: 100px;
+    height: 25px;
+}
+div.form-bot
+{
+    <?php if($this->browser_is_ie==false) : ?>
+    margin-top: 150px;
+    <?php endif ?>
+}
+
+input.intxt-full
+{
+    width: 800px;
+    height: 43px;
+    line-height: 43px;
+    font-size: 2em;
+}
+textarea.intxa-full
+{
+    width: 800px;
+    height: 200px;
+    line-height: 43px;
+    font-size: 2em;
+}
+select.insel-full
+{
+    width: 800px;
+    height: 43px;
+    line-height: 43px;
+    font-size: 2em;
+}
+div.form-row
+{
+    height: 80px;
+}
+#btn-send
+{
+    width: 200px;
+    height: 30px;
+}
+
+#emailmsg
+{
+    margin-top: 25px;
+    margin-bottom: 25px;
+}

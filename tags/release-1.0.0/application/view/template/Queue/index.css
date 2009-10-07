@@ -1,0 +1,329 @@
+body
+{
+    overflow: hidden;
+}
+div.midct
+{
+    margin-right: 0px;
+}
+#tplbar
+{
+    height: 54px;
+    line-height: 54px;
+    margin-right: 50px;
+}
+#tplbaropt
+{
+    height: 54px;
+    line-height: 54px;
+    float: right;
+    font-size: 0.9em;
+}
+#tplbaropt img
+{
+    width: 1px;
+    height: 20px;
+    border-left: 1px solid black;
+    margin: 0px 10px -5px 15px; 
+}
+button.queuepubbtn
+{
+    width: 41px;
+    height: 41px;
+    font-size: 0.6em;
+    overflow: hidden;
+    padding: 0px;
+    <?php if($this->browser_is_ie) : ?>
+    margin: 7px 0px 0px 7px;
+    <?php endif ?>
+	/*background-image: url('./image/dashboard/queue-pp-btn.png');*/
+    /*background-repeat: no-repeat;*/
+    background-image: none;
+	-moz-border-radius: 4px;
+	-webkit-border-radius: 4px;
+}
+#queuepubplay
+{
+    /*background-position: 0px 0px;*/
+    background-color: gray;
+}
+#queuepubpause
+{
+    /*background-position: -40px 0px;*/
+}
+#tplbarclr
+{
+    clear: both;
+}
+
+#etylst
+{
+    margin-right: 0px;
+    height: 400px;
+    overflow-x: hidden;
+    overflow-y: auto;
+    text-align: left;
+}
+div.ety
+{
+    height: 45px;
+    overflow: hidden;
+    white-space: nowrap;
+}
+div.ety-cl
+{
+    border-bottom: 2px solid white;
+    background-color: #e1f0f4;
+}
+div.ety-op
+{
+    border: 2px solid #48898c;
+    border-bottom: 1px solid #e1f0f4;
+    background-color: white;
+}
+div.ety-pub
+{
+    background-color: silver;
+}
+div.entrydndhdr
+{
+    float: left;
+    width: 32px;
+    height: 32px;
+    line-height: 32px;
+    margin-left: 10px;
+    margin-right: 5px;
+    margin-top: 7px;
+    cursor: move;
+	background-image: url('./image/dashboard/btn-dnd.png?v=1253527293');
+}
+div.entrydndhdr-pb
+{
+    background: none;
+    cursor: auto;
+}
+div.etytog
+{
+    position: relative;
+    float: left;
+    top: 12px;
+    left: 12px;
+    width: 20px;
+    height: 20px;
+    font-size: 0.1em;
+    cursor: pointer;
+    cursor: hand;
+    background-repeat: no-repeat;
+    font-weight: bold;
+}
+div.etytog-pb
+{
+    position: relative;
+    float: left;
+    top: 12px;
+    left: 12px;
+    width: 20px;
+    height: 20px;
+    font-size: 1em;
+    font-weight: bold;
+    text-align: center;
+    border: 2px solid black;
+}
+div.etytog-un
+{
+    background-position: -165px 0px;
+}
+div.etytog-ck
+{
+    background-position: -165px -20px;
+}
+div.etylab
+{
+    float: left;
+    margin-left: 20px;
+    margin-top: 5px;
+    overflow: hidden;
+    white-space: nowrap;
+}
+div.etylab a
+{
+    text-decoration: none;
+    color: black;
+}
+div.etylab a:hover
+{
+    color: #164a66;
+}
+span.etytt
+{
+    font-size: 1em;
+    line-height: 35px;
+    font-weight: bold;
+    overflow: hidden;
+    white-space: nowrap;
+}
+/*
+div.etyedlnk
+{
+    position: relative;
+    float: left;
+    top: 15px;
+    left: 10px;
+    width: 23px;
+    height: 20px;
+    cursor: pointer;
+    cursor: hand;
+    background-repeat: no-repeat;
+    background-position: -165px -40px;
+}
+*/
+div.etyedlnk
+{
+    float: left;
+    <?php if($this->browser_is_ie6) : ?>
+	background-image: url('./image/dashboard/page_text_edit-8.png?v=1253819580');
+    <?php else : ?>
+	background-image: url('./image/dashboard/page_text_edit.png?v=1253527293');
+    <?php endif ?>
+	background-position: 0px 0px;
+    background-repeat: no-repeat;
+    width: 24px;
+    height: 24px;
+    margin-top: 14px;
+    margin-left: 5px;
+}
+div.etyedlnk a
+{
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+div.etydte
+{
+    float: right;
+    font-size: 0.9em;
+    height: 45px;
+    line-height: 45px;
+    margin-right: 10px;
+}
+div.etyclr
+{
+    clear: both;
+}
+
+/* entry view style [ */
+div.etyview
+{
+    border: 2px solid #48898c;
+    border-top: 0;
+    padding: 0px 10px 0px 38px;
+    white-space: normal;
+    background-color: white;
+}
+div.etyview h1
+{
+    font-size: 1.5em;
+    padding: 10px 0 10px 0;
+    max-width: 650px;
+}
+div.etybody
+{
+    font-size: 90%;
+    /*text-align: justify;*/
+    padding-bottom: 15px;
+    max-width: 650px;
+    overflow: hidden;
+}
+div.etybody p
+{
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+div.etybody img
+{
+    /* float: left */
+    padding: 0px 10px 0px 10px;
+}
+/* entry view style ] */
+
+#entryblank
+{
+    display: none;
+}
+#contentblank
+{
+    display: none;
+}
+div.b-modal
+{
+    position: absolute;
+    z-index: 4001;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: black;
+}
+#editform
+{
+    display: none;
+    position: absolute;
+    z-index: 5001;
+    top: 0;
+    left: 0;
+    background-color: white;
+    text-align: left;
+    border: 2px solid #48898c;
+}
+#editform form
+{
+    margin: 20px;
+}
+input.intxt-full
+{
+    width: 700px;
+}
+textarea.intxa-full
+{
+    width: 400px;
+}
+#editform-bot
+{
+    position: absolute;
+}
+
+#noentrymsg
+{
+    display: none;
+    text-align: left;
+    margin-top: 25px;
+    margin-right: 100px;
+    font-size: 1.4em;
+    color: gray;
+}
+#checkicon
+{
+    background: none;
+    border: 0;
+    -moz-border-radius: 0px;
+    -webkit-border-radius: 0px;
+    padding: 0;
+    margin: 0;
+    width: 23px;
+    height: 21px;
+    cursor: default
+}
+#checkicon div
+{
+    width: 20px;
+    height: 20px;
+    background-position: -165px -20px;
+}
+
+<?php if($this->browser_is_ie) : ?>
+div.ui-sortable-helper /* fix wrong IE margin in sortable */
+{
+    margin-top: -150px;
+    margin-left: -250px;
+}
+<?php endif ?>

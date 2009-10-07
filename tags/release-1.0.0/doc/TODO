@@ -1,0 +1,36 @@
+26/04/09 a 02/05/09
+
+    @ Incluir editor WYSIWYG na edição de um artigo do queue
+    * Gravar alterações de um artigo do queue
+    * Remover artigo do queue
+    * Ordenar artigo do queue
+
+    * Testar login (e publicacao de draft) durante o cadastro de um blog
+    @ Gerenciador de blogs cadastrados
+    @ Alterar blogs cadastrados
+
+03/05/09 a 09/05/09
+
+    @ Gerenciador de feeds cadastrados
+    @ Desativar feed cadastrado
+    @ Remover feed cadastrado
+    @ Permitir importar feeds a partir de OPML
+
+    * Diferenciar itens Não lidos na lista de artigos de um feed
+    * Diferenciar itens Publicados na lista de artigos de um feed
+    X Marcar com estrela um artigo de feed
+    @ Paginação de artigos de um feed
+    * Incluir botão no rodapé que permite adicionar um artigo de feed ao queue
+
+10/05/09 a 16/05/09
+
+    @ Novo feed incluir no topo da lista
+    @ Exibir artigos de todos os feeds
+    X Exibir artigos de feeds marcados com estrela
+    @ Ordenar canais de feed
+    ~ Exibir info de feed (url, descrição, data/hora da próxima alteração)
+
+    X Adicionar separador redimensionável no Dashboard para Itens de feed / Queue
+
+    ~ Método de alimentação (manual, automático ...)
+    ~ Método de publicação (manual, automático ...)
