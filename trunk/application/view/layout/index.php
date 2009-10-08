@@ -29,9 +29,9 @@ $this->browser_is_opera = (strpos($this->browser, 'opera')>0);
 <script type="text/javascript" src="./thickbox/thickbox-compressed.js?v=1253526829"></script>
 <link rel="stylesheet" href="./thickbox/thickbox.css?v=1253526829" type="text/css" media="screen"/>
 <?php endif ?>
-<?php if($this->request()->getController()=='tour') : ?>
-<script type='text/javascript' src='./ovp/swfobject.js?v=1253526829'></script>
-<?php endif ?>
+<?#php if($this->request()->getController()=='tour') : ?>
+<!--<script type='text/javascript' src='./ovp/swfobject.js?v=1253526829'></script>-->
+<?#php endif ?>
 
 <script type="text/javascript"><?php $this->includeLayout('general.js') ?></script>
 <script type="text/javascript"><?php $this->includeLayout('index.js') ?></script>
