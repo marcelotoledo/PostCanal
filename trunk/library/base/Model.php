@@ -50,6 +50,13 @@ abstract class B_Model
     protected $data = array();
 
     /**
+     * Modified data
+     *
+     * @var array
+     */
+    protected $modified = array();
+
+    /**
      * Table name
      *
      * @var string
@@ -150,6 +157,12 @@ abstract class B_Model
             }
         }
 
+        if(array_key_exists($name, $this->data) && 
+           $this->data[$name]!=$value)
+        {
+            $this->modified[$name] = true;
+        }
+
         $this->data[$name] = $value;
     }
 
@@ -206,29 +219,27 @@ abstract class B_Model
 
         $this->sanitize();
 
-        /* ignore non-column data and split name=>value */
-
-        $structure = $this->getTableStructure();
-        $scolumns = array_keys($structure);
-        $dcolumns = array_keys($this->data);
-
-        $ndata = array_diff($dcolumns, $scolumns);
         $datak = array();
         $datav = array();
         $datac = 0;
 
-        foreach($this->data as $name => $value)
-        {
-            if(in_array($name, $ndata)==false)
-            {
-                $datak[] = $name;
-                $datav[] = $value;
-                $datac++;
-            }
-        }
+        /* INSERT */
 
         if($this->isNew())
         {
+            $ndata = array_diff(array_keys($this->data), 
+                                array_keys($this->getTableStructure()));
+
+            foreach($this->data as $name => $value)
+            {
+                if(in_array($name, $ndata)==false)
+                {
+                    $datak[] = $name;
+                    $datav[] = $value;
+                    $datac++;
+                }
+            }
+
             $sql = "INSERT INTO " . $this->getTableName() . " " . 
                    "(" . implode(", ", $datak) . ") VALUES " .
                    "(?" . str_repeat(", ?", $datac - 1) . ")";
@@ -238,12 +249,33 @@ abstract class B_Model
             $this->setPrimaryKey($id);
             $saved = ($id > 0);
         }
+
+        /* UPDATE */
+
         else
         {
+            $mdata = array_keys($this->modified);
+            $tdata = count($mdata);
+
+            if($tdata==0 || ($tdata==1 && current($mdata)=='updated_at'))
+            {
+                return false; // nothing to update 
+            }
+
+            foreach($this->data as $name => $value)
+            {
+                if(in_array($name, $mdata))
+                {
+                    $datak[] = $name;
+                    $datav[] = $value;
+                    $datac++;
+                }
+            }
+
             $sql = "UPDATE " . $this->getTableName() .
                    " SET " . implode(" = ?, ", $datak) . " = ?" .
                    " WHERE " . $this->getPrimaryKeyName() . " = ?";
-            
+        
             array_push($datav, $this->getPrimaryKey());
 
             $affected = self::execute($sql, $datav);
