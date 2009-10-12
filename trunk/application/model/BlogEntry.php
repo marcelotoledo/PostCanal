@@ -140,23 +140,7 @@ class BlogEntry extends B_Model
 
     const ENTRY_WORKING_TIMEOUT_DEFAULT = 60;
 
-
-    /* set override */
-    public function __set ($name, $value)
-    {
-        if($name=='publication_status' || $name=='publication_date')
-        {
-            if(in_array($this->publication_status, array(
-            /* publication status and date are in read-only mode when
-               status has one of these values */
-                self::STATUS_WORKING, self::STATUS_PUBLISHED
-            ))) return false;
-        }
-
-        parent::__set($name, $value);
-    }
-
-
+    
     /**
      * Save model
      *
@@ -222,7 +206,7 @@ class BlogEntry extends B_Model
     }
 
     /**
-     * find las published entries
+     * find last published entries
      *
      * @return array
      */
@@ -685,6 +669,7 @@ class BlogEntry extends B_Model
         if($interval<=0)
         {
             $interval = intval(B_Registry::get('application/queue/publicationMargin'));
+            if($interval<=0) $interval = 0;
         }
 
         $t = time();
@@ -699,10 +684,15 @@ class BlogEntry extends B_Model
 
         foreach($queue = self::findQueue($user, $blog) as $o)
         {
-            $o->publication_status = ($publication==true) ? 
-                self::STATUS_WAITING : self::STATUS_IDLE ;
-            $o->publication_date = ($t+=$interval);
-            $o->save();
+
+            if($o->publication_status!=self::STATUS_WORKING)
+            /* update only when entry status is not working */
+            {
+                $o->publication_status = ($publication==true) ? 
+                    self::STATUS_WAITING : self::STATUS_IDLE ;
+                $o->publication_date = ($t+=$interval);
+                $o->save();
+            }
         }
     }
 
