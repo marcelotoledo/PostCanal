@@ -119,6 +119,9 @@ class AggregatorFeed extends B_Model
 
     // -------------------------------------------------------------------------
 
+    const DEFAULT_UPDATE_TIME = 600;
+
+
     /**
      * Save model
      *
@@ -126,6 +129,16 @@ class AggregatorFeed extends B_Model
      */
     public function save()
     {
+        /* set minimum update time (when necessary) */
+
+        $mut = intval(B_Registry::get('application/feed/minimumUpdateTime'));
+        if($mut<=0) $mut = self::DEFAULT_UPDATE_TIME;
+
+        if(intval($this->feed_update_time) < $mut)
+        {
+            $this->feed_update_time = $mut;
+        }
+
         /* generate article md5 */
 
         if($this->isNew()) 

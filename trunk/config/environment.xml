@@ -90,6 +90,7 @@
         </profile>
         <feed>
             <!-- discover life time (feed cache) -->
+            <minimumUpdateTime>60</minimumUpdateTime>
             <discoverLife>1296000</discoverLife>
         </feed>
         <queue>
@@ -104,8 +105,8 @@
             <subjectPrefix>[support]</subjectPrefix>
         </support>
         <report>
-            <username>pcreport</username>
-            <password>nRa82McFyT</password>
+            <username>report</username>
+            <password>report</password>
         </report>
     </application>
     <zend>
