@@ -138,6 +138,24 @@ class BlogEntry extends B_Model
 
     const ENQUEUEING_AUTO_MAX_ENTRIES = 10;
 
+    const ENTRY_WORKING_TIMEOUT_DEFAULT = 60;
+
+
+    /* set override */
+    public function __set ($name, $value)
+    {
+        if($name=='publication_status' || $name=='publication_date')
+        {
+            if(in_array($this->publication_status, array(
+            /* publication status and date are in read-only mode when
+               status has one of these values */
+                self::STATUS_WORKING, self::STATUS_PUBLISHED
+            ))) return false;
+        }
+
+        parent::__set($name, $value);
+    }
+
 
     /**
      * Save model
@@ -250,6 +268,27 @@ class BlogEntry extends B_Model
     }
 
     /**
+     * Update entry working timeout to failed
+     * This will free entries without PCD status response
+     */
+    public static function updateWorkingPublicationTimeout()
+    {
+        $sql = "UPDATE model_user_blog_entry
+                SET publication_status = ?
+                WHERE publication_status = ?
+                AND (UNIX_TIMESTAMP(publication_date) + ?) < UNIX_TIMESTAMP()";
+
+        $timeout = intval(B_Registry::get('application/queue/entryWorkingTimeout'));
+        if($timeout<=0) $timeout = self::ENTRY_WORKING_TIMEOUT_DEFAULT;
+
+        $affected = self::execute($sql, array(self::STATUS_FAILED, 
+                                              self::STATUS_WORKING, 
+                                              $timeout));
+
+        B_Log::write(sprintf('working publication timeout updated %d entries to failed', $affected), E_WARNING);
+    }
+
+    /**
      * Get blog entries that need publication
      * 
      * @return  array
@@ -274,24 +313,23 @@ class BlogEntry extends B_Model
                     model_blog_type AS c ON (b.blog_type_id = c.blog_type_id) 
                 LEFT JOIN
                     model_aggregator_feed_article AS d ON (a.aggregator_feed_article_id = d.aggregator_feed_article_id)
-                WHERE
-                    (       a.publication_status = ? 
-                        OR (a.publication_status = ? AND (UNIX_TIMESTAMP(a.updated_at) + ?) < UNIX_TIMESTAMP())
-                    )
-                    AND a.publication_date < NOW() 
-                    AND a.deleted = 0
+                WHERE a.publication_status = ?
+                AND a.publication_date <= NOW() 
+                AND a.deleted = 0
                 ORDER BY
                     a.ordering ASC
                 LIMIT " . intval($limit);
 
+        self::updateWorkingPublicationTimeout();
         self::transaction();
 
-        if(($res = self::select($sql, array(self::STATUS_WAITING, self::STATUS_WORKING, intval(B_Registry::get('application/queue/entryWorkingTimeout'))), PDO::FETCH_ASSOC)))
+        if(($res = self::select($sql, array(self::STATUS_WAITING), PDO::FETCH_ASSOC)))
         {
             /* working status avoid duplicated items on backend */
 
             $sql = "UPDATE model_user_blog_entry
                     SET publication_status='" . self::STATUS_WORKING . "', 
+                        publication_date=NOW(),
                         updated_at=NOW()
                     WHERE user_blog_entry_id=?";
 
@@ -661,8 +699,8 @@ class BlogEntry extends B_Model
 
         foreach($queue = self::findQueue($user, $blog) as $o)
         {
-            $o->publication_status = ($publication==true) ? self::STATUS_WAITING :
-                                                            self::STATUS_IDLE ;
+            $o->publication_status = ($publication==true) ? 
+                self::STATUS_WAITING : self::STATUS_IDLE ;
             $o->publication_date = ($t+=$interval);
             $o->save();
         }
