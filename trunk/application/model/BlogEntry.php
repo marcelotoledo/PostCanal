@@ -917,7 +917,7 @@ class BlogEntry extends B_Model
             self::newFromArticleBlogId($ma, $blog->blog_id);
             $_m = "suggestion of article (" . $ma . ") " . 
                   "added to blog (" . $blog->blog_id . ")";
-            B_Log::write($_m, E_NOTICE);
+            // B_Log::write($_m, E_NOTICE); // disabled
         }
 
         return $blog->blog_id;

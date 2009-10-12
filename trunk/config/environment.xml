@@ -89,8 +89,8 @@
             <quotaPublicationPeriod>60</quotaPublicationPeriod>
         </profile>
         <feed>
-            <!-- discover life time (feed cache) -->
             <minimumUpdateTime>60</minimumUpdateTime>
+            <!-- discover life time (feed cache) -->
             <discoverLife>1296000</discoverLife>
         </feed>
         <queue>
