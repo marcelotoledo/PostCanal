@@ -269,7 +269,10 @@ class BlogEntry extends B_Model
                                               self::STATUS_WORKING, 
                                               $timeout));
 
-        B_Log::write(sprintf('working publication timeout updated %d entries to failed', $affected), E_WARNING);
+        if($affected>0)
+        {
+            B_Log::write(sprintf('working publication timeout updated %d entries to failed', $affected), E_WARNING);
+        }
     }
 
     /**
