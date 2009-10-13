@@ -13,7 +13,7 @@
 #midct-home-1
 {
     height: 276px;
-    background-image: url('./image/index/middle-home.png?v=1253527293');
+    background-image: url('/image/index/middle-home.png?v=1253527293');
     background-repeat: no-repeat;
     background-position: top left;
 }
@@ -26,9 +26,9 @@
 div.midct-home-tr
 {
     <?php if($this->browser_is_ie6) : ?>
-    background-image: url('./image/index/middle-home-8-en_US.png?v=1253527293'); /* i18n */
+    background-image: url('/image/index/middle-home-8-en_US.png?v=1253527293'); /* i18n */
     <?php else : ?>
-    background-image: url('./image/index/middle-home-24-en_US.png?v=1253527293'); /* i18n */
+    background-image: url('/image/index/middle-home-24-en_US.png?v=1253527293'); /* i18n */
     <?php endif ?>
 }
 #midct-home-sp-1
@@ -116,9 +116,9 @@ div.midct-home-tr
 #midct-home-btn
 {
     <?php if($this->browser_is_ie6) : ?>
-    background-image: url('./image/index/middle-home-btn-8.png?v=1253813355');
+    background-image: url('/image/index/middle-home-btn-8.png?v=1253813355');
     <?php else : ?>
-    background-image: url('./image/index/middle-home-btn-24.png?v=1253813355');
+    background-image: url('/image/index/middle-home-btn-24.png?v=1253813355');
     <?php endif ?>
     width: 208px;
     height: 63px;

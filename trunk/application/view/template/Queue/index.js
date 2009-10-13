@@ -34,7 +34,7 @@ function entry_set_status(e, s)
         //}
         if(s=='failed')
         {
-            e.find('div.etylab').append('<nobr><img src="./image/warning.png"/></nobr>');
+            e.find('div.etylab').append('<nobr><img src="/image/warning.png"/></nobr>');
         }
         if(s=='published')
         {
@@ -178,7 +178,7 @@ function entry_list_callback(d)
 
 function entry_list()
 {
-    do_request('GET', './queue/list', { blog : my_blog.current }, entry_list_callback);
+    do_request('GET', '/queue/list', { blog : my_blog.current }, entry_list_callback);
 }
 
 function entry_scroll_top()
@@ -235,6 +235,7 @@ function entry_show(e)
 
         _content.find('h1').html(my_queue.data[e].title);
         _content.find('div.etybody').html(my_queue.data[e].content);
+        _content.find('div.etybody').find('a').attr('target', '_blank'); /* add target _blank to all links */
 
         if(my_queue.current.hasClass('ety-op')==false)
         {
@@ -251,9 +252,9 @@ function queue_editor_init()
         height: ($(window).height() - 350),
         toolbarCanCollapse : false,
         resize_enabled : false,
-        contentsCss : './css/ck_content.css'
+        contentsCss : '/css/ck_content.css'
     });
-    //CKEDITOR.config.contentCss = './css/ck_content.css';
+    //CKEDITOR.config.contentCss = '/css/ck_content.css';
 
     /*
     var _sz = { W : $(window).width()  * 0.75 , 
@@ -319,7 +320,7 @@ function entry_save_current()
         content : CKEDITOR.instances.entrybody.getData()
     };
 
-    do_request('POST', './queue/update', _data, entry_save_callback);
+    do_request('POST', '/queue/update', _data, entry_save_callback);
 }
 
 function entry_delete_callback(d)
@@ -331,7 +332,7 @@ function entry_delete(e)
 {
     var _data = { blog  : my_blog.current , entry : e };
     entry_hide_current();
-    do_request('POST', './queue/delete', _data, entry_delete_callback);
+    do_request('POST', '/queue/delete', _data, entry_delete_callback);
 }
 
 function entry_position_callback(d)
@@ -343,7 +344,7 @@ function entry_position_callback(d)
 function entry_position(e, p)
 {
     var _data = { blog  : my_blog.current , entry : e, position: p };
-    do_request('POST', './queue/position', _data, entry_position_callback);
+    do_request('POST', '/queue/position', _data, entry_position_callback);
 }
 
 function entry_sortable_callback(e)
@@ -413,7 +414,7 @@ function set_queue_publication_auto()
                   interval    : my_queue.interval ,
                   publication : (my_queue.publication ? 1 : 0) };
 
-    do_request('POST', './queue/auto', _data, function() { entry_list(); });
+    do_request('POST', '/queue/auto', _data, function() { entry_list(); });
 }
 
 function toggle_queue_enqueueing()
@@ -490,7 +491,7 @@ function publication_updater()
     {
         _wdom.each(function() { _wpar.push($(this).attr('entry')); });
         _data = { blog : my_blog.current, waiting : _wpar.join(',') };
-        do_request('GET', './queue/check', _data, publication_updater_callback);
+        do_request('GET', '/queue/check', _data, publication_updater_callback);
     }
 }
 
@@ -503,7 +504,7 @@ function enqueue_updater()
 {
     if(my_queue.enqueueing!=true || my_updater.request==true) { return false; }
     _data = { blog : my_blog.current };
-    do_request('GET', './queue/list', _data, enqueue_updater_callback);
+    do_request('GET', '/queue/list', _data, enqueue_updater_callback);
 }
 
 function updater_run()

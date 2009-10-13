@@ -54,4 +54,4 @@
 -->
 <div id="midclear"></div>
 
-<a class="thickbox" href="./signup/invitation?KeepThis=true&height=500&width=640&TB_iframe=true&modal=true" id="invitationlnk"></a>
+<a class="thickbox" href="/signup/invitation?KeepThis=true&height=500&width=640&TB_iframe=true&modal=true" id="invitationlnk"></a>

@@ -6,7 +6,7 @@
 body
 {
 	text-align: center;
-	/*background-image: url('./image/dashboard/bg-body.png');
+	/*background-image: url('/image/dashboard/bg-body.png');
 	background-position: 0px 0px;*/
 	font-family: "Trebuchet MS", Verdana, Geneva, Arial, Helvetica, sans-serif;
     overflow-x: hidden;
@@ -27,7 +27,7 @@ a:hover
 
 #mainct
 {
-	/*background-image: url('./image/dashboard/bg-head.png');
+	/*background-image: url('/image/dashboard/bg-head.png');
 	background-repeat: repeat-x;
 	background-position: top left;*/
 }
@@ -41,9 +41,9 @@ a:hover
 div.sprites-img
 {
     <?php if($this->browser_is_ie6): ?>
-    background-image: url('./image/dashboard/sprites-8.png?v=1253819580');
+    background-image: url('/image/dashboard/sprites-8.png?v=1253819580');
     <?php else : ?>
-    background-image: url('./image/dashboard/sprites.png?v=1253527293');
+    background-image: url('/image/dashboard/sprites.png?v=1253527293');
     <?php endif ?>
 }
 #leftlogo
@@ -233,7 +233,7 @@ button, input.button-ie
 	font-weight: bold;
 	padding: 0px 5px 0px 5px;
     border: 0;
-	background-image: url('./image/index/btn-bg.png?v=1253527293');
+	background-image: url('/image/index/btn-bg.png?v=1253527293');
 	background-repeat: repeat-x;
 	background-position: 0px 0px;
 	background-color: #FF6600;

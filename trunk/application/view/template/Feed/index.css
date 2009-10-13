@@ -63,7 +63,7 @@ div.feeddndhdr
     margin-right: 10px;
     margin-top: 4px;
     cursor: move;
-    background-image: url('./image/dashboard/btn-dnd.png?v=1253527293');
+    background-image: url('/image/dashboard/btn-dnd.png?v=1253527293');
 }
 div.feedtit
 {

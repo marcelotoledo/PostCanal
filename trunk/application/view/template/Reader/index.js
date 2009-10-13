@@ -97,7 +97,7 @@ function feed_list()
     var _data = { blog    : my_blog.current ,
                   enabled : true };
 
-    do_request('GET', './feed/list', _data, feed_list_callback);
+    do_request('GET', '/feed/list', _data, feed_list_callback);
 }
 
 /* ARTICLES */
@@ -216,7 +216,7 @@ function article_list_callback(d)
 
 function article_list(older)
 {
-    var _url = ((my_feed.current) ? './article/threaded' : './article/all');
+    var _url = ((my_feed.current) ? '/article/threaded' : '/article/all');
 
     var _data = { blog  : my_blog.current ,
                   feed  : my_feed.current ,
@@ -364,7 +364,7 @@ function queue_add(f, a)
                   feed    : f,
                   article : a };
 
-    do_request('GET', './queue/add', _data, queue_add_callback);
+    do_request('GET', '/queue/add', _data, queue_add_callback);
 }
 
 function queue_delete_callback(d)
@@ -381,7 +381,7 @@ function queue_delete_callback(d)
 function queue_delete(e)
 {
     var _data = { blog  : my_blog.current , entry : e };
-    do_request('POST', './queue/delete', _data, queue_delete_callback);
+    do_request('POST', '/queue/delete', _data, queue_delete_callback);
 }
 
 function on_blog_change()
@@ -453,7 +453,7 @@ $(document).ready(function()
 
     function no_blog()
     {
-        document.location='./site';
+        document.location='/site';
     }
 
     function initialize()

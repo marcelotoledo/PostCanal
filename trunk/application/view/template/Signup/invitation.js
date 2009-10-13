@@ -17,7 +17,7 @@ $(document).ready(function()
             return false;
         }
 
-        do_request('POST', './signup/invitation', _fd, invitation_cb);
+        do_request('POST', '/signup/invitation', _fd, invitation_cb);
     });
 
     $("#cancelbtn").click(function()

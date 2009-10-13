@@ -35,7 +35,7 @@ function email_change()
         return false;
     }
 
-    do_request('POST', './profile/email', _data, email_change_callback);
+    do_request('POST', '/profile/email', _data, email_change_callback);
 }
 
 

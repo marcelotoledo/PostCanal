@@ -42,7 +42,7 @@ function password_recovery()
         return false;
     }
 
-    do_request('POST', './profile/password', _data, password_recovery_callback);
+    do_request('POST', '/profile/password', _data, password_recovery_callback);
 };
 
 

@@ -26,7 +26,7 @@ function edit_submit()
                   local_timezone  : my_template.timezone.val() // ,
                /* local_culture   : my_template.culture.val() */ };
 
-    do_request('POST', './profile/edit', _data, edit_submit_callback);
+    do_request('POST', '/profile/edit', _data, edit_submit_callback);
 }
 
 function pwdchange_message(m)
@@ -66,7 +66,7 @@ function pwdchange_submit()
         return false;
     }
 
-    do_request('POST', './profile/password', _data, pwdchange_submit_callback);
+    do_request('POST', '/profile/password', _data, pwdchange_submit_callback);
 }
 
 function emlchange_message(m)
@@ -90,7 +90,7 @@ function emlchange_submit()
         return false;
     }
 
-    do_request('POST', './profile/email', _data, emlchange_submit_callback);
+    do_request('POST', '/profile/email', _data, emlchange_submit_callback);
 }
 
 function timezone_populate(d)
@@ -114,7 +114,7 @@ function timezone_populate(d)
 
 function on_blog_change()
 {
-    // document.location='./reader'; TODO
+    // document.location='/reader'; TODO
 }
 
 $(document).ready(function()
@@ -151,7 +151,7 @@ $(document).ready(function()
 
     function load_timezone()
     {
-        do_request('GET', './profile/timezone', { territory: selected_territory() }, timezone_populate);
+        do_request('GET', '/profile/timezone', { territory: selected_territory() }, timezone_populate);
     }
     
     function initialize()

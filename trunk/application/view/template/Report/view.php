@@ -2,7 +2,7 @@
 
 <h2>View report :: <?php echo $this->report_name ?></h2>
 
-<p><a href="./report">go back</a></p>
+<p><a href="/report">go back</a></p>
 
 <p>
 <table id="report-view" style="border:2px solid gray">

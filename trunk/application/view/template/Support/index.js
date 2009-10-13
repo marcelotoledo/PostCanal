@@ -30,7 +30,7 @@ function send_email()
     }
 
     $(window).scrollTop(0);
-    do_request('POST', './support', _data, send_email_cb);
+    do_request('POST', '/support', _data, send_email_cb);
 }
 
 

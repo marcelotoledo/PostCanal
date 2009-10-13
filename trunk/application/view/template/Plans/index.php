@@ -31,7 +31,7 @@
                 <div class="planprc">$0/month</div>
             </div>
             <div class="planclr"></div><br/>
-            <div id="signupfree"><a href="./signup">Sign Up FREE!! <?php if($this->browser_is_ie6) : ?><img src="./image/index/middle-plans-arw-8.png"/><?php else : ?><img src="./image/index/middle-plans-arw-24.png"/><?php endif ?></a></div>
+            <div id="signupfree"><a href="/signup">Sign Up FREE!! <?php if($this->browser_is_ie6) : ?><img src="/image/index/middle-plans-arw-8.png"/><?php else : ?><img src="/image/index/middle-plans-arw-24.png"/><?php endif ?></a></div>
             <div id="midbotclr"></div>
         </div>
     </div>

@@ -10,13 +10,13 @@ function register_submit_cb(d)
     if(d.length==0) { server_error(); return null; }
     if(d.find('register').text()=="true") 
     {
-        window.location="./signup/welcome";
+        window.location="/signup/welcome";
     }
     else
     {
         //register_msg(d.find('message').text());
         alert(d.find('message').text());
-        window.location="./signup";
+        window.location="/signup";
     }
 }
 
@@ -62,7 +62,7 @@ function register_submit()
     }
 
     $(window).scrollTop(0);
-    do_request('POST', './profile/register', _data, register_submit_cb);
+    do_request('POST', '/profile/register', _data, register_submit_cb);
 }
 
 
@@ -113,7 +113,7 @@ $(document).ready(function()
     {
         var _data = { territory : selected_country() };
         my_template.input_timezone.attr('disabled', true);
-        do_request('POST', './profile/timezone', _data , load_timezone_cb);
+        do_request('POST', '/profile/timezone', _data , load_timezone_cb);
     }
 
     my_template.input_country.change(function()

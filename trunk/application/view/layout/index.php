@@ -16,21 +16,20 @@ $this->browser_is_opera = (strpos($this->browser, 'opera')>0);
 <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
 <meta http-equiv="X-UA-Compatible" content="IE=EmulateIE7"/>
 <link rel="alternate" type="application/rss+xml" title="RSS 2.0" href="http://blog.postcanal.com/feed/" />
-<base href="<?php echo BASE_URL ?>" />
 
 <title>PostCanal.com</title>
 
-<script type="text/javascript" src="./jquery/jquery-1.3.2.min.js"></script>
-<script type="text/javascript" src="./js/application.js?v=1253528538"></script>
-<link rel="stylesheet" href="./css/application.css?v=1253528121" type="text/css" media="screen"/>
+<script type="text/javascript" src="/jquery/jquery-1.3.2.min.js"></script>
+<script type="text/javascript" src="/js/application.js?v=1253528538"></script>
+<link rel="stylesheet" href="/css/application.css?v=1253528121" type="text/css" media="screen"/>
 
 <?php if($this->request()->getController()=='tour' ||
          $this->request()->getController()=='signup') : ?>
-<script type="text/javascript" src="./thickbox/thickbox-compressed.js?v=1253526829"></script>
-<link rel="stylesheet" href="./thickbox/thickbox.css?v=1253526829" type="text/css" media="screen"/>
+<script type="text/javascript" src="/thickbox/thickbox-compressed.js?v=1253526829"></script>
+<link rel="stylesheet" href="/thickbox/thickbox.css?v=1253526829" type="text/css" media="screen"/>
 <?php endif ?>
 <?#php if($this->request()->getController()=='tour') : ?>
-<!--<script type='text/javascript' src='./ovp/swfobject.js?v=1253526829'></script>-->
+<!--<script type='text/javascript' src='/ovp/swfobject.js?v=1253526829'></script>-->
 <?#php endif ?>
 
 <script type="text/javascript"><?php $this->includeLayout('general.js') ?></script>
@@ -55,7 +54,7 @@ $this->browser_is_opera = (strpos($this->browser, 'opera')>0);
         <div class="menuitm menuitm-ebd menuitm-left">Home</div>
         <div class="menuitm toprowimg sepbrd sepbrd-ebd-r">&nbsp;</div>
         <?php else : ?>
-        <div class="menuitm menuitm-left"><a class="menulnk" href="./">Home</a></div>
+        <div class="menuitm menuitm-left"><a class="menulnk" href="/">Home</a></div>
         <?php if($this->request()->getController()=='signup') : ?>
         <div class="menuitm toprowimg sepbrd sepbrd-ebd-l">&nbsp;</div>
         <?php else : ?>
@@ -69,7 +68,7 @@ $this->browser_is_opera = (strpos($this->browser, 'opera')>0);
         <div class="menuitm toprowimg signuparw-ebd" id="signuparw">&nbsp;</div>
         <div class="menuitm toprowimg sepbrd sepbrd-ebd-r">&nbsp;</div>
         <?php else : ?>
-        <div class="menuitm"><a class="menulnk" href="./signup">Sign Up</a></div>
+        <div class="menuitm"><a class="menulnk" href="/signup">Sign Up</a></div>
         <div class="menuitm toprowimg signuparw-dbd" id="signuparw">&nbsp;</div>
         <?php if($this->request()->getController()=='tour') : ?>
         <div class="menuitm toprowimg sepbrd sepbrd-ebd-l">&nbsp;</div>
@@ -83,7 +82,7 @@ $this->browser_is_opera = (strpos($this->browser, 'opera')>0);
         <div class="menuitm menuitm-ebd">Tour</div>
         <div class="menuitm toprowimg sepbrd sepbrd-ebd-r">&nbsp;</div>
         <?php else : ?>
-        <div class="menuitm"><a class="menulnk" href="./tour">Tour</a></div>
+        <div class="menuitm"><a class="menulnk" href="/tour">Tour</a></div>
         <?php if($this->request()->getController()=='plans') : ?>
         <div class="menuitm toprowimg sepbrd sepbrd-ebd-l">&nbsp;</div>
         <?php else : ?>
@@ -96,7 +95,7 @@ $this->browser_is_opera = (strpos($this->browser, 'opera')>0);
         <div class="menuitm menuitm-ebd">Plans <span style="font-family:sans-serif;font-weight:normal">&amp;</span> Prices</div>
         <div class="menuitm toprowimg sepbrd sepbrd-ebd-r">&nbsp;</div>
         <?php else : ?>
-        <div class="menuitm"><a class="menulnk" href="./plans">Plans <span style="font-family:sans-serif;font-weight:normal">&amp;</span> Prices</a></div>
+        <div class="menuitm"><a class="menulnk" href="/plans">Plans <span style="font-family:sans-serif;font-weight:normal">&amp;</span> Prices</a></div>
         <?php if($this->request()->getController()=='support') : ?>
         <div class="menuitm toprowimg sepbrd sepbrd-ebd-l">&nbsp;</div>
         <?php else : ?>
@@ -108,7 +107,7 @@ $this->browser_is_opera = (strpos($this->browser, 'opera')>0);
         <?php if($this->request()->getController()=='support') : ?>
         <div class="menuitm menuitm-ebd menuitm-right">Support</div>
         <?php else : ?>
-        <div class="menuitm menuitm-right"><a class="menulnk" href="./support">Support</a></div>
+        <div class="menuitm menuitm-right"><a class="menulnk" href="/support">Support</a></div>
         <?php endif ?>
         <div id="menuitmclr"></div>
     </div>

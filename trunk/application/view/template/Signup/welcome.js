@@ -11,6 +11,6 @@ $(document).ready(function()
 
     mytpl.signinbtn.click(function() 
     {
-        location='./';
+        location='/';
     });
 });

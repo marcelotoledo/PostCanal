@@ -166,7 +166,7 @@ function feed_discover()
     }
 
     add_message(''); 
-    do_request('POST', './feed/discover', _data, feed_discover_callback);
+    do_request('POST', '/feed/discover', _data, feed_discover_callback);
 }
 
 function feed_add_callback(d)
@@ -184,7 +184,7 @@ function feed_add(u)
 {
     var _data = { url : u, blog: my_blog.current };
     add_message(''); 
-    do_request('POST', './feed/add', _data, feed_add_callback);
+    do_request('POST', '/feed/add', _data, feed_add_callback);
 }
 
 function feed_list_callback(d)
@@ -212,7 +212,7 @@ function feed_list()
     $.ajax
     ({
         type: "GET",
-        url: "./feed/list",
+        url: "/feed/list",
         dataType: "xml",
         data: { blog: my_blog.current },
         beforeSend: function () { set_active_request(true); },
@@ -274,7 +274,7 @@ function feed_delete_callback(d)
 function feed_delete(f)
 {
     var _data = { blog: my_blog.current, feed: f };
-    do_request('POST', './feed/delete', _data, feed_delete_callback);
+    do_request('POST', '/feed/delete', _data, feed_delete_callback);
 }
 
 function feed_update_callback(d)
@@ -300,7 +300,7 @@ function feed_update(f)
         feed_title : my_template.feed_list_ref[f].item.find("input[name='title']").val()
     }
 
-    do_request('POST', './feed/update', _up, feed_update_callback);
+    do_request('POST', '/feed/update', _up, feed_update_callback);
 }
 
 function feed_position_callback(d)
@@ -314,7 +314,7 @@ function feed_position_callback(d)
 function feed_position(f, p)
 {
     var _data = { blog : my_blog.current, feed : f, position : p };
-    do_request('POST', './feed/position', _data, feed_position_callback);
+    do_request('POST', '/feed/position', _data, feed_position_callback);
 }
 
 function sortable_callback(feed)

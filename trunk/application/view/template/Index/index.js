@@ -11,7 +11,7 @@ function login_submit_cb(d)
     if(d.length==0) { server_error(); return null; }
     if(d.find('login').text()=="true") 
     {
-        window.location="./reader";
+        window.location="/reader";
     }
     else
     {
@@ -30,7 +30,7 @@ function login_submit()
         return false;
     }
 
-    do_request('POST', './profile/login', _data, login_submit_cb);
+    do_request('POST', '/profile/login', _data, login_submit_cb);
 }
 
 function login_show()
@@ -77,7 +77,7 @@ function recovery_submit()
         return false;
     }
 
-    do_request('POST', './profile/recovery', { email: _data }, recovery_submit_cb);
+    do_request('POST', '/profile/recovery', { email: _data }, recovery_submit_cb);
 }
 
 

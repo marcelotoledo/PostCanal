@@ -6,18 +6,17 @@
 
 <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
 <meta http-equiv="X-UA-Compatible" content="IE=EmulateIE7"/>
-<base href="<?php echo BASE_URL ?>" />
 
 <title>PostCanal.com</title>
 
-<script type="text/javascript" src="./jquery/jquery-1.3.2.min.js"></script>
-<script type="text/javascript" src="./jquery/jquery-ui-1.7.1.custom.min.js"></script>
+<script type="text/javascript" src="/jquery/jquery-1.3.2.min.js"></script>
+<script type="text/javascript" src="/jquery/jquery-ui-1.7.1.custom.min.js"></script>
 <?php if($this->request()->getController()=='queue' &&
          $this->request()->getAction()=='index') : ?>
-<script type="text/javascript" src="./ckeditor/ckeditor.js?v=1253526829"></script>
+<script type="text/javascript" src="/ckeditor/ckeditor.js?v=1253526829"></script>
 <?php endif ?>
-<script type="text/javascript" src="./js/application.js?v=1253528538"></script>
-<link rel="stylesheet" href="./css/application.css?v=1253528121" type="text/css" media="screen"/>
+<script type="text/javascript" src="/js/application.js?v=1253528538"></script>
+<link rel="stylesheet" href="/css/application.css?v=1253528121" type="text/css" media="screen"/>
 
 <script type="text/javascript"><?php $this->includeLayout('general.js') ?></script>
 <script type="text/javascript"><?php $this->includeLayout('dashboard.js') ?></script>
@@ -40,17 +39,17 @@
                 <?php if($this->request()->getController()=='site') : ?>
                 Manage your Sites
                 <?php else : ?>
-                <a href="./site">Manage your Sites</a>
+                <a href="/site">Manage your Sites</a>
                 <?php endif ?>
             </div>
             <div class="menutopfmt" id="menutopright">
                 <?php if($this->request()->getController()=='profile') : ?>
                 Edit Settings
                 <?php else : ?>
-                <a href="./profile/edit">Edit Settings</a>
+                <a href="/profile/edit">Edit Settings</a>
                 <?php endif ?>
                 <img class="fakespcimg">
-                <a href="./profile/logout">Sign Out</a>
+                <a href="/profile/logout">Sign Out</a>
             </div>
             <div id="menutopclr"></div>
         </div>
@@ -67,19 +66,19 @@
                 <?php if($this->request()->getController()=='feed') : ?>
                 Manage Feeds
                 <?php else : ?>
-                <a href="./feed">Manage Feeds</a>
+                <a href="/feed">Manage Feeds</a>
                 <?php endif ?>
                 <img>
                 <?php if($this->request()->getController()=='reader') : ?>
                 Reader
                 <?php else : ?>
-                <a href="./reader">Reader</a>
+                <a href="/reader">Reader</a>
                 <?php endif ?>
                 <img>
                 <?php if($this->request()->getController()=='queue') : ?>
                 Queue
                 <?php else : ?>
-                <a href="./queue">Queue</a>
+                <a href="/queue">Queue</a>
                 <?php endif ?>
             </div>
             <div class="menubotfmt" id="menubotright">

@@ -5,9 +5,9 @@
 <meta http-equiv="X-UA-Compatible" content="IE=EmulateIE7"/>
 <base href="<?php echo BASE_URL ?>" />
 
-<script type="text/javascript" src="./jquery/jquery-1.3.2.min.js"></script>
-<script type="text/javascript" src="./js/application.js"></script>
-<link rel="stylesheet" href="./css/application.css" type="text/css" media="screen"/>
+<script type="text/javascript" src="/jquery/jquery-1.3.2.min.js"></script>
+<script type="text/javascript" src="/js/application.js"></script>
+<link rel="stylesheet" href="/css/application.css" type="text/css" media="screen"/>
 
 <script type="text/javascript"><?php $this->includeLayout('general.js') ?></script>
 <script type="text/javascript"><?php $this->includeLayout('index.js') ?></script>

@@ -21,7 +21,7 @@ function report_list_callback(d)
 
 function report_list()
 {
-    do_request('GET', './report/list', {} , report_list_callback);
+    do_request('GET', '/report/list', {} , report_list_callback);
 }
 
 function report_edit_callback(d)
@@ -42,7 +42,7 @@ function report_edit_callback(d)
 
 function report_edit(i)
 {
-    do_request('GET', './report/edit', { id : i }, report_edit_callback);
+    do_request('GET', '/report/edit', { id : i }, report_edit_callback);
 }
 
 function report_update_callback(d)
@@ -77,7 +77,7 @@ function report_update()
     }
 
     $(window).scrollTop(0);
-    do_request('POST', './report/edit', d, report_update_callback);
+    do_request('POST', '/report/edit', d, report_update_callback);
 }
 
 function report_submit_complete()
@@ -118,7 +118,7 @@ function report_add()
     }
 
     $(window).scrollTop(0);
-    do_request('POST', './report/add', d, report_add_callback);
+    do_request('POST', '/report/add', d, report_add_callback);
 }
 
 function report_delete_callback(d)
@@ -140,7 +140,7 @@ function report_delete_callback(d)
 
 function report_delete(i)
 {
-    do_request('POST', './report/delete', { id : i }, report_delete_callback);
+    do_request('POST', '/report/delete', { id : i }, report_delete_callback);
 }
 
 
@@ -187,7 +187,7 @@ $(document).ready(function()
 
     my_template.report_list.find('a[href="#view"]').live('click', function()
     {
-        document.location='./report/view?id=' + $(this).get_report_id_from_parent();
+        document.location='/report/view?id=' + $(this).get_report_id_from_parent();
         $(this).blur();
         return false;
     });

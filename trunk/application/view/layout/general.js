@@ -26,7 +26,7 @@ function do_request(t, u, d, c)
 
 function server_error()
 {
-    if(active_request<=0) { document.location='./ouch'; }
+    if(active_request<=0) { document.location='/ouch'; }
 }
 
 function flash_message(m)

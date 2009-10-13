@@ -36,7 +36,7 @@ button.queuepubbtn
     <?php if($this->browser_is_ie) : ?>
     margin: 7px 0px 0px 7px;
     <?php endif ?>
-	/*background-image: url('./image/dashboard/queue-pp-btn.png');*/
+	/*background-image: url('/image/dashboard/queue-pp-btn.png');*/
     /*background-repeat: no-repeat;*/
     background-image: none;
 	-moz-border-radius: 4px;
@@ -95,7 +95,7 @@ div.entrydndhdr
     margin-right: 5px;
     margin-top: 7px;
     cursor: move;
-	background-image: url('./image/dashboard/btn-dnd.png?v=1253527293');
+	background-image: url('/image/dashboard/btn-dnd.png?v=1253527293');
 }
 div.entrydndhdr-pb
 {
@@ -181,9 +181,9 @@ div.etyedlnk
 {
     float: left;
     <?php if($this->browser_is_ie6) : ?>
-	background-image: url('./image/dashboard/page_text_edit-8.png?v=1253819580');
+	background-image: url('/image/dashboard/page_text_edit-8.png?v=1253819580');
     <?php else : ?>
-	background-image: url('./image/dashboard/page_text_edit.png?v=1253527293');
+	background-image: url('/image/dashboard/page_text_edit.png?v=1253527293');
     <?php endif ?>
 	background-position: 0px 0px;
     background-repeat: no-repeat;

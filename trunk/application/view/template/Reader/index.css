@@ -112,9 +112,9 @@ div.artlnk
 {
     float: left;
     <?php if($this->browser_is_ie6) : ?>
-	background-image: url('./image/dashboard/world_go_blue-8.png?v=1253819580');
+	background-image: url('/image/dashboard/world_go_blue-8.png?v=1253819580');
     <?php else : ?>
-	background-image: url('./image/dashboard/world_go_blue.png?v=1253527293');
+	background-image: url('/image/dashboard/world_go_blue.png?v=1253527293');
     <?php endif ?>
 	background-position: 0px 0px;
     background-repeat: no-repeat;

@@ -27,7 +27,7 @@
             <div id="midct-home-sp-6"></div>
         </div>
         <div id="midct-home-5">
-            <div id="midct-home-btn"><a href="./tour">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;TOUR&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</a></div>
+            <div id="midct-home-btn"><a href="/tour">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;TOUR&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</a></div>
         </div>
         <div id="midct-home-x"></div>
     </div>
@@ -78,7 +78,7 @@
 
     <div class="rgtct-hrd">
         <div id="notmember">Not a member?</div>
-        <div id="learnmore"><a href="./signup">Learn More!</a></div>
+        <div id="learnmore"><a href="/signup">Learn More!</a></div>
     </div>
 </div>
 <div id="midclear"></div>

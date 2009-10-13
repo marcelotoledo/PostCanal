@@ -7,10 +7,10 @@
 
 <title>PostCanal.com</title>
 
-<script type="text/javascript" src="./jquery/jquery-1.3.2.min.js"></script>
-<script type="text/javascript" src="./jquery/jquery-ui-1.7.1.custom.min.js"></script>
-<script type="text/javascript" src="./js/application.js?v=1253528538"></script>
-<link rel="stylesheet" href="./css/application.css?v=1253528121" type="text/css" media="screen"/>
+<script type="text/javascript" src="/jquery/jquery-1.3.2.min.js"></script>
+<script type="text/javascript" src="/jquery/jquery-ui-1.7.1.custom.min.js"></script>
+<script type="text/javascript" src="/js/application.js?v=1253528538"></script>
+<link rel="stylesheet" href="/css/application.css?v=1253528121" type="text/css" media="screen"/>
 <script type="text/javascript"><?php $this->includeLayout('general.js') ?></script>
 <script type="text/javascript"><?php $this->includeTemplate('js') ?></script>
 

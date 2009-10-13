@@ -132,7 +132,7 @@ function blog_add()
         my_template.new_blog_url.val(_u);
     }
 
-    do_request('POST', './site/add', { url: _u }, blog_add_callback);
+    do_request('POST', '/site/add', { url: _u }, blog_add_callback);
 }
 
 function blog_list_callback(d)
@@ -145,7 +145,7 @@ function blog_list_callback(d)
 
 function blog_list()
 {
-    do_request('GET', './site/list', { }, blog_list_callback);
+    do_request('GET', '/site/list', { }, blog_list_callback);
 }
 
 function blog_edit_show(b)
@@ -204,7 +204,7 @@ function blog_delete_callback(d)
 
 function blog_delete(b)
 {
-    do_request('POST', './site/delete', { blog: b }, blog_delete_callback);
+    do_request('POST', '/site/delete', { blog: b }, blog_delete_callback);
 }
 
 function blog_update_callback(d)
@@ -233,12 +233,12 @@ function blog_update(b)
         // keywords      : my_template.blog_list_ref[b].item.find("input[name='keywords']").val()
     }
 
-    do_request('POST', './site/update', _up, blog_update_callback);
+    do_request('POST', '/site/update', _up, blog_update_callback);
 }
 
 function on_blog_change()
 {
-    // document.location='./reader'; TODO
+    // document.location='/reader'; TODO
 }
 
 $(document).ready(function()
