@@ -58,6 +58,10 @@ div.toprowimg
 	float: left;
 	background-position: 0px 0px;
 }
+#toplogo h1, h2 /* semantic only */
+{
+    display: none;
+}
 #logobeta
 {
     margin-top: 76px;

@@ -13,11 +13,23 @@ $this->browser_is_opera = (strpos($this->browser, 'opera')>0);
 <html>
 <head>
 
-<meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
-<meta http-equiv="X-UA-Compatible" content="IE=EmulateIE7"/>
-<link rel="alternate" type="application/rss+xml" title="RSS 2.0" href="http://blog.postcanal.com/feed/" />
+<?php     if($this->request()->getController()=='signup') : ?>
+<title>Signup - PostCanal.com</title>
+<?php elseif($this->request()->getController()=='tour') : ?>
+<title>Tour - PostCanal.com</title>
+<?php elseif($this->request()->getController()=='plans') : ?>
+<title>Plans & Prices - PostCanal.com</title>
+<?php elseif($this->request()->getController()=='support') : ?>
+<title>Support - PostCanal.com</title>
+<?php else : ?>
+<title>PostCanal.com - We help you publish content</title>
+<?php endif ?>
+<meta name="description" content="Publish content with perfection! Increase visitors, revenues, quality of your Blog, Twitter and more!">
+<meta name="keywords" content="postcanal, blog, feed, twitter, wordpress, blogger">
 
-<title>PostCanal.com</title>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=EmulateIE7">
+<link rel="alternate" type="application/rss+xml" title="RSS 2.0" href="http://blog.postcanal.com/feed/" />
 
 <script type="text/javascript" src="/jquery/jquery-1.3.2.min.js"></script>
 <script type="text/javascript" src="/js/application.js?v=1253528538"></script>
@@ -45,6 +57,8 @@ $this->browser_is_opera = (strpos($this->browser, 'opera')>0);
 <div id="toprow">
     <div class="menuitm" id="menursp">&nbsp;</div>
     <div class="toprowimg" id="toplogo">
+        <h1>PostCanal.com</h1>
+        <h2>we help you publish content</h2>
         <div id="logobeta">beta</div>
         <div id="tagline">we help you publish content</div>
     </div>

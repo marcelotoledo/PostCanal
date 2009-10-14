@@ -113,7 +113,7 @@ $(document).ready(function()
     {
         if(active_request==false) { login_submit(); }
         $(this).blur();
-        return null;
+        return false;
     });
 
     my_template.link_recovery.click(function()

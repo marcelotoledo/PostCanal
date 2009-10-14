@@ -3,7 +3,6 @@
 
 <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
 <meta http-equiv="X-UA-Compatible" content="IE=EmulateIE7"/>
-<base href="<?php echo BASE_URL ?>" />
 
 <title>PostCanal.com</title>
 

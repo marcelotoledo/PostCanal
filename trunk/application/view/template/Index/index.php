@@ -38,7 +38,7 @@
     <div class="rgtct-ttl" id="retrieved-ttl">Retrieved password!</div>
 
     <div class="rgtct-lgt" id="login-fc">
-        <form id="login-form">
+        <form id="login-form" action="#">
         <div class="form-row">
             <p>Email</p><p><input type="text" class="intxt intxt-rgt" name="email" id="login-email"></p>
         </div>
