@@ -73,6 +73,7 @@ function blog_add_callback(d)
 
         var _b = d.find('blog').text();
         var _n = d.find('name').text();
+        var _u = d.find('url').text();
 
         my_template.blog_list_ref[_b].item.find('div.donotchangepwd').hide();
         my_template.blog_list_ref[_b].item.find('input[name="password"]').show();
@@ -87,6 +88,15 @@ function blog_add_callback(d)
             $("#noblogmsg1").hide(100);
             $("#noblogmsg2").show(100);
         }
+
+        // wordpress install remote publishing tip
+
+        if(d.find('type_name').text()=='wordpress' &&
+           _u.indexOf('wordpress.com')==-1)
+        {
+            $("#wordpress-remote-publishing").show();
+        }
+           
     }
     if(_status=="<?php echo C_Site::ADD_STATUS_OVERQUOTA ?>")
     {

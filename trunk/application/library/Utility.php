@@ -56,7 +56,7 @@ class L_Utility
     {
         $m = array();
         preg_match("#^(.*?//)*([\w\.\d]*)(:(\d+))*(/*)(.*)$#", $url, $m);
-        return ucwords(str_replace('.', ' ', $m[2] . '.' . $m[6]));
+        return ucwords(trim(str_replace('.', ' ', $m[2] . '.' . $m[6])));
     }
 
     /**

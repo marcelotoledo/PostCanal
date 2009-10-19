@@ -40,6 +40,7 @@
         <div class="form-row">
         <p>Password</p><p><input type="password" name="password" class="intxt intxt-full" style="display:none"><div class="donotchangepwd"><input type="checkbox" name="donotchangepwd" checked> keep unchanged</div></p>
         </div>
+        <div id="wordpress-remote-publishing" style="display:none"><img src="/image/warning.png"> You must enable <b>Remote Publishing</b> in WordPress<br/><small>Go to your WordPress admin, click on Settings &rarr; Writing and check <b>XML-RPC</b> option</small></div>
         <div class="form-bot">
         <button class="blogupdatebtn">SAVE</button>&nbsp;
         <button class="blogcancelbtn">CANCEL</button>

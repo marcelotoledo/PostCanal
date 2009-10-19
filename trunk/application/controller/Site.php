@@ -106,6 +106,8 @@ class C_Site extends B_Controller
             return false;
         }
 
+        $this->view()->type_name = $discover->type_name;
+
         $status = self::ADD_STATUS_FAILED;
 
         if($discover->url_accepted == false)

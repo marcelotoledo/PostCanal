@@ -151,3 +151,14 @@ div.noblogmsg
     font-size: 0.8em;
     color: gray;
 }
+
+#wordpress-remote-publishing
+{
+    color: #2780b1;
+    background-color: white;
+    padding: 10px;
+    margin-top: 10px;
+    margin-bottom: 15px;
+    border: 2px solid tomato;
+    max-width: 500px;
+}
