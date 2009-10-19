@@ -76,6 +76,7 @@ function blog_add_callback(d)
 
         my_template.blog_list_ref[_b].item.find('div.donotchangepwd').hide();
         my_template.blog_list_ref[_b].item.find('input[name="password"]').show();
+        my_template.blog_list_ref[_b].item.find('input[name="username"]').focus();
 
         // add new blog to blogs select box
         my_template.blog_list_select.append('<option value="' + _b + '" selected>' + _n + '</option>');
@@ -229,8 +230,17 @@ function blog_update(b)
         blog          : b,
         name          : my_template.blog_list_ref[b].item.find("input[name='name']").val(),
         blog_username : my_template.blog_list_ref[b].item.find("input[name='username']").val(),
-        blog_password : my_template.blog_list_ref[b].item.find("input[name='password']").val()
-        // keywords      : my_template.blog_list_ref[b].item.find("input[name='keywords']").val()
+        blog_password : my_template.blog_list_ref[b].item.find("input[name='password']").val(),
+        blog_password_is_visible : my_template.blog_list_ref[b].item.find("input[name='password']").is(':visible')
+    }
+
+    add_message(''); 
+
+    if(_up.name=='' || _up.blog_username=='' ||
+       (_up.blog_password=='' && _up.blog_password_is_visible))
+    {
+        alert("Please fill this form correctly with Name, Username and Password");
+        return null;
     }
 
     do_request('POST', '/site/update', _up, blog_update_callback);

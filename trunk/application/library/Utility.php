@@ -31,7 +31,6 @@ class L_Utility
      * Fix URL
      * 
      * @param   string      $url
-     * @return  string
      */
     public static function fixURL(&$url)
     {
@@ -45,6 +44,19 @@ class L_Utility
         $resource = empty($m[6]) ? ""        : $m[5] . $m[6];
 
         $url = $protocol . $address . $port . $resource;
+    }
+
+    /**
+     * Title from URL
+     * 
+     * @param   string      $url
+     * @return  string
+     */
+    public static function titleFromURL($url)
+    {
+        $m = array();
+        preg_match("#^(.*?//)*([\w\.\d]*)(:(\d+))*(/*)(.*)$#", $url, $m);
+        return ucwords(str_replace('.', ' ', $m[2] . '.' . $m[6]));
     }
 
     /**

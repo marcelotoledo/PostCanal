@@ -40,11 +40,6 @@
         <div class="form-row">
         <p>Password</p><p><input type="password" name="password" class="intxt intxt-full" style="display:none"><div class="donotchangepwd"><input type="checkbox" name="donotchangepwd" checked> keep unchanged</div></p>
         </div>
-        <!--
-        <div class="form-row">
-        <p>Keywords</p><p><input type="text" name="keywords" class="intxt intxt-full"></p>
-        </div>
-        -->
         <div class="form-bot">
         <button class="blogupdatebtn">SAVE</button>&nbsp;
         <button class="blogcancelbtn">CANCEL</button>

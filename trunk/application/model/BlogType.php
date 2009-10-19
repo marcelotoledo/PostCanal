@@ -186,6 +186,8 @@ class BlogType extends B_Model
             $discover->type_accepted = true;
         }
 
+        $discover->title = L_Utility::titleFromURL($url);
+
         return $discover;
     }
 

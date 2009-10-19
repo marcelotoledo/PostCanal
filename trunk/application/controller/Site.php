@@ -128,19 +128,13 @@ class C_Site extends B_Controller
             $status = self::ADD_STATUS_OK;
 
             $blog = new UserBlog();
-            $blog->user_profile_id = $this->session()->user_profile_id;
-            $blog->blog_type_id    = $discover->blog_type_id;
-            $blog->blog_url        = $discover->url;
-            $blog->name            = $discover->title;
-
-            if(strlen($blog->name)==0)
-            {
-                $blog->name = $this->translation()->my_new_site;
-            }
-
-            $blog->blog_manager_url = $discover->manager_url;
+            $blog->user_profile_id    = $this->session()->user_profile_id;
+            $blog->blog_type_id       = $discover->blog_type_id;
+            $blog->blog_url           = $discover->url;
+            $blog->name               = $discover->title;
+            $blog->blog_manager_url   = $discover->manager_url;
             $blog->blog_type_revision = $discover->revision;
-            $blog->blog_username = $discover->username;
+            $blog->blog_username      = $discover->username;
 
             try
             {
