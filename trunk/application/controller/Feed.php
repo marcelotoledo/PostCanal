@@ -28,6 +28,12 @@ class C_Feed extends B_Controller
         $blogs = UserBlog::findByUser($id, $enabled=true);
         $this->view()->blogs = $blogs;
         $this->view()->settings = UserDashboard::getByUser($id);
+
+        if(count($blogs)==0)
+        {
+            header('Location: /site');
+            exit(0);
+        }
     }
 
     /**

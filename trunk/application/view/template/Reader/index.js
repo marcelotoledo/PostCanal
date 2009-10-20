@@ -453,7 +453,7 @@ $(document).ready(function()
 
     function no_blog()
     {
-        document.location='/site';
+        //document.location='/site';
     }
 
     function initialize()
