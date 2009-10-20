@@ -5,11 +5,7 @@
             <div class="tour-title">Tour</div>
             <div class="tour-subtitle">Video</div>
             <div id="vidct">
-                <object width="585" height="355"><param name="movie" value="http://www.youtube.com/v/Q6OVHOLE69s&hl=en&fs=1&rel=0"></param><param name="allowFullScreen" value="true"></param><param name="allowscriptaccess" value="always"></param><embed src="http://www.youtube.com/v/Q6OVHOLE69s&hl=en&fs=1&rel=0" type="application/x-shockwave-flash" allowscriptaccess="always" allowfullscreen="true" width="585" height="355"></embed></object>
-                <!--
-                <script type="text/javascript">function playerReady(o) { alert('ok'); }; var flashvars = { src: 'http://dl.getdropbox.com/u/2024254/postcanal_coming_soon-640x360.m4v', themeColor: '2780b1', mode: 'sidebyside', frameColor: '333333', fontColor: 'cccccc', link: '', embed: ''}; var params = { allowFullScreen: 'true', wmode: 'opaque' }; var attributes = { id: 'myPlayer',name: 'myPlayer' }; swfobject.embedSWF('/ovp/AkamaiFlashPlayer.swf', 'myPlayerGoesHere', '560', '420', '9.0.0', '/ovp/expressInstall.swf', flashvars, params, attributes);</script>
-                <div id='myPlayerGoesHere'><a href='http://www.adobe.com/go/getflashplayer'><img src='http://www.adobe.com/images/shared/download_buttons/get_flash_player.gif' alt='Get Adobe Flash player' /></a></div>
-                -->
+                <object width="585" height="355"><param name="WMode" value="transparent"></param><param name="movie" value="http://www.youtube.com/v/Q6OVHOLE69s&hl=en&fs=1&rel=0"></param><param name="allowFullScreen" value="true"></param><param name="allowscriptaccess" value="always"></param><embed src="http://www.youtube.com/v/Q6OVHOLE69s&hl=en&fs=1&rel=0" type="application/x-shockwave-flash" wmode="transparent" allowscriptaccess="always" allowfullscreen="true" width="585" height="355"></embed></object>
             </div>
             <div id="morevid">More videos</div>
             <div id="vidgal">
