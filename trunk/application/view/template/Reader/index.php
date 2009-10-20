@@ -1,4 +1,4 @@
-<div id="tplbar" class="midct">
+<div id="tplbar" class="midct" style="display:<?php echo ($this->total_feed>0) ? 'block' : 'none' ?>">
     <div id="tplbartt">All items</div>
     <div id="tplbaropt">
         <b>Show:</b> <a href="#" id="articleexpandedlnk">Expanded</a> <span id="articleexpandedlab">Expanded</span> | <a href="#" id="articlelistlnk">List</a> <span id="articlelistlab">List</span>
@@ -6,7 +6,7 @@
     <div id="tplbarclr"></div>
 </div>
 
-<div id="midmenu">
+<div id="midmenu" style="display:<?php echo ($this->total_feed>0) ? 'block' : 'none' ?>">
     <h1>Subscribed Feeds</h1>
     <div class="chlst" id="chtop">
         <div class="ch" id="chall">&raquo; <a href="#" id="chall">All items</a></div>
@@ -14,7 +14,7 @@
     <div class="chlst" id="chlst"></div>
 </div>
 
-<div id="arttop" class="midct">
+<div id="arttop" class="midct" style="display:<?php echo ($this->total_feed>0) ? 'block' : 'none' ?>">
     <div id="navbar">
         <?php if($this->browser_is_ie) : ?>
         <input type="button" class="button-ie navbtn" id="articleprev" value="PREVIOUS">
@@ -27,7 +27,7 @@
     <div id="navclr"></div>
 </div>
 
-<div id="artlst" class="midct"></div>
+<div id="artlst" class="midct" style="display:<?php echo ($this->total_feed>0) ? 'block' : 'none' ?>"></div>
 
 <div id="feeditemblank">
 <div class="ch" feed="">&raquo; <a href="#" class="feeditemlnk"></a></div>

@@ -28,12 +28,18 @@ class C_Reader extends B_Controller
         $id = $this->session()->user_profile_id;
         $blogs = UserBlog::findByUser($id, $enabled=true);
         $this->view()->blogs = $blogs;
-        $this->view()->settings = UserDashboard::getByUser($id);
+        $settings = UserDashboard::getByUser($id);
+        $this->view()->settings = $settings;
+        $blog_current = $settings->blog->current;
 
         if(count($blogs)==0)
         {
             header('Location: /site');
             exit(0);
         }
+
+        $this->view()->total_feeds = UserBlogFeed::findTotalByBlogAndUser($blog_current,
+                                                                          $id,
+                                                                          true);
     }
 }

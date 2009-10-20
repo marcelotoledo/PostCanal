@@ -78,8 +78,8 @@ function feed_populate(d)
 
 function no_feed()
 {
-    my_template.middle_menu.hide();
-    $("div.midct").hide();
+    //my_template.middle_menu.hide();
+    //$("div.midct").hide();
     my_template.no_feed_message.show();
 }
 

@@ -160,6 +160,7 @@ class BlogType extends B_Model
         else
         {
             $discover = ((object) $result);
+            $discover->title = L_Utility::titleFromURL($url);
             $discover->type_accepted = false;
 
             if(!is_object(($blog_type = self::getByName($discover->type_name, 
@@ -185,8 +186,6 @@ class BlogType extends B_Model
 
             $discover->type_accepted = true;
         }
-
-        $discover->title = L_Utility::titleFromURL($url);
 
         return $discover;
     }

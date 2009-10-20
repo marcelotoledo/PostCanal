@@ -249,6 +249,36 @@ class UserBlogFeed extends B_Model
     }
 
     /**
+     * Find total by User Blog
+     *
+     * @param   string      $blog_hash
+     * @param   integer     $user_id
+     * @param   boolean     $enabled        Show enabled only
+     *
+     * @return  array
+     */
+    public static function findTotalByBlogAndUser($blog_hash, $user_id, $enabled=true)
+    {
+        $sql = "SELECT COUNT(*) AS total
+                FROM " . self::$table_name . " AS a
+                LEFT JOIN model_aggregator_feed AS b
+                ON (a.aggregator_feed_id = b.aggregator_feed_id)
+                WHERE a.user_blog_id = (
+                    SELECT user_blog_id
+                    FROM model_user_blog
+                    WHERE hash = ? AND user_profile_id = ?) ";
+        if($enabled==true)
+        {
+            $sql.= "AND a.enabled = 1 ";
+        }
+        $sql.= "AND b.enabled = 1 AND deleted = 0
+                ORDER BY a.ordering ASC, a.created_at DESC";
+
+        $r = current(self::select($sql, array($blog_hash, $user_id), PDO::FETCH_ASSOC));
+        return $r['total'];
+    }
+
+    /**
      * Find feed articles for a user blog feed
      *
      * @param   string      $blog_hash

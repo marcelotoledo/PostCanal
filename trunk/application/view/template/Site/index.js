@@ -230,6 +230,12 @@ function blog_update_callback(d)
         my_template.blog_list_select.find('option[value="' + _blog + '"]').text(_name);
         flash_message("<?php echo $this->translation()->saved ?>");
         blog_edit_hide(_blog);
+
+        if($("#noblogmsg2").is(':visible')) /* tutorial */
+        {
+            $("#noblogmsg2").hide(100);
+            $("#noblogmsg3").show(100);
+        }
     }
 }
 
