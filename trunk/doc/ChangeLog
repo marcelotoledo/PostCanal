@@ -15,3 +15,32 @@ HORAS TRABALHADAS: 8h
 - Melhorias no SEO (bugzId:160)
 
 HORAS TRABALHADAS: 3h
+
+==========
+19/10/2009
+==========
+
+- Atualização de video Tour
+- Correção da mensagem de erro no form de add Site (bugzId:128)
+- Inclusão de mensagem para orientação para Remote publishing no WordPress (bugzId:147)
+- Alteração do formulário de Signup para implementação de reCaptcha (bugzId:44)
+
+HORAS TRABALHADAS: 4h
+
+==========
+20/10/2009
+==========
+
+- Alteração do formulário de Signup para implementação de reCaptcha (bugzId:44)
+- Ajustes na exibição de tutoriais
+- Ajustes para exibição de ícones na lista de Feeds (pastas e feeds)
+
+HORAS TRABALHADAS: 4h
+
+==========
+21/10/2009
+==========
+
+- Suporte a cadastro imediato apenas com senha (bugzId:45)
+
+HORAS TRABALHADAS: 2h

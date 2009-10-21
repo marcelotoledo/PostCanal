@@ -14,9 +14,9 @@ function register_submit_cb(d)
     }
     else
     {
-        //register_msg(d.find('message').text());
-        alert(d.find('message').text());
-        window.location="/signup";
+        register_msg(d.find('message').text());
+        if(d.find('rerecaptcha').text()=='true') { Recaptcha.reload(); }
+        $(window).scrollTop(9999);
     }
 }
 
@@ -37,13 +37,16 @@ function register_submit()
                   passwordc : my_template.input_confirm.val(),
                   name      : my_template.input_name.val(), 
                   country   : selected_country(), 
-                  timezone  : selected_timezone() };
+                  timezone  : selected_timezone(),
+                  recaptcha_challenge : $("#recaptcha_challenge_field").val(), 
+                  recaptcha_response : $("#recaptcha_response_field").val() };
 
     if(_data.email     == "" ||
        _data.password  == "" ||
        _data.passwordc == "" ||
        _data.name      == "" ||
-       _data.country   == "")
+       _data.country   == "" ||
+       _data.recaptcha_response == "")
     {
         register_msg("Please fill up the form correctly.");
         return false;

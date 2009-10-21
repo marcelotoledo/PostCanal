@@ -112,3 +112,9 @@ div.form-row
     width: 200px;
     height: 30px;
 }
+
+#recaptcha-row
+{
+    margin-top: 20px;
+    margin-bottom: 25px;
+}

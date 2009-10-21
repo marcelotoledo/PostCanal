@@ -35,38 +35,39 @@ class C_Profile extends B_Controller
 
         if(is_object($profile))
         {
-            /* no register confirmation */
-
-            if($profile->register_confirmation == false)
-            {
-                $this->view()->message = $this->translation()->registration_not_confirmed;
-            }
+            // deprecated
+            // /* no register confirmation */
+            // 
+            // if($profile->register_confirmation == false)
+            // {
+            //     $this->view()->message = $this->translation()->registration_not_confirmed;
+            // }
 
             /* valid login, create session */
 
-            else
-            {
-                $this->session()->setActive(true);
-                $this->session()->setCulture($profile->local_culture);
-                $this->session()->setTimezone($profile->local_timezone);
-                $this->session()->user_profile_id = $profile->user_profile_id;
-                $this->session()->user_profile_hash = $profile->hash;
-                $this->session()->user_profile_login_email = $profile->login_email;
+            // else
+            // {
+            $this->session()->setActive(true);
+            $this->session()->setCulture($profile->local_culture);
+            $this->session()->setTimezone($profile->local_timezone);
+            $this->session()->user_profile_id = $profile->user_profile_id;
+            $this->session()->user_profile_hash = $profile->hash;
+            $this->session()->user_profile_login_email = $profile->login_email;
 
-                $this->session()->user_profile_quota_blog = $profile->quota_blog;
-                $this->session()->user_profile_quota_feed = $profile->quota_feed;
-                $this->session()->user_profile_quota_publication_period = $profile->quota_publication_period;
+            $this->session()->user_profile_quota_blog = $profile->quota_blog;
+            $this->session()->user_profile_quota_feed = $profile->quota_feed;
+            $this->session()->user_profile_quota_publication_period = $profile->quota_publication_period;
 
-                $profile->last_login_time = time();
-                $profile->save();
+            $profile->last_login_time = time();
+            $profile->save();
 
-                $this->view()->login = true;
-                $this->view()->message = "";
+            $this->view()->login = true;
+            $this->view()->message = "";
 
-                $id = $profile->user_profile_id;
-                $_d = array ('method' => __METHOD__, 'user_profile_id' => $id);
-                self::log("session created", $_d);
-            }
+            $id = $profile->user_profile_id;
+            $_d = array ('method' => __METHOD__, 'user_profile_id' => $id);
+            self::log("session created", $_d);
+            // }
         }
     }
 
@@ -87,20 +88,31 @@ class C_Profile extends B_Controller
         $timezone = $this->request()->timezone;
 
         $this->view()->register = false;
+        $this->view()->rerecaptcha = false;
         $this->view()->message = $this->translation()->registration_invalid;
+
+        /* check recaptcha */
+
+        if(self::checkRecaptcha($_POST['recaptcha_challenge'],
+                                $_POST['recaptcha_response'])==false)
+        {
+            $this->view()->message = "Please, check the two confirmation words.";
+            $this->view()->rerecaptcha = true;
+            return false;
+        }
 
         /* check for invitation */
         /* TEMPORARY FOR BETA VERSION **********/
         if(is_object($i = ProfileInvitation::getByEmail($email)) &&
                      $i->enabled==true)
         {
-            B_Log::write(sprintf('trying to register (%s) with enabled invitation', $email), E_NOTICE, array('method' => __METHOD__));
+            B_Log::write(sprintf('new registration from (%s) with enabled invitation', $email), E_NOTICE, array('method' => __METHOD__));
         }
         else
         {
-            B_Log::write(sprintf('trying to register (%s) without invitation blocked', $email), E_WARNING, array('method' => __METHOD__));
-            $email = '';
-            $this->view()->message = "This email was not yet accepted for registration.";
+            B_Log::write(sprintf('new registration from (%s) blocked without invitation', $email), E_WARNING, array('method' => __METHOD__));
+            $this->view()->message = "This email was not accepted for registration.";
+            return false;
         }
         /* TEMPORARY FOR BETA VERSION **********/
 
@@ -833,6 +845,25 @@ class C_Profile extends B_Controller
         $mailer->setBody(ob_get_clean());
 
         return $mailer->send($email, $template);
+    }
+
+    /**
+     * Check reCaptcha
+     *
+     * @param   string  $c  recaptcha chalenge field
+     * @param   string  $r  recaptcha response field
+     * @return  boolean
+     */
+    private static function checkRecaptcha($c, $r)
+    {
+        require_once 'recaptcha/recaptchalib.php';
+
+        if(strlen(($pk = B_Registry::get('recaptcha/privateKey')))==0)
+            throw new B_Exception('recaptcha private key is not set', E_ERROR);
+
+        $res = recaptcha_check_answer($pk, $_SERVER['REMOTE_ADDR'], $c, $r);
+
+        return $res->is_valid;
     }
 
     /**

@@ -30,6 +30,10 @@
                 <option value="">&nbsp;</option>
             </select></p>
             </div>
+            <div id="recaptcha-row">
+            <?php require_once 'recaptcha/recaptchalib.php';
+            echo recaptcha_get_html(B_Registry::get('recaptcha/publicKey')); ?>
+            </div>
             <div class="form-bot">
                 <button type="button" id="submit-register">CREATE ACCOUNT</button>
             </div>

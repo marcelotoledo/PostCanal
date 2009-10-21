@@ -1,4 +1,4 @@
-<?xml version="1.0"?>
+<?xml version="1.0" encoding="utf-8"?>
 <environment>
     <base>
         <url>http://192.168.0.147:82</url>
@@ -115,4 +115,14 @@
             <formatLong>MMM dd - hh:mm a</formatLong>
         </date>
     </zend>
+    <recaptcha>
+        <!-- postcanal.com -->
+        <publicKey>6Lcr7ggAAAAAAKakGNXwElFLP4VrziH59-AOvoZh</publicKey>
+        <privateKey>6Lcr7ggAAAAAACfKX4LwjoigNUpEK1D6xATPis_B</privateKey>
+        <!-- any domain -->
+        <!--
+        <publicKey>6Leu7ggAAAAAAAQ6HuvVRg-iFJhqmKcOrE0tjr8d</publicKey>
+        <privateKey>6Leu7ggAAAAAAFTzzmf9FZefeb0y3EIUbgWeLGA9</privateKey>
+        -->
+    </recaptcha>
 </environment>
