@@ -7,11 +7,10 @@
 </div>
 
 <div id="midmenu" style="display:<?php echo ($this->total_feeds>0) ? 'block' : 'none' ?>">
-    <h1>Subscribed Feeds</h1>
-    <div class="chlst" id="chtop">
-        <div class="ch" id="chall">&raquo; <a href="#" id="chall">All items</a></div>
+    <h1>Subscribed Feeds <a href="#" id="chaddlnk"><img src="/image/dashboard/add.png"></a></h1>
+    <div class="chlst" id="chlst">
+        <div class="ch chf"><img src="/image/dashboard/folder.png"> <a href="#" id="chall">All items</a></div>
     </div>
-    <div class="chlst" id="chlst"></div>
 </div>
 
 <div id="arttop" class="midct" style="display:<?php echo ($this->total_feeds>0) ? 'block' : 'none' ?>">
@@ -30,7 +29,7 @@
 <div id="artlst" class="midct" style="display:<?php echo ($this->total_feeds>0) ? 'block' : 'none' ?>"></div>
 
 <div id="feeditemblank">
-<div class="ch" feed="">&raquo; <a href="#" class="feeditemlnk"></a></div>
+<div class="ch chi" feed=""><img src="/image/dashboard/feed.png"> <a href="#" class="feeditemlnk"></a></div>
 </div>
 
 <div id="articleblank">
@@ -53,3 +52,9 @@
 </div>
 
 <div id="nofeedmsg" class="midct">There is no <b>feeds</b> registered for this <b>site</b>. To start reading feeds, you must register at least one. You can do this by clicking <b>"Manage Feeds"</b> link on top menu.</div>
+
+<div id="chaddct" style="display:none">
+    <small>Today we support RSS and Atom feeds.</small><br/>
+    <input type="text" id="chaddinput"> <button id="chaddbtn">ADD</button> <button id="chaddccl">CANCEL</button>
+    <br/><small>eg: http://www.google.com.</small>
+</div>

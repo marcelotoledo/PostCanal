@@ -41,6 +41,7 @@ HORAS TRABALHADAS: 4h
 21/10/2009
 ==========
 
-- Suporte a cadastro imediato apenas com senha (bugzId:45)
+- Suporte a cadastro imediato apenas com senha [incompleto] (bugzId:45)
+- Suporte a adicionar feed diretamente do Reader [incompleto] (bugzId:40) 
 
-HORAS TRABALHADAS: 2h
+HORAS TRABALHADAS: 4h

@@ -89,7 +89,10 @@ class B_Registry
 
         foreach($a as $i)
         {
-            if(strlen($i)==0) throw new B_Exception('invalid path', E_WARNING);
+            if(strlen($i)==0)
+            {
+                throw new B_Exception(sprintf('invalid path (%s)', $path), E_WARNING);
+            }
             if(!isset($r->{$i})) $r->{$i} = new self();
             $r = $r->{$i};
         }
@@ -110,7 +113,10 @@ class B_Registry
 
         foreach($a as $i)
         {
-            if(strlen($i)==0) throw new B_Exception('invalid path', E_WARNING);
+            if(strlen($i)==0 || !is_object($r))
+            {
+                throw new B_Exception(sprintf('invalid path (%s)', $path), E_WARNING);
+            }
             $r = $r->{$i};
         }
 

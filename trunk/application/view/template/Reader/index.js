@@ -45,7 +45,6 @@ function set_article_display()
 
 function feed_populate(d)
 {
-    my_template.subscribed_list.find('div.ch').remove();
     if(d.length==0) { return false; }
 
     var _data   = null;
@@ -67,7 +66,6 @@ function feed_populate(d)
         _item = my_template.feed_item_blank.clone();
         _inner = _item.find('div.ch');
         _inner.attr('feed', _data.feed);
-        // _inner.find('a.feeditemlnk').text(_data.title);
         _inner.find('a.feeditemlnk').attr('title', _data.title).b_txtoverflow({ buffer: my_template.txtoverflow_buffer, width: _flw, text: _data.title });
 
         _lsdata[_i] = _item.html(); _i++;
@@ -119,7 +117,7 @@ function update_right_header_title()
         my_template.right_header_title.css('text-transform', 'capitalize');
     }
 
-    my_template.right_header_title.b_txtoverflow({ buffer: my_template.txtoverflow_buffer, width: (my_template.article_list.width() * 0.6), text: _title });
+    my_template.right_header_title.b_txtoverflow({ buffer: my_template.txtoverflow_buffer, width: (my_template.right_header_title.width() * 0.8), text: _title });
 }
 
 function article_populate(d, append)
@@ -412,6 +410,9 @@ $(document).ready(function()
         <?php endif ?>
         //right_footer         : $("#rightfooter"),
         middle_menu          : $("#midmenu"),
+        feed_add_lnk         : $("#chaddlnk"),
+        feed_add_ct          : $("#chaddct"),
+        feed_add_input       : $("#chaddinput"),
         subscribed_list      : $("#chlst"),
         feed_item_blank      : $("#feeditemblank"),
         article_expanded_lnk : $("#articleexpandedlnk"),
@@ -469,6 +470,16 @@ $(document).ready(function()
     }
 
     /* events */
+
+    my_template.feed_add_lnk.click(function()
+    {
+        if(my_template.feed_add_ct.toggle().is(':visible'))
+        {
+            my_template.feed_add_input.focus();
+        }
+        $(this).blur();
+        return false;
+    });
 
     my_template.article_list_lnk.click(function()
     {
