@@ -43,6 +43,19 @@ function set_article_display()
 
 /* FEEDS */
 
+function feed_item_c(f, t, w)
+{
+    var _item = null;
+    var _inner = null;
+
+    _item = my_template.feed_item_blank.clone();
+    _inner = _item.find('div.ch');
+    _inner.attr('feed', f);
+    _inner.find('a.feeditemlnk').attr('title', t).b_txtoverflow({ buffer: my_template.txtoverflow_buffer, width: w, text: t });
+
+    return _item;
+}
+
 function feed_populate(d)
 {
     if(d.length==0) { return false; }
@@ -63,11 +76,7 @@ function feed_populate(d)
             title : $(this).find('feed_title').text()
         };
 
-        _item = my_template.feed_item_blank.clone();
-        _inner = _item.find('div.ch');
-        _inner.attr('feed', _data.feed);
-        _inner.find('a.feeditemlnk').attr('title', _data.title).b_txtoverflow({ buffer: my_template.txtoverflow_buffer, width: _flw, text: _data.title });
-
+        _item = feed_item_c(_data.feed, _data.title, _flw);
         _lsdata[_i] = _item.html(); _i++;
     });
 
@@ -96,6 +105,29 @@ function feed_list()
                   enabled : true };
 
     do_request('GET', '/feed/list', _data, feed_list_callback);
+}
+
+function feed_add_callback(d)
+{
+    var _data = null;
+    var _flw = my_template.subscribed_list.width() * 0.9;
+
+    _data =
+    {
+        feed  : d.find('feed').find('feed').text(),
+        title : d.find('feed_title').text()
+    };
+
+    _item = feed_item_c(_data.feed, _data.title, _flw);
+    my_template.all_items_folder.after(_item.html() + "\n");
+}
+
+function feed_add()
+{
+    var _data = { blog : my_blog.current ,
+                  url  : my_template.feed_add_input.val() };
+
+    do_request('POST', '/feed/quick', _data, feed_add_callback);
 }
 
 /* ARTICLES */
@@ -395,6 +427,7 @@ $(document).ready(function()
         main_container       : $("#mainct"),
         //left_container       : $("#leftcontainer"),
         all_items            : $("#chall"),
+        all_items_folder     : $("#challf"),
         //right_container      : $("#rightcontainer"),
         right_header_title   : $("#tplbartt"),
         right_middle         : $("#artlst"),
@@ -413,6 +446,8 @@ $(document).ready(function()
         feed_add_lnk         : $("#chaddlnk"),
         feed_add_ct          : $("#chaddct"),
         feed_add_input       : $("#chaddinput"),
+        feed_add_button      : $("#chaddbtn"),
+        feed_add_cancel      : $("#chaddccl"),
         subscribed_list      : $("#chlst"),
         feed_item_blank      : $("#feeditemblank"),
         article_expanded_lnk : $("#articleexpandedlnk"),
@@ -475,10 +510,34 @@ $(document).ready(function()
     {
         if(my_template.feed_add_ct.toggle().is(':visible'))
         {
+            my_template.feed_add_input.val('');
             my_template.feed_add_input.focus();
         }
         $(this).blur();
         return false;
+    });
+
+    my_template.feed_add_button.click(function()
+    {
+        feed_add();
+        my_template.feed_add_ct.hide();
+        $(this).blur();
+        return false;
+    });
+
+    my_template.feed_add_cancel.click(function()
+    {
+        my_template.feed_add_ct.hide();
+        $(this).blur();
+        return false;
+    });
+
+    my_template.feed_add_input.keypress(function(e)
+    {
+        if((e.which && e.which == 13) || (e.keyCode && e.keyCode == 13))
+        {
+            my_template.feed_add_button.click();
+        }
     });
 
     my_template.article_list_lnk.click(function()

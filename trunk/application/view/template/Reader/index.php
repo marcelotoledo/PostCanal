@@ -9,7 +9,7 @@
 <div id="midmenu" style="display:<?php echo ($this->total_feeds>0) ? 'block' : 'none' ?>">
     <h1>Subscribed Feeds <a href="#" id="chaddlnk"><img src="/image/dashboard/add.png"></a></h1>
     <div class="chlst" id="chlst">
-        <div class="ch chf"><img src="/image/dashboard/folder.png"> <a href="#" id="chall">All items</a></div>
+        <div class="ch chf" id="challf"><img src="/image/dashboard/folder.png"> <a href="#" id="chall">All items</a></div>
     </div>
 </div>
 

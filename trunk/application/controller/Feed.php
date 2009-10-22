@@ -56,30 +56,21 @@ class C_Feed extends B_Controller
     public function A_discover()
     {
         $this->response()->setXML(true);
-
-        $user_id = $this->session()->user_profile_id;
-        $quota = $this->session()->user_profile_quota_feed;
-
-        if($quota > 0 && UserBlogFeed::total($user_id) >= $quota)
-        {
-            $this->view()->overquota = true;
-            return false;
-        }
-
-        $this->view->results = AggregatorFeed::discover($this->request()->url);
+        $this->view()->results = AggregatorFeed::discover($this->request()->url);
     }
 
     /**
      * Add feed
      */
-    protected function feedAdd($url, $title, $blog_hash)
+    protected function feedAdd($blog_hash, $url, $title=null)
     {
         $user_id = $this->session()->user_profile_id;
-        $blog_feed = null;
+        $result = null;
 
         if(is_object(($feed = AggregatorFeed::getByURL($url))))
         {
             $blog = UserBlog::getByUserAndHash($user_id, $blog_hash);
+            $blog_feed = null;
 
             if(is_object($blog))
             {
@@ -109,22 +100,8 @@ class C_Feed extends B_Controller
                 $blog_feed->feed_description = $feed->feed_description;
                 $blog_feed->save();
             }
-        }
 
-        return $blog_feed;
-    }
-
-    public function A_add()
-    {
-        $this->response()->setXML(true);
-        $url = $this->request()->url;
-        $title = $this->request()->title;
-        $blog_hash = $this->request()->blog;
-        $blog_feed = $this->feedAdd($url, $title, $blog_hash);
-        
-        if(is_object($blog_feed))
-        {
-            $this->view()->feed = array
+            $result = array
             (
                 'feed'       => $blog_feed->hash,
                 'ordering'   => $blog_feed->ordering,
@@ -133,6 +110,57 @@ class C_Feed extends B_Controller
                 'enabled'    => $blog_feed->enabled
             );
         }
+
+        return $result;
+    }
+
+    protected function checkQuota()
+    {
+        $user_id = $this->session()->user_profile_id;
+        $quota = $this->session()->user_profile_quota_feed;
+
+        return ($quota > 0 && UserBlogFeed::total($user_id) >= $quota);
+    }
+
+    public function A_add()
+    {
+        $this->response()->setXML(true);
+
+        $url = $this->request()->url;
+        $blog = $this->request()->blog;
+        $title = $this->request()->title;
+
+        /* check quota */
+
+        $oq = $this->checkQuota();
+        $this->view()->overquota = $oq;
+        if($oq) return false;
+
+        /* add feed */
+
+        $this->view()->feed = $this->feedAdd($blog, $url, $title);
+    }
+
+    public function A_quick()
+    {
+        $this->response()->setXML(true);
+
+        $b = $this->request()->blog;
+        $d = AggregatorFeed::discover($this->request()->url);
+        if(array_key_exists(0, $d)==false) return false;
+        $d = $d[0];
+        $u = (is_array($d) && array_key_exists('feed_url', $d)) ? $d['feed_url'] : null;
+
+        /* check quota */
+
+        $oq = $this->checkQuota();
+        $this->view()->overquota = $oq;
+        if($oq) return false;
+
+        /* add feed */
+
+        if(strlen($b)==0 || strlen($u)==0) return false;
+        $this->view()->feed = $this->feedAdd($b, $u);
     }
 
     /**
