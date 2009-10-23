@@ -222,9 +222,9 @@ function article_populate(d, append)
                     .addClass('arttog-ck');
             }
 
-            if(_data.feed_title.length==0)
+            if(_data.article_title.length==0)
             {
-                _data.feed_title = 'Untitled';
+                _data.article_title = 'Untitled';
             }
 
             _inner.find('span.artch').b_txtoverflow({ buffer: my_template.txtoverflow_buffer, width: _alw, text: _data.feed_title });
