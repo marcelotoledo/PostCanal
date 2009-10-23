@@ -222,6 +222,11 @@ function article_populate(d, append)
                     .addClass('arttog-ck');
             }
 
+            if(_data.feed_title.length==0)
+            {
+                _data.feed_title = 'Untitled';
+            }
+
             _inner.find('span.artch').b_txtoverflow({ buffer: my_template.txtoverflow_buffer, width: _alw, text: _data.feed_title });
             _inner.find('span.arttt').b_txtoverflow({ buffer: my_template.txtoverflow_buffer, width: _alw, text: _data.article_title });
             _inner.find('div.artdte').text(_i < 5 ? _data.article_time_literal :
