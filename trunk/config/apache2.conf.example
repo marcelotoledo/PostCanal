@@ -4,12 +4,10 @@ ServerName 0.0.0.0
     DocumentRoot /var/www/postcanal
     <Directory /var/www/postcanal>
         AllowOverride All
-        #allow from all
         deny from all
         allow from 127.0.0.1
-        allow from 192.168.0
-        allow from 192.168.56
-        allow from 10.0.1
+        allow from 192.168
+        allow from 10.0
     </Directory>
     ErrorLog /var/log/apache2/postcanal_error_log
     LogLevel warn
