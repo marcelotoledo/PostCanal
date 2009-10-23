@@ -47,9 +47,10 @@ HORAS TRABALHADAS: 4h
 HORAS TRABALHADAS: 4h
 
 ==========
-23/10/2009
+22/10/2009
 ==========
 
-- Suporte a adicionar feed diretamente do Reader [incompleto] (bugzId:40) 
+- Suporte a adicionar feed diretamente do Reader (bugzId:40) 
+- Suporte ao formato feed:// no Manage feeds e Reader (bugzId:67)
 
-HORAS TRABALHADAS: 3h
+HORAS TRABALHADAS: 5h

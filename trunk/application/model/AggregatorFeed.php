@@ -339,7 +339,8 @@ class AggregatorFeed extends B_Model
     {
         /* fix url */
 
-        if(strpos($url, 'feed://')===0) $url = str_replace('feed://', '', $url);
+        $url = trim($url);
+        if(strpos($url, 'feed://')===0) $url = str_replace('feed://', 'http://', $url);
         if(strpos($url, 'http://')!==0) $url = 'http://' . $url;
 
         if(count(($feeds = self::findAssocByURL($url))) == 0)
