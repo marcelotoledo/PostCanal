@@ -18,6 +18,19 @@ class C_Queue extends B_Controller
         $this->authorize();
     }
 
+    protected function checkRegisterConfirmation()
+    {
+        $c = $this->session()->user_profile_register_confirmation;
+
+        if($c==false)
+        {
+            $p = UserProfile::getByPrimaryKey($this->session()->user_profile_id);
+            $c = $p->register_confirmation;
+        }
+
+        return $c;
+    }
+
     /**
      * Default action
      *
@@ -29,14 +42,16 @@ class C_Queue extends B_Controller
 
         $id = $this->session()->user_profile_id;
         $blogs = UserBlog::findByUser($id, $enabled=true);
-        $this->view()->blogs = $blogs;
-        $this->view()->settings = UserDashboard::getByUser($id);
 
         if(count($blogs)==0)
         {
             header('Location: /site');
             exit(0);
         }
+
+        $this->view()->blogs = $blogs;
+        $this->view()->settings = UserDashboard::getByUser($id);
+        $this->view()->register_confirmation = $this->checkRegisterConfirmation();
     }
 
     /**
@@ -187,6 +202,9 @@ class C_Queue extends B_Controller
     public function A_auto()
     {
         $this->response()->setXML(true);
+
+        /* do not allow publication without register confirmation */
+        if($this->checkRegisterConfirmation()==false) return false;
 
         $blog_hash = $this->request()->blog;
         $queue_publication = $this->request()->publication==1 ? true : false;

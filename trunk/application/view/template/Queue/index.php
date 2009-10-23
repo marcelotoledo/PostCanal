@@ -55,3 +55,16 @@
     </div>
 </form>
 </div>
+
+<div id="confirmationform">
+<div id="confirmationbody">
+<h1>Register confirmation</h1>
+<p>You need to confirm your subscription in order to activate PostCanal.com publishing.<p>
+<p>Make sure you received an email with a link to confirm your subscription. After this, you will be able to publish using PostCanal.com.</p>
+<p>If you have'nt received any message yet, use the form below to send a new confirmation request (remember to check your spam folder).</p>
+<br/>
+<div id="confirmationbtns">
+<button id="confirmationsend">SEND AGAIN</button>&nbsp;&nbsp;<button id="confirmationcancel">CANCEL</button></p>
+</div>
+</div>
+</div>

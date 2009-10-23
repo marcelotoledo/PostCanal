@@ -54,3 +54,11 @@ HORAS TRABALHADAS: 4h
 - Suporte ao formato feed:// no Manage feeds e Reader (bugzId:67)
 
 HORAS TRABALHADAS: 5h
+
+==========
+22/10/2009
+==========
+
+- Bloquear publicacao e solicitar confirmação posterior, no Queue publication (bugzId:45)
+
+HORAS TRABALHADAS: 4h

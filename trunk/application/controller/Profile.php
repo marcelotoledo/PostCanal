@@ -53,6 +53,7 @@ class C_Profile extends B_Controller
             $this->session()->user_profile_id = $profile->user_profile_id;
             $this->session()->user_profile_hash = $profile->hash;
             $this->session()->user_profile_login_email = $profile->login_email;
+            $this->session()->user_profile_register_confirmation = $profile->register_confirmation;
 
             $this->session()->user_profile_quota_blog = $profile->quota_blog;
             $this->session()->user_profile_quota_feed = $profile->quota_feed;
@@ -161,9 +162,7 @@ class C_Profile extends B_Controller
                 }
                 else
                 {
-                    $this->notify($profile->login_email, "register_new", $profile);
-                    $profile->register_message_time = time();
-                    $profile->save();
+                    $this->notifyRegistration($profile);
                 }
 
                 $this->view()->register = true;
@@ -297,6 +296,16 @@ class C_Profile extends B_Controller
 
             $this->view()->accepted = true;
         }
+    }
+
+    /**
+     * Resend register confirmation message
+     */
+    public function A_resend()
+    {
+        $this->response()->setXML(true);
+        $p = UserProfile::getByPrimaryKey($this->session()->user_profile_id);
+        $this->notifyRegistration($p);
     }
 
     /**
@@ -845,6 +854,13 @@ class C_Profile extends B_Controller
         $mailer->setBody(ob_get_clean());
 
         return $mailer->send($email, $template);
+    }
+
+    private function notifyRegistration($profile)
+    {
+        $this->notify($profile->login_email, "register_new", $profile);
+        $profile->register_message_time = time();
+        $profile->save();
     }
 
     /**

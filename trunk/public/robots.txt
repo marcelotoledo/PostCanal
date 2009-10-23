@@ -8,3 +8,4 @@ Disallow: /ovp/
 Disallow: /signup/invitation
 Disallow: /signup/welcome
 Disallow: /profile
+Disallow: /ouch

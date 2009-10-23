@@ -118,6 +118,11 @@ function entry_populate(d)
 
             entry_set_status(_inner, _data.publication_status);
 
+            if(_data.entry_title.length==0)
+            {
+                _data.entry_title = 'Untitled';
+            }
+
             // _inner.find('span.etytt').text(_data.entry_title);
             _inner.find('span.etytt').b_txtoverflow({ buffer: my_template.txtoverflow_buffer, width: _alw, text: _data.entry_title });
             //_inner.find('span.artch').b_txtoverflow({ buffer: my_template.txtoverflow_buffer, width: txtofw_articletit_max, text: _data.feed_title });
@@ -254,26 +259,6 @@ function queue_editor_init()
         resize_enabled : false,
         contentsCss : '/css/ck_content.css'
     });
-    //CKEDITOR.config.contentCss = '/css/ck_content.css';
-
-    /*
-    var _sz = { W : $(window).width()  * 0.75 , 
-                H :  };
-
-    my_queue.editor = new FCKeditor("FCKQueueEntryEditor", _sz.W, _sz.H);
-    my_queue.editor.Config["CustomConfigurationsPath"] = "../../js/fckconfig.js?t=<?php echo time() ?>";
-    my_queue.editor.Config["EditorAreaCSS"] = "../../css/fck_editorarea.css?t=<?php echo time() ?>";
-    my_queue.editor.Config["AutoDetectLanguage"] = false;
-    my_queue.editor.Config["DefaultLanguage"] = "<?php echo substr($this->session()->getCulture(), 0, 2) ?>";
-    */
-}
-
-function FCKeditor_OnComplete(i)
-{
-    /*
-    i.SetData(my_queue.data[my_queue.current.attr('entry')].content);
-    set_active_request(false);
-    */
 }
 
 function entry_edit(e)
@@ -316,7 +301,6 @@ function entry_save_current()
         blog    : my_blog.current , 
         entry   : my_queue.current.attr('entry'),
         title   : my_template.edit_form.find("input[name='entrytitle']").val(),
-        // content : FCKeditorAPI.GetInstance("FCKQueueEntryEditor").GetData()
         content : CKEDITOR.instances.entrybody.getData()
     };
 
@@ -558,6 +542,17 @@ function on_blog_load()
     initialize();
 }
 
+function confirmation_send_cb(d)
+{
+    alert('Email sent, please check your inbox.');
+    my_template.confirmation_form.b_modal_close();
+}
+
+function confirmation_send()
+{
+    do_request('POST', '/profile/resend', { }, confirmation_send_cb);
+}
+
 $(document).ready(function()
 {
     my_template =
@@ -573,6 +568,9 @@ $(document).ready(function()
         entry_blank        : $("#entryblank"),
         content_blank      : $("#contentblank"),
         edit_form          : $("#editform"),
+        confirmation_form  : $("#confirmationform"),
+        confirmation_send  : $("#confirmationsend"),
+        confirmation_ccel  : $("#confirmationcancel"),
         queue_middle_area  : { x : 0 , y : 0 , w : 0 , h : 0 },
         queue_middle_hover : false,
         queue_pub_play     : $("#queuepubplay"),
@@ -723,7 +721,24 @@ $(document).ready(function()
         .find('button.queuepubbtn')
         .live('click', function()
     {
+        <?php if($this->register_confirmation==false) : ?>
+        my_template.confirmation_form.b_modal();
+        <?php else : ?>
         toggle_queue_publication();
+        <?php endif ?>
+    });
+
+    my_template.confirmation_send.click(function()
+    {
+        confirmation_send();
+        $(this).blur();
+        return false;
+    });
+
+    my_template.confirmation_ccel.click(function()
+    {
+        my_template.confirmation_form.b_modal_close();
+        return false;
     });
 
     $(document).bind('blog_publication_auto_updated', function()

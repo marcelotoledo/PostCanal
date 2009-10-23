@@ -292,6 +292,47 @@ textarea.intxa-full
     position: absolute;
 }
 
+#confirmationform
+{
+    display: none;
+    position: absolute;
+    z-index: 5002;
+    top: 0;
+    left: 0;
+    background-color: white;
+    text-align: left;
+    border: 4px solid #48898c;
+}
+#confirmationbody
+{
+    padding: 25px;
+}
+#confirmationbody h1
+{
+    font-size: 2.6em;
+    font-weight: bold;
+    color: #2780B1;
+    margin-bottom: 25px;
+}
+#confirmationbody p
+{
+    font-size: 1.2em;
+    margin-bottom: 20px;
+}
+#confirmationbtns
+{
+    text-align: center;
+}
+#confirmationbody span
+{
+    margin-right: 50px;
+}
+#confirmationbody button
+{
+    width: 200px;
+    height: 30px;
+}
+
 #noentrymsg
 {
     display: none;
