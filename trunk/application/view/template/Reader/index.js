@@ -112,17 +112,17 @@ function feed_add_callback(d)
     var _flw = my_template.subscribed_list.width() * 0.9;
     var _dta = d.find('feed');
 
-    if(_dta.length==0) 
-    {
-        alert('Invalid Feed');
-        return false;
-    }
-
     _data =
     {
         feed  : _dta.find('feed').text(),
         title : _dta.find('feed_title').text()
     };
+
+    if(_data.feed.length==0) 
+    {
+        alert('Invalid Feed');
+        return false;
+    }
 
     if(my_template.subscribed_list.find('div.ch[feed="' + _data.feed + '"]').length==0)
     {
