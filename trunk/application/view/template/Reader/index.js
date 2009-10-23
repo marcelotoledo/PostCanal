@@ -109,17 +109,26 @@ function feed_list()
 
 function feed_add_callback(d)
 {
-    var _data = null;
     var _flw = my_template.subscribed_list.width() * 0.9;
+    var _dta = d.find('feed');
+
+    if(_dta.length==0) 
+    {
+        alert('Invalid Feed');
+        return false;
+    }
 
     _data =
     {
-        feed  : d.find('feed').find('feed').text(),
-        title : d.find('feed_title').text()
+        feed  : _dta.find('feed').text(),
+        title : _dta.find('feed_title').text()
     };
 
-    _item = feed_item_c(_data.feed, _data.title, _flw);
-    my_template.all_items_folder.after(_item.html() + "\n");
+    if(my_template.subscribed_list.find('div.ch[feed="' + _data.feed + '"]').length==0)
+    {
+        _item = feed_item_c(_data.feed, _data.title, _flw);
+        my_template.all_items_folder.after(_item.html() + "\n");
+    }
 }
 
 function feed_add()

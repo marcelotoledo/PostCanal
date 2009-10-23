@@ -56,5 +56,5 @@
 <div id="chaddct" style="display:none">
     <small>Today we support RSS and Atom feeds.</small><br/>
     <input type="text" id="chaddinput"> <button id="chaddbtn">ADD</button> <button id="chaddccl">CANCEL</button>
-    <br/><small>eg: http://www.google.com.</small>
+    <br/><small>eg: http://news.google.com/?output=rss</small>
 </div>
