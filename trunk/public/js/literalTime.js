@@ -66,7 +66,7 @@ jQuery.fn.pc_literalTime = function(config)
         if(_T > this.t && _w > 0)
         {
             /* when _w==1 ceil to wrap residual */
-            var _d = (_w==1) ? Math.ceil(_T / this.t) : 
+            var _d = (_w==1) ? (Math.round(_T * 10 / this.t) / 10) : 
                                Math.floor(_T / this.t); 
 
             _T -= (_d * this.t);

@@ -65,25 +65,18 @@ class C_Queue extends B_Controller
         $blog_hash = $this->request()->blog;
         $profile_id = $this->session()->user_profile_id;
 
+        $blog = UserBlog::getByUserAndHash($profile_id, $blog_hash);
         $queue = BlogEntry::findQueue($profile_id, $blog_hash);
         $published = BlogEntry::findPublished($profile_id, $blog_hash);
 
         $results = array('queue' => array(), 'published' => array());
-
-        // $zd = new Zend_Date(time(), false, $this->session()->getCulture());
-        // $zd->setTimezone($this->session()->getTimezone());
-        // $ct = $zd->toString('YYYMMMdd');
-        // $zd_cfg = B_Registry::get('zend/date');
+        $j = 1;
 
         foreach($queue as $o)
         {
-            // $zd->setTimestamp($o->publication_date);
-            $diff = $o->publication_date - time();
-            // $lt = L_Utility::literalTime($diff);
-
-            // $local = $zd->toString($zd->toString('YYYMMMdd')==$ct ? 
-            //     $zd_cfg->formatShort : 
-            //     $zd_cfg->formatLong);
+            $diff = ($blog->publication_auto) ?
+                ($o->publication_date - time()) :
+                ($blog->publication_interval * $j) ; // fixed interval when paused
 
             $results['queue'][] = array
             (
@@ -91,24 +84,16 @@ class C_Queue extends B_Controller
                 'entry_title'              => $o->entry_title,
                 'entry_content'            => $o->entry_content,
                 'publication_status'       => $o->publication_status,
-                // 'publication_date'         => $o->publication_date,
                 'publication_date_diff'    => $diff,
-                // 'publication_date_literal' => $lt,
-                // 'publication_date_local'   => $local,
                 'ordering'                 => $o->ordering
             );
+
+            $j++;
         }
 
         foreach($published as $o)
         {
-            $zd->setTimestamp($o->publication_date);
-
             $diff = $o->publication_date - time();
-            // $lt = L_Utility::literalTime($diff);
-
-            // $local = $zd->toString($zd->toString('YYYMMMdd')==$ct ? 
-            //     $zd_cfg->formatShort : 
-            //     $zd_cfg->formatLong);
 
             $results['published'][] = array
             (
@@ -116,10 +101,7 @@ class C_Queue extends B_Controller
                 'entry_title'              => $o->entry_title,
                 'entry_content'            => $o->entry_content,
                 'publication_status'       => $o->publication_status,
-                // 'publication_date'         => $o->publication_date,
                 'publication_date_diff'    => $diff,
-                // 'publication_date_literal' => $lt,
-                // 'publication_date_local'   => $local,
                 'ordering'                 => $o->ordering
             );
         }
