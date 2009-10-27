@@ -32,7 +32,7 @@ $this->browser_is_opera = (strpos($this->browser, 'opera')>0);
 <link rel="alternate" type="application/rss+xml" title="RSS 2.0" href="http://blog.postcanal.com/feed/" />
 
 <script type="text/javascript" src="/jquery/jquery-1.3.2.min.js"></script>
-<script type="text/javascript" src="/js/application.js?v=1256607596"></script>
+<script type="text/javascript" src="/js/application.js?v=1256671424"></script>
 <link rel="stylesheet" href="/css/application.css?v=1253528121" type="text/css" media="screen"/>
 
 <?php if($this->request()->getController()=='tour' ||

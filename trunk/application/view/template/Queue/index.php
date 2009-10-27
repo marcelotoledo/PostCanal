@@ -22,7 +22,7 @@
 <div id="etylst" class="midct"></div>
 
 <div id="entryblank">
-<div class="ety ety-cl" entry="" ord="" status="">
+<div class="ety ety-cl" entry="" status="">
     <div class="entrydndhdr">&nbsp;</div>
     <div class="sprites-img etytog etytog-ck">&nbsp;</div>
     <div class="etylab">

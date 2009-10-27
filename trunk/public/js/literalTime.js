@@ -3,7 +3,7 @@
  *
  * usage:
  * 
- * $("#mytimecontainer").b_modal(), 
+ * $("#mytimecontainer").pc_literalTime(), 
  *
  * html:
  *
@@ -12,8 +12,19 @@
 
 jQuery.fn.pc_literalTime = function(config)
 {
+    var _t = null;
+
     /* parse time in seconds */
-    var _t = parseInt($(this).attr('time')); if(isNaN(_t)) { return false; }
+    if(typeof config == 'object' && typeof config.t == 'number')
+    { 
+        _t = config.t;
+    }
+    else
+    {
+        _t = parseInt($(this).attr('time')); 
+    }
+
+    if(isNaN(_t)) { return false; }
     var _T = Math.abs(_t);
 
     /* prepend and append dictionary */
@@ -32,7 +43,7 @@ jQuery.fn.pc_literalTime = function(config)
 
     /* literal time glue dictionary */
     var _g = ' and ';
-    if(typeof config == 'object' && config.g.length > 0) { _g = config.g; }
+    if(typeof config == 'object' && config.g!=undefined) { _g = config.g; }
 
     /* literal time table conversion */
     var _c = [ { t: 31104000, s : _n.y, p: _n.Y },
@@ -54,7 +65,10 @@ jQuery.fn.pc_literalTime = function(config)
     {
         if(_T > this.t && _w > 0)
         {
-            var _d = Math.floor(_T / this.t);
+            /* when _w==1 ceil to wrap residual */
+            var _d = (_w==1) ? Math.ceil(_T / this.t) : 
+                               Math.floor(_T / this.t); 
+
             _T -= (_d * this.t);
             _s = _s + ((_y > 0) ? _g : ' ') + _d + ' ' + (_d > 1 ? this.p : this.s);
             _w--;

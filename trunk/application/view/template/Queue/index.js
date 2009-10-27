@@ -3,22 +3,15 @@ var my_template = null;
 var my_queue = 
 {
     data        : Array() ,
-    keys        : Array() ,
     objects     : Array() ,
     current     : null    ,
     editor      : null    ,
     sorting     : false   ,
     publication : null    ,
     interval    : 0       ,
-    // enqueueing  : null    ,
     request     : false
 };
 
-// var my_updater =
-// {
-//     interval : 15000,
-//     request  : false
-// }
 
 function entry_set_status(e, s)
 {
@@ -31,12 +24,9 @@ function entry_set_status(e, s)
     {
         e.attr('status', s);
 
-        //if(s=='waiting')
-        //{
-        //}
         if(s=='working')
         {
-            e.find('div.etydte').text('working...');
+            e.find('div.etydte').text('publishing...');
         }
         if(s=='failed')
         {
@@ -61,33 +51,6 @@ function entry_set_status(e, s)
     }
 }
 
-// function entry_set_publication_date(e, x, d, l, s, b)
-// {
-//     if(typeof e == 'string' && e.length > 0)
-//     {
-//         e = my_template.entry_list.find("div.ety[entry='" + e + "']");
-//     }
-// 
-//     if(typeof e == 'object')
-//     {
-//         if(s)
-//         {
-//             e.find('div.etydte').text(l);
-//         }
-//         else
-//         {
-//             if(d<0)
-//             {
-//                 e.find('div.etydte').text('working');
-//             }
-//             else
-//             {
-//                 e.find('div.etydte').text((b) ? l : x);
-//             }
-//         }
-//     }
-// }
-
 function entry_cache_init()
 {
     my_template.entry_list.find('div.ety').each(function()
@@ -96,29 +59,35 @@ function entry_cache_init()
     });
 }
 
-function entry_clock_updater_init()
+function entry_updater_init()
 {
-    setTimeout('entry_clock_update()', 1000);
+    return setTimeout('entry_updater()', 1000);
 }
 
-function entry_clock_update()
+function entry_updater()
 {
     my_template.entry_list.find('div.ety').each(function()
     {
+        var _e = $(this).attr('entry');
         var _d = $(this).find('div.etydte');
-        var _t = parseInt(_d.attr('time')) - 1;
 
-        if(_t==0 || $(this).attr('status')=='working')
+        if(my_queue.data[_e].time<=0 && 
+           (my_queue.data[_e].status=='<?php echo BlogEntry::STATUS_WAITING ?>' || 
+            my_queue.data[_e].status=='<?php echo BlogEntry::STATUS_WORKING ?>'))
         {
-            _d.text('working...');
+            _d.text('publishing...');
+            return true;
         }
-        else
+
+        _d.pc_literalTime({ t : my_queue.data[_e].time });
+
+        if(my_queue.data[_e].status!='<?php echo BlogEntry::STATUS_IDLE ?>')
         {
-            _d.attr('time', _t);
-            _d.pc_literalTime();
+            my_queue.data[_e].time-=1;
         }
     });
-    entry_clock_updater_init();
+
+    entry_updater_init();
 }
 
 function entry_populate(d)
@@ -137,45 +106,30 @@ function entry_populate(d)
     {
         _data = 
         {
-            entry                    : $(this).find('entry').text(),
-            entry_title              : $(this).find('entry_title').text(),
-            entry_content            : $(this).find('entry_content').text(),
-            publication_status       : $(this).find('publication_status').text(),
-            // publication_date         : $(this).find('publication_date').text(),
-            publication_date_diff    : parseInt($(this).find('publication_date_diff').text()),
-            // publication_date_literal : $(this).find('publication_date_literal').text(),
-            // publication_date_local   : $(this).find('publication_date_local').text(),
-            ordering                 : $(this).find('ordering').text()
+            entry    : $(this).find('entry').text(),
+            title    : $(this).find('entry_title').text(),
+            content  : $(this).find('entry_content').text(),
+            status   : $(this).find('publication_status').text(),
+            time     : parseInt($(this).find('publication_date_diff').text()),
+            ordering : parseInt($(this).find('ordering').text())
         };
 
         if(my_queue.data[_data.entry]==undefined) // avoid dupl
         {
             my_queue.data[_data.entry]=_data;
-            my_queue.keys.push(_data.entry);
 
             _item  = my_template.entry_blank.clone();
             _inner = _item.find('div.ety');
             _inner.attr('entry', _data.entry);
-            _inner.attr('ord', _data.ordering);
-            _inner.find('div.etydte').attr('time', _data.publication_date_diff);
 
-            entry_set_status(_inner, _data.publication_status);
+            entry_set_status(_inner, _data.status);
 
-            if(_data.entry_title.length==0)
+            if(_data.title.length==0)
             {
-                _data.entry_title = 'Untitled';
+                _data.title = 'Untitled';
             }
 
-            // _inner.find('span.etytt').text(_data.entry_title);
-            _inner.find('span.etytt').b_txtoverflow({ buffer: my_template.txtoverflow_buffer, width: _alw, text: _data.entry_title });
-            //_inner.find('span.artch').b_txtoverflow({ buffer: my_template.txtoverflow_buffer, width: txtofw_articletit_max, text: _data.feed_title });
-
-            // entry_set_publication_date(_inner,
-            //                            _data.publication_date_local,
-            //                            _data.publication_date_diff,
-            //                            _data.publication_date_literal,
-            //                           (_data.publication_status=='published'),
-            //                           (_i<5));
+            _inner.find('span.etytt').b_txtoverflow({ buffer: my_template.txtoverflow_buffer, width: _alw, text: _data.title });
 
             _lsdata[_i] = _item.html(); _i++;
         }
@@ -275,8 +229,8 @@ function entry_show(e)
             _content = my_template.entry_list.find('div.etyview') : 
                        my_template.content_blank.clone();
 
-        _content.find('h1').html(my_queue.data[e].entry_title);
-        _content.find('div.etybody').html(my_queue.data[e].entry_content);
+        _content.find('h1').html(my_queue.data[e].title );
+        _content.find('div.etybody').html(my_queue.data[e].content);
         _content.find('div.etybody').find('a').attr('target', '_blank'); /* add target _blank to all links */
 
         if(my_queue.current.hasClass('ety-op')==false)
@@ -312,20 +266,17 @@ function entry_edit(e)
         my_template.edit_form.b_modal();
 
         my_template.edit_form.find('div.form-bot').css('top', _rect.H - 55); // position hack
-        my_template.edit_form.find("input[name='entrytitle']").val(my_queue.data[e].entry_title).focus();
-        CKEDITOR.instances.entrybody.setData(my_queue.data[e].entry_content)
-        //set_active_request(true);
-
-        // my_template.edit_form.find("textarea[name='entrybody']").replaceWith(my_queue.editor.CreateHtml());
+        my_template.edit_form.find("input[name='entrytitle']").val(my_queue.data[e].title).focus();
+        CKEDITOR.instances.entrybody.setData(my_queue.data[e].content)
     }
 }
 
 function entry_save_callback(d)
 {
     var _e = d.find('entry').text();
-    my_queue.data[_e].entry_title = d.find('title').text();
-    my_queue.data[_e].entry_content = d.find('content').text();
-    my_queue.current.find('span.etytt').text(my_queue.data[_e].entry_title);
+    my_queue.data[_e].title = d.find('title').text();
+    my_queue.data[_e].content = d.find('content').text();
+    my_queue.current.find('span.etytt').text(my_queue.data[_e].title);
     my_template.edit_form.b_modal_close();
     entry_show(_e);
     flash_message("<?php echo $this->translation()->saved ?>");
@@ -373,7 +324,7 @@ function entry_sortable_callback(e)
 
     my_template.entry_list.find('div.ety').each(function()
     {
-        if(e==$(this).attr('entry') && _p != $(this).attr('ord'))
+        if(e==$(this).attr('entry') && _p != my_queue.data[e].ordering)
         {
             entry_position(e, _p);
         }
@@ -437,31 +388,6 @@ function set_queue_publication_auto()
     do_request('POST', '/queue/auto', _data, function() { entry_list(); });
 }
 
-// function toggle_queue_enqueueing()
-// {
-//     my_queue.enqueueing = my_queue.enqueueing ^ true;
-//     blog_update('enqueueing_auto', (my_queue.enqueueing ? 1 : 0));
-// }
-
-// function set_queue_enqueueing()
-// {
-//     if(my_queue.enqueueing==null)
-//     {
-//         my_queue.enqueueing = (my_blog.info['enqueueing_auto']==1);
-//     }
-// 
-//     if(my_queue.enqueueing)
-//     {
-//         my_template.enqueue_no.hide();
-//         my_template.enqueue_yes.show();
-//     }
-//     else
-//     {
-//         my_template.enqueue_yes.hide();
-//         my_template.enqueue_no.show();
-//     }
-// }
-
 function set_queue_interval()
 {
     my_queue.interval = parseInt(my_blog.info['publication_interval']);
@@ -517,31 +443,6 @@ function set_queue_interval()
 //     }
 // }
 
-// function enqueue_updater_callback(d)
-// {
-//     entry_populate(d.find('result').find('queue').children());
-// }
-
-// function enqueue_updater()
-// {
-//     if(my_queue.enqueueing!=true || my_updater.request==true) { return false; }
-//     _data = { blog : my_blog.current };
-//     do_request('GET', '/queue/list', _data, enqueue_updater_callback);
-// }
-
-// function updater_run()
-// {
-//     var _i = my_updater.interval / 3;
-//     setTimeout('publication_updater()', _i * 1);
-//     setTimeout('enqueue_updater()', _i * 2);
-//     updater_init();
-// }
-
-// function updater_init()
-// {
-//     setTimeout('updater_run()', my_updater.interval);
-// }
-
 function set_queue_header_title()
 {
     var _tts = my_template.queue_toolbar.position().left - 
@@ -558,15 +459,12 @@ function initialize()
     my_queue.sorting     = false;
     my_queue.publication = null;
     my_queue.interval    = 0;
-//     my_queue.enqueueing  = null;
 
     set_queue_header_title();
     set_queue_publication();
-    // set_queue_enqueueing();
     set_queue_interval();
     entry_list();
-    entry_clock_updater_init();
-    // updater_init();
+    entry_updater_init();
 }
 
 function on_blog_change()
@@ -596,7 +494,6 @@ $(document).ready(function()
     {
         main_container     : $("#mainct"),
         blog_list          : $("#bloglstsel"),
-        // queue_container    : $("#queuecontainer"),
         queue_header       : $("#tplbar"),
         queue_header_title : $("#tplbartt"),
         queue_toolbar      : $("#tplbaropt"),
@@ -612,8 +509,6 @@ $(document).ready(function()
         queue_middle_hover : false,
         queue_pub_play     : $("#queuepubplay"),
         queue_pub_pause    : $("#queuepubpause"),
-        // enqueue_yes        : $("#enqueuelnkyes"),
-        // enqueue_no         : $("#enqueuelnkno"),
         queue_interval_sel : $("#pubinterval"),
         txtoverflow_buffer : $("#b_txtoverflow-buffer"),
         no_entry_tutorial  : $("#noentrymsg")
@@ -624,9 +519,6 @@ $(document).ready(function()
         var _w = { height : $(window).height() - 
                             my_template.main_container.position().top,
                    width  : $(window).width() };
-
-        // my_template.queue_container.width(_w.width);
-        // my_template.queue_container.height(_w.height);
 
         my_template.queue_middle.width(_w.width - parseInt(my_template.queue_middle.css('margin-left')));
         my_template.queue_middle.height(_w.height - my_template.queue_middle.position().top);
@@ -783,20 +675,6 @@ $(document).ready(function()
         set_queue_publication();
         set_queue_publication_auto();
     });
-
-    // my_template.queue_header
-    //     .find('div.enqueuelnk')
-    //     .find('a')
-    //     .live('click', function()
-    // {
-    //     toggle_queue_enqueueing();
-    //     return false;
-    // });
-
-    // $(document).bind('blog_enqueueing_auto_updated', function()
-    // {
-    //     set_queue_enqueueing();
-    // });
 
     my_template.queue_interval_sel.change(function()
     {

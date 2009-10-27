@@ -254,35 +254,35 @@ class L_WebService
         return BlogEntry::getAwaitingPublicationTotal();
     }
 
-    /**
-     * Do queue suggestion (blog entry feeding)
-     */
-    public function queue_suggest_do($args)
-    {
-        if($this->validate_args($args, array()) == false) return null;
+    // /**
+    //  * Do queue suggestion (blog entry feeding)
+    //  */
+    // public function queue_suggest_do($args)
+    // {
+    //     if($this->validate_args($args, array()) == false) return null;
+    // 
+    //     $blog_id = 0;
+    // 
+    //     try
+    //     {
+    //         $blog_id = BlogEntry::suggestEntry();
+    //     }
+    //     catch(B_Exception $_e)
+    //     {
+    //         $_m = "queue suggest failed";
+    //         $_d = array ('method' => __METHOD__);
+    //         B_Log::write($_m, E_ERROR, $_d);
+    //     }
+    //     
+    //     return $blog_id;
+    // }
 
-        $blog_id = 0;
-
-        try
-        {
-            $blog_id = BlogEntry::suggestEntry();
-        }
-        catch(B_Exception $_e)
-        {
-            $_m = "queue suggest failed";
-            $_d = array ('method' => __METHOD__);
-            B_Log::write($_m, E_ERROR, $_d);
-        }
-        
-        return $blog_id;
-    }
-
-    /**
-     * Reset queue suggestion
-     */
-    public function queue_suggest_reset($args)
-    {
-        if($this->validate_args($args, array()) == false) return false;
-        UserBlog::resetSuggest();
-    }
+    // /**
+    //  * Reset queue suggestion
+    //  */
+    // public function queue_suggest_reset($args)
+    // {
+    //     if($this->validate_args($args, array()) == false) return false;
+    //     UserBlog::resetSuggest();
+    // }
 }

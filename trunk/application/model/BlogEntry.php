@@ -136,7 +136,26 @@ class BlogEntry extends B_Model
     const STATUS_UNREACHABLE  = 'unreachable';
     const STATUS_FAILED       = 'failed';
 
-    const ENQUEUEING_AUTO_MAX_ENTRIES = 10;
+    public static $status_publication = array
+    (
+        true  => self::STATUS_WAITING,
+        false => self::STATUS_IDLE
+    );
+
+    public static $status_response = array 
+    (
+        self::STATUS_PUBLISHED,
+        self::STATUS_UNAUTHORIZED,
+        self::STATUS_OVERQUOTA,
+        self::STATUS_UNREACHABLE,
+        self::STATUS_FAILED
+    );
+
+    public static $status_response_bool = array
+    (
+        true  => self::STATUS_PUBLISHED,
+        false => self::STATUS_FAILED
+    );
 
     const ENTRY_WORKING_TIMEOUT_DEFAULT = 60;
 
@@ -315,14 +334,14 @@ class BlogEntry extends B_Model
             /* working status avoid duplicated items on backend */
 
             $sql = "UPDATE model_user_blog_entry
-                    SET publication_status='" . self::STATUS_WORKING . "', 
+                    SET publication_status=?, 
                         publication_date=NOW(),
                         updated_at=NOW()
                     WHERE user_blog_entry_id=?";
 
             for($i=0;$i<count($res);$i++)
             {
-                self::execute($sql, array($res[$i]['id']));
+                self::execute($sql, array(self::STATUS_WORKING, $res[$i]['id']));
             }
         }
 
@@ -345,16 +364,13 @@ class BlogEntry extends B_Model
                     model_user_blog AS b ON (a.user_blog_id = b.user_blog_id) 
                 LEFT JOIN 
                     model_blog_type AS c ON (b.blog_type_id = c.blog_type_id) 
-                WHERE
-                    (       a.publication_status = ? 
-                        OR (a.publication_status = ? AND (UNIX_TIMESTAMP(a.updated_at) + ?) < UNIX_TIMESTAMP())
-                    )
-                    AND a.publication_date < NOW() 
-                    AND a.deleted = 0";
+                WHERE a.publication_status = ?
+                AND a.publication_date <= NOW() 
+                AND a.deleted = 0";
 
         $total = 0;
 
-        if(($res = current(self::select($sql, array(self::STATUS_WAITING, self::STATUS_WORKING, intval(B_Registry::get('application/queue/entryWorkingTimeout'))), PDO::FETCH_ASSOC))))
+        if(($res = current(self::select($sql, array(self::STATUS_WAITING, PDO::FETCH_ASSOC)))))
         {
             $total = $res['total'];
         }
@@ -367,11 +383,11 @@ class BlogEntry extends B_Model
      */
     public static function releaseWorking()
     {
-        self::execute("UPDATE " . self::$table_name . " SET publication_status='" . self::STATUS_WAITING . "', updated_at=NOW() WHERE publication_status='" . self::STATUS_WORKING . "'");
+        self::execute("UPDATE " . self::$table_name . " SET publication_status=?, updated_at=NOW() WHERE publication_status=?", array(self::STATUS_WAITING, self::STATUS_WORKING));
     }
 
     /**
-     * Set blog entry publication status
+     * Set blog entry publication status to done
      * 
      * @param   integer            $id             Entry ID
      * @param   boolean|string     $status         Publication status?
@@ -382,21 +398,13 @@ class BlogEntry extends B_Model
 
         if(is_object($entry))
         {
-            if(!is_bool($status) && in_array($status, array
-                (
-                    self::STATUS_PUBLISHED,
-                    self::STATUS_UNAUTHORIZED,
-                    self::STATUS_UNREACHABLE,
-                    self::STATUS_FAILED,
-                )))
+            if(!is_bool($status) && in_array($status, self::$status_response))
             {
                 $entry->publication_status = $status;
             }
             else
             {
-                $entry->publication_status = ((boolean) $status) ?
-                    self::STATUS_PUBLISHED :
-                    self::STATUS_FAILED;
+                $entry->publication_status = self::$status_response_bool[((boolean) $status)];
             }
 
             $entry->save();
@@ -431,7 +439,6 @@ class BlogEntry extends B_Model
         if($result['publication_auto']==1)
         {
             /* new item start waiting publication */
-
             $entry->publication_status = self::STATUS_WAITING;
         }
 
@@ -691,8 +698,7 @@ class BlogEntry extends B_Model
             if($o->publication_status!=self::STATUS_WORKING)
             /* update only when entry status is not working */
             {
-                $o->publication_status = ($publication==true) ? 
-                    self::STATUS_WAITING : self::STATUS_IDLE ;
+                $o->publication_status = self::$status_publication[((boolean) $publication)];
                 $o->publication_date = ($t+=$interval);
                 $o->save();
             }
@@ -730,207 +736,207 @@ class BlogEntry extends B_Model
         return $article;
     }
 
-    /**
-     * Do queue entry suggestion when enqueueing_auto is true
-     */
-    public static function suggestEntry()
-    {
-        /* get blog */
+    // /**
+    //  * Do queue entry suggestion when enqueueing_auto is true
+    //  */
+    // public static function suggestEntry()
+    // {
+    //     /* get blog */
 
-        $max = intval(B_Registry::get('application/queue/suggestMaxEntries'));
+    //     $max = intval(B_Registry::get('application/queue/suggestMaxEntries'));
 
-        $sql = "SELECT 
-                    a.user_blog_id AS blog_id, 
-                    keywords AS keywords
-                FROM model_user_blog AS a 
-                LEFT JOIN (
-                    SELECT user_blog_id, COUNT(user_blog_entry_id) AS entries
-                    FROM model_user_blog_entry 
-                    WHERE suggested=1 AND deleted=0 AND publication_status != ?
-                    GROUP BY user_blog_id) AS x
-                ON (a.user_blog_id = x.user_blog_id)
-                WHERE enqueueing_auto=1 AND enabled=1
-                AND (x.entries < " . $max . " OR x.entries IS NULL)
-                ORDER BY enqueueing_auto_updated_at ASC LIMIT 1";
+    //     $sql = "SELECT 
+    //                 a.user_blog_id AS blog_id, 
+    //                 keywords AS keywords
+    //             FROM model_user_blog AS a 
+    //             LEFT JOIN (
+    //                 SELECT user_blog_id, COUNT(user_blog_entry_id) AS entries
+    //                 FROM model_user_blog_entry 
+    //                 WHERE suggested=1 AND deleted=0 AND publication_status != ?
+    //                 GROUP BY user_blog_id) AS x
+    //             ON (a.user_blog_id = x.user_blog_id)
+    //             WHERE enqueueing_auto=1 AND enabled=1
+    //             AND (x.entries < " . $max . " OR x.entries IS NULL)
+    //             ORDER BY enqueueing_auto_updated_at ASC LIMIT 1";
 
-        $articles = array();
-        $keywords = array();
+    //     $articles = array();
+    //     $keywords = array();
 
-        self::transaction();
+    //     self::transaction();
 
-        if(is_object($blog = current(self::select($sql, array(self::STATUS_PUBLISHED), PDO::FETCH_OBJ)))==false) 
-        {
-            self::rollback();
-            return 0;
-        }
+    //     if(is_object($blog = current(self::select($sql, array(self::STATUS_PUBLISHED), PDO::FETCH_OBJ)))==false) 
+    //     {
+    //         self::rollback();
+    //         return 0;
+    //     }
 
-        $sql = "UPDATE model_user_blog
-                SET enqueueing_auto_updated_at = NOW()
-                WHERE user_blog_id = ?";
+    //     $sql = "UPDATE model_user_blog
+    //             SET enqueueing_auto_updated_at = NOW()
+    //             WHERE user_blog_id = ?";
 
-        self::execute($sql, array($blog->blog_id));
+    //     self::execute($sql, array($blog->blog_id));
 
-        self::commit();
+    //     self::commit();
 
-        /* get blog keywords */
+    //     /* get blog keywords */
 
-        $separator = null;
-        if    (strpos($blog->keywords, ",")>0) $separator = ",";
-        elseif(strpos($blog->keywords, ":")>0) $separator = ":";
-        elseif(strpos($blog->keywords, ";")>0) $separator = ";";
-        elseif(strpos($blog->keywords, "|")>0) $separator = "|";
+    //     $separator = null;
+    //     if    (strpos($blog->keywords, ",")>0) $separator = ",";
+    //     elseif(strpos($blog->keywords, ":")>0) $separator = ":";
+    //     elseif(strpos($blog->keywords, ";")>0) $separator = ";";
+    //     elseif(strpos($blog->keywords, "|")>0) $separator = "|";
 
-        $keywords = array();
+    //     $keywords = array();
 
-        if($separator==null)
-        {
-            if(strpos($blog->keywords, " ")>0)
-            {
-                $k = $blog->keywords;
-                L_Utility::keywords($k);
-                $keywords = explode(" ", $k);
-            }
-        }
-        else
-        {
-            foreach(explode($separator, $blog->keywords) AS $k)
-            {
-                L_Utility::keywords($k);
+    //     if($separator==null)
+    //     {
+    //         if(strpos($blog->keywords, " ")>0)
+    //         {
+    //             $k = $blog->keywords;
+    //             L_Utility::keywords($k);
+    //             $keywords = explode(" ", $k);
+    //         }
+    //     }
+    //     else
+    //     {
+    //         foreach(explode($separator, $blog->keywords) AS $k)
+    //         {
+    //             L_Utility::keywords($k);
 
-                if(strlen($k)>0)
-                {
-                    $keywords[] = $k;
-                }
-            }
-        }
+    //             if(strlen($k)>0)
+    //             {
+    //                 $keywords[] = $k;
+    //             }
+    //         }
+    //     }
 
-        /* get keywords based on last publications */
+    //     /* get keywords based on last publications */
 
-        if(count($keywords)==0)
-        {
-            $epub = self::findLastPublishedKeywords($blog->blog_id);
-            $etot = count($epub);
-            $fmin = round($etot * 0.2); // discard low freq keywords
-            $buff = array();
+    //     if(count($keywords)==0)
+    //     {
+    //         $epub = self::findLastPublishedKeywords($blog->blog_id);
+    //         $etot = count($epub);
+    //         $fmin = round($etot * 0.2); // discard low freq keywords
+    //         $buff = array();
 
-            /* calculate keyword freq */
+    //         /* calculate keyword freq */
 
-            foreach($epub as $e)
-            {
-                foreach(explode(" ", $e->keywords) as $k)
-                {
-                    array_key_exists($k, $buff) ? $buff[$k]++ : $buff[$k] = 1;
-                }
-            }
+    //         foreach($epub as $e)
+    //         {
+    //             foreach(explode(" ", $e->keywords) as $k)
+    //             {
+    //                 array_key_exists($k, $buff) ? $buff[$k]++ : $buff[$k] = 1;
+    //             }
+    //         }
 
-            /* get most popular keywords */
+    //         /* get most popular keywords */
 
-            foreach($buff as $k => $f)
-            {
-                if($f >= $fmin)
-                {
-                    $keywords[] = $k;
-                }
-            }
-        }
+    //         foreach($buff as $k => $f)
+    //         {
+    //             if($f >= $fmin)
+    //             {
+    //                 $keywords[] = $k;
+    //             }
+    //         }
+    //     }
 
-        /* rank articles */
+    //     /* rank articles */
 
-        $rank = array();
+    //     $rank = array();
 
-        $articles = UserBlogFeed::findArticlesToSuggestion($blog->blog_id);
+    //     $articles = UserBlogFeed::findArticlesToSuggestion($blog->blog_id);
 
-        if(count($articles)>0)
-        {
-            /* suggestion based on keywords */
+    //     if(count($articles)>0)
+    //     {
+    //         /* suggestion based on keywords */
     
-            if(count($keywords)>0)
-            {
-                $nk = count($keywords);
-                $jk = 0;
+    //         if(count($keywords)>0)
+    //         {
+    //             $nk = count($keywords);
+    //             $jk = 0;
 
-                foreach($articles as $a)
-                {
-                    $a->keywords = " " . $a->keywords; // fix for strpos==0
+    //             foreach($articles as $a)
+    //             {
+    //                 $a->keywords = " " . $a->keywords; // fix for strpos==0
 
-                    for($jk=0;$jk<$nk;$jk++)
-                    {
-                        if(strpos($a->keywords, $keywords[$jk])>0)
-                        {
-                            array_key_exists($a->article_id, $rank) ?
-                                $rank[$a->article_id]++ :
-                                $rank[$a->article_id] = 1 ;
-                        }
-                    }
+    //                 for($jk=0;$jk<$nk;$jk++)
+    //                 {
+    //                     if(strpos($a->keywords, $keywords[$jk])>0)
+    //                     {
+    //                         array_key_exists($a->article_id, $rank) ?
+    //                             $rank[$a->article_id]++ :
+    //                             $rank[$a->article_id] = 1 ;
+    //                     }
+    //                 }
 
-                    /* feed ordering ponderation */
+    //                 /* feed ordering ponderation */
 
-                    if($a->feed_ordering > 0)
-                    {
-                        array_key_exists($a->article_id, $rank) ?
-                            $rank[$a->article_id] *= (1 / $a->feed_ordering) :
-                            $rank[$a->article_id] = 0 ;
-                    }
-                }
-            }
+    //                 if($a->feed_ordering > 0)
+    //                 {
+    //                     array_key_exists($a->article_id, $rank) ?
+    //                         $rank[$a->article_id] *= (1 / $a->feed_ordering) :
+    //                         $rank[$a->article_id] = 0 ;
+    //                 }
+    //             }
+    //         }
 
-            /* suggestion based on top article */
+    //         /* suggestion based on top article */
             
-            else
-            {
-                foreach($articles as $a)
-                {
-                    if($a->feed_ordering > 0)
-                    {
-                        $rank[$a->article_id] = (1 / $a->feed_ordering);
-                    }
-                }
-            }
+    //         else
+    //         {
+    //             foreach($articles as $a)
+    //             {
+    //                 if($a->feed_ordering > 0)
+    //                 {
+    //                     $rank[$a->article_id] = (1 / $a->feed_ordering);
+    //                 }
+    //             }
+    //         }
 
-        }
+    //     }
 
-        /* get top ranked article */
+    //     /* get top ranked article */
 
-        $ma = 0;
-        $mr = 0;
+    //     $ma = 0;
+    //     $mr = 0;
 
-        foreach($rank as $a=>$r)
-        {
-            if($r > $mr)
-            {
-                $ma = $a;
-                $mr = $r;
-            }
-        }
+    //     foreach($rank as $a=>$r)
+    //     {
+    //         if($r > $mr)
+    //         {
+    //             $ma = $a;
+    //             $mr = $r;
+    //         }
+    //     }
 
-        /* enqueue */
+    //     /* enqueue */
 
-        if($ma>0)
-        {
-            self::newFromArticleBlogId($ma, $blog->blog_id);
-            $_m = "suggestion of article (" . $ma . ") " . 
-                  "added to blog (" . $blog->blog_id . ")";
-            // B_Log::write($_m, E_NOTICE); // disabled
-        }
+    //     if($ma>0)
+    //     {
+    //         self::newFromArticleBlogId($ma, $blog->blog_id);
+    //         $_m = "suggestion of article (" . $ma . ") " . 
+    //               "added to blog (" . $blog->blog_id . ")";
+    //         // B_Log::write($_m, E_NOTICE); // disabled
+    //     }
 
-        return $blog->blog_id;
-    }
+    //     return $blog->blog_id;
+    // }
 
-    /**
-     * Find total publication in a period
-     */
-    public static function totalPeriod($profile_id, $period)
-    {
-        $sql = "SELECT COUNT(*) AS total 
-                FROM " . self::$table_name . " 
-                WHERE publication_status=?
-                AND publication_date > (UNIX_TIMESTAMP() - ?)
-                AND user_blog_id IN (
-                    SELECT user_blog_id
-                    FROM model_user_blog
-                    WHERE user_profile_id=?
-                    AND deleted=0
-                )";
-       // TODO...
-    }
+    // /**
+    //  * Find total publication in a period
+    //  */
+    // public static function totalPeriod($profile_id, $period)
+    // {
+    //     $sql = "SELECT COUNT(*) AS total 
+    //             FROM " . self::$table_name . " 
+    //             WHERE publication_status=?
+    //             AND publication_date > (UNIX_TIMESTAMP() - ?)
+    //             AND user_blog_id IN (
+    //                 SELECT user_blog_id
+    //                 FROM model_user_blog
+    //                 WHERE user_profile_id=?
+    //                 AND deleted=0
+    //             )";
+    //    // TODO...
+    // }
 }
