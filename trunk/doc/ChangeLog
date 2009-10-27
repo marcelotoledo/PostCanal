@@ -56,9 +56,17 @@ HORAS TRABALHADAS: 4h
 HORAS TRABALHADAS: 5h
 
 ==========
-22/10/2009
+23/10/2009
 ==========
 
 - Bloquear publicacao e solicitar confirmação posterior, no Queue publication (bugzId:45)
 
 HORAS TRABALHADAS: 4h
+
+==========
+26/10/2009
+==========
+
+- Implementação de countdown no Queue (bugzId:107)
+
+HORAS TRABALHADAS: 6h

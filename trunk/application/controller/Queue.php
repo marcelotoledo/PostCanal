@@ -70,20 +70,20 @@ class C_Queue extends B_Controller
 
         $results = array('queue' => array(), 'published' => array());
 
-        $zd = new Zend_Date(time(), false, $this->session()->getCulture());
-        $zd->setTimezone($this->session()->getTimezone());
-        $ct = $zd->toString('YYYMMMdd');
-        $zd_cfg = B_Registry::get('zend/date');
+        // $zd = new Zend_Date(time(), false, $this->session()->getCulture());
+        // $zd->setTimezone($this->session()->getTimezone());
+        // $ct = $zd->toString('YYYMMMdd');
+        // $zd_cfg = B_Registry::get('zend/date');
 
         foreach($queue as $o)
         {
-            $zd->setTimestamp($o->publication_date);
+            // $zd->setTimestamp($o->publication_date);
             $diff = $o->publication_date - time();
-            $lt = L_Utility::literalTime($diff);
+            // $lt = L_Utility::literalTime($diff);
 
-            $local = $zd->toString($zd->toString('YYYMMMdd')==$ct ? 
-                $zd_cfg->formatShort : 
-                $zd_cfg->formatLong);
+            // $local = $zd->toString($zd->toString('YYYMMMdd')==$ct ? 
+            //     $zd_cfg->formatShort : 
+            //     $zd_cfg->formatLong);
 
             $results['queue'][] = array
             (
@@ -91,10 +91,10 @@ class C_Queue extends B_Controller
                 'entry_title'              => $o->entry_title,
                 'entry_content'            => $o->entry_content,
                 'publication_status'       => $o->publication_status,
-                'publication_date'         => $o->publication_date,
+                // 'publication_date'         => $o->publication_date,
                 'publication_date_diff'    => $diff,
-                'publication_date_literal' => $lt,
-                'publication_date_local'   => $local,
+                // 'publication_date_literal' => $lt,
+                // 'publication_date_local'   => $local,
                 'ordering'                 => $o->ordering
             );
         }
@@ -104,11 +104,11 @@ class C_Queue extends B_Controller
             $zd->setTimestamp($o->publication_date);
 
             $diff = $o->publication_date - time();
-            $lt = L_Utility::literalTime($diff);
+            // $lt = L_Utility::literalTime($diff);
 
-            $local = $zd->toString($zd->toString('YYYMMMdd')==$ct ? 
-                $zd_cfg->formatShort : 
-                $zd_cfg->formatLong);
+            // $local = $zd->toString($zd->toString('YYYMMMdd')==$ct ? 
+            //     $zd_cfg->formatShort : 
+            //     $zd_cfg->formatLong);
 
             $results['published'][] = array
             (
@@ -116,10 +116,10 @@ class C_Queue extends B_Controller
                 'entry_title'              => $o->entry_title,
                 'entry_content'            => $o->entry_content,
                 'publication_status'       => $o->publication_status,
-                'publication_date'         => $o->publication_date,
+                // 'publication_date'         => $o->publication_date,
                 'publication_date_diff'    => $diff,
-                'publication_date_literal' => $lt,
-                'publication_date_local'   => $local,
+                // 'publication_date_literal' => $lt,
+                // 'publication_date_local'   => $local,
                 'ordering'                 => $o->ordering
             );
         }
@@ -146,9 +146,9 @@ class C_Queue extends B_Controller
                                                $feed_hash,
                                                $profile_id);
 
-        $zd = new Zend_Date(time(), false, $this->session()->getCulture());
-        $zd->setTimezone($this->session()->getTimezone());
-        $zd->setTimestamp($entry['publication_date']);
+        // $zd = new Zend_Date(time(), false, $this->session()->getCulture());
+        // $zd->setTimezone($this->session()->getTimezone());
+        // $zd->setTimestamp($entry['publication_date']);
 
         if($entry)
         {
@@ -203,13 +203,13 @@ class C_Queue extends B_Controller
     {
         $this->response()->setXML(true);
 
-        /* do not allow publication without register confirmation */
-        if($this->checkRegisterConfirmation()==false) return false;
-
         $blog_hash = $this->request()->blog;
         $queue_publication = $this->request()->publication==1 ? true : false;
         $queue_interval = intval($this->request()->interval);
         $profile_id = $this->session()->user_profile_id;
+
+        /* do not allow auto publication without register confirmation */
+        if($this->checkRegisterConfirmation()==false) $queue_publication=0;
 
         BlogEntry::updateAutoPublication($blog_hash, 
                                          $profile_id, 
