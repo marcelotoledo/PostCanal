@@ -364,7 +364,7 @@ function set_queue_publication()
 {
     if(my_queue.publication==null)
     {
-        my_queue.publication = (my_blog.info['publication_auto']==1);
+        my_queue.publication = (my_blog.info['publication_auto']=='true');
     }
 
     if(my_queue.publication)
