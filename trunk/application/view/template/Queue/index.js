@@ -69,6 +69,10 @@ function entry_updater()
     my_template.entry_list.find('div.ety').each(function()
     {
         var _e = $(this).attr('entry');
+
+        /* object is destroyed during sortable */
+        if(my_queue.data[_e]==undefined) { return false; }
+
         var _d = $(this).find('div.etydte');
 
         if(my_queue.data[_e].time<=0 && 
