@@ -190,11 +190,12 @@ function entry_populate(d)
         _data = 
         {
             entry    : $(this).find('entry').text(),
-            title    : $(this).find('entry_title').text(),
-            content  : $(this).find('entry_content').text(),
-            status   : $(this).find('publication_status').text(),
-            time     : parseInt($(this).find('publication_date_diff').text()),
-            ordering : parseInt($(this).find('ordering').text())
+            title    : $(this).find('title').text(),
+            content  : $(this).find('content').text(),
+            status   : $(this).find('status').text(),
+            time     : parseInt($(this).find('time').text()),
+            ordering : parseInt($(this).find('ordering').text()),
+            link     : $(this).find('link').text()
         };
 
         if(my_queue.data[_data.entry]==undefined) // avoid dupl
@@ -204,6 +205,7 @@ function entry_populate(d)
             _item  = my_template.entry_blank.clone();
             _inner = _item.find('div.ety');
             _inner.attr('entry', _data.entry);
+            _inner.find('div.artlnk > a').attr('href', _data.link);
 
             entry_set_status(_inner, _data.status);
 

@@ -208,11 +208,11 @@ class BlogEntry extends B_Model
     }
 
     /**
-     * Find entries in queue (not published)
+     * Find current entries in queue (not published)
      *
      * @return array
      */
-    public static function findQueue($profile_id, $blog_hash)
+    public static function findQueueCurrent($profile_id, $blog_hash)
     {
         $sql = "SELECT * FROM " . self::$table_name . "
                 WHERE user_blog_id = (
@@ -225,20 +225,44 @@ class BlogEntry extends B_Model
     }
 
     /**
-     * find last published entries
+     * find Queue overview (current entries and last published)
      *
-     * @return array
+     * return array
      */
-    public static function findPublished($profile_id, $blog_hash, $last=1)
+    public static function findQueueOverview($profile_id, $blog_hash, $last=1)
     {
-        $sql = "SELECT * FROM " . self::$table_name . "
-                WHERE user_blog_id = (
-                    SELECT user_blog_id FROM model_user_blog
-                    WHERE hash = ? AND user_profile_id = ?) 
-                AND publication_status = ? AND deleted=0
-                ORDER BY publication_date DESC LIMIT " . intval($last);
+        $base = "SELECT a.hash               AS entry, 
+                        a.entry_title        AS title,
+                        a.entry_content      AS content,
+                        a.publication_status AS status,
+                        (UNIX_TIMESTAMP(a.publication_date) - UNIX_TIMESTAMP()) AS time,
+                        a.ordering           AS ordering,
+                        b.article_link       AS link
+                 FROM " . self::$table_name . " AS a
+                 LEFT JOIN model_aggregator_feed_article AS b
+                     ON (a.aggregator_feed_article_id = b.aggregator_feed_article_id)
+                 WHERE a.user_blog_id = (
+                     SELECT user_blog_id FROM model_user_blog
+                     WHERE hash = ? AND user_profile_id = ?) 
+                 AND deleted=0";
 
-        return self::select($sql, array($blog_hash, $profile_id, self::STATUS_PUBLISHED),  PDO::FETCH_CLASS, get_class());
+        $blog = UserBlog::getByUserAndHash($profile_id, $blog_hash);
+
+        $results = array('queue' => array(), 'published' => array());
+
+        $j = 1;
+        foreach(self::select($base . " AND publication_status != ? ORDER BY ordering ASC", array($blog_hash, $profile_id, self::STATUS_PUBLISHED), PDO::FETCH_ASSOC) as $i) 
+        {
+            // fixed interval when paused
+            if($blog->publication_auto==false) $i['time'] = $blog->publication_interval * $j;
+            $results['queue'][] = $i;
+            $j++;
+        }
+
+        $results['published'] = self::select($base . " AND publication_status = ? ORDER BY publication_date DESC LIMIT " . intval($last), array($blog_hash, $profile_id, self::STATUS_PUBLISHED), PDO::FETCH_ASSOC);
+
+        return $results;
+
     }
 
     /**
@@ -636,7 +660,7 @@ class BlogEntry extends B_Model
 
         self::transaction();
 
-        foreach(self::findQueue($profile_id, $blog_hash) as $o)
+        foreach(self::findQueueCurrent($profile_id, $blog_hash) as $o)
         {
             if($o->hash==$entry_hash)
             {
@@ -700,7 +724,7 @@ class BlogEntry extends B_Model
 
         /* update entries */
 
-        foreach($queue = self::findQueue($user, $blog) as $o)
+        foreach($queue = self::findQueueCurrent($user, $blog) as $o)
         {
 
             if($o->publication_status!=self::STATUS_WORKING)

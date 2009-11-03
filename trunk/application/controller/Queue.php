@@ -55,55 +55,6 @@ class C_Queue extends B_Controller
     }
 
     /**
-     * Generate array for Queue list output
-     */
-    protected function generateQueueListOutput($profile_id, $blog_hash)
-    {
-        $blog = UserBlog::getByUserAndHash($profile_id, $blog_hash);
-        $queue = BlogEntry::findQueue($profile_id, $blog_hash);
-        $published = BlogEntry::findPublished($profile_id, $blog_hash);
-
-        $results = array('queue' => array(), 'published' => array());
-        $j = 1;
-
-        foreach($queue as $o)
-        {
-            $diff = ($blog->publication_auto) ?
-                ($o->publication_date - time()) :
-                ($blog->publication_interval * $j) ; // fixed interval when paused
-
-            $results['queue'][] = array
-            (
-                'entry'                    => $o->hash,
-                'entry_title'              => $o->entry_title,
-                'entry_content'            => $o->entry_content,
-                'publication_status'       => $o->publication_status,
-                'publication_date_diff'    => $diff,
-                'ordering'                 => $o->ordering
-            );
-
-            $j++;
-        }
-
-        foreach($published as $o)
-        {
-            $diff = $o->publication_date - time();
-
-            $results['published'][] = array
-            (
-                'entry'                    => $o->hash,
-                'entry_title'              => $o->entry_title,
-                'entry_content'            => $o->entry_content,
-                'publication_status'       => $o->publication_status,
-                'publication_date_diff'    => $diff,
-                'ordering'                 => $o->ordering
-            );
-        }
-
-        return $results;
-    }
-
-    /**
      * List blog entries
      *
      * @return void
@@ -113,7 +64,7 @@ class C_Queue extends B_Controller
         $this->response()->setXML(true);
         $blog_hash = $this->request()->blog;
         $profile_id = $this->session()->user_profile_id;
-        $this->view->result = $this->generateQueueListOutput($profile_id, $blog_hash);
+        $this->view->result = BlogEntry::findQueueOverview($profile_id, $blog_hash);
     }
 
     /**
@@ -205,7 +156,7 @@ class C_Queue extends B_Controller
                                          $queue_publication, 
                                          $queue_interval);
 
-        $this->view->result = $this->generateQueueListOutput($profile_id, $blog_hash);
+        $this->view->result = BlogEntry::findQueueOverview($profile_id, $blog_hash);
     }
 
     /**
@@ -222,7 +173,7 @@ class C_Queue extends B_Controller
 
         BlogEntry::updateOrdering($blog_hash, $profile_id, $entry_hash, $position);
 
-        $this->view->result = $this->generateQueueListOutput($profile_id, $blog_hash);
+        $this->view->result = BlogEntry::findQueueOverview($profile_id, $blog_hash);
     }
 
     /**

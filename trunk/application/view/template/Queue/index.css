@@ -181,6 +181,27 @@ div.etyedlnk
     background-position: -165px -40px;
 }
 */
+div.artlnk
+{
+    float: left;
+    <?php if($this->browser_is_ie6) : ?>
+    background-image: url('/image/dashboard/world_go_blue-8.png?v=1253819580');
+    <?php else : ?>
+    background-image: url('/image/dashboard/world_go_blue.png?v=1253527293');
+    <?php endif ?>
+    background-position: 0px 0px;
+    background-repeat: no-repeat;
+    width: 24px;
+    height: 24px;
+    margin-top: 14px;
+    margin-left: 5px;
+}
+div.artlnk a
+{
+    display: block;
+    width: 100%;
+    height: 100%;
+}
 div.etyedlnk
 {
     float: left;
@@ -194,7 +215,6 @@ div.etyedlnk
     width: 24px;
     height: 24px;
     margin-top: 14px;
-    margin-left: 5px;
 }
 div.etyedlnk a
 {

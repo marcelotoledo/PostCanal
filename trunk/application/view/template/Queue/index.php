@@ -29,6 +29,7 @@
         <a href="#"><span class="etytt"></span></a>
     </div>
     <div class="etydte"></div>
+    <div class="artlnk"><a href="#" target="_blank" title="view original">&nbsp;</a></div>
     <div class="sprites-img etyedlnk"><a href="#">&nbsp;</a></div>
     <div class="etyclr"></div>
 </div>
