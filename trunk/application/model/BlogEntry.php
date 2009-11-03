@@ -556,19 +556,28 @@ class BlogEntry extends B_Model
     {
         /* sanitize hash list */
 
-        for($i=0;$i<count($array_entry_hash);$i++)
+        $t = count($array_entry_hash);
+        if($t==0) return null;
+
+        for($i=0;$i<$t;$i++)
         {
             $array_entry_hash[$i] = preg_replace("/[^\w]+/", "", $array_entry_hash[$i]);
         }
-
-        $_in = "'" . implode("','", $array_entry_hash) . "'";
 
         $_q = "SELECT hash , publication_status, publication_date 
                FROM " . self::$table_name . "
                WHERE user_blog_id = (
                     SELECT user_blog_id FROM model_user_blog
-                    WHERE hash = ? and user_profile_id = ?)
-               AND hash IN (" . $_in . ")";
+                    WHERE hash = ? and user_profile_id = ?)";
+        if($t>1)
+        {
+            $_in = "'" . implode("','", $array_entry_hash) . "'";
+            $_q.= " AND hash IN (" . $_in . ")";
+        }
+        else
+        {
+            $_q.= " AND hash = '" . $array_entry_hash[0] . "'";
+        }
 
         $results = array();
 
@@ -581,8 +590,7 @@ class BlogEntry extends B_Model
             (
                 'entry'                    => $o->hash,
                 'status'                   => $o->publication_status,
-                'publication_date_diff'    => $diff,
-                'publication_date_literal' => L_Utility::literalTime($diff)
+                'publication_date_diff'    => $diff
             );
         }
 

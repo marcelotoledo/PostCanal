@@ -1,0 +1,8 @@
+#b_txtoverflow-buffer
+{
+    position: absolute;
+    display: none;
+    width: auto;
+    height: auto;
+    white-space: nowrap;
+}

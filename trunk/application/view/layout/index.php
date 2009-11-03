@@ -32,8 +32,8 @@ $this->browser_is_opera = (strpos($this->browser, 'opera')>0);
 <link rel="alternate" type="application/rss+xml" title="RSS 2.0" href="http://blog.postcanal.com/feed/" />
 
 <script type="text/javascript" src="/jquery/jquery-1.3.2.min.js"></script>
-<script type="text/javascript" src="/js/application.js?v=1256671424"></script>
-<link rel="stylesheet" href="/css/application.css?v=1253528121" type="text/css" media="screen"/>
+<script type="text/javascript" src="/js/main.js?v=1257250269"></script>
+<link rel="stylesheet" href="/css/main.css?v=1257250269" type="text/css" media="screen"/>
 
 <?php if($this->request()->getController()=='tour' ||
          $this->request()->getController()=='signup') : ?>
@@ -126,7 +126,7 @@ $this->browser_is_opera = (strpos($this->browser, 'opera')>0);
 </div>
 <div id="topclr"></div>
 
-<div id="midrow"><?php $this->includeTemplate() ?></div>
+<div id="midrow"><?php $this->includeTemplate('php') ?></div>
 
 <div id="btmrow">
     <div id="btmdsh">&nbsp;</div>

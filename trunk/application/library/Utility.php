@@ -160,7 +160,7 @@ class L_Utility
         if($j > 30 && $x=='d') { $j = ceil($j / 30); $x = 'm'; }
         if($j > 12 && $x=='m') { $j = ceil($j / 12); $x = 'y'; }
 
-        return sprintf($d[($k . $x)], $j); 
+        return (array_key_exists(($k . $x), $d)) ? sprintf($d[($k . $x)], $j) : '';
     }
 
     /**

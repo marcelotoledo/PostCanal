@@ -51,7 +51,7 @@ h1
 <body>
 <div id="mainct">
 
-<?php $this->includeTemplate() ?>
+<?php $this->includeTemplate('php') ?>
 
 <?php if(B_Registry::get('view/googleAnalytics')=='true') : ?>
 <script type="text/javascript">

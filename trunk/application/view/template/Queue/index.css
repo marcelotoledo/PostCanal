@@ -85,6 +85,10 @@ div.ety-pub
 {
     background-color: silver;
 }
+div.ety-fail
+{
+    background-color: #f4e1e1;
+}
 div.entrydndhdr
 {
     float: left;

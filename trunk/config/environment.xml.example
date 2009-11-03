@@ -17,7 +17,7 @@
         <expiration>43200</expiration>
     </session>
     <view>
-        <compression>false</compression>
+        <cache>false</cache>
         <googleAnalytics>false</googleAnalytics>
     </view>
     <mailer>

@@ -2,8 +2,9 @@ var my_template = null;
 
 var my_queue = 
 {
-    data        : Array() ,
-    objects     : Array() ,
+    data        : Array() , // entry data
+    objects     : Array() , // entry DOM objects
+    check       : Array() , // entry status check queue
     current     : null    ,
     editor      : null    ,
     sorting     : false   ,
@@ -11,6 +12,8 @@ var my_queue =
     interval    : 0       ,
     request     : false
 };
+
+var entry_check_update_interval = 10000;
 
 
 function entry_set_status(e, s)
@@ -23,21 +26,24 @@ function entry_set_status(e, s)
     if(typeof e == 'object')
     {
         e.attr('status', s);
+        var _e = e.attr('entry');
 
-        if(s=='working')
+        if(s=='<?php echo BlogEntry::STATUS_WORKING ?>')
         {
             e.find('div.etydte').text('publishing...');
         }
-        if(s=='failed')
+        if(s=='<?php echo BlogEntry::STATUS_FAILED ?>')
         {
+            e.addClass('ety-fail');
             e.find('div.etylab').append('<nobr><img src="/image/warning.png"/></nobr>');
         }
-        if(s=='published')
+        if(s=='<?php echo BlogEntry::STATUS_PUBLISHED ?>')
         {
             e.addClass('ety-pub');
             e.find('div.entrydndhdr').addClass('entrydndhdr-pb');
             e.find('div.etytog').replaceWith('<div class="etytog-pb">P</div>');
             e.find('div.etyedlnk').remove();
+            e.find('div.etydte').text('published');
 
             if(e.is(':visible')) /* move to bottom */
             {
@@ -57,6 +63,78 @@ function entry_cache_init()
     {
         my_queue.objects[$(this).attr('entry')] = $(this);
     });
+}
+
+function entry_check_callback(d)
+{
+    var _updata = null;
+
+    d.find('result').children().each(function()
+    {
+        _updata = 
+        {
+            entry  : $(this).find('entry').text(),
+            status : $(this).find('status').text(),
+            time   : parseInt($(this).find('publication_date_diff').text())
+        };
+
+        my_queue.data[_updata.entry].status = _updata.status;
+        my_queue.data[_updata.entry].time = _updata.time;
+        entry_set_status(_updata.entry, _updata.status);
+
+        if((_updata.status=='<?php echo BlogEntry::STATUS_WAITING ?>' || 
+            _updata.status=='<?php echo BlogEntry::STATUS_WORKING ?>')==false)
+        {
+            entry_check_remove(_updata.entry);
+        }
+    });
+}
+
+function entry_check_init()
+{
+    setTimeout('entry_check()', entry_check_update_interval);
+}
+
+function entry_check()
+{
+    if(my_queue.check.length>0)
+    {
+        var _data = { blog : my_blog.current, waiting : my_queue.check.join(',') };
+        do_request('GET', '/queue/check', _data, entry_check_callback);
+    }
+
+    entry_check_init();
+}
+
+function entry_check_index(e)
+{
+    var i;
+    var j=null;
+
+    for(i=0;i<my_queue.check.length;i++)
+    {
+        if(my_queue.check[i]==e) { j=e; }
+    }
+
+    return j;
+}
+
+function entry_check_add(e)
+{
+    if(entry_check_index(e)==null)
+    {
+        my_queue.check.push(e);
+    }
+}
+
+function entry_check_remove(e)
+{
+    var j=entry_check_index(e);
+
+    if(j!=null)
+    {
+        my_queue.check.splice(j, 1);
+    }
 }
 
 function entry_updater_init()
@@ -80,6 +158,7 @@ function entry_updater()
             my_queue.data[_e].status=='<?php echo BlogEntry::STATUS_WORKING ?>'))
         {
             _d.text('publishing...');
+            entry_check_add(_e);
             return true;
         }
 
@@ -157,7 +236,9 @@ function entry_populate(d)
 
 function entry_list_callback(d)
 {
-    my_queue.data = Array();
+    my_queue.data    = Array();
+    my_queue.objects = Array();
+    my_queue.check   = Array();
     my_queue.current = null;
     my_template.entry_list.html('');
 
@@ -301,7 +382,9 @@ function entry_save_current()
 
 function entry_delete_callback(d)
 {
-    my_queue.objects[d.find('entry').text()].remove();
+    var _e = d.find('entry').text();
+    my_queue.objects[_e].remove();
+    entry_check_remove(_e);
 }
 
 function entry_delete(e)
@@ -311,15 +394,10 @@ function entry_delete(e)
     do_request('POST', '/queue/delete', _data, entry_delete_callback);
 }
 
-function entry_position_callback(d)
-{
-    entry_list();
-}
-
 function entry_position(e, p)
 {
     var _data = { blog  : my_blog.current , entry : e, position: p };
-    do_request('POST', '/queue/position', _data, entry_position_callback);
+    do_request('POST', '/queue/position', _data, entry_list_callback);
 }
 
 function entry_sortable_callback(e)
@@ -389,7 +467,7 @@ function set_queue_publication_auto()
                   interval    : my_queue.interval ,
                   publication : (my_queue.publication ? 1 : 0) };
 
-    do_request('POST', '/queue/auto', _data, function() { entry_list(); });
+    do_request('POST', '/queue/auto', _data, entry_list_callback);
 }
 
 function set_queue_interval()
@@ -469,6 +547,7 @@ function initialize()
     set_queue_interval();
     entry_list();
     entry_updater_init();
+    entry_check_init();
 }
 
 function on_blog_change()

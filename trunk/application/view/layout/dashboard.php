@@ -15,8 +15,8 @@
          $this->request()->getAction()=='index') : ?>
 <script type="text/javascript" src="/ckeditor/ckeditor.js?v=1253526829"></script>
 <?php endif ?>
-<script type="text/javascript" src="/js/application.js?v=1256671424"></script>
-<link rel="stylesheet" href="/css/application.css?v=1253528121" type="text/css" media="screen"/>
+<script type="text/javascript" src="/js/main.js?v=1257250269"></script>
+<link rel="stylesheet" href="/css/main.css?v=1257250269" type="text/css" media="screen"/>
 
 <script type="text/javascript"><?php $this->includeLayout('general.js') ?></script>
 <script type="text/javascript"><?php $this->includeLayout('dashboard.js') ?></script>
@@ -89,7 +89,7 @@
     </div>
 </div>
 
-<?php $this->includeTemplate() ?>
+<?php $this->includeTemplate('php') ?>
 
 </div>
 <div id="flashmessage"></div>

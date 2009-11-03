@@ -2491,14 +2491,13 @@ class B_View
 
         if(strlen($this->layout) > 0)
         {
-            if(B_Registry::get('view')->compression=='true' && 
-               strlen($this->template) > 0)
+            if(B_Registry::get('view/cache')=='true' && strlen($this->template) > 0)
             {
                 $this->includeCache();
             }
             else
             {
-                $this->includeLayout();
+                $this->includeLayout($this->layout . '.php');
             }
         }
 
@@ -2515,7 +2514,7 @@ class B_View
      */
     public function includeCache()
     {
-        $path = APPLICATION_PATH . '/view/cache/' . $this->layout . '-' .
+        $path = APPLICATION_PATH . '/view/cache/cache-' . $this->layout . '-' .
                 strtolower(str_replace('/', '-', $this->template)) . '.php';
 
         if(file_exists($path))
@@ -2534,9 +2533,8 @@ class B_View
      *
      * @param   string  $name
      */
-    public function includeLayout($name=null)
+    public function includeLayout($name)
     {
-        if($name==null) $name = $this->layout . '.php';
         if(file_exists(($path = APPLICATION_PATH . '/view/layout/' . $name))) include $path;
     }
 
@@ -2545,7 +2543,7 @@ class B_View
      *
      * @param   string  $type
      */
-    public function includeTemplate($type='php')
+    public function includeTemplate($type)
     {
         if(file_exists(($path = APPLICATION_PATH . '/view/template/' . $this->template  . '.' . $type))) include $path;
     }

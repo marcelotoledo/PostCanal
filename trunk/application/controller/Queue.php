@@ -55,16 +55,10 @@ class C_Queue extends B_Controller
     }
 
     /**
-     * List blog entries
-     *
-     * @return void
+     * Generate array for Queue list output
      */
-    public function A_list()
+    protected function generateQueueListOutput($profile_id, $blog_hash)
     {
-        $this->response()->setXML(true);
-        $blog_hash = $this->request()->blog;
-        $profile_id = $this->session()->user_profile_id;
-
         $blog = UserBlog::getByUserAndHash($profile_id, $blog_hash);
         $queue = BlogEntry::findQueue($profile_id, $blog_hash);
         $published = BlogEntry::findPublished($profile_id, $blog_hash);
@@ -106,7 +100,20 @@ class C_Queue extends B_Controller
             );
         }
 
-        $this->view->result = $results;
+        return $results;
+    }
+
+    /**
+     * List blog entries
+     *
+     * @return void
+     */
+    public function A_list()
+    {
+        $this->response()->setXML(true);
+        $blog_hash = $this->request()->blog;
+        $profile_id = $this->session()->user_profile_id;
+        $this->view->result = $this->generateQueueListOutput($profile_id, $blog_hash);
     }
 
     /**
@@ -197,6 +204,8 @@ class C_Queue extends B_Controller
                                          $profile_id, 
                                          $queue_publication, 
                                          $queue_interval);
+
+        $this->view->result = $this->generateQueueListOutput($profile_id, $blog_hash);
     }
 
     /**
@@ -213,7 +222,7 @@ class C_Queue extends B_Controller
 
         BlogEntry::updateOrdering($blog_hash, $profile_id, $entry_hash, $position);
 
-        $this->view()->updated = true;
+        $this->view->result = $this->generateQueueListOutput($profile_id, $blog_hash);
     }
 
     /**

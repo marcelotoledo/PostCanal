@@ -127,7 +127,7 @@ th
 <body>
 <div id="mainct">
 
-<?php $this->includeTemplate() ?>
+<?php $this->includeTemplate('php') ?>
 
 </body>
 </html>
