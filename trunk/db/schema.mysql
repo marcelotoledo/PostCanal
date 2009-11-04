@@ -13,6 +13,7 @@ DROP TABLE IF EXISTS model_aggregator_feed_discover CASCADE;
 DROP TABLE IF EXISTS model_aggregator_feed CASCADE;
 DROP TABLE IF EXISTS model_blog_type CASCADE;
 DROP TABLE IF EXISTS application_mailer_relay CASCADE;
+DROP TABLE IF EXISTS application_report CASCADE;
 DROP TABLE IF EXISTS base_translation CASCADE;
 DROP TABLE IF EXISTS base_session CASCADE;
 DROP TABLE IF EXISTS base_log CASCADE;
