@@ -6,52 +6,22 @@
 
 <title>PostCanal.com</title>
 
-<style type="text/css">
-*
-{
-	padding: 0;
-	margin: 0;
-}
-body
-{
-	text-align: center;
-	font-family: "Trebuchet MS", Verdana, Geneva, Arial, Helvetica, sans-serif;
-}
-img
-{
-	border: 0;
-}
-a
-{
-    text-decoration: none;
-    color: #2780b1;
-}
-a:hover
-{
-    color: #164a66;
-}
-
-#mainct
-{
-    text-align: left;
-    margin: 25px;
-}
-h1
-{
-    font-size: 1.5em;
-    margin-bottom: 15px;
-}
-#msg
-{
-    width: 650px;
-}
-</style>
+<?php if($this->request()->getController()!='ouch') : ?>
+<script type="text/javascript" src="/jquery/jquery-1.3.2.min.js"></script>
+<script type="text/javascript" src="/js/main.js?v=1257250269"></script>
+<link rel="stylesheet" href="/css/main.css?v=1257250269" type="text/css" media="screen"/>
+<script type="text/javascript"><?php $this->includeLayout('general.js') ?></script>
+<script type="text/javascript"><?php $this->includeLayout('default.js') ?></script>
+<script type="text/javascript"><?php $this->includeTemplate('js') ?></script>
+<?php endif ?>
+<style type="text/css"><?php $this->includeLayout('default.css') ?></style>
+<style type="text/css"><?php $this->includeTemplate('css') ?></style>
 
 </head>
 <body>
 <div id="mainct">
-
 <?php $this->includeTemplate('php') ?>
+</div>
 
 <?php if(B_Registry::get('view/googleAnalytics')=='true') : ?>
 <script type="text/javascript">

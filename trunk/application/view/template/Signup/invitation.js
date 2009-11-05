@@ -1,3 +1,6 @@
+jQuery.b_spinner_start = function() { return false; }
+jQuery.b_spinner_stop = function() { return false; }
+
 $(document).ready(function()
 {
     function invitation_cb(d)

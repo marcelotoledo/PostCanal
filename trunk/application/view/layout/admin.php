@@ -3,14 +3,13 @@
 
 <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
 <meta http-equiv="X-UA-Compatible" content="IE=EmulateIE7"/>
-<base href="<?php echo BASE_URL ?>" />
 
 <title>PostCanal.com</title>
 
 <script type="text/javascript" src="/jquery/jquery-1.3.2.min.js"></script>
 <script type="text/javascript" src="/jquery/jquery-ui-1.7.1.custom.min.js"></script>
-<script type="text/javascript" src="/js/application.js?v=1253528538"></script>
-<link rel="stylesheet" href="/css/application.css?v=1253528121" type="text/css" media="screen"/>
+<script type="text/javascript" src="/js/main.js?v=1257348067"></script>
+<link rel="stylesheet" href="/css/main.css?v=1257348067" type="text/css" media="screen"/>
 <script type="text/javascript"><?php $this->includeLayout('general.js') ?></script>
 <script type="text/javascript"><?php $this->includeTemplate('js') ?></script>
 

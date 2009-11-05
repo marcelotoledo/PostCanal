@@ -6,6 +6,7 @@ var my_queue =
     objects     : Array() , // entry DOM objects
     check       : Array() , // entry status check queue
     current     : null    ,
+    scroll      : 0       ,
     editor      : null    ,
     sorting     : false   ,
     publication : null    ,
@@ -233,7 +234,7 @@ function entry_populate(d)
 
     entry_sortable_init();
     entry_cache_init();
-    my_template.entry_list.scrollTop(0);
+    my_template.entry_list.scrollTop(my_queue.scroll);
 }
 
 function entry_list_callback(d)
@@ -242,6 +243,7 @@ function entry_list_callback(d)
     my_queue.objects = Array();
     my_queue.check   = Array();
     my_queue.current = null;
+    my_queue.scroll  = my_template.entry_list.scrollTop()
     my_template.entry_list.html('');
 
     var _qr = d.find('result').find('queue').children();
@@ -263,19 +265,6 @@ function entry_list_callback(d)
 function entry_list()
 {
     do_request('GET', '/queue/list', { blog : my_blog.current }, entry_list_callback);
-}
-
-function entry_scroll_top()
-{
-    if(my_queue.current)
-    {
-        my_template.entry_list.animate(
-        {
-            scrollTop: my_queue.current.position().top -
-                my_template.entry_list.position().top +
-                my_template.entry_list.scrollTop() - 2
-        }, 200);
-    }
 }
 
 function entry_show_fix_vertical()
@@ -318,7 +307,8 @@ function entry_show(e)
 
         _content.find('h1').html(my_queue.data[e].title );
         _content.find('div.etybody').html(my_queue.data[e].content);
-        _content.find('div.etybody').find('a').attr('target', '_blank'); /* add target _blank to all links */
+        /* add target _blank to all links */
+        _content.find('div.etybody').find('a').attr('target', '_blank');
 
         if(my_queue.current.hasClass('ety-op')==false)
         {
@@ -484,48 +474,6 @@ function set_queue_interval()
         }
     });
 }
-
-// function publication_updater_callback(d)
-// {
-//     var _updata = null;
-// 
-//     d.find('result').children().each(function()
-//     {
-//         _updata = 
-//         {
-//             entry  : $(this).find('entry').text(),
-//             stat   : $(this).find('status').text(),
-//             diff   : parseInt($(this).find('publication_date_diff').text())
-//             // diff   : parseInt($(this).find('publication_date_diff').text()),
-//             // liter  : $(this).find('publication_date_literal').text()
-//         };
-// 
-//         entry_set_status(_updata.entry, _updata.stat);
-// 
-//         // entry_set_publication_date(_updata.entry,
-//         //                            _updata.liter, // maybe fix?
-//         //                            _updata.diff,
-//         //                            _updata.liter,
-//         //                           (_updata.stat=='published'),
-//         //                            true);
-//     });
-// }
-
-// function publication_updater()
-// {
-//     if(my_updater.request==true) { return false; }
-// 
-//     var _wdom = my_template.entry_list.find("div.ety[status='waiting']");
-//     var _wpar = Array();
-//     var _data = null;
-// 
-//     if(_wdom.length>0)
-//     {
-//         _wdom.each(function() { _wpar.push($(this).attr('entry')); });
-//         _data = { blog : my_blog.current, waiting : _wpar.join(',') };
-//         do_request('GET', '/queue/check', _data, publication_updater_callback);
-//     }
-// }
 
 function set_queue_header_title()
 {
