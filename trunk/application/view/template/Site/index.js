@@ -75,6 +75,7 @@ function blog_add_callback(d)
         var _n = d.find('name').text();
         var _u = d.find('url').text();
 
+        my_template.blog_list_ref[_b].item.find('span.whypwdquestion').show();
         my_template.blog_list_ref[_b].item.find('div.donotchangepwd').hide();
         my_template.blog_list_ref[_b].item.find('input[name="password"]').show();
         my_template.blog_list_ref[_b].item.find('input[name="username"]').focus();
@@ -94,7 +95,7 @@ function blog_add_callback(d)
         if(d.find('type_name').text()=='wordpress' &&
            _u.indexOf('wordpress.com')==-1)
         {
-            $("#wordpress-remote-publishing").show();
+            my_template.blog_list_ref[_b].item.find('div.wordpress-remote-publishing').show();
         }
            
     }
@@ -170,6 +171,9 @@ function blog_edit_hide(b)
 {
     my_template.blog_list_ref[b].item.find('div.donotchangepwd').show();
     my_template.blog_list_ref[b].item.find('input[name="password"]').hide();
+    // hide foreve all new site notice
+    my_template.blog_list_ref[b].item.find('div.newsite-notice').hide();
+    my_template.blog_list_ref[b].item.find('span.whypwdquestion').hide();
     my_template.blog_list_ref[b].item.find('div.blogbot').hide();
     my_template.blog_list_ref[b].item.find('button.blogdeletebtn').hide();
     my_template.blog_list_ref[b].item.find('button.blogeditbtn').show();
@@ -353,6 +357,16 @@ $(document).ready(function()
     my_template.blog_list_area.find('button.blogdeletebtn').live('click', function()
     {
         blog_delete_confirm_show(blog_item_getid($(this)));
+        return false;
+    });
+
+    my_template.blog_list_area.find("span.whypwdquestion")
+        .find('a')
+        .live('click', function()
+    {
+        var b = $(this).parent().parent().parent().parent().parent().parent().attr('blog');
+        my_template.blog_list_ref[b].item.find('div.password-notice').show();
+        $(this).blur();
         return false;
     });
 

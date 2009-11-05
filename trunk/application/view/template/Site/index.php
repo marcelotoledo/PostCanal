@@ -38,9 +38,14 @@
         <p>Username</p><p><input type="text" name="username" class="intxt intxt-full"></p>
         </div>
         <div class="form-row">
-        <p>Password</p><p><input type="password" name="password" class="intxt intxt-full" style="display:none"><div class="donotchangepwd"><input type="checkbox" name="donotchangepwd" checked> keep unchanged</div></p>
+        <p>Password</p><p><input type="password" name="password" class="intxt intxt-full" style="display:none"> <span class="whypwdquestion" style="display:none"> <a href="#"><small>why do you need my password?</small></a></span>
+        <div class="donotchangepwd"><input type="checkbox" name="donotchangepwd" checked> keep unchanged</div>
+        </p>
         </div>
-        <div id="wordpress-remote-publishing" style="display:none"><img src="/image/warning.png"> You must enable <b>Remote Publishing</b> in WordPress<br/><small>Go to your WordPress admin, click on Settings &rarr; Writing and check <b>XML-RPC</b> option</small></div>
+        <div class="password-notice newsite-notice" style="display:none">
+        Your password is necessary to allow us publish content in your site. It is stored securely in our infrasctructure and will be used to content publication only.
+        </div>
+        <div class="wordpress-remote-publishing newsite-notice" style="display:none"><img src="/image/warning.png"> You must enable <b>Remote Publishing</b> in WordPress<br/><small>Go to your WordPress admin, click on Settings &rarr; Writing and check <b>XML-RPC</b> option</small></div>
         <div class="form-bot">
         <button class="blogupdatebtn">SAVE</button>&nbsp;
         <button class="blogcancelbtn">CANCEL</button>

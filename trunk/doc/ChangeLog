@@ -84,5 +84,7 @@ HORAS TRABALHADAS: 8h
 ==========
 
 - Manter link original do article original no Queue (bugzId:141)
+- Manage sites : informar sobre uso da senha (bugzId:127)
+- Feeds em ordem inversa (bugzId:150)
 
-HORAS TRABALHADAS: 2h
+HORAS TRABALHADAS: 4h
