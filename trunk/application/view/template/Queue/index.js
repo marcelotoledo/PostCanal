@@ -16,7 +16,6 @@ var my_queue =
 
 var entry_check_update_interval = 10000;
 
-
 function entry_set_status(e, s)
 {
     if(typeof e == 'string' && e.length > 0)

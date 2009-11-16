@@ -2,7 +2,8 @@ var my_template = null;
 
 var my_feed =
 {
-    current : null
+    current : null,
+    type    : 'feed'
 };
 
 var my_article = 
@@ -14,8 +15,6 @@ var my_article =
     bottom  : 0
 };
 
-var magic_slh = 10;
-
 
 function set_article_display()
 {
@@ -26,8 +25,6 @@ function set_article_display()
         my_template.article_list_lnk.hide();
         my_template.article_list_lab.show();
         article_hide_all();
-        //my_template.article_prev.attr('disabled', false);
-        //my_template.article_next.attr('disabled', false);
     }
     if(my_article.display=='expanded')
     {
@@ -36,8 +33,6 @@ function set_article_display()
         my_template.article_list_lab.hide();
         my_template.article_list_lnk.show();
         article_show_all();
-        //my_template.article_prev.attr('disabled', true);
-        //my_template.article_next.attr('disabled', true);
     }
 }
 
@@ -52,6 +47,19 @@ function feed_item_c(f, t, w)
     _inner = _item.find('div.ch');
     _inner.attr('feed', f);
     _inner.find('a.feeditemlnk').attr('title', t).b_txtoverflow({ buffer: my_template.txtoverflow_buffer, width: w, text: t });
+
+    return _item;
+}
+
+function tag_item_c(tag, w)
+{
+    var _item = null;
+    var _inner = null;
+
+    _item = my_template.tag_item_blank.clone();
+    _inner = _item.find('div.ch');
+    _inner.attr('tag', tag);
+    _inner.find('a.tagitemlnk').attr('title', tag).b_txtoverflow({ buffer: my_template.txtoverflow_buffer, width: w, text: tag });
 
     return _item;
 }
@@ -83,6 +91,26 @@ function feed_populate(d)
     my_template.subscribed_list.append(_lsdata.join("\n"));
 }
 
+function tag_populate(d)
+{
+    if(d.length==0) { return false; }
+
+    var _flw = my_template.subscribed_list.width() * 0.9;
+
+    d.each(function()
+    {
+        _data =
+        {
+            tag_name  : $(this).find('tag_name').text(),
+            tag_feeds : $(this).find('tag_feeds').children()
+        };
+
+        _item = tag_item_c(_data.tag_name, _flw);
+        my_template.subscribed_list.append(_item.html() + "\n");
+        feed_populate(_data.tag_feeds);
+    });
+}
+
 function no_feed()
 {
     //my_template.middle_menu.hide();
@@ -95,6 +123,7 @@ function feed_list_callback(d)
     var _fl = d.find('feeds').children();
     if(_fl.length==0) { no_feed(); } // tutorial
     feed_populate(_fl);
+    tag_populate(d.find('tags').children()); // tags
 }
 
 function feed_list()
@@ -148,8 +177,8 @@ function update_right_header_title()
     if(my_feed.current)
     {
         _title = my_template.subscribed_list
-            .find("div.ch[feed='" + my_feed.current + "']")
-            .find('a').text();
+            .find("div.ch[" + my_feed.type + "='" + my_feed.current + "']")
+            .find('a').attr('title');
         my_template.right_header_title.css('text-transform', 'none');
     }
     else
@@ -192,19 +221,20 @@ function article_populate(d, append)
     {
         _data = 
         {
-            feed                 : $(this).find('feed').text(),
-            feed_title           : $(this).find('feed_title').text(),
-            article              : $(this).find('article').text(),
-            article_title        : $(this).find('article_title').text(),
-            article_link         : $(this).find('article_link').text(),
-            article_date         : $(this).find('article_date').text(),
-            article_time         : $(this).find('article_time').text(),
-            article_time_literal : $(this).find('article_time_literal').text(),
-            article_date_local   : $(this).find('article_date_local').text(),
-            article_author       : $(this).find('article_author').text(),
-            article_content      : $(this).find('article_content').text(),
-            publication_status   : $(this).find('publication_status').text(),
-            entry                : $(this).find('entry').text()
+            feed                 :  $(this).find('feed').text(),
+            feed_title           :  $(this).find('feed_title').text(),
+            article              :  $(this).find('article').text(),
+            article_title        :  $(this).find('article_title').text(),
+            article_link         :  $(this).find('article_link').text(),
+            article_date         :  $(this).find('article_date').text(),
+            article_time         :  $(this).find('article_time').text(),
+            article_time_literal :  $(this).find('article_time_literal').text(),
+            article_date_local   :  $(this).find('article_date_local').text(),
+            article_author       :  $(this).find('article_author').text(),
+            article_content      :  $(this).find('article_content').text(),
+            publication_status   :  $(this).find('publication_status').text(),
+            entry                :  $(this).find('entry').text(),
+            wr                   : ($(this).find('wr').text()=='1')
         };
 
         if(my_article.data[_data.article]==undefined) // avoid dupl
@@ -214,6 +244,11 @@ function article_populate(d, append)
             _inner.attr('feed', _data.feed);
             _inner.attr('article', _data.article);
             _inner.attr('entry', _data.entry);
+
+            if(_data.wr)
+            {
+                _inner.addClass('art-wr');
+            }
 
             if(_data.publication_status.length>0)
             {
@@ -228,7 +263,7 @@ function article_populate(d, append)
             }
 
             _inner.find('span.artch').b_txtoverflow({ buffer: my_template.txtoverflow_buffer, width: _alw, text: _data.feed_title });
-            _inner.find('span.arttt').b_txtoverflow({ buffer: my_template.txtoverflow_buffer, width: _alw, text: _data.article_title });
+            _inner.find('span.arttt').addClass((_data.wr ? 'arttt-wr' : '')).b_txtoverflow({ buffer: my_template.txtoverflow_buffer, width: _alw, text: _data.article_title });
             _inner.find('div.artdte').text(_i < 5 ? _data.article_time_literal :
                                                     _data.article_date_local);
             _inner.find('div.artlnk > a').attr('href', _data.article_link);
@@ -260,11 +295,12 @@ function article_list_callback(d)
 
 function article_list(older)
 {
-    var _url = ((my_feed.current) ? '/article/threaded' : '/article/all');
+    var _url = ((my_feed.current) ? '/article/' + my_feed.type : '/article/all');
 
-    var _data = { blog  : my_blog.current ,
-                  feed  : my_feed.current ,
-                  older : older };
+    var _data = { blog         : my_blog.current ,
+                  // my_feed.type : my_feed.current ,
+                  older        : older };
+        _data[my_feed.type] = my_feed.current;
 
     do_request('GET', _url, _data, article_list_callback);
 }
@@ -273,12 +309,13 @@ function article_scroll_top()
 {
     if(my_article.current)
     {
-        my_template.article_list.animate(
-        {
-            scrollTop: my_article.current.position().top -
-                my_template.article_list.position().top +
-                my_template.article_list.scrollTop() - 2
-        }, 200);
+        var _scr = my_article.current.position().top -
+                   my_template.article_list.position().top +
+                   my_template.article_list.scrollTop() - 
+                   (my_article.display=='list' ? 2 : 10);
+
+        my_template.scroll_animate=true;
+        my_template.article_list.animate({ scrollTop: _scr }, 200, function() { my_template.scroll_animate=false; });
     }
 }
 
@@ -293,25 +330,57 @@ function article_show_fix_vertical()
                _apt -
                ((_coh > _rmh) ? _rmt : _rmh);
 
-    my_template.article_list.animate({ scrollTop: _scr }, 200);
+    my_template.scroll_animate=true;
+    my_template.article_list.animate({ scrollTop: _scr }, 200, function() { my_template.scroll_animate=false });
 }
 
 function article_hide(a)
 {
+    article_blur();
     a.removeClass('art-op').next('div.artview').remove();
 }
 
 function article_hide_current()
 {
     if(my_article.current) { article_hide(my_article.current); }
-    my_article.current = null;
+    //my_article.current = null;
 }
 
 function article_hide_all()
 {
     my_template.article_list.find('div.artview').remove();
-    my_template.article_list.find('div.art').removeClass('art-op');
+    my_template.article_list.find('div.artview-sep').remove();
+    my_template.article_list.find('div.art').removeClass('art-op').removeClass('art-op-focus');
     my_article.current = null;
+}
+
+function article_focus_callback(d)
+{
+    return false;
+}
+
+function article_focus()
+{
+    if(my_article.current)
+    {
+        my_article.current.addClass('art-op-focus');
+        my_article.current.next('div.artview').addClass('artview-focus');
+
+        var _data = { blog     : my_blog.current ,
+                      article  : my_article.current.attr('article') };
+
+        $.ajax({ type: 'POST', url: '/reader/wr', dataType: "xml", data: _data });
+        my_article.current.addClass('art-wr').find('span.arttt').addClass('arttt-wr');
+    }
+}
+
+function article_blur()
+{
+    if(my_article.current)
+    {
+        my_article.current.removeClass('art-op-focus');
+        my_article.current.next('div.artview').removeClass('artview-focus');
+    }
 }
 
 function article_show(a)
@@ -325,11 +394,12 @@ function article_show(a)
         {
             var _content = my_template.content_blank.clone();
             _content.find('h1').html(my_article.data[a].title);
-            // _content.find('div.artbody').html(my_article.data[a].content + '<div style="clear:both"></div>'); /* div clear both for img float left in artbody css */
             _content.find('div.artbody').html(my_article.data[a].content); /* div clear both for img float left in artbody css */
             _content.find('div.artbody').find('a').attr('target', '_blank'); /* add target _blank to all links */
             my_article.current.after(_content.html()).addClass('art-op');
         }
+
+        article_focus();
     }
 }
 
@@ -337,14 +407,18 @@ function article_show_all()
 {
     article_hide_all();
 
+    my_template.article_list.prepend('<div class="artview-sep">&nbsp;</div>');
     my_template.article_list.find('div.art').each(function()
     {
         var _art = $(this).attr('article');
         var _content = my_template.content_blank.clone();
         _content.find('h1').html(my_article.data[_art].title);
         _content.find('div.artbody').html(my_article.data[_art].content);
+        $(this).after('<div class="artview-sep">&nbsp;</div>');
         $(this).after(_content.html()).addClass('art-op');
     });
+
+    article_show(my_template.article_list.find('div.art').eq(0).attr('article'));
 }
 
 function article_previous()
@@ -353,6 +427,7 @@ function article_previous()
 
     if(my_article.current)
     {
+        article_blur();
         _prev = my_article.current.prevAll('div.art').attr('article');
     }
 
@@ -370,6 +445,7 @@ function article_next()
 
     if(my_article.current)
     {
+        article_blur();
         _next = my_article.current.nextAll('div.art').attr('article');
     }
     else
@@ -464,6 +540,7 @@ $(document).ready(function()
         feed_add_cancel      : $("#chaddccl"),
         subscribed_list      : $("#chlst"),
         feed_item_blank      : $("#feeditemblank"),
+        tag_item_blank       : $("#tagitemblank"),
         article_expanded_lnk : $("#articleexpandedlnk"),
         article_expanded_lab : $("#articleexpandedlab"),
         article_list_lnk     : $("#articlelistlnk"),
@@ -471,7 +548,8 @@ $(document).ready(function()
         article_prev         : $("#articleprev"),
         article_next         : $("#articlenext"),
         txtoverflow_buffer   : $("#b_txtoverflow-buffer"),
-        no_feed_message      : $("#nofeedmsg")
+        no_feed_message      : $("#nofeedmsg"),
+        scroll_animate       : false
     }; 
     
     function window_update()
@@ -611,11 +689,37 @@ $(document).ready(function()
 
     my_template.right_middle.scroll(function()
     {
-        // if(my_template.article_list.scrollTop() > (my_article.bottom * 2/3) && /* fails when threaded */
         if(my_template.article_list.scrollTop() > (my_article.bottom / 2) &&
            my_article.older > 0 && active_request==false)
         {
             article_list(my_article.older);
+        }
+
+        /* article expanded scroll focus */
+
+        if(my_article.display=='expanded')
+        {
+            var _found = null;
+            my_template.article_list.find('div.art').each(function()
+            {
+                if(_found==null)
+                {
+                    _found=$(this).position().top;
+                    _found=((_found<my_template.right_middle_area.y || 
+                             _found>my_template.right_middle_area.h) ? null : $(this));
+                }
+            });
+            if(_found)
+            {
+                var _found_art = $(this).attr('article');
+                var _current_art = (my_article.current ? my_article.current.attr('article') : null);
+                if(_found_art!=_current_art && my_template.scroll_animate==false)
+                {
+                    article_blur();
+                    my_article.current=_found;
+                    article_focus();
+                }
+            }
         }
     });
 
@@ -648,6 +752,7 @@ $(document).ready(function()
     my_template.all_items.click(function()
     {
         my_feed.current = null;
+        my_feed.type    = 'feed';
         article_list(null);
         return false;
     });
@@ -655,6 +760,16 @@ $(document).ready(function()
     my_template.subscribed_list.find('a.feeditemlnk').live('click', function()
     {
         my_feed.current = $(this).parent().attr('feed');
+        my_feed.type    = 'feed';
+        article_list(null);
+        $(this).blur();
+        return false;
+    });
+
+    my_template.subscribed_list.find('a.tagitemlnk').live('click', function()
+    {
+        my_feed.current = $(this).parent().attr('tag');
+        my_feed.type    = 'tag';
         article_list(null);
         $(this).blur();
         return false;
@@ -666,19 +781,25 @@ $(document).ready(function()
     {
         var _pt = $(this).parent();
 
-        if(_pt.hasClass('art-op'))
-        {
-            article_hide_current();
-            $(this).blur();
-            return false; 
-        }
-
         if(my_article.display=='list')
         {
+            if(_pt.hasClass('art-op'))
+            {
+                article_hide_current();
+                $(this).blur();
+                return false; 
+            }
+
             article_hide_current();
-            article_show(_pt.attr('article'));
-            article_show_fix_vertical();
         }
+        
+        if(my_article.display=='expanded')
+        {
+            article_blur();
+        }
+
+        article_show(_pt.attr('article'));
+        article_show_fix_vertical();
 
         $(this).blur();
         return false;

@@ -32,6 +32,10 @@
 <div class="ch chi" feed=""><img src="/image/dashboard/feed.png"> <a href="#" class="feeditemlnk"></a></div>
 </div>
 
+<div id="tagitemblank">
+<div class="ch chf" tag=""><img src="/image/dashboard/folder.png"> <a href="#" class="tagitemlnk"></a></div>
+</div>
+
 <div id="articleblank">
 <div class="art art-cl" feed="" article="" entry="">
     <div class="sprites-img arttog arttog-un">&nbsp;</div>

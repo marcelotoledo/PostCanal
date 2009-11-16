@@ -48,6 +48,7 @@ class C_Feed extends B_Controller
         $this->view()->feeds = UserBlogFeed::findAssocByBlogAndUser($blog_hash, 
                                                                     $user_id,
                                                                     $enabled);
+        $this->view()->tags = UserBlogFeed::findGroupByTags($blog_hash, $user_id);
     }
 
     /**
@@ -216,6 +217,35 @@ class C_Feed extends B_Controller
         $user = $this->session()->user_profile_id;
         $updated = array();
 
+        // tags (folders)
+        if(strlen(($folders=$this->request()->folders))>0)
+        {
+            $folder_tags=L_Utility::splitTags($folders);
+            $folder_tags_total=count($folder_tags);
+            $blog_tags_assoc=UserBlogTag::findAssocFromUserBlog($user, $blog);
+            $tag_ids=array();
+            $blog_obj=null;
+
+            for($j=0;$j<$folder_tags_total;$j++)
+            {
+                $tag_id=null;
+
+                if((($tag_id=array_search($folder_tags[$j], $blog_tags_assoc))>0)==false)
+                {
+                    if($blog_obj==null) $blog_obj = UserBlog::getByUserAndHash($user, $blog);
+                    if($blog_obj)
+                    {
+                        $o=new UserBlogTag();
+                        $o->user_blog_id = $blog_obj->user_blog_id;
+                        $o->name = $folder_tags[$j];
+                        if($o->save()) $tag_id=$o->user_blog_tag_id;
+                    }
+                }
+
+                if($tag_id>0) $tag_ids[]=$tag_id;
+            }
+        }
+
         if(is_object(($feed = UserBlogFeed::getByBlogAndFeedHash($user, $blog, $hash))))
         {
             foreach(UserBlogFeed::$allow_write as $k)
@@ -227,6 +257,8 @@ class C_Feed extends B_Controller
                 }
             }
             $feed->save();
+            UserBlogFeedTag::setTagIDArray($feed->user_blog_feed_id, $tag_ids);
+
             $updated = array_merge($updated, array('feed' => $hash));
         }
         $this->view()->updated = $updated;

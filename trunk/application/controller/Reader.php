@@ -42,4 +42,16 @@ class C_Reader extends B_Controller
                                                                           $id,
                                                                           true);
     }
+
+    /**
+     * Set user blog feed article attribute
+     */
+    public function A_wr()
+    {
+        $this->response()->setXML(true);
+        $u = $this->session()->user_profile_id;
+        $b = $this->request()->blog;
+        $a = $this->request()->article;
+        UserBlogFeedArticle::setArticleAsRead($u, $b, $a);
+    }
 }

@@ -54,6 +54,9 @@
         <div class="form-row">
         <p>Title</p><p><input type="text" name="title" class="intxt intxt-full"></p>
         </div>
+        <div class="form-row">
+        <p>Folders <span class="form-row-tip">(eg: Business, Enternainment, Sports)</span></p><p><input type="text" name="folders" class="intxt intxt-full"></p>
+        </div>
         <div class="form-bot">
         <button class="feedupdatebtn">SAVE</button>&nbsp;
         <button class="feedcancelbtn">CANCEL</button>

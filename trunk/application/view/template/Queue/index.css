@@ -69,6 +69,9 @@ div.ety
     height: 45px;
     overflow: hidden;
     white-space: nowrap;
+    -moz-user-select: none;
+    -khtml-user-select: none;
+    user-select: none;
 }
 div.ety-cl
 {

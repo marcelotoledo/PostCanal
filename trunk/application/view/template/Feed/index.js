@@ -60,7 +60,8 @@ function feed_populate(b, app)
         ord     : b.find('ordering').text(),
         url     : b.find('feed_url').text(),
         title   : b.find('feed_title').text(),
-        enabled : b.find('enabled').text()
+        enabled : b.find('enabled').text(),
+        tags    : b.find('tags').text()
     };
 
     if(my_template.feed_list_ref[_feed.feed]!=undefined) // avoid dupl
@@ -85,6 +86,7 @@ function feed_populate(b, app)
     my_template.feed_list_ref[_feed.feed].item.find('div.feedtit').b_txtoverflow({ buffer: my_template.txtoverflow_buffer, width: (my_template.feed_list_area.width()), text: _feed.title });
     my_template.feed_list_ref[_feed.feed].item.find('div.feedurl > span').text(_feed.url);
     my_template.feed_list_ref[_feed.feed].item.find("input[name='title']").val(_feed.title);
+    my_template.feed_list_ref[_feed.feed].item.find("input[name='folders']").val(_feed.tags);
 }
 
 function feed_options(r)
@@ -297,7 +299,8 @@ function feed_update(f)
     {
         feed       : f,
         blog       : my_blog.current,
-        feed_title : my_template.feed_list_ref[f].item.find("input[name='title']").val()
+        feed_title : my_template.feed_list_ref[f].item.find("input[name='title']").val(),
+        folders    : my_template.feed_list_ref[f].item.find("input[name='folders']").val()
     }
 
     do_request('POST', '/feed/update', _up, feed_update_callback);

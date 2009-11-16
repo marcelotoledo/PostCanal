@@ -55,7 +55,7 @@ class C_Article extends B_Controller
      * List articles for a specified user blog feed
      *
      */
-    public function A_threaded()
+    public function A_feed()
     {
         $blog_hash = $this->request()->blog;
         $feed_hash = $this->request()->feed;
@@ -68,6 +68,25 @@ class C_Article extends B_Controller
         if($older>0) { $this->view()->append = true; }
 
         $this->session()->user_blog_hash = $blog_hash;
+    }
+
+    /**
+     * List articles for a specified tag
+     *
+     */
+    public function A_tag()
+    {
+        $blog  = $this->request()->blog;
+        $tag   = $this->request()->tag;
+        $older = intval($this->request()->older);
+        $user  = $this->session()->user_profile_id;
+
+        $this->view()->articles = $this->formatArticles(
+            UserBlogFeed::findArticlesTag($blog, $user, $tag, $older));
+
+        if($older>0) { $this->view()->append = true; }
+
+        $this->session()->user_blog_hash = $blog;
     }
 
     /**

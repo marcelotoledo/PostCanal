@@ -185,3 +185,9 @@ div.nofeedmsg
     font-size: 0.8em;
     color: gray;
 }
+span.form-row-tip
+{
+    font-weight: normal;
+    font-size: small;
+    color: #404040;
+}

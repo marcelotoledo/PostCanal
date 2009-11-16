@@ -182,4 +182,30 @@ class L_Utility
         return preg_replace('/[^\w]/', '',  $matches['version'][$i] . ' ' . 
                                  strtolower($matches['browser'][$i]));
     }
+
+    /**
+     * Split tags
+     */
+    public static function splitTags ($s)
+    {
+        $x=null;
+        $p=',;:/';
+        $l=strlen($p);
+
+        while(($l--)>0)
+            if($x==null && strpos($s, $p[$l])!==false) $x=$p[$l];
+
+        $a=($x ? explode($x, $s) : array($s));
+        $l=count($a);
+        $n=array();
+
+        for($j=0;$j<$l;$j++)
+        {
+            $t=trim($a[$j]);
+            $t=str_replace(',', '', $t);
+            if(strlen($t)>0 && !in_array($t, $n)) $n[]=$t;
+        }
+
+        return $n;
+    }
 }
