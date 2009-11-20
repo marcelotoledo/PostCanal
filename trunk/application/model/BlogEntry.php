@@ -394,7 +394,7 @@ class BlogEntry extends B_Model
 
         $total = 0;
 
-        if(($res = current(self::select($sql, array(self::STATUS_WAITING, PDO::FETCH_ASSOC)))))
+        if(($res = current(self::select($sql, array(self::STATUS_WAITING), PDO::FETCH_ASSOC))))
         {
             $total = $res['total'];
         }
