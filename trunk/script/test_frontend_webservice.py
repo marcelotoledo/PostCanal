@@ -30,4 +30,10 @@ print "-------------------------------------------------------------------------
 print "feed update get"
 print "---------------------------------------------------------------------------------"
 
+print server.feed_update_total({ 'token' : token, 'total' : 3 })
 print server.feed_update_get({ 'token' : token, 'total' : 3 })
+print server.feed_update_reset({ 'token' : token, 'total' : 3 })
+
+print server.blog_publish_total({ 'token' : token, 'total' : 3 })
+print server.blog_publish_get({ 'token' : token, 'total' : 3 })
+print server.blog_publish_reset({ 'token' : token, 'total' : 3 })
