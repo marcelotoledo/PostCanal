@@ -117,7 +117,7 @@ class C_Article extends B_Controller
         $older = intval($this->request()->older);
         $user = $this->session()->user_profile_id;
 
-        $writings = UserBlogWriting::findWritings($blog, $user, $older); 
+        $writings = UserBlogWriting::findWritings($user, $blog, $older); 
         $wc = count($writings);
 
         $zd = new Zend_Date(time(), false, $this->session()->getCulture());
@@ -127,7 +127,7 @@ class C_Article extends B_Controller
 
         for($j=0; $j<$wc; $j++)
         {
-            $ts = strtotime($writings[$j]['created_at']);
+            $ts = strtotime($writings[$j]['writing_date']);
             $lt = L_Utility::literalTime($ts = time());
             $zd->setTimestamp($ts);
 
@@ -135,9 +135,9 @@ class C_Article extends B_Controller
                 $zd_cfg->formatShort :
                 $zd_cfg->formatLong;
 
-            $writings[$j]['created_at_time'] = $ts;
-            $writings[$j]['created_at_literal'] = $lt;
-            $writings[$j]['created_at_local'] = $local;
+            $writings[$j]['writing_date_time'] = $ts;
+            $writings[$j]['writing_date_literal'] = $lt;
+            $writings[$j]['writing_date_local'] = $local;
         }
 
         if($older>0) { $this->view()->append = true; }

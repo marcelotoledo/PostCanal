@@ -178,7 +178,7 @@ function article_populate(d, append)
 {
     if(append==false)
     {
-        my_template.article_list.html('');
+        my_template.right_middle.html('');
         my_article.data = Array();
         my_article.current = null;
         my_article.older = 0;
@@ -197,7 +197,7 @@ function article_populate(d, append)
     var _lsdata = Array();
     var _i      = 0;
 
-    var _alw = my_template.article_list.width() * 0.6;
+    var _alw = my_template.right_middle.width() * 0.6;
 
     d.each(function()
     {
@@ -261,18 +261,117 @@ function article_populate(d, append)
         };
     });
 
-    my_template.article_list.append(_lsdata.join("\n"));
+    my_template.right_middle.append(_lsdata.join("\n"));
     my_article.older = _data.article_time;
 
     if(my_article.display=='expanded') { article_show_all(); }
-    if(append==false) { my_template.article_list.scrollTop(0); }
+    if(append==false) { my_template.right_middle.scrollTop(0); }
 
-    my_article.bottom += my_template.article_list.find('div.art:last').position().top;
+    my_article.bottom += my_template.right_middle.find('div.art:last').position().top;
+}
+
+function writing_populate(d, append)
+{
+    if(append==false)
+    {
+        my_template.right_middle.html('');
+        my_article.data = Array();
+        my_article.current = null;
+        my_article.older = 0;
+        my_article.bottom = 0;
+    }
+
+    if(d.length==0)
+    { 
+        if(append==true) { my_article.older = 0; }
+        return false; 
+    }
+
+    var _data   = null;
+    var _item   = null;
+    var _inner  = null;
+    var _lsdata = Array();
+    var _i      = 0;
+
+    var _alw = my_template.right_middle.width() * 0.6;
+
+    d.each(function()
+    {
+        _data = 
+        {
+            writing              :  $(this).find('writing').text(),
+            writing_title        :  $(this).find('writing_title').text(),
+            writing_content      :  $(this).find('writing_content').text(),
+            writing_date         :  $(this).find('writing_date').text(),
+            writing_date_time    :  $(this).find('writing_date_time').text(),
+            writing_date_literal :  $(this).find('writing_date_literal').text(),
+            writing_date_local   :  $(this).find('writing_date_local').text(),
+            publication_status   :  '' // TODO
+        };
+
+        if(my_article.data[_data.writing]==undefined) // avoid dupl
+        {
+            _item  = my_template.writing_blank.clone();
+            _inner = _item.find('div.wtg');
+            _inner.attr('writing', _data.writing);
+
+            if(_data.publication_status.length>0)
+            {
+                _inner.find('div.wtgtog')
+                    .removeClass('wtgtog-un')
+                    .addClass('wtgtog-ck');
+            }
+
+            if(_data.writing_title.length==0)
+            {
+                _data.writing_title = 'Untitled';
+            }
+
+            _inner.find('span.wtgtt').b_txtoverflow({ buffer: my_template.txtoverflow_buffer, width: _alw, text: _data.writing_title });
+            _inner.find('div.wtgdte').text(_i < 5 ? _data.writing_time_literal :
+                                                    _data.writing_date_local);
+
+            _lsdata[_i] = _item.html(); _i++;
+        }
+
+        my_article.data[_data.writing] =
+        {
+            title   : _data.writing_title,
+            author  : '',
+            content : _data.writing_content
+        };
+    });
+
+    my_template.right_middle.append(_lsdata.join("\n"));
+    my_article.older = _data.writing_time;
+
+    if(my_article.display=='expanded') { article_show_all(); }
+    if(append==false) { my_template.right_middle.scrollTop(0); }
+
+    my_article.bottom += my_template.right_middle.find('div.wtg:last').position().top;
 }
 
 function article_list_callback(d)
 {
-    article_populate(d.find('articles').children(), (d.find('append').text()=="true"));
+    var _lst = null;
+    var _app = null;
+
+    _lst = d.find('articles');
+    _app = d.find('append');
+
+    if(_lst.length>0) 
+    { 
+        article_populate(_lst.children(), (_app.text()=="true")); 
+        return true;
+    }
+
+    _lst = d.find('writings')
+
+    if(_lst.length>0)
+    {
+        writing_populate(_lst.children(), (_app.text()=="true"));
+        return true;
+    }
 }
 
 function article_list(older)
@@ -289,12 +388,12 @@ function article_scroll_top()
     if(my_article.current)
     {
         var _scr = my_article.current.position().top -
-                   my_template.article_list.position().top +
-                   my_template.article_list.scrollTop() - 
+                   my_template.right_middle.position().top +
+                   my_template.right_middle.scrollTop() - 
                    (my_article.display=='list' ? 2 : 10);
 
         my_template.scroll_animate=true;
-        my_template.article_list.animate({ scrollTop: _scr }, 200, function() { my_template.scroll_animate=false; });
+        my_template.right_middle.animate({ scrollTop: _scr }, 200, function() { my_template.scroll_animate=false; });
     }
 }
 
@@ -305,12 +404,12 @@ function article_show_fix_vertical()
     var _apt = my_article.current.position().top;
     var _coh = my_article.current.next('div.artview').outerHeight();
 
-    var _scr = my_template.article_list.scrollTop() + 
+    var _scr = my_template.right_middle.scrollTop() + 
                _apt -
                ((_coh > _rmh) ? _rmt : _rmh);
 
     my_template.scroll_animate=true;
-    my_template.article_list.animate({ scrollTop: _scr }, 200, function() { my_template.scroll_animate=false });
+    my_template.right_middle.animate({ scrollTop: _scr }, 200, function() { my_template.scroll_animate=false });
 }
 
 function article_hide(a)
@@ -327,9 +426,9 @@ function article_hide_current()
 
 function article_hide_all()
 {
-    my_template.article_list.find('div.artview').remove();
-    my_template.article_list.find('div.artview-sep').remove();
-    my_template.article_list.find('div.art').removeClass('art-op').removeClass('art-op-focus');
+    my_template.right_middle.find('div.artview').remove();
+    my_template.right_middle.find('div.artview-sep').remove();
+    my_template.right_middle.find('div.art').removeClass('art-op').removeClass('art-op-focus');
     my_article.current = null;
 }
 
@@ -366,7 +465,7 @@ function article_show(a)
 {
     if(my_article.data[a])
     {
-        my_article.current = my_template.article_list
+        my_article.current = my_template.right_middle
             .find("div.art[article='" + a + "']");
 
         if(my_article.current.hasClass('art-op')==false)
@@ -386,8 +485,8 @@ function article_show_all()
 {
     article_hide_all();
 
-    my_template.article_list.prepend('<div class="artview-sep">&nbsp;</div>');
-    my_template.article_list.find('div.art').each(function()
+    my_template.right_middle.prepend('<div class="artview-sep">&nbsp;</div>');
+    my_template.right_middle.find('div.art').each(function()
     {
         var _art = $(this).attr('article');
         var _content = my_template.content_blank.clone();
@@ -397,7 +496,7 @@ function article_show_all()
         $(this).after(_content.html()).addClass('art-op');
     });
 
-    article_show(my_template.article_list.find('div.art').eq(0).attr('article'));
+    article_show(my_template.right_middle.find('div.art').eq(0).attr('article'));
 }
 
 function article_previous()
@@ -429,7 +528,7 @@ function article_next()
     }
     else
     {
-        _next = my_template.article_list.find('div.art').attr('article');
+        _next = my_template.right_middle.find('div.art').attr('article');
     }
 
     if(_next)
@@ -448,7 +547,7 @@ function queue_add_callback(d)
                "[feed='" + d.find('feed').text() + "']" + 
                "[article='" + d.find('article').text() + "']";
 
-    my_template.article_list
+    my_template.right_middle
         .find(_sel)
         .attr('entry', d.find('entry').text())
         .find('div.arttog')
@@ -470,7 +569,7 @@ function queue_delete_callback(d)
 {
     var _sel = "div.art[entry='" + d.find('entry').text() + "']";
 
-    my_template.article_list.find(_sel)
+    my_template.right_middle.find(_sel)
         .find('div.arttog')
         .removeClass('arttog-ck')
         .addClass('arttog-un')
@@ -518,7 +617,7 @@ function writing_edit(w)
     {
         _edit_title = my_article.data[w].title;
         _edit_title = my_article.data[w].content;
-        my_article.current = my_template.article_list.find("div.art[article='" + w + "']");
+        my_article.current = my_template.right_middle.find("div.art[article='" + w + "']");
     }
 
     my_template.edit_form.find('div.form-bot').css('top', _rect.H - 55); // position hack
@@ -559,8 +658,8 @@ $(document).ready(function()
         //right_container      : $("#rightcontainer"),
         right_header_title   : $("#tplbartt"),
         right_middle         : $("#artlst"),
-        article_list         : $("#artlst"),
         article_blank        : $("#articleblank"),
+        writing_blank        : $("#writingblank"),
         content_blank        : $("#contentblank"),
         right_middle_area    : { x : 0 , y : 0 , w : 0 , h : 0 },
         right_middle_hover   : false,
@@ -745,7 +844,7 @@ $(document).ready(function()
 
     my_template.right_middle.scroll(function()
     {
-        if(my_template.article_list.scrollTop() > (my_article.bottom / 2) &&
+        if(my_template.right_middle.scrollTop() > (my_article.bottom / 2) &&
            my_article.older > 0 && active_request==false)
         {
             article_list(my_article.older);
@@ -756,7 +855,7 @@ $(document).ready(function()
         if(my_article.display=='expanded')
         {
             var _found = null;
-            my_template.article_list.find('div.art').each(function()
+            my_template.right_middle.find('div.art').each(function()
             {
                 if(_found==null)
                 {
@@ -845,7 +944,7 @@ $(document).ready(function()
         return false;
     });
 
-    my_template.article_list.find('div.art')
+    my_template.right_middle.find('div.art')
         .find('div.artlab')
         .live('click', function()
     {
@@ -875,7 +974,7 @@ $(document).ready(function()
         return false;
     });
 
-    my_template.article_list.find('div.art')
+    my_template.right_middle.find('div.art')
         .find('div.arttog')
         .live('click', function()
     {

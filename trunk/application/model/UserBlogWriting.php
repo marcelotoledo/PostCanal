@@ -148,7 +148,7 @@ class UserBlogWriting extends B_Model
     {
         if(!$older) $older = time();
 
-        $sql = "SELECT hash AS writing, writing_title, writing_content
+        $sql = "SELECT hash AS writing, writing_title, writing_content, created_at AS writing_date
                 FROM " . self::$table_name . "
                 WHERE deleted = 0 AND created_at < ?
                 AND user_blog_id = (

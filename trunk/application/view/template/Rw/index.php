@@ -55,6 +55,18 @@
 </div>
 </div>
 
+<div id="writingblank">
+<div class="wtg wtg-cl" entry="" status="">
+    <div class="sprites-img wtgtog wtgtog-un">&nbsp;</div>
+    <div class="wtglab">
+        <a href="#"><span class="wtgtt"></span></a>
+    </div>
+    <div class="wtgdte"></div>
+    <div class="sprites-img wtgedlnk"><a href="#">&nbsp;</a></div>
+    <div class="wtgclr"></div>
+</div>
+</div>
+
 <div id="contentblank">
 <div class="artview">
     <h1></h1>
