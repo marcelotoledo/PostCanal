@@ -17,7 +17,7 @@
     <div id="tplbarclr"></div>
 </div>
 
-<div id="noentrymsg" class="midct">There is no <b>entry</b> in queue for this <b>site</b>. To start queueing entries, you must check&nbsp;<button id="checkicon" disabled><div class="sprites-img">&nbsp;</div></button> in any article available on <b>Reader</b>.</div>
+<div id="noentrymsg" class="midct">There is no <b>entry</b> in queue for this <b>site</b>. To start queueing entries, you must check&nbsp;<button id="checkicon" disabled><div class="sprites-img">&nbsp;</div></button> in any article available on <b>Reader/Writer</b>.</div>
 
 <div id="etylst" class="midct"></div>
 

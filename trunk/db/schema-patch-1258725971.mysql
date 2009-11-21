@@ -1,0 +1,23 @@
+START TRANSACTION;
+
+DROP TABLE IF EXISTS model_user_blog_writing CASCADE;
+
+CREATE TABLE model_user_blog_writing
+(
+    user_blog_writing_id INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
+    user_blog_id INTEGER UNSIGNED NOT NULL,
+    hash VARCHAR(8) COLLATE 'utf8_bin' NOT NULL,
+    writing_title TEXT NOT NULL NOT NULL DEFAULT '',
+    writing_content TEXT NOT NULL NOT NULL DEFAULT '', 
+    created_at TIMESTAMP NOT NULL DEFAULT '1970-01-01 00:00:00', 
+    updated_at TIMESTAMP NOT NULL DEFAULT '1970-01-01 00:00:00',
+    deleted TINYINT(1) NOT NULL DEFAULT 0,
+    PRIMARY KEY (user_blog_writing_id),
+    CONSTRAINT m_ubw_uh UNIQUE (user_blog_id, hash),
+    CONSTRAINT m_ubw_m_ubg_fk FOREIGN KEY (user_blog_id) 
+        REFERENCES model_user_blog (user_blog_id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET='utf8' COLLATE='utf8_unicode_ci';
+
+CREATE INDEX m_ubw_idx ON model_user_blog_writing (hash(4), created_at, deleted);
+
+COMMIT;

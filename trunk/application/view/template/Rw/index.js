@@ -3,7 +3,8 @@ var my_template = null;
 var my_feed =
 {
     current : null,
-    type    : 'feed'
+    type    : 'all',
+    title   : ""
 };
 
 var my_article = 
@@ -113,15 +114,13 @@ function tag_populate(d)
 
 function no_feed()
 {
-    //my_template.middle_menu.hide();
-    //$("div.midct").hide();
     my_template.no_feed_message.show();
 }
 
 function feed_list_callback(d)
 {
     var _fl = d.find('feeds').children();
-    if(_fl.length==0) { no_feed(); } // tutorial
+    // if(_fl.length==0) { no_feed(); } // tutorial
     feed_populate(_fl);
     tag_populate(d.find('tags').children()); // tags
 }
@@ -156,7 +155,7 @@ function feed_add_callback(d)
     if(my_template.subscribed_list.find('div.ch[feed="' + _data.feed + '"]').length==0)
     {
         _item = feed_item_c(_data.feed, _data.title, _flw);
-        my_template.all_items_folder.after(_item.html() + "\n");
+        my_template.subscribed_all_folder.after(_item.html() + "\n");
     }
 }
 
@@ -170,30 +169,13 @@ function feed_add()
 
 /* ARTICLES */
 
-function update_right_header_title()
+function update_right_header_title(t)
 {
-    var _title = "";
-
-    if(my_feed.current)
-    {
-        _title = my_template.subscribed_list
-            .find("div.ch[" + my_feed.type + "='" + my_feed.current + "']")
-            .find('a').attr('title');
-        my_template.right_header_title.css('text-transform', 'none');
-    }
-    else
-    {
-        _title = "<?php echo $this->translation()->all_items ?>";
-        my_template.right_header_title.css('text-transform', 'capitalize');
-    }
-
-    my_template.right_header_title.b_txtoverflow({ buffer: my_template.txtoverflow_buffer, width: (my_template.right_header_title.width() * 0.8), text: _title });
+    my_template.right_header_title.b_txtoverflow({ buffer: my_template.txtoverflow_buffer, width: (my_template.right_header_title.width() * 0.8), text: t });
 }
 
 function article_populate(d, append)
 {
-    update_right_header_title();
-
     if(append==false)
     {
         my_template.article_list.html('');
@@ -295,14 +277,11 @@ function article_list_callback(d)
 
 function article_list(older)
 {
-    var _url = ((my_feed.current) ? '/article/' + my_feed.type : '/article/all');
+    var _data = { blog  : my_blog.current ,
+                  older : older };
+    if(my_feed.current) { _data[my_feed.type] = my_feed.current; }
 
-    var _data = { blog         : my_blog.current ,
-                  // my_feed.type : my_feed.current ,
-                  older        : older };
-        _data[my_feed.type] = my_feed.current;
-
-    do_request('GET', _url, _data, article_list_callback);
+    do_request('GET', ('/article/' + my_feed.type), _data, article_list_callback);
 }
 
 function article_scroll_top()
@@ -369,7 +348,7 @@ function article_focus()
         var _data = { blog     : my_blog.current ,
                       article  : my_article.current.attr('article') };
 
-        $.ajax({ type: 'POST', url: '/reader/wr', dataType: "xml", data: _data });
+        $.ajax({ type: 'POST', url: '/rw/wr', dataType: "xml", data: _data });
         my_article.current.addClass('art-wr').find('span.arttt').addClass('arttt-wr');
     }
 }
@@ -510,14 +489,73 @@ function on_blog_change()
     article_list(null);
 }
 
+
+function writing_editor_init()
+{
+    CKEDITOR.replace('writingbody',
+    {
+        toolbar : [ [ 'Source', '-', 'Bold', 'Italic' ] ],
+        height: ($(window).height() - 350),
+        toolbarCanCollapse : false,
+        resize_enabled : false,
+        contentsCss : '/css/ck_content.css'
+    });
+}
+
+function writing_edit(w)
+{
+    var _rect = { L : $(window).width()  * 0.1 ,
+                  T :                       50 ,
+                  W : $(window).width()  * 0.8 ,
+                  H : $(window).height()  -100 };
+
+    my_template.edit_form.b_modal();
+
+    var _edit_title = '';
+    var _edit_content = '';
+
+    if(my_article.data[w])
+    {
+        _edit_title = my_article.data[w].title;
+        _edit_title = my_article.data[w].content;
+        my_article.current = my_template.article_list.find("div.art[article='" + w + "']");
+    }
+
+    my_template.edit_form.find('div.form-bot').css('top', _rect.H - 55); // position hack
+    my_template.edit_form.find("input[name='writingtitle']").val(_edit_title).focus();
+    CKEDITOR.instances.writingbody.setData(_edit_content);
+}
+
+function writing_save_callback(d)
+{
+    // TODO
+    my_template.edit_form.b_modal_close();
+    flash_message("<?php echo $this->translation()->saved ?>");
+}
+
+function writing_save_current()
+{
+    var _data =
+    {
+        blog            : my_blog.current ,
+        writing         : null, // TODO 
+        writing_title   : my_template.edit_form.find("input[name='writingtitle']").val(),
+        writing_content : CKEDITOR.instances.writingbody.getData()
+    };
+
+    do_request('POST', '/writing/save', _data, writing_save_callback);
+}
+
+
 $(document).ready(function()
 {
     my_template =
     {
         main_container       : $("#mainct"),
         //left_container       : $("#leftcontainer"),
-        all_items            : $("#chall"),
-        all_items_folder     : $("#challf"),
+        subscribed_all       : $("#chall"),
+        subscribed_all_folder: $("#challf"),
+        writings_all         : $("#wrall"),
         //right_container      : $("#rightcontainer"),
         right_header_title   : $("#tplbartt"),
         right_middle         : $("#artlst"),
@@ -531,14 +569,18 @@ $(document).ready(function()
         <?php else : ?>
         LEFT_MIDDLE_OFFSET_TOP : 20,
         <?php endif ?>
-        //right_footer         : $("#rightfooter"),
-        middle_menu          : $("#midmenu"),
+        LEFT_MIDDLE_V_MARGIN : 70,
+        WRITINGS_MENU_HEIGHT : 30, 
         feed_add_lnk         : $("#chaddlnk"),
         feed_add_ct          : $("#chaddct"),
         feed_add_input       : $("#chaddinput"),
         feed_add_button      : $("#chaddbtn"),
         feed_add_cancel      : $("#chaddccl"),
+        writing_add_lnk      : $("#wraddlnk"),
+        subscribed_menu      : $("#subscribed"),
         subscribed_list      : $("#chlst"),
+        writings_menu        : $("#writings"),
+        writings_list        : $("#wrlst"),
         feed_item_blank      : $("#feeditemblank"),
         tag_item_blank       : $("#tagitemblank"),
         article_expanded_lnk : $("#articleexpandedlnk"),
@@ -547,6 +589,7 @@ $(document).ready(function()
         article_list_lab     : $("#articlelistlab"),
         article_prev         : $("#articleprev"),
         article_next         : $("#articlenext"),
+        edit_form            : $("#editform"),
         txtoverflow_buffer   : $("#b_txtoverflow-buffer"),
         no_feed_message      : $("#nofeedmsg"),
         scroll_animate       : false
@@ -560,9 +603,14 @@ $(document).ready(function()
         my_template.right_middle.height(_w.height - 
                                         my_template.right_middle.position().top);
 
-        my_template.subscribed_list.height(_w.height - 
-                                           my_template.subscribed_list.offset().top -
-                                           my_template.LEFT_MIDDLE_OFFSET_TOP);
+        var _lmh = _w.height - my_template.subscribed_list.offset().top -
+                               my_template.LEFT_MIDDLE_OFFSET_TOP;
+
+        my_template.subscribed_list.height(_lmh - (my_template.LEFT_MIDDLE_V_MARGIN + 
+                                                   my_template.WRITINGS_MENU_HEIGHT));
+        my_template.writings_menu.css('top', my_template.subscribed_menu.position().top + 
+                                             _lmh - my_template.WRITINGS_MENU_HEIGHT);
+        my_template.writings_list.height(my_template.WRITINGS_MENU_HEIGHT);
 
         my_template.right_middle_area.x = my_template.right_middle.offset().left;
         my_template.right_middle_area.y = my_template.right_middle.offset().top;
@@ -587,13 +635,14 @@ $(document).ready(function()
     function initialize()
     {
         <?php if(count($this->blogs)==0) : ?>
-        no_blog(); // tutorial
+        // no_blog(); // tutorial
         <?php endif ?>
         set_article_display();
         feed_list();
         article_list(null);
         browser_fix();
         window_update();
+        writing_editor_init();
     }
 
     /* events */
@@ -630,6 +679,13 @@ $(document).ready(function()
         {
             my_template.feed_add_button.click();
         }
+    });
+
+    my_template.writing_add_lnk.click(function()
+    {
+        writing_edit(null);
+        $(this).blur();
+        return false;
     });
 
     my_template.article_list_lnk.click(function()
@@ -749,11 +805,13 @@ $(document).ready(function()
 
     /* controls */
 
-    my_template.all_items.click(function()
+    my_template.subscribed_all.click(function()
     {
         my_feed.current = null;
-        my_feed.type    = 'feed';
+        my_feed.type    = 'all';
         article_list(null);
+        update_right_header_title($(this).attr('title'));
+        $(this).blur();
         return false;
     });
 
@@ -762,6 +820,7 @@ $(document).ready(function()
         my_feed.current = $(this).parent().attr('feed');
         my_feed.type    = 'feed';
         article_list(null);
+        update_right_header_title($(this).attr('title'));
         $(this).blur();
         return false;
     });
@@ -771,6 +830,17 @@ $(document).ready(function()
         my_feed.current = $(this).parent().attr('tag');
         my_feed.type    = 'tag';
         article_list(null);
+        update_right_header_title($(this).attr('title'));
+        $(this).blur();
+        return false;
+    });
+
+    my_template.writings_all.click(function()
+    {
+        my_feed.current = null;
+        my_feed.type    = 'writing';
+        article_list(null);
+        update_right_header_title($(this).attr('title'));
         $(this).blur();
         return false;
     });
@@ -833,6 +903,22 @@ $(document).ready(function()
     {
         article_previous();
         $(this).blur();
+    });
+
+    my_template.edit_form
+        .find("button[name='editformsave']")
+        .live('click', function()
+    {
+        if(active_request==true) { return false; }
+        writing_save_current();
+    });
+
+    my_template.edit_form
+        .find("button[name='editformcancel']")
+        .live('click', function()
+    {
+        if(active_request==true) { return false; }
+        my_template.edit_form.b_modal_close();
     });
 
     /* initialize */

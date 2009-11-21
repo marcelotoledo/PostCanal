@@ -22,7 +22,7 @@ class C_Index extends B_Controller
     {
         if($this->session()->getActive() == true)
         {
-            $this->response()->setRedirect(B_Request::url('reader'));
+            $this->response()->setRedirect(B_Request::url('rw'));
         }
     }
 }

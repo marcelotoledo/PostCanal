@@ -11,8 +11,9 @@
 
 <script type="text/javascript" src="/jquery/jquery-1.3.2.min.js"></script>
 <script type="text/javascript" src="/jquery/jquery-ui-1.7.1.custom.min.js"></script>
-<?php if($this->request()->getController()=='queue' &&
-         $this->request()->getAction()=='index') : ?>
+<?php if(($this->request()->getController()=='rw' ||
+          $this->request()->getController()=='queue') &&
+          $this->request()->getAction()=='index') : ?>
 <script type="text/javascript" src="/ckeditor/ckeditor.js?v=1253526829"></script>
 <?php endif ?>
 <script type="text/javascript" src="/js/main.js?v=1257250269"></script>
@@ -69,10 +70,10 @@
                 <a href="/feed">Manage Feeds</a>
                 <?php endif ?>
                 <img>
-                <?php if($this->request()->getController()=='reader') : ?>
-                Reader
+                <?php if($this->request()->getController()=='rw') : ?>
+                Reader/Writer
                 <?php else : ?>
-                <a href="/reader">Reader</a>
+                <a href="/rw">Reader/Writer</a>
                 <?php endif ?>
                 <img>
                 <?php if($this->request()->getController()=='queue') : ?>

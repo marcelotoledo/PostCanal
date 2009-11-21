@@ -262,10 +262,9 @@ input.navbtn /* for ie browsers */
     clear: both;
 }
 
-#midmenu
+div.leftmenu
 {
     position: absolute;
-    top: 135px;
     left: 0px;
     width: 230px;
     background-color: #48898c;
@@ -276,16 +275,26 @@ input.navbtn /* for ie browsers */
     -webkit-border-bottom-left-radius: 4px;
     overflow: hidden;
 }
-#midmenu h1
+div.leftmenu h1
 {
     font-size: 1em;
     padding: 10px;
     color: white;
 }
-#midmenu h1 img
+div.leftmenu h1 img
 {
     margin-bottom: -3px;
 }
+#subscribed
+{
+    top: 135px;
+}
+#writings
+{
+}
+
+
+
 #chaddct
 {
     position: absolute;
@@ -368,4 +377,42 @@ div.fi img
     margin-top: 25px;
     font-size: 1.4em;
     color: gray;
+}
+
+div.b-modal
+{
+    position: absolute;
+    z-index: 4001;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: black;
+}
+#editform
+{
+    display: none;
+    position: absolute;
+    z-index: 5001;
+    top: 0;
+    left: 0;
+    background-color: white;
+    text-align: left;
+    border: 2px solid #48898c;
+}
+#editform form
+{
+    margin: 20px;
+}
+input.intxt-full
+{
+    width: 700px;
+}
+textarea.intxa-full
+{
+    width: 400px;
+}
+#editform-bot
+{
+    position: absolute;
 }

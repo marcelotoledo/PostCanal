@@ -1,14 +1,14 @@
 <?php
 
 /**
- * Reader controller class
+ * Reader/Writer controller class
  * 
  * @category    PostCanal
  * @package     Application Controller
  * @author      Rafael Castilho <rafael@castilho.biz>
  */
 
-class C_Reader extends B_Controller
+class C_Rw extends B_Controller
 {
     /**
      * Before action

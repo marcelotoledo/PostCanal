@@ -268,7 +268,7 @@ function blog_update(b)
 
 function on_blog_change()
 {
-    // document.location='/reader'; TODO
+    // document.location='/rw'; TODO
 }
 
 $(document).ready(function()
