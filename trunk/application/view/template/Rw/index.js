@@ -631,7 +631,7 @@ $(document).ready(function()
         LEFT_MIDDLE_OFFSET_TOP : 20,
         <?php endif ?>
         LEFT_MIDDLE_V_MARGIN : 70,
-        WRITINGS_MENU_HEIGHT : 30, 
+        WRITINGS_MENU_HEIGHT : 35, 
         feed_add_lnk         : $("#chaddlnk"),
         feed_add_ct          : $("#chaddct"),
         feed_add_input       : $("#chaddinput"),
