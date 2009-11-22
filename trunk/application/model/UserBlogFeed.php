@@ -368,8 +368,6 @@ class UserBlogFeed extends B_Model
                                                 $older=null, 
                                                 $limit=25)
     {
-        if(!$older) $older = time();
-
         $sql = "SELECT a.feed_title AS feed_title, a.hash AS feed, 
                        b.article_md5 AS article, b.article_title AS article_title, 
                        b.article_link AS article_link, b.created_at AS article_date, 
@@ -387,18 +385,22 @@ class UserBlogFeed extends B_Model
                 LEFT JOIN model_user_blog_feed_article AS d
                     ON (a.user_blog_id = d.user_blog_id)
                     AND (b.aggregator_feed_article_id = d.aggregator_feed_article_id)
-                WHERE a.enabled = 1 AND a.deleted = 0 AND b.updated_at < ? 
-                AND a.hash = ? AND a.user_blog_id = (
+                WHERE a.enabled = 1 AND a.deleted = 0 ";
+        if($older) $sql.= "AND b.updated_at < ? ";
+        $sql.= "AND a.hash = ? AND a.user_blog_id = (
                     SELECT user_blog_id
                     FROM model_user_blog
                     WHERE hash = ? AND user_profile_id = ?) 
                 ORDER BY b.created_at DESC, b.article_date DESC, b.aggregator_feed_article_id DESC
                 LIMIT " . intval($limit);
 
-        return self::select($sql, array(date("Y-m-d H:i:s", $older), 
-                                        $feed_hash,
-                                        $blog_hash, 
-                                        $user_id), PDO::FETCH_ASSOC);
+        $args = array();
+        if($older) $args[] = date("Y-m-d H:i:s", $older);
+        $args[] = $feed_hash;
+        $args[] = $blog_hash;
+        $args[] = $user_id;
+
+        return self::select($sql, $args, PDO::FETCH_ASSOC);
     }
 
     /**
@@ -410,8 +412,6 @@ class UserBlogFeed extends B_Model
                                            $older=null, 
                                            $limit=25)
     {
-        if(!$older) $older = time();
-
         $sql = "SELECT a.feed_title AS feed_title, a.hash AS feed, 
                        b.article_md5 AS article, b.article_title AS article_title, 
                        b.article_link AS article_link, b.created_at AS article_date, 
@@ -435,15 +435,22 @@ class UserBlogFeed extends B_Model
                 INNER JOIN model_user_blog_feed_tag AS f
                     ON (a.user_blog_feed_id = f.user_blog_feed_id)
                     AND (e.user_blog_tag_id = f.user_blog_tag_id)
-                WHERE a.enabled = 1 AND a.deleted = 0 AND b.updated_at < ? 
-                AND a.user_blog_id = (
+                WHERE a.enabled = 1 AND a.deleted = 0 ";
+        if($older) $sql.= "AND b.updated_at < ? ";
+        $sql.= "AND a.user_blog_id = (
                     SELECT user_blog_id
                     FROM model_user_blog
                     WHERE hash = ? AND user_profile_id = ?) 
                 ORDER BY b.created_at DESC, b.article_date DESC, b.aggregator_feed_article_id DESC
                 LIMIT " . intval($limit);
 
-        return self::select($sql, array($tag, date("Y-m-d H:i:s", $older), $blog_hash, $user_id), PDO::FETCH_ASSOC);
+        $args = array();
+        $args[] = $tag;
+        if($older) $args[] = date("Y-m-d H:i:s", $older);
+        $args[] = $blog_hash;
+        $args[] = $user_id;
+
+        return self::select($sql, $args, PDO::FETCH_ASSOC);
     }
 
     /**
@@ -461,8 +468,6 @@ class UserBlogFeed extends B_Model
                                            $older=null, 
                                            $limit=self::ARTICLES_MAX)
     {
-        if(!$older) $older= time();
-
         $sql = "SELECT a.feed_title AS feed_title, a.hash AS feed, 
                        b.article_md5 AS article, b.article_title AS article_title, 
                        b.article_link AS article_link, b.created_at AS article_date, 
@@ -480,17 +485,21 @@ class UserBlogFeed extends B_Model
                 LEFT JOIN model_user_blog_feed_article AS d
                     ON (a.user_blog_id = d.user_blog_id)
                     AND (b.aggregator_feed_article_id = d.aggregator_feed_article_id)
-                WHERE a.enabled = 1 AND a.deleted = 0 
-                AND b.updated_at < ? AND a.user_blog_id = (
+                WHERE a.enabled = 1 AND a.deleted = 0 ";
+        if($older) $sql.= "AND b.updated_at < ? ";
+        $sql.= "AND a.user_blog_id = (
                     SELECT user_blog_id
                     FROM model_user_blog
                     WHERE hash = ? AND user_profile_id = ?) 
                 ORDER BY b.created_at DESC, b.article_date DESC, b.aggregator_feed_article_id DESC
                 LIMIT " . intval($limit);
 
-        return self::select($sql, array(date("Y-m-d H:i:s", $older), 
-                                        $blog_hash, 
-                                        $user_id), PDO::FETCH_ASSOC);
+        $args = array();
+        if($older) $args[] = date("Y-m-d H:i:s", $older);
+        $args[] = $blog_hash;
+        $args[] = $user_id;
+
+        return self::select($sql, $args, PDO::FETCH_ASSOC);
     }
 
     /**
@@ -501,8 +510,6 @@ class UserBlogFeed extends B_Model
                                         $older=null, 
                                         $limit=25)
     {
-        if(!$older) $older = time();
-
         $sql = "SELECT a.feed_title AS feed_title, a.hash AS feed, 
                        b.article_md5 AS article, b.article_title AS article_title, 
                        b.article_link AS article_link, b.created_at AS article_date, 
@@ -520,20 +527,22 @@ class UserBlogFeed extends B_Model
                 INNER JOIN model_aggregator_feed AS x
                     ON (a.aggregator_feed_id = x.aggregator_feed_id)
                     AND (x.feed_url_md5 = ?)
-                WHERE b.updated_at < ? 
-                AND a.user_blog_id = (
+                WHERE a.user_blog_id = (
                     SELECT user_blog_id
                     FROM model_user_blog
-                    WHERE hash = ? AND user_profile_id = ?) 
-                ORDER BY b.created_at DESC, b.article_date DESC, b.aggregator_feed_article_id DESC
+                    WHERE hash = ? AND user_profile_id = ?) "; 
+        if($older) $sql.= "AND b.updated_at < ? ";
+        $sql.= "ORDER BY b.created_at DESC, b.article_date DESC, b.aggregator_feed_article_id DESC
                 LIMIT " . intval($limit);
 
-        return self::select($sql, array(
-            md5(sprintf(AggregatorFeed::WRITINGS_URL_BASE, $user_id, $blog_hash)),
-            date("Y-m-d H:i:s", $older),  
-            $blog_hash, $user_id), PDO::FETCH_ASSOC);
-    }
+        $args = array();
+        $args[] = md5(sprintf(AggregatorFeed::WRITINGS_URL_BASE, $user_id, $blog_hash));
+        $args[] = $blog_hash;
+        $args[] = $user_id;
+        if($older) $args[] = date("Y-m-d H:i:s", $older);
 
+        return self::select($sql, $args, PDO::FETCH_ASSOC);
+    }
 
     /**
      * Find feed articles To Suggestion

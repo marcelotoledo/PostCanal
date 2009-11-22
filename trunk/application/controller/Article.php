@@ -141,7 +141,7 @@ class C_Article extends B_Controller
         $art = null;
 
         if(strlen($article)>0) 
-            $art = AggregatorFeedArticle::getWritingArticle($blog, $user, $article);
+            $art = AggregatorFeedArticle::getWritingArticle($user, $blog, $article);
 
         if(is_object($art)==false)
         {
@@ -158,5 +158,7 @@ class C_Article extends B_Controller
         $art->article_title   = $article_title;
         $art->article_content = $article_content;
         $art->save();
+
+        $this->A_writing();
     }
 }

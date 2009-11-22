@@ -262,6 +262,11 @@ function article_populate(d, append)
                 _inner.find('div.artlnk > a').attr('href', _data.article_link) :
                 _inner.find('div.artlnk').hide();
 
+            if(my_feed.type=='writing')
+            {
+                _inner.find('div.artedlnk').show();
+            }
+
             _lsdata[_i] = _item.html(); _i++;
         }
     });
@@ -541,7 +546,7 @@ function writing_edit(w)
     if(my_article.data[w])
     {
         _edit_title = my_article.data[w].article_title;
-        _edit_title = my_article.data[w].article_content;
+        _edit_content = my_article.data[w].article_content;
         my_article.current = my_article.objects[w];
     }
 
@@ -554,17 +559,17 @@ function writing_save_callback(d)
 {
     my_template.edit_form.b_modal_close();
     flash_message("<?php echo $this->translation()->saved ?>");
-    article_list(null);
+    article_list_callback(d);
 }
 
 function writing_save_current()
 {
     var _data =
     {
-        blog            : my_blog.current,
-        article         : my_article.current,
-        article_title   : my_template.edit_form.find("input[name='writingtitle']").val(),
-        article_content : CKEDITOR.instances.writingbody.getData()
+        blog            :  my_blog.current,
+        article         : (my_article.current ? my_article.current.attr('article') : null),
+        article_title   :  my_template.edit_form.find("input[name='writingtitle']").val(),
+        article_content :  CKEDITOR.instances.writingbody.getData()
     };
 
     do_request('POST', '/article/save', _data, writing_save_callback);
@@ -708,6 +713,18 @@ $(document).ready(function()
     my_template.writing_add_lnk.click(function()
     {
         writing_edit(null);
+        $(this).blur();
+        return false;
+    });
+
+    my_template.right_middle.find('div.art')
+        .find('div.artedlnk')
+        .find('a').live('click', function()
+    {
+        var _pt = $(this).parent().parent();
+
+        writing_edit(_pt.attr('article'));
+
         $(this).blur();
         return false;
     });

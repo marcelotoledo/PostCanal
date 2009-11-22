@@ -178,7 +178,7 @@ class AggregatorFeedArticle extends B_Model
                 WHERE feed_url_md5 = ?
               ) 
               AND article_md5 = ?",
-            array(sprintf(AggregatorFeed::WRITINGS_URL_BASE, $user, $blog), $article), 
+            array(md5(sprintf(AggregatorFeed::WRITINGS_URL_BASE, $user, $blog)), $article), 
             PDO::FETCH_CLASS, get_class()));
     }
 
