@@ -161,4 +161,21 @@ class C_Article extends B_Controller
 
         $this->A_writing();
     }
+
+    /**
+     * delete writings
+     */
+    public function A_delete()
+    {
+        $blog    = $this->request()->blog;
+        $user    = $this->session()->user_profile_id;
+        $article = $this->request()->article;
+
+        if(is_object(($a = AggregatorFeedArticle::getWritingArticle($user, $blog, $article))))
+        {
+            $a->delete();
+        }
+
+        $this->A_writing();
+    }
 }

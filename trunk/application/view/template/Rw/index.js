@@ -4,7 +4,8 @@ var my_feed =
 {
     current : null,
     type    : 'all',
-    title   : ""
+    title   : "",
+    scroll  : 0
 };
 
 var my_article = 
@@ -265,6 +266,7 @@ function article_populate(d, append)
             if(my_feed.type=='writing')
             {
                 _inner.find('div.artedlnk').show();
+                _inner.find('div.artrmlnk').show();
             }
 
             _lsdata[_i] = _item.html(); _i++;
@@ -560,6 +562,7 @@ function writing_save_callback(d)
     my_template.edit_form.b_modal_close();
     flash_message("<?php echo $this->translation()->saved ?>");
     article_list_callback(d);
+    my_template.right_middle.scrollTop(my_feed.scroll);
 }
 
 function writing_save_current()
@@ -572,7 +575,35 @@ function writing_save_current()
         article_content :  CKEDITOR.instances.writingbody.getData()
     };
 
+    my_feed.scroll = my_template.right_middle.scrollTop();
     do_request('POST', '/article/save', _data, writing_save_callback);
+}
+
+function writing_delete_callback(d)
+{
+    my_article.current = null;
+    flash_message("<?php echo $this->translation()->deleted ?>");
+    article_list_callback(d);
+    my_template.right_middle.scrollTop(my_feed.scroll);
+}
+
+function writing_delete(w)
+{
+    my_article.current = null;
+
+    if(my_article.data[w])
+    {
+        my_article.current = my_article.objects[w];
+    }
+
+    var _data =
+    {
+        blog    : my_blog.current,
+        article : w
+    };
+
+    my_feed.scroll = my_template.right_middle.scrollTop();
+    do_request('POST', '/article/delete', _data, writing_delete_callback);
 }
 
 
@@ -712,6 +743,7 @@ $(document).ready(function()
 
     my_template.writing_add_lnk.click(function()
     {
+        if(my_feed.type!='writing') { my_template.writings_all.click(); }
         writing_edit(null);
         $(this).blur();
         return false;
@@ -725,6 +757,17 @@ $(document).ready(function()
 
         writing_edit(_pt.attr('article'));
 
+        $(this).blur();
+        return false;
+    });
+
+    my_template.right_middle.find('div.art')
+        .find('div.artrmlnk')
+        .find('a').live('click', function()
+    {
+        var _pt = $(this).parent().parent();
+        var answer = confirm("Are you sure?")
+        if (answer) { writing_delete(_pt.attr('article')); }
         $(this).blur();
         return false;
     });

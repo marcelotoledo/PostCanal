@@ -52,6 +52,7 @@
     <div class="artdte"></div>
     <div class="artlnk"><a href="#" target="_blank" title="view original">&nbsp;</a></div>
     <div class="sprites-img artedlnk"><a href="#">&nbsp;</a></div>
+    <div class="artrmlnk"><a href="#">&nbsp;</a></div>
     <div class="artclr"></div>
 </div>
 </div>
