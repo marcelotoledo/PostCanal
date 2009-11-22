@@ -130,7 +130,7 @@ class C_Site extends B_Controller
             $status = self::ADD_STATUS_OK;
 
             $blog = new UserBlog();
-            $blog->user_profile_id    = $this->session()->user_profile_id;
+            $blog->user_profile_id    = $profile_id;
             $blog->blog_type_id       = $discover->blog_type_id;
             $blog->blog_url           = $discover->url;
             $blog->name               = $discover->title;
@@ -148,6 +148,27 @@ class C_Site extends B_Controller
                 $_d = array('method' => __METHOD__);
                 B_Exception::forward($_m, E_WARNING, $exception, $_d);
             } 
+
+            // create blog's writings feed
+            $wf = new AggregatorFeed();
+            $wf->feed_url = sprintf(AggregatorFeed::WRITINGS_URL_BASE, $profile_id, $blog->hash);
+            $wf->feed_url_md5 = md5($wf->feed_url);
+            $wf->feed_title = AggregatorFeed::WRITINGS_TITLE;
+            $wf->feed_link = "";
+            $wf->feed_description = "";
+            $wf->enabled = 0;
+            $wf->save();
+
+            // add blog's writings feed to user blog feeds
+            $bf = new UserBlogFeed();
+            $bf->user_blog_id = $blog->user_blog_id;
+            $bf->aggregator_feed_id = $wf->aggregator_feed_id;
+            $bf->feed_title = $wf->feed_title;
+            $bf->feed_description = $wf->feed_description;
+            $bf->ordering = 0;
+            $bf->enabled = false;
+            $bf->deleted = false;
+            $bf->save();
         }
 
         $this->view()->status = $status;

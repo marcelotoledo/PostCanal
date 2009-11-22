@@ -107,40 +107,22 @@ class C_Article extends B_Controller
         $this->session()->user_blog_hash = $blog_hash;
     }
 
-    /** 
+
+    /**
      * List writing articles
      *
      */
-    public function  A_writing()
+    public function A_writing()
     {
-        $blog = $this->request()->blog;
+        $blog_hash = $this->request()->blog;
         $older = intval($this->request()->older);
-        $user = $this->session()->user_profile_id;
+        $user_id = $this->session()->user_profile_id;
 
-        $writings = UserBlogWriting::findWritings($user, $blog, $older); 
-        $wc = count($writings);
-
-        $zd = new Zend_Date(time(), false, $this->session()->getCulture());
-        $zd->setTimezone($this->session()->getTimezone());
-        $ct = $zd->toString('YYYMMMdd');
-        $zd_cfg = B_Registry::get('zend/date');
-
-        for($j=0; $j<$wc; $j++)
-        {
-            $ts = strtotime($writings[$j]['writing_date']);
-            $lt = L_Utility::literalTime($ts = time());
-            $zd->setTimestamp($ts);
-
-            $local = $zd->toString($zd->toString('YYYMMMdd')==$ct) ?
-                $zd_cfg->formatShort :
-                $zd_cfg->formatLong;
-
-            $writings[$j]['writing_date_time'] = $ts;
-            $writings[$j]['writing_date_literal'] = $lt;
-            $writings[$j]['writing_date_local'] = $local;
-        }
+        $this->view()->articles = $this->formatArticles(
+            UserBlogFeed::findWritings($blog_hash, $user_id, $older));
 
         if($older>0) { $this->view()->append = true; }
-        $this->view()->writings = $writings;
+
+        $this->session()->user_blog_hash = $blog_hash;
     }
 }

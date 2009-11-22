@@ -182,9 +182,9 @@ class C_Queue extends B_Controller
     public function A_delete()
     {
         $this->response()->setXML(true);
+        $user = $this->session()->user_profile_id;
         $blog = $this->request()->blog;
         $entry = $this->request()->entry;
-        $user = $this->session()->user_profile_id;
 
         if(strlen(($article = BlogEntry::deleteEntry($user, $blog, $entry)))>0)
         {

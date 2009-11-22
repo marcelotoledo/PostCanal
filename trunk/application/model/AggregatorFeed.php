@@ -121,6 +121,9 @@ class AggregatorFeed extends B_Model
 
     const DEFAULT_UPDATE_TIME = 600;
 
+    const WRITINGS_URL_BASE = "pc://writings/profile/%d/blog/%s";
+    const WRITINGS_TITLE    = "My Writings";
+
 
     /**
      * Save model
@@ -165,8 +168,8 @@ class AggregatorFeed extends B_Model
                FROM model_aggregator_feed_discover AS a
                LEFT JOIN model_aggregator_feed AS b 
                ON (a.feed_url_md5 = b.feed_url_md5)
-               WHERE a.url_md5 = ? AND (UNIX_TIMESTAMP(a.updated_at) + ?) > 
-               UNIX_TIMESTAMP()";
+               WHERE a.url_md5 = ? AND (UNIX_TIMESTAMP(a.updated_at) + ?) > UNIX_TIMESTAMP() 
+               AND b.enabled = 1";
         $_d = array(md5($url), $lf);
         return self::select($_s, $_d, PDO::FETCH_ASSOC);
     }
@@ -195,6 +198,7 @@ class AggregatorFeed extends B_Model
         $sql = "SELECT aggregator_feed_id AS id, feed_url
                 FROM " . self::$table_name . "
                 WHERE (feed_update_time + UNIX_TIMESTAMP(updated_at)) < UNIX_TIMESTAMP()
+                AND enabled = 1
                 ORDER BY (feed_update_time + UNIX_TIMESTAMP(updated_at)) ASC
                 LIMIT " . intval($limit);
 
@@ -228,7 +232,8 @@ class AggregatorFeed extends B_Model
     {
         $sql = "SELECT COUNT(aggregator_feed_id) AS total
                 FROM " . self::$table_name . "
-                WHERE (feed_update_time + UNIX_TIMESTAMP(updated_at)) < UNIX_TIMESTAMP()";
+                WHERE (feed_update_time + UNIX_TIMESTAMP(updated_at)) < UNIX_TIMESTAMP()
+                AND enabled = 1";
 
         $total = 0;
 

@@ -494,6 +494,49 @@ class UserBlogFeed extends B_Model
     }
 
     /**
+     * Find writings
+     */
+    public static function findWritings($blog_hash, 
+                                        $user_id, 
+                                        $older=null, 
+                                        $limit=25)
+    {
+        if(!$older) $older = time();
+
+        $feed_url_md5 = md5(sprintf(AggregatorFeed::WRITINGS_URL_BASE, intval($user_id), preg_replace("/[^\w]/", "", $blog_hash)));
+
+        $sql = "SELECT a.feed_title AS feed_title, a.hash AS feed, 
+                       b.article_md5 AS article, b.article_title AS article_title, 
+                       b.article_link AS article_link, b.created_at AS article_date, 
+                       b.article_author AS article_author, b.article_content AS article_content,
+                       c.publication_status AS publication_status,
+                       c.hash AS entry,
+                       0 AS wr
+                FROM model_user_blog_feed AS a
+                LEFT JOIN model_aggregator_feed_article AS b
+                    ON (a.aggregator_feed_id = b.aggregator_feed_id)
+                LEFT JOIN model_user_blog_entry AS c
+                    ON (b.aggregator_feed_article_id = c.aggregator_feed_article_id) 
+                    AND (a.user_blog_id = c.user_blog_id)
+                    AND (c.deleted = 0)
+                INNER JOIN model_aggregator_feed AS x
+                    ON (a.aggregator_feed_id = x.aggregator_feed_id)
+                    AND (x.feed_url_md5 = '" . $feed_url_md5 . "')
+                WHERE b.updated_at < ? 
+                AND a.user_blog_id = (
+                    SELECT user_blog_id
+                    FROM model_user_blog
+                    WHERE hash = ? AND user_profile_id = ?) 
+                ORDER BY b.created_at DESC, b.article_date DESC, b.aggregator_feed_article_id DESC
+                LIMIT " . intval($limit);
+
+        return self::select($sql, array(date("Y-m-d H:i:s", $older), 
+                                        $blog_hash, 
+                                        $user_id), PDO::FETCH_ASSOC);
+    }
+
+
+    /**
      * Find feed articles To Suggestion
      *
      * @param   string      $blog_id
