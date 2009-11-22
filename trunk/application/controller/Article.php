@@ -32,7 +32,7 @@ class C_Article extends B_Controller
 
         foreach($results as $a)
         {
-            $ts = strtotime($a['article_date']);
+            $ts = intval(strtotime($a['article_date']));
             $lt = L_Utility::literalTime($ts - time());
             $zd->setTimestamp($ts);
 

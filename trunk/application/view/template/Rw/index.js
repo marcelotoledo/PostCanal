@@ -229,7 +229,7 @@ function article_populate(d, append)
             wr                   : ($(this).find('wr').text()=='1')
         };
 
-        if(my_article.data[_data.article]==undefined) // avoid dupl
+        if(_data.article.length>0 && my_article.data[_data.article]==undefined) // avoid dupl
         {
             my_article.data[_data.article]=_data;
 
@@ -273,6 +273,8 @@ function article_populate(d, append)
         }
     });
 
+    if(_i==0) { return false; }
+
     my_template.right_middle.append(_lsdata.join("\n"));
     article_cache_init();
 
@@ -280,7 +282,6 @@ function article_populate(d, append)
 
     if(my_article.display=='expanded') { article_show_all(); }
     if(append==false) { my_template.right_middle.scrollTop(0); }
-
     my_article.bottom += my_template.right_middle.find('div.art:last').position().top;
 }
 

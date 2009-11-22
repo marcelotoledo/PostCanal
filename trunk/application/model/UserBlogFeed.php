@@ -524,21 +524,22 @@ class UserBlogFeed extends B_Model
                     ON (b.aggregator_feed_article_id = c.aggregator_feed_article_id) 
                     AND (a.user_blog_id = c.user_blog_id)
                     AND (c.deleted = 0)
-                INNER JOIN model_aggregator_feed AS x
-                    ON (a.aggregator_feed_id = x.aggregator_feed_id)
-                    AND (x.feed_url_md5 = ?)
                 WHERE a.user_blog_id = (
                     SELECT user_blog_id
                     FROM model_user_blog
                     WHERE hash = ? AND user_profile_id = ?) "; 
         if($older) $sql.= "AND b.updated_at < ? ";
-        $sql.= "ORDER BY b.created_at DESC, b.article_date DESC, b.aggregator_feed_article_id DESC
+        $sql.= "AND a.aggregator_feed_id = (
+                    SELECT aggregator_feed_id
+                    FROM model_aggregator_feed
+                    WHERE feed_url_md5 = ?)
+                ORDER BY b.created_at DESC, b.article_date DESC, b.aggregator_feed_article_id DESC
                 LIMIT " . intval($limit);
 
         $args = array();
-        $args[] = md5(sprintf(AggregatorFeed::WRITINGS_URL_BASE, $user_id, $blog_hash));
         $args[] = $blog_hash;
         $args[] = $user_id;
+        $args[] = md5(sprintf(AggregatorFeed::WRITINGS_URL_BASE, $user_id, $blog_hash));
         if($older) $args[] = date("Y-m-d H:i:s", $older);
 
         return self::select($sql, $args, PDO::FETCH_ASSOC);
