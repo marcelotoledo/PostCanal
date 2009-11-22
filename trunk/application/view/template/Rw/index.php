@@ -44,26 +44,15 @@
 </div>
 
 <div id="articleblank">
-<div class="art art-cl" feed="" article="" entry="">
+<div class="art art-cl" article="">
     <div class="sprites-img arttog arttog-un">&nbsp;</div>
     <div class="artlab">
         <span class="arttt"></span><br/><span class="artch"></span>
     </div>
     <div class="artdte"></div>
     <div class="artlnk"><a href="#" target="_blank" title="view original">&nbsp;</a></div>
+    <div class="sprites-img artedlnk"><a href="#">&nbsp;</a></div>
     <div class="artclr"></div>
-</div>
-</div>
-
-<div id="writingblank">
-<div class="wtg wtg-cl" entry="" status="">
-    <div class="sprites-img wtgtog wtgtog-un">&nbsp;</div>
-    <div class="wtglab">
-        <a href="#"><span class="wtgtt"></span></a>
-    </div>
-    <div class="wtgdte"></div>
-    <div class="sprites-img wtgedlnk"><a href="#">&nbsp;</a></div>
-    <div class="wtgclr"></div>
 </div>
 </div>
 

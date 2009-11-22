@@ -9,8 +9,9 @@ var my_feed =
 
 var my_article = 
 {
-    display : "<?php echo $this->settings->article->display ?>",
     data    : Array(),
+    objects : Array(),
+    display : "<?php echo $this->settings->article->display ?>",
     current : null,
     older   : 0,
     bottom  : 0
@@ -174,6 +175,14 @@ function update_right_header_title(t)
     my_template.right_header_title.b_txtoverflow({ buffer: my_template.txtoverflow_buffer, width: (my_template.right_header_title.width() * 0.8), text: t });
 }
 
+function article_cache_init()
+{
+    my_template.right_middle.find('div.art').each(function()
+    {
+        my_article.objects[$(this).attr('article')] = $(this);
+    });
+}
+
 function article_populate(d, append)
 {
     if(append==false)
@@ -221,11 +230,11 @@ function article_populate(d, append)
 
         if(my_article.data[_data.article]==undefined) // avoid dupl
         {
+            my_article.data[_data.article]=_data;
+
             _item  = my_template.article_blank.clone();
             _inner = _item.find('div.art');
-            _inner.attr('feed', _data.feed);
             _inner.attr('article', _data.article);
-            _inner.attr('entry', _data.entry);
 
             if(_data.wr)
             {
@@ -248,107 +257,24 @@ function article_populate(d, append)
             _inner.find('span.arttt').addClass((_data.wr ? 'arttt-wr' : '')).b_txtoverflow({ buffer: my_template.txtoverflow_buffer, width: _alw, text: _data.article_title });
             _inner.find('div.artdte').text(_i < 5 ? _data.article_time_literal :
                                                     _data.article_date_local);
-            _inner.find('div.artlnk > a').attr('href', _data.article_link);
+
+            (_data.article_link.length>0) ?
+                _inner.find('div.artlnk > a').attr('href', _data.article_link) :
+                _inner.find('div.artlnk').hide();
 
             _lsdata[_i] = _item.html(); _i++;
         }
-
-        my_article.data[_data.article] =
-        {
-            title   : _data.article_title,
-            author  : _data.article_author,
-            content : _data.article_content
-        };
     });
 
     my_template.right_middle.append(_lsdata.join("\n"));
+    article_cache_init();
+
     my_article.older = _data.article_time;
 
     if(my_article.display=='expanded') { article_show_all(); }
     if(append==false) { my_template.right_middle.scrollTop(0); }
 
     my_article.bottom += my_template.right_middle.find('div.art:last').position().top;
-}
-
-function writing_populate(d, append)
-{
-    if(append==false)
-    {
-        my_template.right_middle.html('');
-        my_article.data = Array();
-        my_article.current = null;
-        my_article.older = 0;
-        my_article.bottom = 0;
-    }
-
-    if(d.length==0)
-    { 
-        if(append==true) { my_article.older = 0; }
-        return false; 
-    }
-
-    var _data   = null;
-    var _item   = null;
-    var _inner  = null;
-    var _lsdata = Array();
-    var _i      = 0;
-
-    var _alw = my_template.right_middle.width() * 0.6;
-
-    d.each(function()
-    {
-        _data = 
-        {
-            writing              :  $(this).find('writing').text(),
-            writing_title        :  $(this).find('writing_title').text(),
-            writing_content      :  $(this).find('writing_content').text(),
-            writing_date         :  $(this).find('writing_date').text(),
-            writing_date_time    :  $(this).find('writing_date_time').text(),
-            writing_date_literal :  $(this).find('writing_date_literal').text(),
-            writing_date_local   :  $(this).find('writing_date_local').text(),
-            publication_status   :  '' // TODO
-        };
-
-        if(my_article.data[_data.writing]==undefined) // avoid dupl
-        {
-            _item  = my_template.writing_blank.clone();
-            _inner = _item.find('div.wtg');
-            _inner.attr('writing', _data.writing);
-
-            if(_data.publication_status.length>0)
-            {
-                _inner.find('div.wtgtog')
-                    .removeClass('wtgtog-un')
-                    .addClass('wtgtog-ck');
-            }
-
-            if(_data.writing_title.length==0)
-            {
-                _data.writing_title = 'Untitled';
-            }
-
-            _inner.find('span.wtgtt').b_txtoverflow({ buffer: my_template.txtoverflow_buffer, width: _alw, text: _data.writing_title });
-            _inner.find('div.wtgdte').text(_i < 5 ? _data.writing_time_literal :
-                                                    _data.writing_date_local);
-
-            _lsdata[_i] = _item.html(); _i++;
-        }
-
-        my_article.data[_data.writing] =
-        {
-            title   : _data.writing_title,
-            author  : '',
-            content : _data.writing_content
-        };
-    });
-
-    my_template.right_middle.append(_lsdata.join("\n"));
-    my_article.older = _data.writing_time;
-
-    if(my_article.display=='expanded') { article_show_all(); }
-    if(append==false) { my_template.right_middle.scrollTop(0); }
-
-    my_article.bottom += my_template.right_middle.find('div.wtg:last').position().top;
 }
 
 function article_list_callback(d)
@@ -362,14 +288,6 @@ function article_list_callback(d)
     if(_lst.length>0) 
     { 
         article_populate(_lst.children(), (_app.text()=="true")); 
-        return true;
-    }
-
-    _lst = d.find('writings')
-
-    if(_lst.length>0)
-    {
-        writing_populate(_lst.children(), (_app.text()=="true"));
         return true;
     }
 }
@@ -444,10 +362,14 @@ function article_focus()
         my_article.current.addClass('art-op-focus');
         my_article.current.next('div.artview').addClass('artview-focus');
 
+        if(my_feed.type=='writing') { return true; }
+        if(my_article.current.hasClass('art-wr')) { return true; }
+
         var _data = { blog     : my_blog.current ,
                       article  : my_article.current.attr('article') };
 
         $.ajax({ type: 'POST', url: '/rw/wr', dataType: "xml", data: _data });
+
         my_article.current.addClass('art-wr').find('span.arttt').addClass('arttt-wr');
     }
 }
@@ -465,14 +387,13 @@ function article_show(a)
 {
     if(my_article.data[a])
     {
-        my_article.current = my_template.right_middle
-            .find("div.art[article='" + a + "']");
+        my_article.current = my_article.objects[a];
 
         if(my_article.current.hasClass('art-op')==false)
         {
             var _content = my_template.content_blank.clone();
-            _content.find('h1').html(my_article.data[a].title);
-            _content.find('div.artbody').html(my_article.data[a].content); /* div clear both for img float left in artbody css */
+            _content.find('h1').html(my_article.data[a].article_title);
+            _content.find('div.artbody').html(my_article.data[a].article_content); /* div clear both for img float left in artbody css */
             _content.find('div.artbody').find('a').attr('target', '_blank'); /* add target _blank to all links */
             my_article.current.after(_content.html()).addClass('art-op');
         }
@@ -490,8 +411,8 @@ function article_show_all()
     {
         var _art = $(this).attr('article');
         var _content = my_template.content_blank.clone();
-        _content.find('h1').html(my_article.data[_art].title);
-        _content.find('div.artbody').html(my_article.data[_art].content);
+        _content.find('h1').html(my_article.data[_art].article_title);
+        _content.find('div.artbody').html(my_article.data[_art].article_content);
         $(this).after('<div class="artview-sep">&nbsp;</div>');
         $(this).after(_content.html()).addClass('art-op');
     });
@@ -543,17 +464,16 @@ function article_next()
 
 function queue_add_callback(d)
 {
-    var _sel = "div.art" +
-               "[feed='" + d.find('feed').text() + "']" + 
-               "[article='" + d.find('article').text() + "']";
+    var _a = d.find('article').text();
+    var _e = d.find('entry').text();
 
-    my_template.right_middle
-        .find(_sel)
-        .attr('entry', d.find('entry').text())
+    my_article.objects[_a]
         .find('div.arttog')
         .removeClass('arttog-un')
         .addClass('arttog-ck')
         .blur();
+    
+    my_article.data[_a].entry = _e;
 }
 
 function queue_add(f, a)
@@ -567,13 +487,16 @@ function queue_add(f, a)
 
 function queue_delete_callback(d)
 {
-    var _sel = "div.art[entry='" + d.find('entry').text() + "']";
+    var _a = d.find('article').text();
+    var _e = d.find('entry').text();
 
-    my_template.right_middle.find(_sel)
+    my_article.objects[_a]
         .find('div.arttog')
         .removeClass('arttog-ck')
         .addClass('arttog-un')
         .blur();
+
+    my_article.data[_a].entry = null;
 }
 
 function queue_delete(e)
@@ -615,9 +538,9 @@ function writing_edit(w)
 
     if(my_article.data[w])
     {
-        _edit_title = my_article.data[w].title;
-        _edit_title = my_article.data[w].content;
-        my_article.current = my_template.right_middle.find("div.art[article='" + w + "']");
+        _edit_title = my_article.data[w].article_title;
+        _edit_title = my_article.data[w].article_content;
+        my_article.current = my_article.objects[w];
     }
 
     my_template.edit_form.find('div.form-bot').css('top', _rect.H - 55); // position hack
@@ -978,15 +901,15 @@ $(document).ready(function()
         .find('div.arttog')
         .live('click', function()
     {
-        var _i = $(this).parent();
+        var _a = $(this).parent().attr('article');
 
-        if($(this).hasClass('arttog-ck'))
+        if(my_article.data[_a].entry)
         {
-            queue_delete(_i.attr('entry'));
+            queue_delete(my_article.data[_a].entry);
         }
         else
         {
-            queue_add(_i.attr('feed'), _i.attr('article'));
+            queue_add(my_article.data[_a].feed, _a);
         }
 
         return false;

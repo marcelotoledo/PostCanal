@@ -205,7 +205,10 @@ function entry_populate(d)
             _item  = my_template.entry_blank.clone();
             _inner = _item.find('div.ety');
             _inner.attr('entry', _data.entry);
-            _inner.find('div.artlnk > a').attr('href', _data.link);
+
+            (_data.link.length>0) ?
+                _inner.find('div.artlnk > a').attr('href', _data.link) :
+                _inner.find('div.artlnk').hide();
 
             entry_set_status(_inner, _data.status);
 
