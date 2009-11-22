@@ -125,4 +125,38 @@ class C_Article extends B_Controller
 
         $this->session()->user_blog_hash = $blog_hash;
     }
+
+    /**
+     * create / update writings
+     */
+    public function A_save()
+    {
+        $blog = $this->request()->blog;
+        $user = $this->session()->user_profile_id;
+
+        $article         = $this->request()->article;
+        $article_title   = $this->request()->article_title;
+        $article_content = $this->request()->article_content;
+
+        $art = null;
+
+        if(strlen($article)>0) 
+            $art = AggregatorFeedArticle::getWritingArticle($blog, $user, $article);
+
+        if(is_object($art)==false)
+        {
+            $af = AggregatorFeed::getByURL(
+                sprintf(AggregatorFeed::WRITINGS_URL_BASE, $user, $blog));
+
+            $art = new AggregatorFeedArticle();
+            $art->aggregator_feed_id = $af->aggregator_feed_id;
+            $art->article_date = time();
+            $art->article_link = '';
+            $art->article_author = '';
+        }
+
+        $art->article_title   = $article_title;
+        $art->article_content = $article_content;
+        $art->save();
+    }
 }

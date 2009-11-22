@@ -503,8 +503,6 @@ class UserBlogFeed extends B_Model
     {
         if(!$older) $older = time();
 
-        $feed_url_md5 = md5(sprintf(AggregatorFeed::WRITINGS_URL_BASE, intval($user_id), preg_replace("/[^\w]/", "", $blog_hash)));
-
         $sql = "SELECT a.feed_title AS feed_title, a.hash AS feed, 
                        b.article_md5 AS article, b.article_title AS article_title, 
                        b.article_link AS article_link, b.created_at AS article_date, 
@@ -521,7 +519,7 @@ class UserBlogFeed extends B_Model
                     AND (c.deleted = 0)
                 INNER JOIN model_aggregator_feed AS x
                     ON (a.aggregator_feed_id = x.aggregator_feed_id)
-                    AND (x.feed_url_md5 = '" . $feed_url_md5 . "')
+                    AND (x.feed_url_md5 = ?)
                 WHERE b.updated_at < ? 
                 AND a.user_blog_id = (
                     SELECT user_blog_id
@@ -530,9 +528,10 @@ class UserBlogFeed extends B_Model
                 ORDER BY b.created_at DESC, b.article_date DESC, b.aggregator_feed_article_id DESC
                 LIMIT " . intval($limit);
 
-        return self::select($sql, array(date("Y-m-d H:i:s", $older), 
-                                        $blog_hash, 
-                                        $user_id), PDO::FETCH_ASSOC);
+        return self::select($sql, array(
+            md5(sprintf(AggregatorFeed::WRITINGS_URL_BASE, $user_id, $blog_hash)),
+            date("Y-m-d H:i:s", $older),  
+            $blog_hash, $user_id), PDO::FETCH_ASSOC);
     }
 
 

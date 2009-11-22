@@ -536,6 +536,8 @@ function writing_edit(w)
     var _edit_title = '';
     var _edit_content = '';
 
+    my_article.current = null;
+
     if(my_article.data[w])
     {
         _edit_title = my_article.data[w].article_title;
@@ -550,22 +552,22 @@ function writing_edit(w)
 
 function writing_save_callback(d)
 {
-    // TODO
     my_template.edit_form.b_modal_close();
     flash_message("<?php echo $this->translation()->saved ?>");
+    article_list(null);
 }
 
 function writing_save_current()
 {
     var _data =
     {
-        blog            : my_blog.current ,
-        writing         : null, // TODO 
-        writing_title   : my_template.edit_form.find("input[name='writingtitle']").val(),
-        writing_content : CKEDITOR.instances.writingbody.getData()
+        blog            : my_blog.current,
+        article         : my_article.current,
+        article_title   : my_template.edit_form.find("input[name='writingtitle']").val(),
+        article_content : CKEDITOR.instances.writingbody.getData()
     };
 
-    do_request('POST', '/writing/save', _data, writing_save_callback);
+    do_request('POST', '/article/save', _data, writing_save_callback);
 }
 
 

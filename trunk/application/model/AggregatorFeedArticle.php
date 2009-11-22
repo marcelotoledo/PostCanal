@@ -128,10 +128,6 @@ class AggregatorFeedArticle extends B_Model
         {
             $this->article_md5 = md5($this->article_link);
         }
-        if(strlen($this->article_md5) == 0 && strlen($this->article_title) > 0)
-        {
-            $this->article_md5 = md5($this->article_title);
-        }
         if(strlen($this->article_md5) == 0)
         {
             $this->article_md5 = md5(L_Utility::randomString(8));
@@ -167,6 +163,23 @@ class AggregatorFeedArticle extends B_Model
             "SELECT * FROM " . self::$table_name . 
             " WHERE aggregator_feed_id = ? AND article_md5 = ?",
             array($feed_id, $article_md5), PDO::FETCH_CLASS, get_class()));
+    }
+
+    /**
+     * get user blog writing article
+     */
+    public static function getWritingArticle($user, $blog, $article)
+    {
+        return current(self::select(
+            "SELECT * FROM " . self::$table_name . 
+            " WHERE aggregator_feed_id = (
+                SELECT aggregator_feed_id
+                FROM model_aggregator_feed
+                WHERE feed_url_md5 = ?
+              ) 
+              AND article_md5 = ?",
+            array(sprintf(AggregatorFeed::WRITINGS_URL_BASE, $user, $blog), $article), 
+            PDO::FETCH_CLASS, get_class()));
     }
 
     /**
