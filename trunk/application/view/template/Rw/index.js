@@ -141,6 +141,7 @@ function feed_add_callback(d)
 {
     var _flw = my_template.subscribed_list.width() * 0.9;
     var _dta = d.find('feed');
+    var _mul = d.find('multiple');
 
     _data =
     {
@@ -712,7 +713,7 @@ $(document).ready(function()
     {
         if(my_template.feed_add_ct.toggle().is(':visible'))
         {
-            my_template.feed_add_input.val('');
+            my_template.feed_add_input.val('http://');
             my_template.feed_add_input.focus();
         }
         $(this).blur();

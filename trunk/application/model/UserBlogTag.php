@@ -136,4 +136,41 @@ class UserBlogTag extends B_Model
 
         return $a;
     }
+
+    /**
+     * Get tags hash
+     */
+    public static function getTagsHash($query, $user, $blog)
+    {
+        $tags=array();
+        
+        if(strlen($query)>0)
+        {   
+            $folder_tags=L_Utility::splitTags($query);
+            $folder_tags_total=count($folder_tags);
+            $blog_tags_assoc=UserBlogTag::findAssocFromUserBlog($user, $blog);
+            $blog_obj=null;
+            
+            for($j=0;$j<$folder_tags_total;$j++)
+            {
+                $tag_id=null;
+                
+                if((($tag_id=array_search($folder_tags[$j], $blog_tags_assoc))>0)==false)
+                {   
+                    if($blog_obj==null) $blog_obj = UserBlog::getByUserAndHash($user, $blog);
+                    if($blog_obj)
+                    {   
+                        $o=new UserBlogTag();
+                        $o->user_blog_id = $blog_obj->user_blog_id;
+                        $o->name = $folder_tags[$j];
+                        if($o->save()) $tag_id=$o->user_blog_tag_id;
+                    }
+                }
+            
+                if($tag_id>0) $tags[$tag_id]=$folder_tags[$j];
+            }
+        }
+    
+        return $tags;
+    }
 }

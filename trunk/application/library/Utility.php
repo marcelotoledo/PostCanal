@@ -27,6 +27,29 @@ class L_Utility
         '+s' => 'in %d seconds'
     );
 
+    public static $google_news_rss_url = "http://news.google.com/news?q=%s&output=rss&ned=%s";
+    public static $google_news_rss_territories = array
+    (
+        'US' => 'us',       // united states
+        'AU' => 'au',       // australia
+        'BR' => 'pt-BR_br', // brazil
+        'CA' => 'ca',       // canada
+        'CN' => 'cn',       // china
+        'DE' => 'de',       // deutschland
+        'ES' => 'es',       // spanish
+        'FR' => 'fr',       // france
+        'GB' => 'uk',       // united kingdom
+        'HK' => 'hk',       // hong kong
+        'IN' => 'in',       // india
+        'IT' => 'it',       // italia
+        // 'JP' => 'jp',       // japan (NO RSS?)
+        'NZ' => 'nz',       // new zealand
+        'KR' => 'kr',       // korea
+        'PT' => 'pt-PT_pt', // portugal
+        'RU' => 'ru_ru',    // russia
+        'TW' => 'tw'        // taiwan
+    );
+
     /**
      * Fix URL
      * 
@@ -207,5 +230,17 @@ class L_Utility
         }
 
         return $n;
+    }
+
+    /**
+     * Get google news rss by keyword and territory
+     */
+    public static function googleNewsRSS($keyword, $territory='US')
+    {
+        $ned = array_key_exists($territory, self::$google_news_rss_territories) ? 
+            self::$google_news_rss_territories[$territory] : 
+            current(self::$google_news_rss_territories);
+
+        return sprintf(self::$google_news_rss_url, urlencode($keyword), $ned);
     }
 }

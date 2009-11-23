@@ -66,12 +66,11 @@ class C_Feed extends B_Controller
     protected function feedAdd($blog_hash, $url, $title=null)
     {
         $user_id = $this->session()->user_profile_id;
-        $result = null;
+        $blog_feed = null;
 
         if(is_object(($feed = AggregatorFeed::getByURL($url))))
         {
             $blog = UserBlog::getByUserAndHash($user_id, $blog_hash);
-            $blog_feed = null;
 
             if(is_object($blog))
             {
@@ -101,18 +100,32 @@ class C_Feed extends B_Controller
                 $blog_feed->feed_description = $feed->feed_description;
                 $blog_feed->save();
             }
-
-            $result = array
-            (
-                'feed'       => $blog_feed->hash,
-                'ordering'   => $blog_feed->ordering,
-                'feed_url'   => $url,
-                'feed_title' => $blog_feed->feed_title,
-                'enabled'    => $blog_feed->enabled
-            );
         }
 
-        return $result;
+        return $blog_feed;
+    }
+
+    protected function feedDiscoverAndAdd($query, $blog)
+    {
+        $d = AggregatorFeed::discover($query);
+        if(array_key_exists(0, $d)==false) return false;
+        $d = $d[0];
+        $u = (is_array($d) && array_key_exists('feed_url', $d)) ? $d['feed_url'] : null;
+        if(strlen($u)==0) return false;
+        return $this->feedAdd($blog, $u);
+    }
+
+    protected function formatFeedAdd($blog_feed, $url)
+    {
+        if(is_object($blog_feed)==false) return null;
+        return array
+        (
+            'feed'       => $blog_feed->hash,
+            'ordering'   => $blog_feed->ordering,
+            'feed_url'   => $url,
+            'feed_title' => $blog_feed->feed_title,
+            'enabled'    => $blog_feed->enabled
+        );
     }
 
     protected function checkQuota()
@@ -139,18 +152,18 @@ class C_Feed extends B_Controller
 
         /* add feed */
 
-        $this->view()->feed = $this->feedAdd($blog, $url, $title);
+        $this->view()->feed = $this->formatFeedAdd($this->feedAdd($blog, $url, $title), $url);
     }
 
     public function A_quick()
     {
         $this->response()->setXML(true);
 
-        $b = $this->request()->blog;
-        $d = AggregatorFeed::discover($this->request()->url);
-        if(array_key_exists(0, $d)==false) return false;
-        $d = $d[0];
-        $u = (is_array($d) && array_key_exists('feed_url', $d)) ? $d['feed_url'] : null;
+        $user  = $this->session()->user_profile_id;
+        $blog  = $this->request()->blog;
+        $query = $this->request()->url;
+
+        if(strlen($blog)==0 || strlen($query)==0) return false;
 
         /* check quota */
 
@@ -158,10 +171,21 @@ class C_Feed extends B_Controller
         $this->view()->overquota = $oq;
         if($oq) return false;
 
-        /* add feed */
+        /* add keyword */
 
-        if(strlen($b)==0 || strlen($u)==0) return false;
-        $this->view()->feed = $this->feedAdd($b, $u);
+        $url = null;
+
+        if(strpos($query, '://')>0)
+        {
+            $url = $query;
+        }
+        else
+        {
+            $profile = UserProfile::getByPrimaryKey($user);
+            $url = L_Utility::googleNewsRSS($query, $profile->local_territory);
+        }
+
+        $this->view()->feed = $this->formatFeedAdd($this->feedDiscoverAndAdd($url, $blog), $url);
     }
 
     /**
@@ -215,36 +239,11 @@ class C_Feed extends B_Controller
         $blog = $this->request()->blog;
         $hash = $this->request()->feed;
         $user = $this->session()->user_profile_id;
-        $updated = array();
 
         // tags (folders)
-        if(strlen(($folders=$this->request()->folders))>0)
-        {
-            $folder_tags=L_Utility::splitTags($folders);
-            $folder_tags_total=count($folder_tags);
-            $blog_tags_assoc=UserBlogTag::findAssocFromUserBlog($user, $blog);
-            $tag_ids=array();
-            $blog_obj=null;
+        $tag_ids = array_keys(UserBlogTag::getTagsHash($this->request()->folders, $user, $blog));
 
-            for($j=0;$j<$folder_tags_total;$j++)
-            {
-                $tag_id=null;
-
-                if((($tag_id=array_search($folder_tags[$j], $blog_tags_assoc))>0)==false)
-                {
-                    if($blog_obj==null) $blog_obj = UserBlog::getByUserAndHash($user, $blog);
-                    if($blog_obj)
-                    {
-                        $o=new UserBlogTag();
-                        $o->user_blog_id = $blog_obj->user_blog_id;
-                        $o->name = $folder_tags[$j];
-                        if($o->save()) $tag_id=$o->user_blog_tag_id;
-                    }
-                }
-
-                if($tag_id>0) $tag_ids[]=$tag_id;
-            }
-        }
+        $updated = array();
 
         if(is_object(($feed = UserBlogFeed::getByBlogAndFeedHash($user, $blog, $hash))))
         {

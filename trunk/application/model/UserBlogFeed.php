@@ -421,7 +421,7 @@ class UserBlogFeed extends B_Model
                 INNER JOIN model_user_blog_feed_tag AS f
                     ON (a.user_blog_feed_id = f.user_blog_feed_id)
                     AND (e.user_blog_tag_id = f.user_blog_tag_id)
-                WHERE a.visible = 1 AND a.deleted = 0 ";
+                WHERE a.deleted = 0 "; // a.visible doesnt matter
         if($older) $sql.= "AND b.updated_at < ? ";
         $sql.= "AND a.user_blog_id = (
                     SELECT user_blog_id
