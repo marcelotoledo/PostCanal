@@ -3,6 +3,9 @@ START TRANSACTION;
 -- drop --
 
 DROP TABLE IF EXISTS model_user_blog_entry CASCADE;
+DROP TABLE IF EXISTS model_user_blog_feed_article CASCADE;
+DROP TABLE IF EXISTS model_user_blog_feed_tag CASCADE;
+DROP TABLE IF EXISTS model_user_blog_tag CASCADE;
 DROP TABLE IF EXISTS model_user_blog_feed CASCADE;
 DROP TABLE IF EXISTS model_user_blog CASCADE;
 DROP TABLE IF EXISTS model_user_dashboard_setting CASCADE;

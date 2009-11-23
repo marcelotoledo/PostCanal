@@ -156,7 +156,7 @@ class C_Site extends B_Controller
             $wf->feed_title = AggregatorFeed::WRITINGS_TITLE;
             $wf->feed_link = "";
             $wf->feed_description = "";
-            $wf->enabled = 0;
+            $wf->updateable = false;
             $wf->save();
 
             // add blog's writings feed to user blog feeds
@@ -166,8 +166,7 @@ class C_Site extends B_Controller
             $bf->feed_title = $wf->feed_title;
             $bf->feed_description = $wf->feed_description;
             $bf->ordering = 0;
-            $bf->enabled = false;
-            $bf->deleted = false;
+            $bf->visible = false;
             $bf->save();
         }
 

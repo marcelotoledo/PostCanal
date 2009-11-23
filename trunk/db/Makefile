@@ -1,6 +1,6 @@
 DB = "./db.php"
 BT = "./base_translation.php"
-PN = "patch-release-1-0-1"
+PN = "patch-release-1-1-0"
 
 default:
 	@echo ""
@@ -16,4 +16,5 @@ patch:
 	$(DB) schema-patch-1257698089.mysql
 	$(DB) schema-patch-1258375512.mysql
 	$(DB) schema-patch-1258725971.mysql
-patch-release-1-0-1: patch
+	$(DB) schema-patch-1258966932.mysql
+patch-release-1-1-0: patch

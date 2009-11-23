@@ -33,7 +33,8 @@ class AggregatorFeed extends B_Model
 		'feed_status' => array ('type' => 'string','size' => 3,'required' => false),
 		'created_at' => array ('type' => 'date','size' => 0,'required' => false),
 		'updated_at' => array ('type' => 'date','size' => 0,'required' => false),
-		'enabled' => array ('type' => 'boolean','size' => 0,'required' => false));
+		'enabled' => array ('type' => 'boolean','size' => 0,'required' => false),
+		'updateable' => array ('type' => 'boolean','size' => 0,'required' => false));
 
     /**
      * Sequence name
@@ -198,7 +199,7 @@ class AggregatorFeed extends B_Model
         $sql = "SELECT aggregator_feed_id AS id, feed_url
                 FROM " . self::$table_name . "
                 WHERE (feed_update_time + UNIX_TIMESTAMP(updated_at)) < UNIX_TIMESTAMP()
-                AND enabled = 1
+                AND enabled = 1 AND updateable = 1
                 ORDER BY (feed_update_time + UNIX_TIMESTAMP(updated_at)) ASC
                 LIMIT " . intval($limit);
 
@@ -233,7 +234,7 @@ class AggregatorFeed extends B_Model
         $sql = "SELECT COUNT(aggregator_feed_id) AS total
                 FROM " . self::$table_name . "
                 WHERE (feed_update_time + UNIX_TIMESTAMP(updated_at)) < UNIX_TIMESTAMP()
-                AND enabled = 1";
+                AND enabled = 1 AND updateable = 1";
 
         $total = 0;
 

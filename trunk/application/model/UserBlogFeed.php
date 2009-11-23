@@ -32,7 +32,7 @@ class UserBlogFeed extends B_Model
 		'ordering' => array ('type' => 'integer','size' => 0,'required' => false),
 		'created_at' => array ('type' => 'date','size' => 0,'required' => false),
 		'updated_at' => array ('type' => 'date','size' => 0,'required' => false),
-		'enabled' => array ('type' => 'boolean','size' => 0,'required' => false),
+		'visible' => array ('type' => 'boolean','size' => 0,'required' => false),
 		'deleted' => array ('type' => 'boolean','size' => 0,'required' => false));
 
     /**
@@ -222,27 +222,22 @@ class UserBlogFeed extends B_Model
      *
      * @param   string      $blog_hash
      * @param   integer     $user_id
-     * @param   boolean     $enabled        Show enabled only
      *
      * @return  array
      */
-    public static function findAssocByBlogAndUser($blog_hash, $user_id, $enabled=true)
+    public static function findAssocByBlogAndUser($blog_hash, $user_id)
     {
         $sql = "SELECT a.hash as feed, b.feed_url, a.feed_title,
                        a.feed_description, b.feed_update_time,
-                       b.feed_status, a.ordering, a.enabled
+                       b.feed_status, a.ordering
                 FROM " . self::$table_name . " AS a
                 LEFT JOIN model_aggregator_feed AS b
                 ON (a.aggregator_feed_id = b.aggregator_feed_id)
                 WHERE a.user_blog_id = (
                     SELECT user_blog_id
                     FROM model_user_blog
-                    WHERE hash = ? AND user_profile_id = ?) ";
-        if($enabled==true)
-        {
-            $sql.= "AND a.enabled = 1 ";
-        }
-        $sql.= "AND b.enabled = 1 AND a.deleted = 0
+                    WHERE hash = ? AND user_profile_id = ?)
+                AND a.visible = 1 AND a.deleted = 0
                 ORDER BY a.ordering ASC, a.created_at DESC";
 
         $feeds = self::select($sql, array($blog_hash, $user_id), PDO::FETCH_ASSOC);
@@ -266,7 +261,7 @@ class UserBlogFeed extends B_Model
     {
         $sql = "SELECT c.name AS tag, b.hash AS feed, d.feed_url, b.feed_title, 
                        b.feed_description, d.feed_update_time, 
-                       d.feed_status, b.ordering, b.enabled 
+                       d.feed_status, b.ordering
                 FROM model_user_blog_feed_tag AS a 
                 LEFT JOIN model_user_blog_feed AS b 
                     ON (a.user_blog_feed_id = b.user_blog_feed_id) 
@@ -278,9 +273,7 @@ class UserBlogFeed extends B_Model
                     SELECT user_blog_id
                     FROM model_user_blog
                     WHERE hash = ? AND user_profile_id = ?)
-                AND b.enabled = 1
-                AND b.deleted = 0
-                AND d.enabled = 1
+                AND b.visible = 1 AND b.deleted = 0
                 ORDER BY b.ordering ASC, b.created_at DESC";
 
         $feeds = self::select($sql, array($blog_hash, $user_id), PDO::FETCH_ASSOC);
@@ -326,26 +319,19 @@ class UserBlogFeed extends B_Model
      *
      * @param   string      $blog_hash
      * @param   integer     $user_id
-     * @param   boolean     $enabled        Show enabled only
      *
      * @return  array
      */
-    public static function findTotalByBlogAndUser($blog_hash, $user_id, $enabled=true)
+    public static function findTotalByBlogAndUser($blog_hash, $user_id)
     {
         $sql = "SELECT COUNT(*) AS total
-                FROM " . self::$table_name . " AS a
-                LEFT JOIN model_aggregator_feed AS b
-                ON (a.aggregator_feed_id = b.aggregator_feed_id)
-                WHERE a.user_blog_id = (
+                FROM " . self::$table_name . "
+                WHERE user_blog_id = (
                     SELECT user_blog_id
                     FROM model_user_blog
-                    WHERE hash = ? AND user_profile_id = ?) ";
-        if($enabled==true)
-        {
-            $sql.= "AND a.enabled = 1 ";
-        }
-        $sql.= "AND b.enabled = 1 AND deleted = 0
-                ORDER BY a.ordering ASC, a.created_at DESC";
+                    WHERE hash = ? AND user_profile_id = ?)
+                AND visible = 1 AND deleted = 0
+                ORDER BY ordering ASC, created_at DESC";
 
         $r = current(self::select($sql, array($blog_hash, $user_id), PDO::FETCH_ASSOC));
         return $r['total'];
@@ -385,7 +371,7 @@ class UserBlogFeed extends B_Model
                 LEFT JOIN model_user_blog_feed_article AS d
                     ON (a.user_blog_id = d.user_blog_id)
                     AND (b.aggregator_feed_article_id = d.aggregator_feed_article_id)
-                WHERE a.enabled = 1 AND a.deleted = 0 ";
+                WHERE a.visible = 1 AND a.deleted = 0 ";
         if($older) $sql.= "AND b.updated_at < ? ";
         $sql.= "AND a.hash = ? AND a.user_blog_id = (
                     SELECT user_blog_id
@@ -435,7 +421,7 @@ class UserBlogFeed extends B_Model
                 INNER JOIN model_user_blog_feed_tag AS f
                     ON (a.user_blog_feed_id = f.user_blog_feed_id)
                     AND (e.user_blog_tag_id = f.user_blog_tag_id)
-                WHERE a.enabled = 1 AND a.deleted = 0 ";
+                WHERE a.visible = 1 AND a.deleted = 0 ";
         if($older) $sql.= "AND b.updated_at < ? ";
         $sql.= "AND a.user_blog_id = (
                     SELECT user_blog_id
@@ -485,7 +471,7 @@ class UserBlogFeed extends B_Model
                 LEFT JOIN model_user_blog_feed_article AS d
                     ON (a.user_blog_id = d.user_blog_id)
                     AND (b.aggregator_feed_article_id = d.aggregator_feed_article_id)
-                WHERE a.enabled = 1 AND a.deleted = 0 ";
+                WHERE a.visible = 1 AND a.deleted = 0 ";
         if($older) $sql.= "AND b.updated_at < ? ";
         $sql.= "AND a.user_blog_id = (
                     SELECT user_blog_id
@@ -524,12 +510,13 @@ class UserBlogFeed extends B_Model
                     ON (b.aggregator_feed_article_id = c.aggregator_feed_article_id) 
                     AND (a.user_blog_id = c.user_blog_id)
                     AND (c.deleted = 0)
-                WHERE a.user_blog_id = (
+                WHERE a.visible = 0 AND a.deleted = 0 ";
+        if($older) $sql.= "AND b.updated_at < ? ";
+        $sql.= "AND a.user_blog_id = (
                     SELECT user_blog_id
                     FROM model_user_blog
-                    WHERE hash = ? AND user_profile_id = ?) "; 
-        if($older) $sql.= "AND b.updated_at < ? ";
-        $sql.= "AND a.aggregator_feed_id = (
+                    WHERE hash = ? AND user_profile_id = ?)
+                AND a.aggregator_feed_id = (
                     SELECT aggregator_feed_id
                     FROM model_aggregator_feed
                     WHERE feed_url_md5 = ?)
@@ -537,58 +524,58 @@ class UserBlogFeed extends B_Model
                 LIMIT " . intval($limit);
 
         $args = array();
+        if($older) $args[] = date("Y-m-d H:i:s", $older);
         $args[] = $blog_hash;
         $args[] = $user_id;
         $args[] = md5(sprintf(AggregatorFeed::WRITINGS_URL_BASE, $user_id, $blog_hash));
-        if($older) $args[] = date("Y-m-d H:i:s", $older);
 
         return self::select($sql, $args, PDO::FETCH_ASSOC);
     }
 
-    /**
-     * Find feed articles To Suggestion
-     *
-     * @param   string      $blog_id
-     * @param   integer     $limit
-     *
-     * @return  array
-     */
-    public static function findArticlesToSuggestion($blog_id, $limit=self::ARTICLES_MAX)
-    {
-        $sql = "SELECT d.aggregator_feed_article_id AS article_id,
-                       d.keywords AS keywords,
-                       x.feed_ordering AS feed_ordering
-                FROM (
+    // /**
+    //  * Find feed articles To Suggestion
+    //  *
+    //  * @param   string      $blog_id
+    //  * @param   integer     $limit
+    //  *
+    //  * @return  array
+    //  */
+    // public static function findArticlesToSuggestion($blog_id, $limit=self::ARTICLES_MAX)
+    // {
+    //     $sql = "SELECT d.aggregator_feed_article_id AS article_id,
+    //                    d.keywords AS keywords,
+    //                    x.feed_ordering AS feed_ordering
+    //             FROM (
 
-                    SELECT a.aggregator_feed_article_id AS article_id, 
-                           c.user_blog_entry_id AS entry_id,
-                           b.ordering AS feed_ordering
-                    FROM model_aggregator_feed_article AS a
+    //                 SELECT a.aggregator_feed_article_id AS article_id, 
+    //                        c.user_blog_entry_id AS entry_id,
+    //                        b.ordering AS feed_ordering
+    //                 FROM model_aggregator_feed_article AS a
 
-                    LEFT JOIN model_user_blog_feed AS b 
-                        ON (a.aggregator_feed_id = b.aggregator_feed_id)
+    //                 LEFT JOIN model_user_blog_feed AS b 
+    //                     ON (a.aggregator_feed_id = b.aggregator_feed_id)
 
-                    LEFT JOIN model_user_blog_entry AS c
-                        ON (a.aggregator_feed_article_id = c.aggregator_feed_article_id) 
-                        AND (b.user_blog_id = c.user_blog_id)
+    //                 LEFT JOIN model_user_blog_entry AS c
+    //                     ON (a.aggregator_feed_article_id = c.aggregator_feed_article_id) 
+    //                     AND (b.user_blog_id = c.user_blog_id)
 
-                    WHERE b.enabled=1 AND b.deleted=0 AND b.user_blog_id = ?
+    //                 WHERE b.enabled=1 AND b.deleted=0 AND b.user_blog_id = ?
 
-                    ORDER BY a.created_at DESC, 
-                             a.article_date DESC, 
-                             a.aggregator_feed_article_id DESC
+    //                 ORDER BY a.created_at DESC, 
+    //                          a.article_date DESC, 
+    //                          a.aggregator_feed_article_id DESC
 
-                    LIMIT " . intval($limit) . "
+    //                 LIMIT " . intval($limit) . "
 
-                ) AS x
+    //             ) AS x
 
-                LEFT JOIN model_aggregator_feed_article AS d
-                    ON (x.article_id = d.aggregator_feed_article_id)
-                
-                WHERE x.entry_id IS NULL";
+    //             LEFT JOIN model_aggregator_feed_article AS d
+    //                 ON (x.article_id = d.aggregator_feed_article_id)
+    //             
+    //             WHERE x.entry_id IS NULL";
 
-        return self::select($sql, array($blog_id), PDO::FETCH_OBJ);
-    }
+    //     return self::select($sql, array($blog_id), PDO::FETCH_OBJ);
+    // }
 
     /**
      * Update column
