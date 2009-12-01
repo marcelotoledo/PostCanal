@@ -224,4 +224,36 @@ class C_Queue extends B_Controller
 
         $this->view()->result = $result;
     }
+
+    /**
+     * Entry publish NOW
+     */
+    public function A_now()
+    {
+        $this->response()->setXML(true);
+
+        $blog = $this->request()->blog;
+        $entry = $this->request()->entry;
+        $user = $this->session()->user_profile_id;
+        $result = array();
+
+        if(is_object(($e = BlogEntry::getByBlogAndEntryHash($user, $blog, $entry))))
+        {
+            if($e->publication_status != BlogEntry::STATUS_PUBLISHED)
+            {
+                $e->publication_status = 'waiting';
+                $e->publication_date = date('Y-m-d H:i:s');
+                $e->save();
+            }
+
+            $result[] = array
+            (
+                'entry'                 => $e->hash,
+                'status'                => $e->publication_status,
+                'publication_date_diff' => 0
+            );
+        }
+
+        $this->view()->result = $result;
+    }
 }

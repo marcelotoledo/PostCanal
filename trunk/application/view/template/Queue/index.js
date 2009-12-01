@@ -43,6 +43,7 @@ function entry_set_status(e, s)
             e.find('div.entrydndhdr').addClass('entrydndhdr-pb');
             e.find('div.etytog').replaceWith('<div class="etytog-pb">P</div>');
             e.find('div.etyedlnk').remove();
+            e.find('div.etynow').remove();
             e.find('div.etydte').text('published');
 
             if(e.is(':visible')) /* move to bottom */
@@ -393,6 +394,22 @@ function entry_delete(e)
     do_request('POST', '/queue/delete', _data, entry_delete_callback);
 }
 
+function entry_now_callback(d)
+{
+    entry_check_callback(d);
+}
+
+function entry_now(e)
+{
+    if(my_queue.data[e])
+    {
+        my_queue.current = my_queue.objects[e];
+        entry_hide_current();
+        var _data = { blog  : my_blog.current , entry : e };
+        do_request('GET', '/queue/now', _data, entry_now_callback);
+    }
+}
+
 function entry_position(e, p)
 {
     var _data = { blog  : my_blog.current , entry : e, position: p };
@@ -658,6 +675,19 @@ $(document).ready(function()
         var _st = _pt.attr('status')
 
         entry_edit(_pt.attr('entry'));
+
+        $(this).blur();
+        return false;
+    });
+
+    my_template.entry_list.find('div.ety')
+        .find('div.etynow')
+        .find('a').live('click', function()
+    {
+        var _pt = $(this).parent().parent();
+        var _st = _pt.attr('status')
+
+        entry_now(_pt.attr('entry'));
 
         $(this).blur();
         return false;
