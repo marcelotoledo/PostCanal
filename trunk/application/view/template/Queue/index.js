@@ -285,9 +285,12 @@ function entry_show_fix_vertical()
 
 function entry_hide(e)
 {
-    e.removeClass('ety-op').next('div.etyview').remove();
-    e.removeClass('ety-op').next('div.etyform').remove();
-    $("#my_source_editor").remove();
+    e.removeClass('ety-op');
+    my_template.entry_list.find('div.etyview').remove();
+    e.find('div.entrydndhdr').css('opacity', 1);
+    //e.removeClass('ety-op').next('div.etyview').remove();
+    //e.removeClass('ety-op').next('div.etyform').remove();
+    //$("#my_source_editor").remove();
 }
 
 function entry_hide_current()
@@ -306,6 +309,8 @@ function entry_show(e)
         var _content = _op ?
             _content = my_template.entry_list.find('div.etyview') : 
                        my_template.content_blank.clone();
+
+        my_queue.current.find('div.entrydndhdr').css('opacity', 0.5);
 
         _content.find('h1').html(my_queue.data[e].title );
         _content.find('div.etybody').html(my_queue.data[e].content);
@@ -419,7 +424,8 @@ function entry_sortable_init()
         distance : 10,
         start: function(e,u)
         {
-            entry_hide_current();
+            u.item.find('div.entrydndhdr').css('opacity', 0.5);
+            //entry_hide_current();
             my_queue.sorting = true;
         },
         update: function (e,u)
