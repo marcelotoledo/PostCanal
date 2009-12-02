@@ -448,6 +448,10 @@ function entry_sortable_init()
         update: function (e,u)
         {
             entry_sortable_callback(u.item.attr('entry'));
+        },
+        stop: function (e,u)
+        {
+            u.item.find('div.entrydndhdr').css('opacity', 1);
         }
     });
     my_template.entry_list.disableSelection();
