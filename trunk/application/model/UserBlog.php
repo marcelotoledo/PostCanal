@@ -221,6 +221,4 @@ class UserBlog extends B_Model
     {
         self::execute('UPDATE ' . self::$table_name . ' SET enqueueing_auto_updated_at="1970-01-01 00:00:00"');
     }
-
-
 }

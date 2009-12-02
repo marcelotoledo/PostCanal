@@ -353,8 +353,11 @@ class BlogEntry extends B_Model
         self::updateWorkingPublicationTimeout();
         self::transaction();
 
+        $total_res = 0;
         if(($res = self::select($sql, array(self::STATUS_WAITING), PDO::FETCH_ASSOC)))
         {
+            $total_res = count($res);
+
             /* working status avoid duplicated items on backend */
 
             $sql = "UPDATE model_user_blog_entry
@@ -363,13 +366,22 @@ class BlogEntry extends B_Model
                         updated_at=NOW()
                     WHERE user_blog_entry_id=?";
 
-            for($i=0;$i<count($res);$i++)
+            for($i=0;$i<$total_res;$i++)
             {
                 self::execute($sql, array(self::STATUS_WORKING, $res[$i]['id']));
             }
         }
 
         self::commit();
+
+        /* HTML sanitizer */
+        for($i=0;$i<$total_res;$i++)
+        {
+            $entry_content = $res[$i]['entry_content'];
+            $sanit = new L_HTMLSanitizer($res[$i]['blog_type']);
+            $sanit->sanitize($entry_content);
+            $res[$i]['entry_content'] = $entry_content;
+        }
 
         return $res;
     }

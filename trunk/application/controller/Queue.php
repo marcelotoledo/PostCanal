@@ -239,7 +239,7 @@ class C_Queue extends B_Controller
 
         if(is_object(($e = BlogEntry::getByBlogAndEntryHash($user, $blog, $entry))))
         {
-            if($e->publication_status != BlogEntry::STATUS_PUBLISHED)
+            if($e->publication_status != BlogEntry::STATUS_WORKING)
             {
                 $e->publication_status = 'waiting';
                 $e->publication_date = date('Y-m-d H:i:s');
