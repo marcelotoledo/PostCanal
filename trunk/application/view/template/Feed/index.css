@@ -32,6 +32,26 @@ button
     margin-top: 10px;
 }
 
+#importfeedform
+{
+    display: none;
+    text-align: left;
+    margin-bottom: 25px;
+}
+#importfeedbtn
+{
+    float: left;
+    margin-top: 15px;
+    margin-left: 15px;
+    width: 150px;
+}
+#importmessage
+{
+    font-size: 0.8em;
+    color: red;
+    margin-top: 10px;
+}
+
 #feedlistarea
 {
     text-align: left;

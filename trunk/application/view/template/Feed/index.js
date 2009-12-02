@@ -1,5 +1,7 @@
 var my_template = null;
 
+// ADD -------------------------------------------------------------------------
+
 function add_message(m)
 {
     my_template.new_feed_message.text(m);
@@ -9,6 +11,7 @@ function add_message(m)
 function feed_add_show()
 {
     add_message('');
+    feed_import_hide();
     my_template.feed_type_failed.hide();
     my_template.new_feed_form.show();
     my_template.new_feed_url.val('');
@@ -40,7 +43,44 @@ function feed_add_toggle()
         feed_add_hide() :
         feed_add_show() ;
     my_template.new_feed_button.toggle();
+    my_template.import_feed_button.toggle();
 }
+
+// IMPORT ----------------------------------------------------------------------
+
+function import_message(m)
+{
+    my_template.import_feed_message.text(m);
+    (m=='') ? my_template.import_feed_message.hide() : my_template.import_feed_message.show();
+}
+
+function feed_import_show()
+{
+    import_message('');
+    feed_add_hide();
+    my_template.import_feed_form.show();
+}
+
+function feed_import_hide()
+{
+    my_template.import_feed_form.hide();
+}
+
+function feed_import_reset()
+{
+    feed_import_hide();
+    my_template.import_feed_button.show();
+}
+
+function feed_import_toggle()
+{
+    (my_template.import_feed_form.css('display')=='block') ?
+        feed_import_hide() :
+        feed_import_show() ;
+    my_template.new_feed_button.toggle();
+    my_template.import_feed_button.toggle();
+}
+
 
 function txtoverflow_up()
 {
@@ -360,6 +400,15 @@ $(document).ready(function()
     {
         new_feed_button      : $("#addnewfeedbtn"),
         new_feed_form        : $("#addnewfeedform"),
+        new_feed_submit      : $("#addsubmit"),
+        new_feed_cancel      : $("#addcancel"),
+        new_feed_message     : $("#addmessage"),
+        import_feed_button   : $("#importfeedbtn"),
+        import_feed_form     : $("#importfeedform"),
+        import_feed_submit   : $("#importsubmit"),
+        import_feed_cancel   : $("#importcancel"),
+        import_feed_message  : $("#importmessage"),
+        import_blog          : $("#importblog"),
         feed_options_form    : $("#feedoptionsform"),
         feed_options_submit  : $("#optsubmit"),
         feed_options_cancel  : $("#optcancel"),
@@ -367,9 +416,6 @@ $(document).ready(function()
         feed_option_blank    : $("#feedoptionblank"),
         feed_option_selector : "input[name='inputfeedoption']",
         new_feed_url         : $("#feedurl"),
-        new_feed_submit      : $("#addsubmit"),
-        new_feed_cancel      : $("#addcancel"),
-        new_feed_message     : $("#addmessage"),
         feed_list_area       : $("#feedlistarea"),
         feed_item_blank      : $("#feeditemblank"),
         feed_delete_blank    : $("#feeddeleteblank"),
@@ -438,6 +484,26 @@ $(document).ready(function()
         return false;
     });
 
+
+    my_template.import_feed_button.click(function()
+    {
+        feed_import_toggle();
+    });
+
+    my_template.import_feed_submit.click(function()
+    {
+        my_template.import_blog.val(my_blog.current);
+        my_template.import_feed_form.find('form').submit();
+        $(this).blur();
+        return false;
+    });
+
+    my_template.import_feed_cancel.click(function()
+    {
+        my_template.import_feed_button.click();
+        $(this).blur();
+        return false;
+    });
 
 
     function feed_item_getid(i)

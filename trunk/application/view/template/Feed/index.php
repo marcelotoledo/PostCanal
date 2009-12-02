@@ -1,6 +1,7 @@
 <div id="tplbar" class="midct">
     <div id="tplbartt">Manage Feeds</div>
     <button id="addnewfeedbtn">ADD NEW FEED</button>
+    <button id="importfeedbtn">IMPORT FEEDS</button>
     <div id="tplbarclr"></div>
 </div>
 
@@ -14,6 +15,20 @@
     <button id="addsubmit">CONTINUE</button>&nbsp;
     <button id="addcancel">CANCEL</button>
     <div class="inputmessage" id="addmessage"></div>
+    </div>
+</form>
+</div>
+
+<div id="importfeedform" class="midct">
+<form action="/feed/opml" method="POST" enctype="multipart/form-data">
+    <input type="hidden" name="blog" value="" id="importblog">
+    <div class="form-row">
+    <p>OPML File Upload</p><p><input type="file" class="intxt intxt-full" name="opmlfile" id="opmlfile"></p>
+    </div>
+    <div class="form-bot">
+    <button id="importsubmit">CONTINUE</button>&nbsp;
+    <button id="importcancel">CANCEL</button>
+    <div class="inputmessage" id="importmessage"></div>
     </div>
 </form>
 </div>

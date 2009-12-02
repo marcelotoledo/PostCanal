@@ -63,12 +63,26 @@ class C_Feed extends B_Controller
     /**
      * Add feed
      */
-    protected function feedAdd($blog_hash, $url, $title=null)
+    protected function feedAdd($blog_hash, $url, $title=null, $link=null, $add=false)
     {
         $user_id = $this->session()->user_profile_id;
         $blog_feed = null;
+        $feed = null;
 
-        if(is_object(($feed = AggregatorFeed::getByURL($url))))
+        if(is_object(($feed = AggregatorFeed::getByURL($url)))==false && $add)
+        {
+            $feed = new AggregatorFeed();
+            $feed->feed_url = $url;
+            $feed->feed_url_md5 = md5($url);
+            $feed->feed_title = '';
+            $feed->feed_description = '';
+            $feed->feed_link = $link;
+            $feed->feed_update_time = 0;
+            $feed->feed_status = 404;
+            $feed->save();
+        }
+
+        if(is_object($feed))
         {
             $blog = UserBlog::getByUserAndHash($user_id, $blog_hash);
 
@@ -261,5 +275,36 @@ class C_Feed extends B_Controller
             $updated = array_merge($updated, array('feed' => $hash));
         }
         $this->view()->updated = $updated;
+    }
+
+    /**
+     * OPML
+     */
+    public function A_opml()
+    {
+        $blog = $this->request()->blog;
+        $fn = array_key_exists('opmlfile', $_FILES) ? $_FILES['opmlfile']['tmp_name'] : null;
+
+        // $this->response()->setRedirect('/feed');
+        if(is_uploaded_file($fn))
+        {
+            $o = new L_OPMLParser();
+            $data = $o->Parse(file_get_contents($fn));
+
+            if(is_array($data) && ($total=count($data))>0)
+            {
+                for($j=0;$j<$total;$j++)
+                {
+                    if(array_key_exists('XMLURL', $data[$j]))
+                    {
+                        $title = array_key_exists('TITLE', $data[$j]) ? $data[$j]['TITLE'] : '';
+                        $link = array_key_exists('HTMLURL', $data[$j]) ? $data[$j]['HTMLURL'] : '';
+                        $this->feedAdd($blog, $data[$j]['XMLURL'], $title, $link, true);
+                    }
+                }
+            }
+        }
+
+        $this->response()->setRedirect('/feed');
     }
 }
