@@ -62,7 +62,11 @@ def processFeed(url, token, requestQueue, name, isMonitor=False):
     while 1:
         l.log('Waiting for next in the queue to arrive', name, monName, 'copy-string', mon)
 
-        feed = requestQueue.get()
+        try:
+            feed = requestQueue.get(timeout=60)
+        except:
+            l.log('Queue timeout, ending thread', name, monName, 'copy-string', mon)
+            return None
 
         if feed == 'kill':
             l.log("I am done, ending thread", name, monName, 'copy-string', mon)
