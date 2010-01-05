@@ -35,18 +35,6 @@ class C_Profile extends B_Controller
 
         if(is_object($profile))
         {
-            // deprecated
-            // /* no register confirmation */
-            // 
-            // if($profile->register_confirmation == false)
-            // {
-            //     $this->view()->message = $this->translation()->registration_not_confirmed;
-            // }
-
-            /* valid login, create session */
-
-            // else
-            // {
             $this->session()->setActive(true);
             $this->session()->setCulture($profile->local_culture);
             $this->session()->setTimezone($profile->local_timezone);
@@ -68,7 +56,6 @@ class C_Profile extends B_Controller
             $id = $profile->user_profile_id;
             $_d = array ('method' => __METHOD__, 'user_profile_id' => $id);
             self::log("session created", $_d);
-            // }
         }
     }
 
@@ -85,8 +72,10 @@ class C_Profile extends B_Controller
         $password = $this->request()->password;
         $confirm = $this->request()->passwordc;
         $name = $this->request()->name;
-        $territory = $this->request()->country;
-        $timezone = $this->request()->timezone;
+        //$territory = $this->request()->country;
+        //$timezone = $this->request()->timezone;
+        $territory = 'US';
+        $timezone = 'UTC'; // defaults
 
         $this->view()->register = false;
         $this->view()->rerecaptcha = false;
@@ -103,19 +92,21 @@ class C_Profile extends B_Controller
         }
 
         /* check for invitation */
-        /* TEMPORARY FOR BETA VERSION **********/
-        if(is_object($i = ProfileInvitation::getByEmail($email)) &&
-                     $i->enabled==true)
+
+        if(B_Registry::get('application/profile/invitationOnly')=='true')
         {
-            B_Log::write(sprintf('new registration from (%s) with enabled invitation', $email), E_NOTICE, array('method' => __METHOD__));
+            if(is_object($i = ProfileInvitation::getByEmail($email)) &&
+                         $i->enabled==true)
+            {
+                B_Log::write(sprintf('new registration from (%s) with enabled invitation', $email), E_NOTICE, array('method' => __METHOD__));
+            }
+            else
+            {
+                B_Log::write(sprintf('new registration from (%s) blocked without invitation', $email), E_WARNING, array('method' => __METHOD__));
+                $this->view()->message = "This email was not accepted for registration.";
+                return false;
+            }
         }
-        else
-        {
-            B_Log::write(sprintf('new registration from (%s) blocked without invitation', $email), E_WARNING, array('method' => __METHOD__));
-            $this->view()->message = "This email was not accepted for registration.";
-            return false;
-        }
-        /* TEMPORARY FOR BETA VERSION **********/
 
         /* check for existing profile */
 

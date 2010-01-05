@@ -35,17 +35,17 @@ function register_submit()
     var _data = { email     : my_template.input_email.val() ,
                   password  : my_template.input_password.val(),
                   passwordc : my_template.input_confirm.val(),
-                  name      : my_template.input_name.val(), 
-                  country   : selected_country(), 
-                  timezone  : selected_timezone(),
+                  //name      : my_template.input_name.val(), 
+                  //country   : selected_country(), 
+                  //timezone  : selected_timezone(),
                   recaptcha_challenge : $("#recaptcha_challenge_field").val(), 
                   recaptcha_response : $("#recaptcha_response_field").val() };
 
     if(_data.email     == "" ||
        _data.password  == "" ||
        _data.passwordc == "" ||
-       _data.name      == "" ||
-       _data.country   == "" ||
+       //_data.name      == "" ||
+       //_data.country   == "" ||
        _data.recaptcha_response == "")
     {
         register_msg("Please fill up the form correctly.");
@@ -136,9 +136,11 @@ $(document).ready(function()
 
     /* invitation (temporary) */
 
+    <?php if(B_Registry::get('application/profile/invitationOnly')=='true') : ?>
     if(my_template.input_email.val()=='')
     {
         my_template.input_name.blur();
         $("#invitationlnk").click();
     }
+    <?php endif ?>
 });

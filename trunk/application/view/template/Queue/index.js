@@ -16,6 +16,14 @@ var my_queue =
 
 var entry_check_update_interval = 10000;
 
+function entry_published_separator()
+{
+    if($("#pubsep").length==0)
+    {
+        my_template.entry_list.append('<div id="pubsep">Published</div>');
+    }
+}
+
 function entry_set_status(e, s)
 {
     if(typeof e == 'string' && e.length > 0)
@@ -40,8 +48,8 @@ function entry_set_status(e, s)
         if(s=='<?php echo BlogEntry::STATUS_PUBLISHED ?>')
         {
             e.addClass('ety-pub');
-            e.find('div.entrydndhdr').addClass('entrydndhdr-pb');
-            e.find('div.etytog').replaceWith('<div class="etytog-pb">P</div>');
+            e.find('div.entrydndhdr').remove();
+            e.find('div.etytog').remove();
             e.find('div.etyedlnk').remove();
             e.find('div.etynow').remove();
             e.find('div.etydte').text('published');
@@ -50,8 +58,9 @@ function entry_set_status(e, s)
             {
                 e.fadeOut(100, function() 
                 { 
-                   my_template.entry_list.append($(this).clone().fadeIn(100));
-                   $(this).remove();
+                    entry_published_separator();
+                    $("#pubsep").after($(this).clone().fadeIn(100));
+                    $(this).remove();
                 });
             }
         }
@@ -158,6 +167,7 @@ function entry_updater()
            (my_queue.data[_e].status=='<?php echo BlogEntry::STATUS_WAITING ?>' || 
             my_queue.data[_e].status=='<?php echo BlogEntry::STATUS_WORKING ?>'))
         {
+            $(this).find('div.etynow').remove();
             _d.text('publishing...');
             entry_check_add(_e);
             return true;
@@ -224,18 +234,18 @@ function entry_populate(d)
         }
     });
 
-    var _pls = my_template.entry_list.find('div.ety[status="published"]').eq(0);
+    var _ps = $("#pubsep");
 
-    if(_pls.length>0)
+    if(_ps.length==0)
     {
-        _pls.before(_lsdata.join("\n"));
+        my_template.entry_list.append(_lsdata.join("\n"));
+        if(_lsdata.length>1) { entry_sortable_init(); }
     }
     else
     {
-       my_template.entry_list.append(_lsdata.join("\n"));
+        _ps.after(_lsdata.join("\n"));
     }
 
-    entry_sortable_init();
     entry_cache_init();
     my_template.entry_list.scrollTop(my_queue.scroll);
 }
@@ -261,7 +271,12 @@ function entry_list_callback(d)
     else
     {
         entry_populate(_qr);
-        entry_populate(_pr);
+
+        if(_pr.length>0)
+        {
+            entry_published_separator();
+            entry_populate(_pr);
+        }
     }
 }
 
@@ -433,6 +448,11 @@ function entry_sortable_callback(e)
 
 function entry_sortable_init()
 {
+    my_template.entry_list.find('div.ety').each(function()
+    {
+        $(this).find('div.entrydndhdr').show();
+    });
+
     my_template.entry_list.sortable(
     {
         handle : "div.entrydndhdr",
@@ -442,7 +462,6 @@ function entry_sortable_init()
         start: function(e,u)
         {
             u.item.find('div.entrydndhdr').css('opacity', 0.5);
-            //entry_hide_current();
             my_queue.sorting = true;
         },
         update: function (e,u)

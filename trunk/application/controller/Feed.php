@@ -111,6 +111,13 @@ class C_Feed extends B_Controller
                 $blog_feed->user_blog_id = $blog->user_blog_id;
                 $blog_feed->aggregator_feed_id = $feed->aggregator_feed_id;
                 $blog_feed->feed_title = $title ? $title : $feed->feed_title;
+
+                /* when feed has no name, use link instead */
+                if(strlen($blog_feed->feed_title)==0) $blog_feed->feed_title = $feed->feed_link;
+                
+                /* when feed has no name, use url instead */
+                if(strlen($blog_feed->feed_title)==0) $blog_feed->feed_title = $url;
+
                 $blog_feed->feed_description = $feed->feed_description;
                 $blog_feed->save();
             }
@@ -122,7 +129,15 @@ class C_Feed extends B_Controller
     protected function feedDiscoverAndAdd($query, $blog)
     {
         $d = AggregatorFeed::discover($query);
-        if(array_key_exists(0, $d)==false) return false;
+        if(count($d)==0) return false;
+        if(count($d)>1)
+        {
+            $d = $d[0];
+            $u = (is_array($d) && array_key_exists('feed_url', $d)) ? $d['feed_url'] : null;
+            if(strlen($u)==0) return false;
+            $d = AggregatorFeed::discover($u);
+        }
+        if(count($d)==0) return false;
         $d = $d[0];
         $u = (is_array($d) && array_key_exists('feed_url', $d)) ? $d['feed_url'] : null;
         if(strlen($u)==0) return false;
@@ -189,7 +204,7 @@ class C_Feed extends B_Controller
 
         $url = null;
 
-        if(strpos($query, '://')>0)
+        if(strpos($query, '.')>0)
         {
             $url = $query;
         }

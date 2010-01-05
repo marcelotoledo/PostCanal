@@ -631,7 +631,7 @@ $(document).ready(function()
         <?php else : ?>
         LEFT_MIDDLE_OFFSET_TOP : 20,
         <?php endif ?>
-        LEFT_MIDDLE_V_MARGIN : 70,
+        LEFT_MIDDLE_V_MARGIN : 85,
         WRITINGS_MENU_HEIGHT : 35, 
         feed_add_lnk         : $("#chaddlnk"),
         feed_add_ct          : $("#chaddct"),
@@ -713,7 +713,7 @@ $(document).ready(function()
     {
         if(my_template.feed_add_ct.toggle().is(':visible'))
         {
-            my_template.feed_add_input.val('http://');
+            //my_template.feed_add_input.val('http://');
             my_template.feed_add_input.focus();
         }
         $(this).blur();

@@ -87,6 +87,7 @@
             <quotaBlog>999</quotaBlog>
             <quotaFeed>999</quotaFeed>
             <quotaPublicationPeriod>60</quotaPublicationPeriod>
+            <invitationOnly>true</invitationOnly>
         </profile>
         <feed>
             <minimumUpdateTime>60</minimumUpdateTime>

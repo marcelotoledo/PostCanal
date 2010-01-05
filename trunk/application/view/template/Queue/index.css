@@ -64,6 +64,11 @@ button.queuepubbtn
     overflow-y: auto;
     text-align: left;
 }
+#pubsep
+{
+    font-size: 1.2em;
+    padding: 15px 0px 10px 0px;
+}
 div.ety
 {
     height: 45px;
@@ -95,6 +100,7 @@ div.ety-fail
 div.entrydndhdr
 {
     float: left;
+    display: none;
     width: 32px;
     height: 32px;
     line-height: 32px;

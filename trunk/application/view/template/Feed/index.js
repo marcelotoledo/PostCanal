@@ -178,17 +178,8 @@ function feed_discover_callback(d)
         return false;
     }
 
-    var _status = _results.find('feed_status').text();
-        
-    if(_status=="200")
-    {
-        feed_add(_results.find('feed_url').text());
-        feed_add_reset();
-    }
-    else
-    {
-        add_message("<?php echo $this->translation()->feed_error ?>");
-    }
+    feed_add(_results.find('feed_url').text());
+    feed_add_reset();
 }
 
 function feed_discover()

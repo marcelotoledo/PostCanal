@@ -365,6 +365,17 @@ div.fi img
 {
     margin-bottom: -3px;
 }
+div.chbot
+{
+    font-size: 0.8em;
+    margin-left: 10px;
+    margin-top: -5px;
+    margin-bottom: 7px;
+}
+div.chbot a
+{
+    color: #E1F0F4;
+}
 
 #feeditemblank
 {

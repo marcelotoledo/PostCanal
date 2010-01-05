@@ -11,6 +11,9 @@
     <div class="chlst" id="chlst">
         <div class="ch chf" id="challf"><img src="/image/dashboard/folder.png"> <a href="#" id="chall" title="All Subscribed Feeds">All items</a></div>
     </div>
+    <div class="chbot">
+        <a href="/feed"><b>Manage Feeds</b></a>
+    </div>
 </div>
 
 <div id="writings" class="leftmenu">

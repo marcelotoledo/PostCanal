@@ -63,12 +63,14 @@
                 <?php endforeach ?>
                 </select>
                 &nbsp;
+                <!--
                 <img>
                 <?php if($this->request()->getController()=='feed') : ?>
                 Manage Feeds
                 <?php else : ?>
                 <a href="/feed">Manage Feeds</a>
                 <?php endif ?>
+                -->
                 <img>
                 <?php if($this->request()->getController()=='rw') : ?>
                 Reader/Writer

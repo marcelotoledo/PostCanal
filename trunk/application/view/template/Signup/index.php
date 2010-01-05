@@ -3,7 +3,7 @@
     <div class="midct-cen">
         <div id="signup-ct">
             <div class="form-title">Sign Up</div>
-            <div class="form-row">
+            <div class="form-row" style="display:none">
             <p>Name</p><p><input type="text" class="intxt intxt-full" name="name" id="input-name" value="<?php echo $this->request()->name ?>"></p>
             </div>
             <div class="form-row">
@@ -15,7 +15,7 @@
             <div class="form-row">
             <p>Re-type password</p><p><input type="password" class="intxt intxt-full" name="confirm" id="input-confirm"></p>
             </div>
-            <div class="form-row">
+            <div class="form-row" style="display:none">
             <p>Country</p><p>
             <select class="insel insel-full" name="country" id="input-country">
                 <option value="">&nbsp;</option>
@@ -24,7 +24,7 @@
                 <?php endforeach ?>
             </select></p>
             </div>
-            <div class="form-row">
+            <div class="form-row" style="display:none">
             <p>Timezone</p><p>
             <select class="insel insel-full" name="timezone" id="input-timezone">
                 <option value="">&nbsp;</option>
