@@ -9,7 +9,7 @@
 <div id="subscribed" class="leftmenu">
     <h1>Subscribed Feeds <a href="#" id="chaddlnk"><img src="/image/dashboard/add.png"></a></h1>
     <div class="chlst" id="chlst">
-        <div class="ch chf" id="challf"><img src="/image/dashboard/folder.png"> <a href="#" id="chall" title="All Subscribed Feeds">All items</a></div>
+        <div class="ch chf" id="challf" tag="@subscribed"><img src="/image/dashboard/folder.png"> <a href="#" id="chall" title="All Subscribed Feeds">All items</a><a href="#" class="chtog chopened">&nbsp;</a></div>
     </div>
     <div class="chbot">
         <a href="/feed"><b>Manage Feeds</b></a>
@@ -19,7 +19,7 @@
 <div id="writings" class="leftmenu">
     <h1>Writings <a href="#" id="wraddlnk"><img src="/image/dashboard/add.png"></a></h1>
     <div class="chlst" id="wrlst">
-        <div class="ch chf"><img src="/image/dashboard/folder.png"> <a href="#" id="wrall" title="All Writings">All items</a></div>
+        <div class="ch chf" tag="@writings"><img src="/image/dashboard/folder.png"> <a href="#" id="wrall" title="All Writings">All items</a></div>
     </div>
 </div>
 
@@ -43,7 +43,7 @@
 </div>
 
 <div id="tagitemblank">
-<div class="ch chf" tag=""><img src="/image/dashboard/folder.png"> <a href="#" class="tagitemlnk"></a></div>
+<div class="ch chf" tag=""><img src="/image/dashboard/folder.png"> <a href="#" class="tagitemlnk"></a><a href="#" class="chtog chopened">&nbsp;</a></div>
 </div>
 
 <div id="articleblank">

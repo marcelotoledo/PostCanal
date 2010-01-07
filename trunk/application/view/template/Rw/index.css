@@ -345,17 +345,35 @@ div.ch
     font-size: 0.9em;
     line-height: 20px;
 }
-div.chf
+div.chgroup
 {
-    padding: 5px 0px 5px 0px;
-}
-div.chi
-{
+    padding-bottom: 5px;
 }
 div.ch img
 {
     width: 16px;
     height: 16px;
+}
+a.chtog
+{
+    float: right;
+    display: block;
+    width: 16px;
+    height: 16px;
+    <?php if($this->browser_is_ie) : ?>
+    margin-top: -19px;
+    <?php else : ?>
+    margin-top: 1px;
+    <?php endif ?>
+    text-decoration: none;
+}
+a.chclosed
+{
+	background-image: url('/image/dashboard/expand.png?v=1262859497');
+}
+a.chopened
+{
+	background-image: url('/image/dashboard/contract.png?v=1262859497');
 }
 div.ff img
 {

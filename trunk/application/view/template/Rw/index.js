@@ -67,6 +67,41 @@ function tag_item_c(tag, w)
     return _item;
 }
 
+function tag_set_opened(t, b)
+{
+    $.cookie('rw_chf_tag_' + t, (b ? 'opened' : 'closed'));
+}
+
+function tag_get_opened(t)
+{
+    var c = $.cookie('rw_chf_tag_' + t);
+    if(c==null)
+    { 
+        c = 'opened';
+        tag_set_opened(t, true); 
+    }
+    return c=='opened';
+}
+
+function tag_toggle(t)
+{
+    var f = my_template.subscribed_list.find("div[tag='" + t + "']");
+    if(f.length==0) { return false; }
+    var l = f.find('a.chtog');
+    if(l.hasClass('chopened'))
+    {
+        l.addClass('chclosed').removeClass('chopened');
+        f.next('div.chgroup').hide()
+        tag_set_opened(t, false);
+    }
+    else
+    {
+        l.addClass('chopened').removeClass('chclosed');
+        f.next('div.chgroup').show();
+        tag_set_opened(t, true);
+    }
+}
+
 function feed_populate(d)
 {
     if(d.length==0) { return false; }
@@ -91,7 +126,7 @@ function feed_populate(d)
         _lsdata[_i] = _item.html(); _i++;
     });
 
-    my_template.subscribed_list.append(_lsdata.join("\n"));
+    my_template.subscribed_list.append('<div class="chgroup">' + _lsdata.join("\n") + '</div>');
 }
 
 function tag_populate(d)
@@ -99,6 +134,7 @@ function tag_populate(d)
     if(d.length==0) { return false; }
 
     var _flw = my_template.subscribed_list.width() * 0.9;
+    var _opened = null;
 
     d.each(function()
     {
@@ -111,6 +147,7 @@ function tag_populate(d)
         _item = tag_item_c(_data.tag_name, _flw);
         my_template.subscribed_list.append(_item.html() + "\n");
         feed_populate(_data.tag_feeds);
+        if(tag_get_opened(_data.tag_name)==false) { tag_toggle(_data.tag_name); }
     });
 }
 
@@ -124,6 +161,7 @@ function feed_list_callback(d)
     var _fl = d.find('feeds').children();
     // if(_fl.length==0) { no_feed(); } // tutorial
     feed_populate(_fl);
+    if(tag_get_opened('@subscribed')==false) { tag_toggle('@subscribed'); }
     tag_populate(d.find('tags').children()); // tags
 }
 
@@ -159,6 +197,7 @@ function feed_add_callback(d)
     {
         _item = feed_item_c(_data.feed, _data.title, _flw);
         my_template.subscribed_all_folder.after(_item.html() + "\n");
+        my_template.subscribed_list.find('div.ch[feed="' + _data.feed + '"]').find('a.feeditemlnk').click();
     }
 }
 
@@ -917,6 +956,15 @@ $(document).ready(function()
         my_feed.type    = 'tag';
         article_list(null);
         update_right_header_title($(this).attr('title'));
+        $(this).blur();
+        return false;
+    });
+
+    my_template.subscribed_list.find('a.chtog').live('click', function()
+    {
+        var t = $(this).parent().attr('tag');
+        if(t==undefined || t=="") { return false; }
+        tag_toggle(t);
         $(this).blur();
         return false;
     });
