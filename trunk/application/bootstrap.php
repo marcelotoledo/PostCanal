@@ -9,6 +9,20 @@
  */
 
 error_reporting (E_STRICT | E_ALL);
+
+
+/* check dependencies which are not included 
+   in the default installation of debian/php5 */
+
+if(function_exists('curl_version')===false)
+{
+    echo 'FATAL: Client URL Library (cURL) not found!';
+    exit(1);
+}
+
+
+/* configure timezone */
+
 date_default_timezone_set('America/Sao_Paulo');
 
 

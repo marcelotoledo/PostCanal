@@ -1,0 +1,6 @@
+START TRANSACTION;
+
+ALTER TABLE model_user_blog ADD COLUMN oauth_enabled TINYINT(1) NOT NULL DEFAULT 0 AFTER blog_password;
+CREATE INDEX m_ubg_oae_idx ON model_user_blog (oauth_enabled);
+
+COMMIT;

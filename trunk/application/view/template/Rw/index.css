@@ -344,15 +344,21 @@ div.ch
 {
     font-size: 0.9em;
     line-height: 20px;
+    background-position: 0px 1px;
+    background-repeat: no-repeat;
+    text-indent: 20px;
+}
+div.chi
+{
+	background-image: url('/image/dashboard/feed.png?v=1262859497');
+}
+div.chf
+{
+	background-image: url('/image/dashboard/folder.png?v=1262859497');
 }
 div.chgroup
 {
     padding-bottom: 5px;
-}
-div.ch img
-{
-    width: 16px;
-    height: 16px;
 }
 a.chtog
 {
@@ -361,19 +367,22 @@ a.chtog
     width: 16px;
     height: 16px;
     <?php if($this->browser_is_ie) : ?>
-    margin-top: -19px;
+    margin-top: -20px;
     <?php else : ?>
-    margin-top: 1px;
+    margin-right: 4px;
+    margin-top: -0px;
     <?php endif ?>
     text-decoration: none;
 }
 a.chclosed
 {
 	background-image: url('/image/dashboard/expand.png?v=1262859497');
+    background-repeat: no-repeat;
 }
 a.chopened
 {
 	background-image: url('/image/dashboard/contract.png?v=1262859497');
+    background-repeat: no-repeat;
 }
 div.ff img
 {
@@ -391,6 +400,10 @@ div.chbot
     margin-bottom: 7px;
 }
 div.chbot a
+{
+    color: white;
+}
+div.chbot a:hover
 {
     color: #E1F0F4;
 }

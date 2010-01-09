@@ -37,11 +37,12 @@ function blog_populate(b)
 {
     var _blog = 
     {
-        blog     : b.find('blog').text(),
-        name     : b.find('name').text(),
-        url      : b.find('url').text(),
-        username : b.find('username').text(),
-        keywords : b.find('keywords').text()
+        blog          : b.find('blog').text(),
+        name          : b.find('name').text(),
+        url           : b.find('url').text(),
+        username      : b.find('username').text(),
+        oauth_enabled : (b.find('oauth_enabled').text()=='true'),
+        keywords      : b.find('keywords').text()
     };
 
     var _item = my_template.blog_item_blank.clone();
@@ -53,6 +54,13 @@ function blog_populate(b)
     {
         item : my_template.blog_list_area.find("div.blog[blog='" + _blog.blog + "']")
     };
+
+    if(_blog.oauth_enabled)
+    {
+        my_template.blog_list_ref[_blog.blog].item.find('div.username-row').hide();
+        my_template.blog_list_ref[_blog.blog].item.find('div.oauth-token-row').show();
+        my_template.blog_list_ref[_blog.blog].item.find('div.password-row').hide();
+    }
 
     my_template.blog_list_ref[_blog.blog].item.find('div.blogtit').b_txtoverflow({ buffer: my_template.txtoverflow_buffer, width: (my_template.blog_list_area.width() * 0.8), text: _blog.name });
     my_template.blog_list_ref[_blog.blog].item.find('div.blogurl > span').text(_blog.url);
@@ -243,6 +251,11 @@ function blog_update_callback(d)
     }
 }
 
+function blog_oauth_authorize(b)
+{
+    document.location='/site/authorize?blog=' + b;
+}
+
 function blog_update(b)
 {
     var _up = 
@@ -259,7 +272,10 @@ function blog_update(b)
     if(_up.name=='' || _up.blog_username=='' ||
        (_up.blog_password=='' && _up.blog_password_is_visible))
     {
-        alert("Please fill this form correctly with Name, Username and Password");
+        var astr;
+        astr  = "Please fill this form correctly with Name";
+        astr += my_template.blog_list_ref[b].item.find('p.username-title-oauth').is(':visible') ? ' and OAuth token' : (_up.blog_password_is_visible ? ', Username and Password' : ' and Username');
+        alert(astr);
         return null;
     }
 
@@ -383,6 +399,12 @@ $(document).ready(function()
     {
         return i.parent().parent().parent().parent().attr('blog')
     }
+
+    my_template.blog_list_area.find("a.oauth_authorize").live('click', function()
+    {
+        blog_oauth_authorize($(this).parent().parent().parent().parent().parent().attr('blog'));
+        return false;
+    });
 
     my_template.blog_list_area.find("button.blogupdatebtn").live('click', function()
     {

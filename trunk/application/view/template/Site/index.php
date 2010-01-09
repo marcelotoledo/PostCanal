@@ -34,10 +34,18 @@
         <div class="form-row">
         <p>Name</p><p><input type="text" name="name" class="intxt intxt-full"></p>
         </div>
-        <div class="form-row">
-        <p>Username</p><p><input type="text" name="username" class="intxt intxt-full"></p>
+        <div class="form-row username-row">
+        <p>Username</p>
+        <p><input type="text" name="username" class="intxt intxt-full"></p>
         </div>
-        <div class="form-row">
+        <div class="form-row oauth-token-row">
+        <p>OAuth token</p>
+        <p>
+            <input type="text" name="username" class="intxt intxt-full">
+            <a href="#" class="oauth_authorize">Authorize</a>
+        </p>
+        </div>
+        <div class="form-row password-row">
         <p>Password</p><p><input type="password" name="password" class="intxt intxt-full" style="display:none"> <span class="whypwdquestion" style="display:none"> <a href="#"><small>why do you need my password?</small></a></span>
         <div class="donotchangepwd"><input type="checkbox" name="donotchangepwd" checked> keep unchanged</div>
         </p>

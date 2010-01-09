@@ -45,9 +45,12 @@ class C_Feed extends B_Controller
         $blog_hash = $this->request()->blog;
         $enabled = $this->request()->enabled ? true : false;
         $user_id = $this->session()->user_profile_id;
-        $this->view()->feeds = UserBlogFeed::findAssocByBlogAndUser($blog_hash, 
-                                                                    $user_id,
-                                                                    $enabled);
+        $feeds = UserBlogFeed::findAssocByBlogAndUser($blog_hash, $user_id, $enabled);
+        $total_feeds = count($feeds);
+        $total_unread = 0;
+        $this->view()->feeds = $feeds; 
+        for($j=0;$j<$total_feeds;$j++) { $total_unread += $feeds[$j]['unread']; }
+        $this->view()->total_unread = $total_unread;
         $this->view()->tags = UserBlogFeed::findGroupByTags($blog_hash, $user_id);
     }
 

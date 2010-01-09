@@ -162,3 +162,8 @@ div.newsite-notice
     border: 2px solid tomato;
     max-width: 500px;
 }
+
+p.oauth-token-row
+{
+    display: none;
+}

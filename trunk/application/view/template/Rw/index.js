@@ -5,7 +5,8 @@ var my_feed =
     current : null,
     type    : 'all',
     title   : "",
-    scroll  : 0
+    scroll  : 0,
+    unread  : 0
 };
 
 var my_article = 
@@ -41,28 +42,33 @@ function set_article_display()
 
 /* FEEDS */
 
-function feed_item_c(f, t, w)
+function feed_item_c(f, t, u, w) // feed, title, unread, width
 {
     var _item = null;
     var _inner = null;
+    var _flnk = null;
 
     _item = my_template.feed_item_blank.clone();
     _inner = _item.find('div.ch');
     _inner.attr('feed', f);
-    _inner.find('a.feeditemlnk').attr('title', t).b_txtoverflow({ buffer: my_template.txtoverflow_buffer, width: w, text: t });
-
+    _flnk = _inner.find('a.feeditemlnk');
+    _flnk.attr('title', t).b_txtoverflow({ buffer: my_template.txtoverflow_buffer, width: w, text: t });
+    if(u>0) { _flnk.append('&nbsp;<span class="chunr">('+u+')</span>'); }
     return _item;
 }
 
-function tag_item_c(tag, w)
+function tag_item_c(tag, u, w) // tag, unread, width
 {
     var _item = null;
     var _inner = null;
+    var _tlnk = null;
 
     _item = my_template.tag_item_blank.clone();
     _inner = _item.find('div.ch');
     _inner.attr('tag', tag);
-    _inner.find('a.tagitemlnk').attr('title', tag).b_txtoverflow({ buffer: my_template.txtoverflow_buffer, width: w, text: tag });
+    _tlnk = _inner.find('a.tagitemlnk');
+    _tlnk.attr('title', tag).b_txtoverflow({ buffer: my_template.txtoverflow_buffer, width: w, text: tag });
+    if(u>0) { _tlnk.append('&nbsp;<span class="chunr">('+u+')</span>'); }
 
     return _item;
 }
@@ -112,17 +118,18 @@ function feed_populate(d)
     var _lsdata = Array();
     var _i      = 0;
 
-    var _flw = my_template.subscribed_list.width() * 0.9;
+    var _flw = my_template.subscribed_list.width() * 0.7;
 
     d.each(function()
     {
         _data =
         {
-            feed  : $(this).find('feed').text(),
-            title : $(this).find('feed_title').text()
+            feed   : $(this).find('feed').text(),
+            title  : $(this).find('feed_title').text(),
+            unread : parseInt($(this).find('unread').text())
         };
 
-        _item = feed_item_c(_data.feed, _data.title, _flw);
+        _item = feed_item_c(_data.feed, _data.title, _data.unread, _flw);
         _lsdata[_i] = _item.html(); _i++;
     });
 
@@ -140,11 +147,12 @@ function tag_populate(d)
     {
         _data =
         {
-            tag_name  : $(this).find('tag_name').text(),
-            tag_feeds : $(this).find('tag_feeds').children()
+            tag_name   : $(this).find('tag_name').text(),
+            tag_feeds  : $(this).find('tag_feeds').children(),
+            tag_unread : parseInt($(this).find('tag_unread').text())
         };
 
-        _item = tag_item_c(_data.tag_name, _flw);
+        _item = tag_item_c(_data.tag_name, _data.tag_unread, _flw);
         my_template.subscribed_list.append(_item.html() + "\n");
         feed_populate(_data.tag_feeds);
         if(tag_get_opened(_data.tag_name)==false) { tag_toggle(_data.tag_name); }
@@ -161,6 +169,8 @@ function feed_list_callback(d)
     var _fl = d.find('feeds').children();
     // if(_fl.length==0) { no_feed(); } // tutorial
     feed_populate(_fl);
+    var _un = parseInt(d.find('total_unread').text());
+    if(_un>0) { my_template.subscribed_all.append('&nbsp;<span class="chunr">('+_un+')</span>'); }
     if(tag_get_opened('@subscribed')==false) { tag_toggle('@subscribed'); }
     tag_populate(d.find('tags').children()); // tags
 }
@@ -177,14 +187,15 @@ function feed_list()
 
 function feed_add_callback(d)
 {
-    var _flw = my_template.subscribed_list.width() * 0.9;
+    var _flw = my_template.subscribed_list.width() * 0.7;
     var _dta = d.find('feed');
     var _mul = d.find('multiple');
 
     _data =
     {
-        feed  : _dta.find('feed').text(),
-        title : _dta.find('feed_title').text()
+        feed   : _dta.find('feed').text(),
+        title  : _dta.find('feed_title').text(),
+        unread : parseInt(_dta.find('unread').text())
     };
 
     if(_data.feed.length==0) 
@@ -195,7 +206,7 @@ function feed_add_callback(d)
 
     if(my_template.subscribed_list.find('div.ch[feed="' + _data.feed + '"]').length==0)
     {
-        _item = feed_item_c(_data.feed, _data.title, _flw);
+        _item = feed_item_c(_data.feed, _data.title, _data.unread, _flw);
         my_template.subscribed_all_folder.after(_item.html() + "\n");
         my_template.subscribed_list.find('div.ch[feed="' + _data.feed + '"]').find('a.feeditemlnk').click();
     }

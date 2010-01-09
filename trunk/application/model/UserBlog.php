@@ -33,6 +33,7 @@ class UserBlog extends B_Model
 		'blog_manager_url' => array ('type' => 'string','size' => 0,'required' => true),
 		'blog_username' => array ('type' => 'string','size' => 255,'required' => false),
 		'blog_password' => array ('type' => 'string','size' => 255,'required' => false),
+		'oauth_enabled' => array ('type' => 'boolean','size' => 0,'required' => false),
 		'enqueueing_auto' => array ('type' => 'boolean','size' => 0,'required' => false),
 		'enqueueing_auto_updated_at' => array ('type' => 'date','size' => 0,'required' => false),
 		'publication_auto' => array ('type' => 'boolean','size' => 0,'required' => false),

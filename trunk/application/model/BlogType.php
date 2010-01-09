@@ -115,6 +115,11 @@ class BlogType extends B_Model
 
     // -------------------------------------------------------------------------
 
+    public static $oauth_enabled = array
+    (
+        'twitter'
+    );
+
     /**
      * Find BlogType by name
      *
@@ -162,6 +167,14 @@ class BlogType extends B_Model
             $discover = ((object) $result);
             $discover->title = L_Utility::titleFromURL($url);
             $discover->type_accepted = false;
+            $discover->oauth_enabled = in_array($discover->type_name, self::$oauth_enabled);
+
+            if($discover->oauth_enabled)
+            {
+                $token = self::requestOAuthToken($discover->type_name);
+                $discover->username = $token['oauth_token'];
+                $discover->password = $token['oauth_token_secret'];
+            }
 
             if(!is_object(($blog_type = self::getByName($discover->type_name, 
                                                         $discover->version_name))) &&
@@ -244,4 +257,18 @@ class BlogType extends B_Model
                       'password' => $password);
         return $client->blog_publication_check($args);
     } 
+
+    /**
+     * Request OAuth Token
+     */
+    public static function requestOAuthToken($type)
+    {
+        $config = B_Registry::get('oauth/' . $type);
+
+        $oauth_wrapper = new L_OAuthWrapper($type, 
+                                            $config->consumerKey,
+                                            $config->consumerSecret);
+
+        return $oauth_wrapper->getRequestToken();
+    }
 }

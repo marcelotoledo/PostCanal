@@ -50,11 +50,12 @@ class C_Site extends B_Controller
     {
         return array
         (
-            'blog'     => $blog->hash,
-            'name'     => $blog->name,
-            'url'      => $blog->blog_url,
-            'username' => $blog->blog_username,
-            'keywords' => $blog->keywords
+            'blog'          => $blog->hash,
+            'name'          => $blog->name,
+            'url'           => $blog->blog_url,
+            'username'      => $blog->blog_username,
+            'oauth_enabled' => $blog->oauth_enabled ? 'true' : 'false',
+            'keywords'      => $blog->keywords
         );
     }
 
@@ -137,6 +138,8 @@ class C_Site extends B_Controller
             $blog->blog_manager_url   = $discover->manager_url;
             $blog->blog_type_revision = $discover->revision;
             $blog->blog_username      = $discover->username;
+            $blog->blog_password      = $discover->password;
+            $blog->oauth_enabled      = $discover->oauth_enabled;
 
             try
             {
@@ -253,5 +256,26 @@ class C_Site extends B_Controller
         }
 
         $this->view()->result = $result;
+    }
+
+    /**
+     * Authorize OAuth
+     */
+    public function A_authorize()
+    {
+        $hash = $this->request()->blog;
+        $user = $this->session()->user_profile_id;
+
+        if(is_object(($blog = UserBlog::getByUserAndHash($user, $hash))))
+        {
+            $type = BlogType::getByPrimaryKey($blog->blog_type_id);
+            $config = B_Registry::get('oauth/' . $type->type_name);
+            $url = ($config->authorizeURL . '?oauth_token=' . $blog->blog_username);
+            $this->response()->setRedirect($url, 301);
+        }
+        else
+        {
+            $this->response()->setRedirect('/site');
+        }
     }
 }

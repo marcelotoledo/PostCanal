@@ -126,4 +126,13 @@
         <privateKey>6Leu7ggAAAAAAFTzzmf9FZefeb0y3EIUbgWeLGA9</privateKey>
         -->
     </recaptcha>
+    <oauth>
+        <twitter>
+            <consumerKey></consumerKey>
+            <consumerSecret></consumerSecret>
+            <requestTokenURL>http://twitter.com/oauth/request_token</requestTokenURL>
+            <accessTokenURL>http://twitter.com/oauth/access_token</accessTokenURL>
+            <authorizeURL>http://twitter.com/oauth/authorize</authorizeURL>
+        </twitter>
+    </oauth>
 </environment>
