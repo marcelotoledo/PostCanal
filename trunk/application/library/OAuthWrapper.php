@@ -38,7 +38,9 @@ class L_OAuthWrapper
         $token = array('oauth_token'        => '',
                        'oauth_token_secret' => '');
 
-        if($this->blog_type==self::BLOG_TYPE_TWITTER)
+        if($this->blog_type==self::BLOG_TYPE_TWITTER && 
+           strlen($this->consumer_key)>0 &&
+           strlen($this->consumer_secret)>0)
         {
             $token = self::getRequestTokenTwitter($this->consumer_key,
                                                   $this->consumer_secret);
