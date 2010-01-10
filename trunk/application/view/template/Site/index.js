@@ -58,8 +58,13 @@ function blog_populate(b)
     if(_blog.oauth_enabled)
     {
         my_template.blog_list_ref[_blog.blog].item.find('div.username-row').hide();
-        my_template.blog_list_ref[_blog.blog].item.find('div.oauth-token-row').show();
         my_template.blog_list_ref[_blog.blog].item.find('div.password-row').hide();
+
+        if(_blog.username)
+        {
+            my_template.blog_list_ref[_blog.blog].item.find('p.oauth-authorize-row').hide();
+            my_template.blog_list_ref[_blog.blog].item.find('p.oauth-reauthorize-row').show();
+        }
     }
 
     my_template.blog_list_ref[_blog.blog].item.find('div.blogtit').b_txtoverflow({ buffer: my_template.txtoverflow_buffer, width: (my_template.blog_list_area.width() * 0.8), text: _blog.name });
@@ -400,9 +405,9 @@ $(document).ready(function()
         return i.parent().parent().parent().parent().attr('blog')
     }
 
-    my_template.blog_list_area.find("a.oauth_authorize").live('click', function()
+    my_template.blog_list_area.find("a.oauth-authorize-lnk").live('click', function()
     {
-        blog_oauth_authorize($(this).parent().parent().parent().parent().parent().attr('blog'));
+        blog_oauth_authorize(blog_update_getid($(this)));
         return false;
     });
 

@@ -259,7 +259,7 @@ class C_Site extends B_Controller
     }
 
     /**
-     * Authorize OAuth
+     * OAuth Authorize
      */
     public function A_authorize()
     {
@@ -268,14 +268,52 @@ class C_Site extends B_Controller
 
         if(is_object(($blog = UserBlog::getByUserAndHash($user, $hash))))
         {
+            $this->session()->user_blog_hash = $blog->hash;
             $type = BlogType::getByPrimaryKey($blog->blog_type_id);
             $config = B_Registry::get('oauth/' . $type->type_name);
-            $url = ($config->authorizeURL . '?oauth_token=' . $blog->blog_username);
-            $this->response()->setRedirect($url, 301);
+            $wrapper = new L_OAuthWrapper($type->type_name, 
+                                          $config->consumerKey, 
+                                         $config->consumerSecret);
+            $token = $wrapper->getRequestToken();
+            $this->session()->oauth_token = $token['oauth_token'];
+            $this->session()->oauth_token_secret = $token['oauth_token_secret'];
+            $url = ($config->authorizeURL . '?oauth_token=' . $token['oauth_token']);
+            $this->response()->setRedirect($url, 307);
         }
         else
         {
-            $this->response()->setRedirect('/site');
+            $this->response()->setRedirect('/site?authorize_error=true');
+        }
+    }
+
+    /**
+     * OAuth Access (Authorize callback)
+     */
+    public function A_access()
+    {
+        $hash = $this->session()->user_blog_hash;
+        $user = $this->session()->user_profile_id;
+        $tk = $this->session()->oauth_token;
+        $ts = $this->session()->oauth_token_secret;
+        $tk_request = $this->request()->oauth_token;
+
+        if(strlen($tk)>0 && $tk==$tk_request &&
+           is_object(($blog = UserBlog::getByUserAndHash($user, $hash))))
+        {
+            $type = BlogType::getByPrimaryKey($blog->blog_type_id);
+            $config = B_Registry::get('oauth/' . $type->type_name);
+            $wrapper = new L_OAuthWrapper($type->type_name, 
+                                          $config->consumerKey, 
+                                          $config->consumerSecret);
+            $token = $wrapper->getAccessToken($tk, $ts);
+            $blog->blog_username = $token['oauth_token'];
+            $blog->blog_password = $token['oauth_token_secret'];
+            $blog->save();
+            $this->response()->setRedirect('/site', 307);
+        }
+        else
+        {
+            $this->response()->setRedirect('/site?access_error=true');
         }
     }
 }

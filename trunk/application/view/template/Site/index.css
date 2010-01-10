@@ -163,7 +163,7 @@ div.newsite-notice
     max-width: 500px;
 }
 
-p.oauth-token-row
+p.oauth-reauthorize-row
 {
     display: none;
 }

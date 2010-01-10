@@ -38,12 +38,54 @@ class L_OAuthWrapper
         $token = array('oauth_token'        => '',
                        'oauth_token_secret' => '');
 
-        if($this->blog_type==self::BLOG_TYPE_TWITTER && 
-           strlen($this->consumer_key)>0 &&
-           strlen($this->consumer_secret)>0)
+        if(strlen($this->consumer_key)==0 || strlen($this->consumer_secret)==0)
         {
-            $token = self::getRequestTokenTwitter($this->consumer_key,
-                                                  $this->consumer_secret);
+            return $token;
+        }
+
+        $result = null;
+
+        if($this->blog_type==self::BLOG_TYPE_TWITTER)
+        {
+            $result = self::getRequestTokenTwitter($this->consumer_key,
+                                                   $this->consumer_secret);
+        }
+
+        if(is_array($result) &&
+           array_key_exists('oauth_token', $result) &&
+           array_key_exists('oauth_token_secret', $result))
+        {
+            $token = $result;
+        }
+
+        return $token;
+    }
+
+    public function getAccessToken($oauth_token, $oauth_token_secret)
+    {
+        $token = array('oauth_token'        => '',
+                       'oauth_token_secret' => '');
+
+        if(strlen($this->consumer_key)==0 || strlen($this->consumer_secret)==0)
+        {
+            return $token;
+        }
+
+        $result = null;
+
+        if($this->blog_type==self::BLOG_TYPE_TWITTER)
+        {
+            $result = self::getAccessTokenTwitter($this->consumer_key,
+                                                  $this->consumer_secret,
+                                                  $oauth_token,
+                                                  $oauth_token_secret);
+        }
+
+        if(is_array($result) &&
+           array_key_exists('oauth_token', $result) &&
+           array_key_exists('oauth_token_secret', $result))
+        {
+            $token = $result;
         }
 
         return $token;
@@ -54,5 +96,12 @@ class L_OAuthWrapper
         require_once 'twitteroauth/twitteroauth.php';
         $c = new TwitterOAuth($k, $s);
         return $c->getRequestToken();
+    }
+
+    protected static function getAccessTokenTwitter($k, $s, $tk, $ts)
+    {
+        require_once 'twitteroauth/twitteroauth.php';
+        $c = new TwitterOAuth($k, $s, $tk, $ts);
+        return $c->getAccessToken();
     }
 }
