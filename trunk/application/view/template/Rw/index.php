@@ -8,9 +8,7 @@
 
 <div id="subscribed" class="leftmenu">
     <h1>Subscribed Feeds <a href="#" id="chaddlnk"><img src="/image/dashboard/add.png"></a></h1>
-    <div class="chlst" id="chlst">
-        <div class="ch chf" id="challf" tag="@subscribed"><a href="#" id="chall" title="All Subscribed Feeds">All items</a><a href="#" class="chtog chopened">&nbsp;</a></div>
-    </div>
+    <div class="chlst" id="chlst"></div>
     <div class="chbot">
         <a href="/feed"><b>Manage Feeds</b></a>
     </div>

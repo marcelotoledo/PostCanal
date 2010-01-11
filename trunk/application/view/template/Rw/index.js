@@ -167,10 +167,10 @@ function no_feed()
 function feed_list_callback(d)
 {
     var _fl = d.find('feeds').children();
-    // if(_fl.length==0) { no_feed(); } // tutorial
-    feed_populate(_fl);
     var _un = parseInt(d.find('total_unread').text());
-    if(_un>0) { my_template.subscribed_all.append('&nbsp;<span class="chunr">('+_un+')</span>'); }
+    // if(_fl.length==0) { no_feed(); } // tutorial
+    my_template.subscribed_list.html('<div class="ch chf" tag="@subscribed"><a href="#" class="tagitemlnk" title="All Subscribed Feeds">All items</a><a href="#" class="chtog chopened">&nbsp;</a>' + (_un>0 ? '&nbsp;<span class="chunr">('+_un+')</span>' : ''));
+    feed_populate(_fl);
     if(tag_get_opened('@subscribed')==false) { tag_toggle('@subscribed'); }
     tag_populate(d.find('tags').children()); // tags
 }
@@ -204,12 +204,14 @@ function feed_add_callback(d)
         return false;
     }
 
+    /* TODO call feed_list again
     if(my_template.subscribed_list.find('div.ch[feed="' + _data.feed + '"]').length==0)
     {
         _item = feed_item_c(_data.feed, _data.title, _data.unread, _flw);
         my_template.subscribed_all_folder.after(_item.html() + "\n");
         my_template.subscribed_list.find('div.ch[feed="' + _data.feed + '"]').find('a.feeditemlnk').click();
     }
+    */
 }
 
 function feed_add()
@@ -409,6 +411,26 @@ function article_hide_all()
     my_article.current = null;
 }
 
+function decrement_unread(feed)
+{
+    if(feed)
+    {
+        my_template.subscribed_list.find('div.chf').each(function()
+        {
+            var _u = $(this).next('div.chgroup').find('div.chi[feed="'+feed+'"]').find('span.chunr');
+            var _i = parseInt(_u.text().replace(/[^0-9]/g, ''));
+            _i>1 ? _u.text('('+(_i-1)+')') : _u.text('');
+
+            if(_u.length>0)
+            {
+                _u = $(this).find('span.chunr');
+                _i = parseInt(_u.text().replace(/[^0-9]/g, ''));
+                _i>1 ? _u.text('('+(_i-1)+')') : _u.text('');
+            }
+        });
+    }
+}
+
 function article_focus_callback(d)
 {
     return false;
@@ -430,6 +452,7 @@ function article_focus()
         $.ajax({ type: 'POST', url: '/rw/wr', dataType: "xml", data: _data });
 
         my_article.current.addClass('art-wr').find('span.arttt').addClass('arttt-wr');
+        decrement_unread(my_article.data[_data.article].feed);
     }
 }
 
@@ -664,11 +687,7 @@ $(document).ready(function()
     my_template =
     {
         main_container       : $("#mainct"),
-        //left_container       : $("#leftcontainer"),
-        subscribed_all       : $("#chall"),
-        subscribed_all_folder: $("#challf"),
         writings_all         : $("#wrall"),
-        //right_container      : $("#rightcontainer"),
         right_header_title   : $("#tplbartt"),
         right_middle         : $("#artlst"),
         article_blank        : $("#articleblank"),
@@ -941,16 +960,6 @@ $(document).ready(function()
 
     /* controls */
 
-    my_template.subscribed_all.click(function()
-    {
-        my_feed.current = null;
-        my_feed.type    = 'all';
-        article_list(null);
-        update_right_header_title($(this).attr('title'));
-        $(this).blur();
-        return false;
-    });
-
     my_template.subscribed_list.find('a.feeditemlnk').live('click', function()
     {
         my_feed.current = $(this).parent().attr('feed');
@@ -964,7 +973,17 @@ $(document).ready(function()
     my_template.subscribed_list.find('a.tagitemlnk').live('click', function()
     {
         my_feed.current = $(this).parent().attr('tag');
-        my_feed.type    = 'tag';
+
+        if(my_feed.current=='@subscribed')
+        {
+            my_feed.current = null;
+            my_feed.type    = 'all';
+        }
+        else
+        {
+            my_feed.type    = 'tag';
+        }
+
         article_list(null);
         update_right_header_title($(this).attr('title'));
         $(this).blur();
