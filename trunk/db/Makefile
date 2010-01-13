@@ -1,4 +1,4 @@
-DB = "./db.php"
+DB = "./load.sh"
 BT = "./base_translation.php"
 
 default:
@@ -6,8 +6,8 @@ default:
 	@echo "options are: schema|translation|patch"
 	@echo ""
 schema:
-	./db.php schema.mysql
-	sleep 2s
+	$(DB) schema.mysql
+	@sleep 2s
 translation:
 	$(BT)
 	$(DB) base_translation.mysql
