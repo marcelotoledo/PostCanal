@@ -18,15 +18,16 @@
  * }
  */
 
-jQuery.fn.b_modal = function()
+jQuery.fn.b_modal = function(mw, mh)
 {
     $('body').append('<div class="b-modal">&nbsp;</div>');
     $('body').find('div.b-modal').css('opacity', 0.75);
 
-   var _rect = { L : $(window).width()  * 0.1 ,
-                 T :                       50 ,
-                 W : $(window).width()  * 0.8 ,
-                 H : $(window).height()  -100 };
+    mw = mw || ($(window).width() * 0.8);
+    mh = mh || ($(window).height() - 100);
+    
+    var _rect = { L : (($(window).width() - mw) / 2) ,
+                  T : (($(window).height() - mh) / 2) , W : mw , H : mh };
 
     $(this).css('top', _rect.T);
     $(this).css('left', _rect.L);

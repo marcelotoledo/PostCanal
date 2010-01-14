@@ -745,7 +745,7 @@ $(document).ready(function()
         .live('click', function()
     {
         <?php if($this->register_confirmation==false) : ?>
-        my_template.confirmation_form.b_modal();
+        my_template.confirmation_form.b_modal(800, 370);
         <?php else : ?>
         toggle_queue_publication();
         <?php endif ?>
