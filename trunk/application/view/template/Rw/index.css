@@ -234,6 +234,13 @@ div.artbody img
     /*float: left;*/
     padding: 0px 10px 0px 10px;
 }
+div.artbbar
+{
+    color: white;
+    font-size: 0.8em;
+    padding: 4px 0px 5px 0px;
+    border-top: 1px dotted #DDDDDD;
+}
 /* article view style ] */
 
 #arttop

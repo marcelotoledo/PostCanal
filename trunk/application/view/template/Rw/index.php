@@ -62,6 +62,7 @@
 <div class="artview">
     <h1></h1>
     <div class="artbody"></div>
+    <div class="artbbar"><img src="/image/dashboard/check.png">&nbsp;<a href="#" class="keepunr">keep unread</a></div>
 </div>
 </div>
 

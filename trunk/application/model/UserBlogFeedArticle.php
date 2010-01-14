@@ -108,8 +108,8 @@ class UserBlogFeedArticle extends B_Model
 
     // -------------------------------------------------------------------------
 
-    public static function setArticleAsRead($user, $blog, $article)
+    public static function setArticleReadAttr($user, $blog, $article, $wr=true)
     {
-        return self::execute('REPLACE INTO ' . self::$table_name . ' (user_blog_id, aggregator_feed_article_id, was_read) VALUES ((SELECT user_blog_id FROM model_user_blog WHERE user_profile_id = ? AND hash = ?), (SELECT aggregator_feed_article_id FROM model_aggregator_feed_article WHERE article_md5 = ?), 1)', array($user, $blog, $article));
+        return self::execute('REPLACE INTO ' . self::$table_name . ' (user_blog_id, aggregator_feed_article_id, was_read) VALUES ((SELECT user_blog_id FROM model_user_blog WHERE user_profile_id = ? AND hash = ?), (SELECT aggregator_feed_article_id FROM model_aggregator_feed_article WHERE article_md5 = ?), ?)', array($user, $blog, $article, ($wr ? 1 : 0)));
     }
 }

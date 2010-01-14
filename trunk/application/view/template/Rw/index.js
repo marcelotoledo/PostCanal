@@ -164,8 +164,10 @@ function no_feed()
     my_template.no_feed_message.show();
 }
 
-function unread_decrement(feed)
+function unread_touch(feed, signal)
 {
+    signal = signal || 1;
+
     if(feed)
     {
         my_template.subscribed_list.find('div.chf').each(function()
@@ -177,10 +179,10 @@ function unread_decrement(feed)
             if(_u.length>0)
             {
                 var _y = parseInt(_u.text().replace(/[^0-9]/g, ''));
-                _y>1 ? _u.text('('+(_y-1)+')') : _u.text('');
+                _y>1 ? _u.text('('+(_y+signal)+')') : _u.text('');
                 _u = $(this).find('span.chunr');
                 _i = parseInt(_u.text().replace(/[^0-9]/g, ''));
-                _i>1 ? _u.text('('+(_i-1)+')') : _u.text('');
+                _i>1 ? _u.text('('+(_i+signal)+')') : _u.text('');
             }
         });
     }
@@ -483,14 +485,31 @@ function article_focus()
         if(my_feed.type=='writing') { return true; }
         if(my_article.current.hasClass('art-wr')) { return true; }
 
-        var _data = { blog     : my_blog.current ,
-                      article  : my_article.current.attr('article') };
+        var _data = { blog    : my_blog.current ,
+                      article : my_article.current.attr('article'),
+                      wr      : true };
 
         $.ajax({ type: 'POST', url: '/rw/wr', dataType: "xml", data: _data });
 
         my_article.current.addClass('art-wr').find('span.arttt').addClass('arttt-wr');
-        unread_decrement(my_article.data[_data.article].feed);
+        unread_touch(my_article.data[_data.article].feed, -1);
     }
+}
+
+function article_unread(a)
+{
+    my_article.data[a].wr=false;
+
+    if(my_article.objects[a].hasClass('art-wr')==false) { return true; }
+
+    var _data = { blog    : my_blog.current ,
+                  article : a,
+                  wr      : false };
+
+    $.ajax({ type: 'POST', url: '/rw/wr', dataType: "xml", data: _data });
+
+    my_article.current.removeClass('art-wr').find('span.arttt').removeClass('arttt-wr');
+    unread_touch(my_article.data[a].feed, 1);
 }
 
 function article_blur()
@@ -1091,6 +1110,17 @@ $(document).ready(function()
             queue_add(my_article.data[_a].feed, _a);
         }
 
+        return false;
+    });
+
+    my_template.right_middle.find('div.artview')
+        .find('a.keepunr')
+        .live('click', function()
+    {
+        var a = $(this).parent().parent().prev('div.art').attr('article');
+        if(a==undefined || a=="") { return false; }
+        article_unread(a);
+        $(this).blur();
         return false;
     });
 
