@@ -243,15 +243,11 @@ class UserBlogFeed extends B_Model
         $feeds = self::select($sql, array($blog_hash, $user_id), PDO::FETCH_ASSOC);
         $total_feeds = count($feeds);
         $tags = UserBlogFeedTag::findCSVFeedTags($user_id, $blog_hash);
-        $unread = self::findTotalUnreadByBlogAndUser($blog_hash, $user_id);
 
         for($j=0;$j<$total_feeds;$j++)
         {
             $feed_hash=$feeds[$j]['feed'];
-            $feeds[$j]['tags'] = (array_key_exists($feed_hash, $tags)) ?
-                $tags[$feed_hash] : '';
-            $feeds[$j]['unread'] = (array_key_exists($feed_hash, $unread)) ?
-                $unread[$feed_hash] : 0;
+            $feeds[$j]['tags'] = (array_key_exists($feed_hash, $tags)) ? $tags[$feed_hash] : '';
         }
 
         return $feeds;
@@ -281,30 +277,22 @@ class UserBlogFeed extends B_Model
 
         $feeds = self::select($sql, array($blog_hash, $user_id), PDO::FETCH_ASSOC);
         $total_feeds = count($feeds);
-        $unread = self::findTotalUnreadByBlogAndUser($blog_hash, $user_id);
         $tag_feeds = array();
-        $tag_unread = array();
 
         for($j=0;$j<$total_feeds;$j++)
         {
             $feed_hash=$feeds[$j]['feed'];
-            $feeds[$j]['unread'] = (array_key_exists($feed_hash, $unread)) ?
-                $unread[$feed_hash] : 0;
-
             $tag = $feeds[$j]['tag'];
             if(array_key_exists($tag, $tag_feeds)==false) $tag_feeds[$tag] = array();
             $tag_feeds[$tag][] = $feeds[$j];
-            if(array_key_exists($tag, $tag_unread)==false) $tag_unread[$tag] = 0;
-            $tag_unread[$tag] += $feeds[$j]['unread'];
         }
 
         $outarr = array();
 
         foreach($tag_feeds as $tag => $feeds)
         {
-            $outarr[] = array('tag_name'   => $tag, 
-                              'tag_unread' => $tag_unread[$tag],
-                              'tag_feeds'  => $feeds);
+            $outarr[] = array('tag_name'  => $tag, 
+                              'tag_feeds' => $feeds);
         }
 
         return $outarr;
@@ -313,18 +301,26 @@ class UserBlogFeed extends B_Model
     /**
      * Find total unread articles
      */
-    public static function findTotalUnreadByBlogAndUser($blog_hash, $user_id)
+    public static function findTotalUnread($blog_hash, $user_id, $feed_hash=null, $tag=null)
     {
         $blog = UserBlog::getByUserAndHash($user_id, $blog_hash);
         $blog_id = is_object($blog) ? $blog->user_blog_id : 0;
 
+        $args = Array();
+        $args[] = $blog_id; // 1
+        $args[] = $blog_id; // 2
         $sql = "SELECT d.hash AS feed, COUNT(a.aggregator_feed_article_id) AS unread
                 FROM model_aggregator_feed_article AS a 
                 LEFT JOIN model_user_blog_feed AS d 
                     ON (a.aggregator_feed_id = d.aggregator_feed_id) 
                 LEFT JOIN model_user_blog AS c 
-                    ON (d.user_blog_id = c.user_blog_id) 
-                WHERE a.created_at >= c.created_at
+                    ON (d.user_blog_id = c.user_blog_id) ";
+        if($tag)
+        {
+            $sql.= "LEFT JOIN model_user_blog_feed_tag AS t
+                        ON (d.user_blog_feed_id = t.user_blog_feed_id) ";
+        }
+        $sql.= "WHERE a.created_at >= c.created_at
                 AND a.aggregator_feed_article_id NOT IN
                 (
                     SELECT aggregator_feed_article_id
@@ -332,21 +328,24 @@ class UserBlogFeed extends B_Model
                     WHERE user_blog_id = ?
                     AND was_read = 1
                 )
-                AND c.user_blog_id = ?
-                AND d.visible = 1 AND d.deleted = 0
+                AND c.user_blog_id = ? ";
+        if($feed_hash)
+        { 
+            $args[] = $feed_hash;
+            $sql.= "AND d.hash = ? "; 
+        }
+        if($tag)
+        {
+            $args[] = $tag;
+            $sql.= "AND t.user_blog_tag_id = (
+                        SELECT user_blog_tag_id 
+                        FROM model_user_blog_tag 
+                        WHERE name = ?) ";
+        }
+        $sql.= "AND d.visible = 1 AND d.deleted = 0
                 GROUP BY d.hash";
 
-        $result = self::select($sql, array($blog_id, $blog_id), PDO::FETCH_ASSOC);
-        $total = count($result);
-        $unread = array();
-
-        for($j=0;$j<$total;$j++)
-        {
-            $feed_hash = $result[$j]['feed'];
-            $unread[$feed_hash] = $result[$j]['unread'];
-        }
-
-        return $unread;
+        return self::select($sql, $args, PDO::FETCH_ASSOC);
     }
 
     /**

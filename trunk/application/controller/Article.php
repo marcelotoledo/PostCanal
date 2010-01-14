@@ -64,6 +64,7 @@ class C_Article extends B_Controller
 
         $this->view()->articles = $this->formatArticles(
             UserBlogFeed::findArticlesThreaded($blog_hash, $user_id, $feed_hash, $older));
+        $this->view()->unread = UserBlogFeed::findTotalUnread($blog_hash, $user_id, $feed_hash);
 
         if($older>0) { $this->view()->append = true; }
 
@@ -83,6 +84,7 @@ class C_Article extends B_Controller
 
         $this->view()->articles = $this->formatArticles(
             UserBlogFeed::findArticlesTag($blog, $user, $tag, $older));
+        $this->view()->unread = UserBlogFeed::findTotalUnread($blog, $user, null, $tag);
 
         if($older>0) { $this->view()->append = true; }
 
@@ -101,12 +103,12 @@ class C_Article extends B_Controller
 
         $this->view()->articles = $this->formatArticles(
             UserBlogFeed::findArticlesAll($blog_hash, $user_id, $older));
+        $this->view()->unread = UserBlogFeed::findTotalUnread($blog_hash, $user_id);
 
         if($older>0) { $this->view()->append = true; }
 
         $this->session()->user_blog_hash = $blog_hash;
     }
-
 
     /**
      * List writing articles

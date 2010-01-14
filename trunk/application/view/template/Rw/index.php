@@ -37,11 +37,11 @@
 <div id="artlst" class="midct"></div>
 
 <div id="feeditemblank">
-<div class="ch chi" feed=""><a href="#" class="feeditemlnk"></a></div>
+<div class="ch chi" feed=""><a href="#" class="feeditemlnk"></a>&nbsp;<span class="chunr"></span></div>
 </div>
 
 <div id="tagitemblank">
-<div class="ch chf" tag=""><a href="#" class="tagitemlnk"></a><a href="#" class="chtog chopened">&nbsp;</a></div>
+<div class="ch chf" tag=""><a href="#" class="tagitemlnk"></a>&nbsp;<span class="chunr"></span><a href="#" class="chtog chopened">&nbsp;</a></div>
 </div>
 
 <div id="articleblank">

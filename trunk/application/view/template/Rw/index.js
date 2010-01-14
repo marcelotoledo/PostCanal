@@ -5,8 +5,7 @@ var my_feed =
     current : null,
     type    : 'all',
     title   : "",
-    scroll  : 0,
-    unread  : 0
+    scroll  : 0
 };
 
 var my_article = 
@@ -42,22 +41,20 @@ function set_article_display()
 
 /* FEEDS */
 
-function feed_item_c(f, t, u, w) // feed, title, unread, width
+function feed_item_c(feed, t, w) // feed, title, width
 {
     var _item = null;
     var _inner = null;
-    var _flnk = null;
 
     _item = my_template.feed_item_blank.clone();
     _inner = _item.find('div.ch');
-    _inner.attr('feed', f);
-    _flnk = _inner.find('a.feeditemlnk');
-    _flnk.attr('title', t).b_txtoverflow({ buffer: my_template.txtoverflow_buffer, width: w, text: t });
-    if(u>0) { _flnk.append('&nbsp;<span class="chunr">('+u+')</span>'); }
+    _inner.attr('feed', feed);
+    _inner.find('a.feeditemlnk').attr('title', t).b_txtoverflow({ buffer: my_template.txtoverflow_buffer, width: w, text: t });
+
     return _item;
 }
 
-function tag_item_c(tag, u, w) // tag, unread, width
+function tag_item_c(tag, t, w) // tag, title, width
 {
     var _item = null;
     var _inner = null;
@@ -67,8 +64,7 @@ function tag_item_c(tag, u, w) // tag, unread, width
     _inner = _item.find('div.ch');
     _inner.attr('tag', tag);
     _tlnk = _inner.find('a.tagitemlnk');
-    _tlnk.attr('title', tag).b_txtoverflow({ buffer: my_template.txtoverflow_buffer, width: w, text: tag });
-    if(u>0) { _tlnk.append('&nbsp;<span class="chunr">('+u+')</span>'); }
+    _tlnk.attr('title', t).b_txtoverflow({ buffer: my_template.txtoverflow_buffer, width: w, text: t });
 
     return _item;
 }
@@ -125,11 +121,10 @@ function feed_populate(d)
         _data =
         {
             feed   : $(this).find('feed').text(),
-            title  : $(this).find('feed_title').text(),
-            unread : parseInt($(this).find('unread').text())
+            title  : $(this).find('feed_title').text()
         };
 
-        _item = feed_item_c(_data.feed, _data.title, _data.unread, _flw);
+        _item = feed_item_c(_data.feed, _data.title, _flw);
         _lsdata[_i] = _item.html(); _i++;
     });
 
@@ -147,12 +142,11 @@ function tag_populate(d)
     {
         _data =
         {
-            tag_name   : $(this).find('tag_name').text(),
-            tag_feeds  : $(this).find('tag_feeds').children(),
-            tag_unread : parseInt($(this).find('tag_unread').text())
+            tag_name  : $(this).find('tag_name').text(),
+            tag_feeds : $(this).find('tag_feeds').children()
         };
 
-        _item = tag_item_c(_data.tag_name, _data.tag_unread, _flw);
+        _item = tag_item_c(_data.tag_name, _data.tag_name, _flw);
         my_template.subscribed_list.append(_item.html() + "\n");
         feed_populate(_data.tag_feeds);
         if(tag_get_opened(_data.tag_name)==false) { tag_toggle(_data.tag_name); }
@@ -164,15 +158,71 @@ function no_feed()
     my_template.no_feed_message.show();
 }
 
+function unread_decrement(feed)
+{
+    if(feed)
+    {
+        my_template.subscribed_list.find('div.chf').each(function()
+        {
+            var _u = $(this).next('div.chgroup')
+                .find('div.chi[feed="'+feed+'"]')
+                .find('span.chunr');
+            
+            if(_u.length>0)
+            {
+                var _y = parseInt(_u.text().replace(/[^0-9]/g, ''));
+                _y>1 ? _u.text('('+(_y-1)+')') : _u.text('');
+                _u = $(this).find('span.chunr');
+                _i = parseInt(_u.text().replace(/[^0-9]/g, ''));
+                _i>1 ? _u.text('('+(_i-1)+')') : _u.text('');
+            }
+        });
+    }
+}
+
+function unread_update(feed, j)
+{
+    if(feed)
+    {
+        my_template.subscribed_list.find('div.chf').each(function()
+        {
+            var _u = $(this).next('div.chgroup')
+                .find('div.chi[feed="'+feed+'"]')
+                .find('span.chunr');
+            
+            if(_u.length>0)
+            {
+                var _y = parseInt(_u.text().replace(/[^0-9]/g, ''));
+                if(isNaN(_y)) { _y=0; }
+                j>1 ? _u.text('('+j+')') : _u.text('');
+                _u = $(this).find('span.chunr');
+                _i = parseInt(_u.text().replace(/[^0-9]/g, ''));
+                _i = isNaN(_i) ? (_y + j) : (_i - _y + j);
+                _i>1 ? _u.text('('+_i+')') : _u.text('');
+            }
+        });
+    }
+}
+
+function unread_populate(d)
+{
+    d.each(function()
+    {
+        var _f = $(this).find('feed').text();
+        var _u = parseInt($(this).find('unread').text());
+        unread_update(_f, _u);
+    });
+}
+
 function feed_list_callback(d)
 {
-    var _fl = d.find('feeds').children();
-    var _un = parseInt(d.find('total_unread').text());
-    // if(_fl.length==0) { no_feed(); } // tutorial
-    my_template.subscribed_list.html('<div class="ch chf" tag="@subscribed"><a href="#" class="tagitemlnk" title="All Subscribed Feeds">All items</a><a href="#" class="chtog chopened">&nbsp;</a>' + (_un>0 ? '&nbsp;<span class="chunr">('+_un+')</span>' : ''));
-    feed_populate(_fl);
+    var _flw = my_template.subscribed_list.width() * 0.9;
+
+    my_template.subscribed_list.html(tag_item_c('@subscribed', "All Subscribed Feeds", _flw).html());
+    feed_populate(d.find('feeds').children());
+
     if(tag_get_opened('@subscribed')==false) { tag_toggle('@subscribed'); }
-    tag_populate(d.find('tags').children()); // tags
+    tag_populate(d.find('tags').children());
 }
 
 function feed_list()
@@ -193,9 +243,8 @@ function feed_add_callback(d)
 
     _data =
     {
-        feed   : _dta.find('feed').text(),
-        title  : _dta.find('feed_title').text(),
-        unread : parseInt(_dta.find('unread').text())
+        feed  : _dta.find('feed').text(),
+        title : _dta.find('feed_title').text()
     };
 
     if(_data.feed.length==0) 
@@ -344,11 +393,14 @@ function article_list_callback(d)
     var _app = null;
 
     _lst = d.find('articles');
-    _app = d.find('append');
+    _app =(d.find('append').text()=='true');
+    _unr = d.find('unread');
+
+    unread_populate(_unr.children());
 
     if(_lst.length>0) 
     { 
-        article_populate(_lst.children(), (_app.text()=="true")); 
+        article_populate(_lst.children(), _app); 
         return true;
     }
 }
@@ -411,26 +463,6 @@ function article_hide_all()
     my_article.current = null;
 }
 
-function decrement_unread(feed)
-{
-    if(feed)
-    {
-        my_template.subscribed_list.find('div.chf').each(function()
-        {
-            var _u = $(this).next('div.chgroup').find('div.chi[feed="'+feed+'"]').find('span.chunr');
-            var _i = parseInt(_u.text().replace(/[^0-9]/g, ''));
-            _i>1 ? _u.text('('+(_i-1)+')') : _u.text('');
-
-            if(_u.length>0)
-            {
-                _u = $(this).find('span.chunr');
-                _i = parseInt(_u.text().replace(/[^0-9]/g, ''));
-                _i>1 ? _u.text('('+(_i-1)+')') : _u.text('');
-            }
-        });
-    }
-}
-
 function article_focus_callback(d)
 {
     return false;
@@ -452,7 +484,7 @@ function article_focus()
         $.ajax({ type: 'POST', url: '/rw/wr', dataType: "xml", data: _data });
 
         my_article.current.addClass('art-wr').find('span.arttt').addClass('arttt-wr');
-        decrement_unread(my_article.data[_data.article].feed);
+        unread_decrement(my_article.data[_data.article].feed);
     }
 }
 
