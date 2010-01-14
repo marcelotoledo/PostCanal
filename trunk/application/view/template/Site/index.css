@@ -163,7 +163,9 @@ div.newsite-notice
     max-width: 500px;
 }
 
+p.oauth-authorize-row,
 p.oauth-reauthorize-row
 {
+    line-height: 30px;
     display: none;
 }

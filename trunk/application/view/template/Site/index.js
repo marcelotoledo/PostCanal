@@ -65,6 +65,11 @@ function blog_populate(b)
             my_template.blog_list_ref[_blog.blog].item.find('p.oauth-authorize-row').hide();
             my_template.blog_list_ref[_blog.blog].item.find('p.oauth-reauthorize-row').show();
         }
+        else
+        {
+            my_template.blog_list_ref[_blog.blog].item.find('p.oauth-authorize-row').show();
+            my_template.blog_list_ref[_blog.blog].item.find('div.form-bot').hide();
+        }
     }
 
     my_template.blog_list_ref[_blog.blog].item.find('div.blogtit').b_txtoverflow({ buffer: my_template.txtoverflow_buffer, width: (my_template.blog_list_area.width() * 0.8), text: _blog.name });

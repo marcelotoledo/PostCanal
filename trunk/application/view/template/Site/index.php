@@ -43,7 +43,7 @@
         <div class="donotchangepwd"><input type="checkbox" name="donotchangepwd" checked> keep unchanged</div>
         </p>
         </div>
-        <p class="oauth-authorize-row"><a href="#" class="oauth-authorize-lnk">authorize the PostCanal.com to use this site</a>.</p>
+        <p class="oauth-authorize-row"><a href="#" class="oauth-authorize-lnk">You need to authorize the PostCanal.com to use this site.</a></p>
         <p class="oauth-reauthorize-row">The PostCanal.com is already authorized to use this site. if the authorization is no longer valid, <a href="#" class="oauth-authorize-lnk">request a new authorization</a>.</p>
         <div class="password-notice newsite-notice" style="display:none">
         Your password is necessary to allow us publish content in your site. It is stored securely in our infrasctructure and will be used to content publication only.
