@@ -64,7 +64,9 @@ function tag_item_c(tag, t, w) // tag, title, width
     _inner = _item.find('div.ch');
     _inner.attr('tag', tag);
     _tlnk = _inner.find('a.tagitemlnk');
-    _tlnk.attr('title', t).b_txtoverflow({ buffer: my_template.txtoverflow_buffer, width: w, text: t });
+    _tlnk.attr('title', t)
+    if(tag=='@subscribed') { t = 'All items'; }
+    _tlnk.b_txtoverflow({ buffer: my_template.txtoverflow_buffer, width: w, text: t });
 
     return _item;
 }
@@ -106,7 +108,11 @@ function tag_toggle(t)
 
 function feed_populate(d)
 {
-    if(d.length==0) { return false; }
+    if(d.length==0) 
+    { 
+        my_template.subscribed_list.append('<div class="chgroup"></div>');
+        return false; 
+    }
 
     var _data   = null;
     var _item   = null;
@@ -135,7 +141,7 @@ function tag_populate(d)
 {
     if(d.length==0) { return false; }
 
-    var _flw = my_template.subscribed_list.width() * 0.9;
+    var _flw = my_template.subscribed_list.width() * 0.65;
     var _opened = null;
 
     d.each(function()
@@ -237,7 +243,7 @@ function feed_list()
 
 function feed_add_callback(d)
 {
-    var _flw = my_template.subscribed_list.width() * 0.7;
+    var _flw = my_template.subscribed_list.width() * 0.65;
     var _dta = d.find('feed');
     var _mul = d.find('multiple');
 
