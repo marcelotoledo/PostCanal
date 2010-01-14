@@ -83,7 +83,7 @@
 <div id="nofeedmsg" class="midct">There is no <b>feeds</b> registered for this <b>site</b>. To start reading feeds, you must register at least one. You can do this by clicking <b>"Manage Feeds"</b> link on top menu.</div>
 
 <div id="chaddct" style="display:none">
-    <small>Today we support RSS/Atom feeds and keywords.</small><br/>
+    <small>Today we support <b>RSS/Atom feeds</b> and <b>keywords</b>.</small><br/>
     <input type="text" id="chaddinput"> <button id="chaddbtn">ADD</button> <button id="chaddccl">CANCEL</button>
-    <br/><small>eg: http://news.google.com/?output=rss</small>
+    <br/><small>eg: <b>http://news.google.com/?output=rss</b> or <b><?php $a=explode(',', "America,Basketball,Car,Dog,Elephant,Lemon,Salad,Toronto"); echo $a[array_rand($a)] ?></b></small>
 </div>
