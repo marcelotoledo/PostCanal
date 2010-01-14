@@ -253,14 +253,13 @@ function feed_add_callback(d)
         return false;
     }
 
-    /* TODO call feed_list again
     if(my_template.subscribed_list.find('div.ch[feed="' + _data.feed + '"]').length==0)
     {
-        _item = feed_item_c(_data.feed, _data.title, _data.unread, _flw);
-        my_template.subscribed_all_folder.after(_item.html() + "\n");
+        _item = feed_item_c(_data.feed, _data.title, _flw);
+        my_template.subscribed_list.find('div.chf').eq(0)
+            .next('div.chgroup').prepend(_item.html() + "\n");
         my_template.subscribed_list.find('div.ch[feed="' + _data.feed + '"]').find('a.feeditemlnk').click();
     }
-    */
 }
 
 function feed_add()
