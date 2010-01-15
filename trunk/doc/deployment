@@ -1,0 +1,33 @@
+POSTCANAL DEPLOYMENT
+
+- Alterar o config/environment.xml
+  e atualizar o atributo application/maintenance para true
+
+- Acessar o database em db/mysql.sh
+  e rodar a seguinte instrução em SQL para 'deslogar'
+  os usuários em sessão:
+
+  UPDATE base_session SET active=0;
+
+- Parar o PCD
+
+- Descarregar o código da nova versão 
+  para uma pasta temporária e entrar nesta pasta
+  temporária
+  (se possível criar um ambiente de deployment no
+   proprio servidor/db de producao
+   para testar antes de colocar em producao)
+
+- Atualizar pacotes do sistema operacional
+  (quando necessário)
+
+- Reiniciar o apache
+  (quando necessário)
+
+- Atualizar o database para a nova versão X.X.X
+  cd ./db
+  make patch-X.X.X
+
+- Mover o código antigo para o limbo e o novo
+  no lugar do antigo
+  mv current old && mv new current

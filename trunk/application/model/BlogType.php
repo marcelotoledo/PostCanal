@@ -117,7 +117,7 @@ class BlogType extends B_Model
 
     public static $oauth_enabled = array
     (
-        'twitter'
+        // 'twitter' // not in 1.1.0 yet
     );
 
     /**

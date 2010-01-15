@@ -82,6 +82,7 @@
         <frontendUrl>/webservice</frontendUrl>
     </webservice>
     <application>
+        <maintenance>false</maintenance>
         <profile>
             <!-- default values for profile quota -->
             <quotaBlog>999</quotaBlog>

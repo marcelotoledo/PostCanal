@@ -13,6 +13,11 @@ class C_Signup extends B_Controller
     public function before()
     {
         $this->view()->setLayout('index');
+
+        if(B_Registry::get('application/maintenance')=='true')
+        {
+            $this->response()->setRedirect(B_Request::url('maintenance'));
+        }
     }
 
     /**
