@@ -1,0 +1,83 @@
+body
+{
+    margin: 20px;
+    background-image: none;
+    overflow: hidden;
+}
+p
+{
+    line-height: 30px;
+    text-align: left;
+}
+a
+{
+    color: #2780B1;
+    text-decoration: none;
+}
+#mainct
+{
+    background: none;
+}
+#inviteform
+{
+    background-color: white;
+    margin-top: 25px;
+    padding: 10px;
+    border: 1px solid #ACACAC;
+    -moz-border-radius: 9px;
+    -webkit-border-radius: 9px;
+}
+#inviteform form
+{
+    background-color: #EEF1F2;
+    padding: 10px;
+    -moz-border-radius: 9px;
+    -webkit-border-radius: 9px;
+}
+
+div.form-bot
+{
+    margin-top: 20px;
+    margin-bottom: 10px;
+    text-align: center;
+}
+
+h1
+{
+    color: #2780b1;
+    text-align: left;
+}
+p.invitemsg
+{
+    margin-top: 15px;
+    line-height: 20px;
+}
+button
+{
+    width: 150px;
+    height: 30px;
+    line-height: 30px;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+#learnmoremsg
+{
+    margin-top: 25px;
+    white-space: nowrap;
+    text-align: center;
+    line-height: 20px;
+    font-size: 0.8em;
+}
+#bottom
+{
+    margin-top: 25px;
+    text-align: center;
+}
+
+#page0
+{
+}
+#page1
+{
+    display: none;
+}

@@ -1,0 +1,171 @@
+button
+{
+    width: 100px;
+}
+
+#tplbaropt
+{
+    float: right;
+    font-size: 0.9em;
+}
+#tplbarclr
+{
+    clear: left;
+}
+
+#addnewblogform
+{
+    display: none;
+    text-align: left;
+    margin-bottom: 25px;
+}
+#addnewblogbtn
+{
+    float: left;
+    margin-top: 15px;
+    width: 150px;
+}
+#addmessage
+{
+    font-size: 0.8em;
+    color: red;
+    margin-top: 10px;
+}
+
+#bloglistarea
+{
+    text-align: left;
+}
+div.blog
+{
+    margin-bottom: 10px;
+}
+div.blogtop
+{
+    background-color: #48898c;
+    padding: 10px;
+    -moz-border-radius-topleft: 5px;
+    -webkit-border-top-left-radius: 5px;
+    -moz-border-radius-topright: 5px;
+    -webkit-border-top-right-radius: 5px;
+}
+div.blogtop button
+{
+    float: right;
+    margin-top: -28px;
+}
+div.blogtit
+{
+    color: white;
+    font-weight: bold;
+}
+div.blogurl
+{
+    font-size: 0.8em;
+    margin-top: 2px;
+    color: whitesmoke;
+}
+div.blogurl span
+{
+    padding: 2px 5px 2px 2px;
+    background-color: #144a4c;
+}
+button.blogeditbtn
+{
+}
+button.blogdeletebtn
+{
+    display: none;
+}
+div.blogbot
+{
+    display: none;
+    padding: 10px 15px 10px 15px;
+    /*background-color: #e1f0f4;*/
+    background-color: #c4e2ea;
+}
+
+input.intxt-full
+{
+    width: 400px;
+}
+
+#blogitemblank
+{
+    display: none;
+}
+
+#blogdeleteblank
+{
+    display: none;
+}
+div.blogdeletemsg
+{
+}
+span.deletemsgbig
+{
+    font-size: 1.6em;
+    font-weight: bold;
+    line-height: 50px;
+}
+span.deletemsgmed
+{
+    font-size: 1.2em;
+}
+span.deletemsgtny
+{
+    font-size: 0.8em;
+}
+span.deletemsgask
+{
+    font-weight: bold;
+    line-height: 50px;
+}
+button.blogdeletey
+{
+    /*background-color: lightgreen;*/
+}
+button.blogdeleten
+{
+    /*background-color: tomato;*/
+}
+
+#blogtypefailedmsg
+{
+    display: none;
+    margin-top: 10px;
+    text-align: left;
+    font-size: 1.4em;
+    color: gray;
+}
+div.noblogmsg
+{
+    display: none;
+    text-align: left;
+    font-size: 1.4em;
+    color: gray;
+}
+
+#supportlist
+{
+    font-size: 0.8em;
+    color: gray;
+}
+
+div.newsite-notice
+{
+    color: #2780b1;
+    background-color: white;
+    padding: 10px;
+    margin-top: 10px;
+    margin-bottom: 15px;
+    border: 2px solid tomato;
+    max-width: 500px;
+}
+
+p.oauth-authorize-row,
+p.oauth-reauthorize-row
+{
+    line-height: 30px;
+    display: none;
+}

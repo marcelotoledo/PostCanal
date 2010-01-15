@@ -1,0 +1,351 @@
+*
+{
+	padding: 0;
+	margin: 0;
+}
+body
+{
+	text-align: center;
+	background-image: url('/image/index/bg-body.png?v=1253527293');
+	background-position: 0px 0px;
+	font-family: "Trebuchet MS", Verdana, Geneva, Arial, Helvetica, sans-serif;
+    overflow-x: hidden;
+}
+img
+{
+	border: 0;
+}
+
+#mainct
+{
+	background-image: url('/image/index/bg-head.png?v=1253527293');
+	background-repeat: repeat-x;
+	background-position: top left;
+	height: 600px;
+    <?php if($this->browser_is_firefox) : ?>
+    margin-top: -50px;
+    <?php endif ?>
+}
+
+/* top */
+
+#toprow
+{
+    margin: 0 auto;
+    <?php if($this->browser_is_ie) : ?>
+    margin-bottom: 25px;
+    <?php else : ?>
+    margin-bottom: 50px;
+    <?php endif ?>
+    width: 900px;
+}
+div.toprowimg
+{
+    margin-top: 20px;
+    <?php if($this->browser_is_ie6) : ?>
+	background-image: url('/image/index/top-8.png?v=1253527293');
+    <?php else : ?>
+	background-image: url('/image/index/top-24.png?v=1253527293');
+    <?php endif ?>
+	background-repeat: no-repeat;
+	background-position: top right;
+}
+#toplogo
+{
+	width: 165px;
+	height: 77px;
+	margin-right: 50px;
+	float: left;
+	background-position: 0px 0px;
+}
+#toplogo h1, h2 /* semantic only */
+{
+    display: none;
+}
+#logobeta
+{
+    margin-top: 76px;
+    text-align: right;
+    color: #2780B1;
+    font-size: 0.8em;
+}
+#tagline
+{
+    margin-top: -2px;
+    white-space: nowrap;
+    font-size: 0.84em;
+    text-align: left;
+    color: #a0a0a0;
+}
+#topmenu
+{
+	float: left;
+    margin-top: 20px;
+}
+div.menuitm
+{
+	float: left;
+	padding: 0px 20px 0px 20px;
+	margin-top: 38px;
+    height: 45px;
+	line-height: 45px;
+	background-color: #081C27;
+	font-size: 1.1em;
+	color: white;
+	font-weight: bold;
+}
+div.menuitm-ebd
+{
+	background-color: #2780B1;
+}
+div.menuitm-left
+{
+    padding-left: 25px;
+	-moz-border-radius-topleft: 9px;
+	-webkit-border-top-left-radius: 9px;
+	-moz-border-radius-bottomleft: 9px;
+	-webkit-border-bottom-left-radius: 9px;
+}
+div.menuitm-right
+{
+    padding-right: 25px;
+}
+a.menulnk
+{
+	color: white;
+	font-weight: normal;
+	text-decoration: none;
+}
+a.menulnk:hover { color: #FFA800; }
+
+div.sepbrd
+{
+	width: 12px;
+	padding: 0px;
+}
+div.sepbrd-dbd   { background-position: -165px -45px; }
+div.sepbrd-ebd-l { background-position: -165px 0px; }
+div.sepbrd-ebd-r { background-position: -177px 0px; }
+
+#signuparw { }
+div.signuparw-ebd { background-position: -185px -45px; background-color: #2780B1; }
+div.signuparw-dbd { background-position: -186px   0px; background-color: #081C26; }
+
+#menursp 
+{ 
+    /*
+    top: 20px;
+    right: 0px; 
+    <?php if($this->browser_is_ie) : ?>
+    display: none;
+    <?php endif ?>
+    */
+    position: absolute;
+    width: 100%;
+    <?php if($this->browser_is_ie) : ?>
+    margin-top: 58px;
+    margin-left: -32px;
+    <?php else : ?>
+    margin-top: 58px; 
+    margin-left: 832px;
+    <?php endif ?>
+}
+
+#menuitmclr { clear: left; }
+#toprowclr  { clear: left; }
+#topclr     { clear: left; }
+
+/* middle */
+
+#midrow
+{
+	margin: 0 auto;
+	width: 900px;
+}
+
+div.midct
+{
+	background-color: white;
+}
+div.midct-half
+{
+	float: left;
+	width: 648px;
+}
+div.midct-full
+{
+	width: 900px;
+}
+div.midct-top
+{
+	height: 9px;
+	border-top: 1px solid #ACACAC;
+	border-left: 1px solid #ACACAC;
+	border-right: 1px solid #ACACAC;
+	-moz-border-radius-topleft: 9px;
+	-webkit-border-top-left-radius: 9px;
+	-moz-border-radius-topright: 9px;
+	-webkit-border-top-right-radius: 9px;
+}
+div.midct-cen
+{
+	border-left: 1px solid #ACACAC;
+	border-right: 1px solid #ACACAC;
+}
+div.midct-bot
+{
+	height: 30px;
+	border-bottom: 1px solid #ACACAC;
+	border-left: 1px solid #ACACAC;
+	border-right: 1px solid #ACACAC;
+	-moz-border-radius-bottomleft: 9px;
+	-webkit-border-bottom-left-radius: 9px;
+	-moz-border-radius-bottomright: 9px;
+	-webkit-border-bottom-right-radius: 9px;
+}
+
+/* right */
+
+div.rgtct
+{
+	float: left;
+	width: 250px;
+	padding: 10px 0px 10px 0px;
+	margin-top: 10px;
+	margin-left: 1px;
+	background-color: #48898C;
+	-moz-border-radius-topright: 9px;
+	-webkit-border-top-right-radius: 9px;
+	-moz-border-radius-bottomright: 9px;
+	-webkit-border-bottom-right-radius: 9px;
+	text-align: left;
+	color: white;
+}
+div.rgtct-ttl
+{
+	margin-left: 20px;
+	font-size: 1.1em;
+	font-weight: bold;
+}
+div.rgtct-lgt
+{
+	padding: 10px 10px 10px 20px;
+	margin: 10px 10px 0px 0px;
+	background-color: #5E9F97;
+	font-size: 1em;
+	-moz-border-radius-topright: 9px;
+	-webkit-border-top-right-radius: 9px;
+	-moz-border-radius-bottomright: 9px;
+	-webkit-border-bottom-right-radius: 9px;
+}
+div.rgtct-lgt a
+{
+	color: black;
+	font-size: 0.8em;
+    font-weight: bold;
+}
+div.rgtct-hrd
+{
+	padding: 10px;
+	margin: 10px 10px 0px 10px;
+	background-color: #144A4D;
+	-moz-border-radius: 9px;
+	-webkit-border-radius: 9px;
+}
+div.rgtct-hrd h1
+{
+	color: #FFA800;
+	font-size: 1.2em;
+	font-weight: bold;
+}
+#midclear
+{
+	clear: left;
+}
+
+/* bottom */
+
+#btmrow
+{
+	margin: 0 auto;
+	width: 880px;
+	text-align: center;
+}
+#btmdsh
+{
+	margin-top: 50px;
+	border-top: 1px dotted #2780B1;
+}
+#btmtxt
+{
+	height: 40px;
+	font-family: "Lucida Grande", Arial, Sans-serif;
+	font-size: 0.8em;
+}
+#btmtxt a
+{
+	color: #2780B1;
+	text-decoration: underline;
+}
+
+/* form */
+
+div.form-row
+{
+	height: 60px;
+	font-weight: bold;
+	line-height: 30px;
+}
+input.intxt
+{
+	border: 1px solid #C6C6C6;
+	height: 25px;
+	line-height: 23px;
+	padding: 0px 2px 0px 2px;
+	font-size: 1em;
+	color: #464646;
+	font-weight: bold;
+}
+textarea.intxa
+{
+	border: 1px solid #C6C6C6;
+	padding: 0px 2px 0px 2px;
+	font-size: 1em;
+	color: #464646;
+	font-weight: bold;
+}
+select.insel
+{
+	border: 1px solid #C6C6C6;
+	height: 25px;
+	line-height: 23px;
+	padding: 0px 2px 0px 2px;
+	font-size: 1em;
+	color: #464646;
+	font-weight: bold;
+}
+
+button
+{
+	height: 20px;
+    font-size: 0.7em;
+	line-height: 20px;
+	font-weight: bold;
+	padding: 0px 5px 0px 5px;
+    border: 0;
+	background-image: url('/image/index/btn-bg.png?v=1253527293');
+	background-repeat: repeat-x;
+	background-position: 0px 0px;
+	background-color: #FF6600;
+	-moz-border-radius: 9px;
+	-webkit-border-radius: 9px;
+    cursor: pointer;
+    cursor: hand;
+}
+
+div.b-spinner
+{
+    <?php if($this->browser_is_ie) : ?>
+    width: 105px;
+    <?php endif ?>
+}

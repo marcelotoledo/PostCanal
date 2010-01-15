@@ -1,0 +1,26 @@
+==========
+02/12/2009
+==========
+
+- Correcao de problema com publicacao de video no WordPress (bugzId:168)
+
+HORAS TRABALHADAS: 5h
+
+==========
+07/12/2009
+==========
+
+- Remoção de campos excedentes do cadastro (bugzId:45)
+- Correção do texto pós cadastro (bugzId:177)
+- Retirar http do 'feed add' no Reader/Writer (bugzId:67)
+
+HORAS TRABALHADAS: 4h
+
+==========
+08/12/2009
+==========
+
+- Alterar local do link 'manage feeds' (bugzId:136)
+- Correcao de usabilidade do Queue (bugzId:172)
+
+HORAS TRABALHADAS: 3h

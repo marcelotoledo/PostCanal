@@ -1,0 +1,21 @@
+2009-03-01
+
+--
+
+2009-02-01 
+
+./sc.sh ChangeLog-2008-12 ChangeLog-2009-01 
+Days worked:  32
+Hours worked: 186
+Avg hr p/day: 5
+Total:        2697.00
+
+Comprovante da transferência de conta corrente para conta corrente
+ Dados da conta debitada:
+Nome: 	MARCELO DIAS DE TOLEDO
+Agência: 	3753 	Conta corrente: 	03872-2
+ Dados da conta creditada:
+Nome: 	RAFAEL C LEME DE MORAES
+Agência: 	3807 	Conta corrente: 	02008-0
+Valor da transferência: 	R$ 2.697,00
+Transferência efetuada em 01/02/2009 às 11:07:55h via Bankline

@@ -1,0 +1,11 @@
+User-agent: *
+Disallow: /image/
+Disallow: /css/
+Disallow: /js/
+Disallow: /jquery/
+Disallow: /thickbox/
+Disallow: /ovp/
+Disallow: /signup/invitation
+Disallow: /signup/welcome
+Disallow: /profile
+Disallow: /ouch

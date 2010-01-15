@@ -1,0 +1,2 @@
+monolithic:
+	./configure.sh

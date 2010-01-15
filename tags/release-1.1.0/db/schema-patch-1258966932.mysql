@@ -1,0 +1,17 @@
+START TRANSACTION;
+
+ALTER TABLE model_aggregator_feed ADD COLUMN updateable TINYINT(1) NOT NULL DEFAULT 1;
+ALTER TABLE model_user_blog_feed CHANGE COLUMN enabled visible TINYINT(1) NOT NULL DEFAULT 1;
+ALTER TABLE model_aggregator_feed DROP INDEX m_agf_idx;
+CREATE INDEX m_agf_idx ON model_aggregator_feed (feed_url_md5(6), feed_update_time, updated_at, enabled, updateable);
+
+COMMIT;
+
+
+START TRANSACTION;
+
+SET @url_base="pc://writings";
+UPDATE model_aggregator_feed SET updateable=0 WHERE feed_url LIKE CONCAT(@url_base, "%");
+UPDATE model_aggregator_feed SET enabled=1 WHERE feed_url LIKE CONCAT(@url_base, "%");
+
+COMMIT;

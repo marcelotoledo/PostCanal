@@ -1,0 +1,24 @@
+START TRANSACTION;
+
+SET @url_base="pc://writings";
+
+DELETE FROM model_user_blog_feed WHERE aggregator_feed_id IN (SELECT aggregator_feed_id FROM model_aggregator_feed WHERE feed_url LIKE CONCAT(@url_base, "%"));
+DELETE FROM model_aggregator_feed WHERE feed_url LIKE CONCAT(@url_base, "%");
+
+INSERT INTO model_aggregator_feed (feed_url, feed_url_md5, feed_title, feed_link, feed_description, enabled)
+SELECT     CONCAT(@url_base, "/profile/", user_profile_id, "/blog/", hash), 
+       MD5(CONCAT(@url_base, "/profile/", user_profile_id, "/blog/", hash)),
+       "My Writings", "", "", 0 FROM model_user_blog;
+
+INSERT INTO model_user_blog_feed (user_blog_id, aggregator_feed_id, hash, feed_title, feed_description, ordering, enabled, deleted)
+SELECT a.user_blog_id, b.aggregator_feed_id, SUBSTRING(MD5(RAND() + RAND() + RAND()), -8), b.feed_title, b.feed_description, 0, 0, 0 FROM model_user_blog AS a LEFT JOIN model_aggregator_feed AS b ON (b.feed_url_md5=MD5(CONCAT(@url_base, "/profile/", a.user_profile_id, "/blog/", a.hash)));
+
+COMMIT;
+
+
+START TRANSACTION;
+
+ALTER TABLE model_user_blog_entry DROP FOREIGN KEY m_bge_m_afa_fk;
+ALTER TABLE model_user_blog_entry ADD CONSTRAINT m_bge_m_afa_fk FOREIGN KEY (aggregator_feed_article_id) REFERENCES model_aggregator_feed_article (aggregator_feed_article_id) ON DELETE CASCADE;
+
+COMMIT;

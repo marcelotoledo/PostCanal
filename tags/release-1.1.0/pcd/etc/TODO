@@ -1,0 +1,9 @@
+  
+* Criar espelhamento de dados no db (queue, threads, ...)
+  Dessa forma poderemos criar histórico e assim prever o futuro através
+   de analise gráfica e estatistica.
+
+* Queue
+  Nao medir o que for kill
+
+* Auto Queue

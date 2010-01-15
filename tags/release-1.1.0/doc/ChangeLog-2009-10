@@ -1,0 +1,90 @@
+==========
+12/10/2009
+==========
+
+- Correção de UPDATE no B_Model (bugzId:156)
+- Inclusão de tempo mínimo para Feed Update (bugzId:161)
+- Correção na unicidade de publicação (bugzId:157)
+
+HORAS TRABALHADAS: 8h
+
+==========
+14/10/2009
+==========
+
+- Melhorias no SEO (bugzId:160)
+
+HORAS TRABALHADAS: 3h
+
+==========
+19/10/2009
+==========
+
+- Atualização de video Tour
+- Correção da mensagem de erro no form de add Site (bugzId:128)
+- Inclusão de mensagem para orientação para Remote publishing no WordPress (bugzId:147)
+- Alteração do formulário de Signup para implementação de reCaptcha (bugzId:44)
+
+HORAS TRABALHADAS: 4h
+
+==========
+20/10/2009
+==========
+
+- Alteração do formulário de Signup para implementação de reCaptcha (bugzId:44)
+- Ajustes na exibição de tutoriais
+- Ajustes para exibição de ícones na lista de Feeds (pastas e feeds)
+
+HORAS TRABALHADAS: 4h
+
+==========
+21/10/2009
+==========
+
+- Suporte a cadastro imediato apenas com senha [incompleto] (bugzId:45)
+- Suporte a adicionar feed diretamente do Reader [incompleto] (bugzId:40) 
+
+HORAS TRABALHADAS: 4h
+
+==========
+22/10/2009
+==========
+
+- Suporte a adicionar feed diretamente do Reader (bugzId:40) 
+- Suporte ao formato feed:// no Manage feeds e Reader (bugzId:67)
+
+HORAS TRABALHADAS: 5h
+
+==========
+23/10/2009
+==========
+
+- Bloquear publicacao e solicitar confirmação posterior, no Queue publication (bugzId:45)
+
+HORAS TRABALHADAS: 4h
+
+==========
+26/10/2009
+==========
+
+- Implementação de countdown no Queue (bugzId:107)
+
+HORAS TRABALHADAS: 6h
+
+==========
+27/10/2009
+==========
+
+- Implementação de countdown no Queue (bugzId:107)
+
+HORAS TRABALHADAS: 8h
+
+==========
+28/10/2009
+==========
+
+- Manter link original do article original no Queue (bugzId:141)
+- Manage sites : informar sobre uso da senha (bugzId:127)
+- Feeds em ordem inversa (bugzId:150)
+
+HORAS TRABALHADAS: 4h

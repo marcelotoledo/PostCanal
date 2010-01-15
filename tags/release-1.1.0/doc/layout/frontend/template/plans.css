@@ -1,0 +1,167 @@
+/* middle */
+
+div.midct-cen
+{
+	padding: 0px 10px 0px 10px;
+	margin-top: -10px;
+	margin-bottom: -20px;
+	text-align: left;
+}
+div > div.midct-cen { margin-top: 0px; }
+
+div.planct
+{
+	float: left;
+	width: 200px;
+	height: 270px;
+	color: white;
+	margin-right: 20px;
+	padding-bottom: 10px;
+	-moz-border-radius: 9px;
+	-webkit-border-radius: 9px;
+}
+div.plantit
+{
+	margin-top: 10px;
+	font-size: 2.4em;
+	font-weight: bold;
+	text-align: center;
+}
+div.planopt
+{
+	height: 120px;
+	padding: 15px 10px 15px 10px;
+	margin: 0px 10px 10px 10px;
+	font-size: 1.1em;
+	-moz-border-radius: 9px;
+	-webkit-border-radius: 9px;
+}
+div.planopt small
+{
+	font-size: 0.8em;
+}
+div.planprc
+{
+	font-size: 1.6em;
+	text-align: center;
+}
+div.planclr
+{
+	clear: both;
+}
+
+#plan-free
+{
+	background-color: #436E71;
+}
+#plan-free div.plantit
+{
+	color: #FFD400;
+}
+#plan-free div.planopt
+{
+	background-color: #567D7F;
+}
+
+#plan-basic
+{
+	float: right;
+	background-color: #2B535E;
+}
+#plan-basic div.plantit
+{
+	color: #FFA800;
+}
+#plan-basic div.planopt
+{
+	background-color: #45787F;
+}
+
+#plan-standard
+{
+	float: right;
+	background-color: #2B4B5E;
+}
+#plan-standard div.plantit
+{
+	color: #FFA800;
+}
+#plan-standard div.planopt
+{
+	background-color: #5E919F;
+}
+
+#plan-premium
+{
+	float: right;
+	margin-right: 0px;
+	background-color: #1C2D44;
+}
+#plan-premium div.plantit
+{
+	color: #FF7F00;
+}
+#plan-premium div.planopt
+{
+	background-color: #5E869F;
+}
+#plan-premium-bdg
+{
+	position: absolute;
+	width: 4px;
+	height: 30px; 
+	margin-top: 30px;
+	margin-left: 98px;
+	background-color: #1C2D44;
+}
+div > #plan-premium-bdg { margin-top: 10px; }
+
+#signupfree
+{
+	float: left;
+	width: 440px;
+	padding: 20px 0px 20px 0px;
+	text-align: center;
+}
+#signupfree a
+{
+	color: #2780B1;
+	font-size: 2em;
+	font-weight: bold;
+	text-decoration: none;
+}
+#signupfree img
+{
+	margin-left: 20px;
+}
+div > #signupfree { margin-top: -10px; }
+
+#premiumxtr
+{
+	float: right;
+	width: 200px;
+	padding: 10px 0px 10px 0px;
+	text-align: center;
+	background-color: #FF7F00;
+	border: 2px solid #1C2D44;
+	-moz-border-radius: 9px;
+	-webkit-border-radius: 9px;
+}
+#premiumxtr-0
+{
+	font-size: 1.1em;
+	font-weight: bold;
+	color: white;
+}
+#premiumxtr-1
+{
+	font-size: 1.3em;
+	font-weight: bold;
+	color: #1C2D44;
+}
+div > #premiumxtr { margin-top: -10px; }
+
+#midbotclr
+{
+	clear: both;
+}

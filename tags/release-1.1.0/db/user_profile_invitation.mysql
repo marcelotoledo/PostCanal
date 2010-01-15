@@ -1,0 +1,1 @@
+INSERT INTO model_user_profile_invitation (invitation_email_local, invitation_email_domain, name, enabled) VALUES ('rafael.ifusp', 'gmail.com', 'Rafael Castilho', 1);

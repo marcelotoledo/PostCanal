@@ -1,0 +1,19 @@
+START TRANSACTION;
+
+DROP TABLE IF EXISTS model_user_blog_feed_article CASCADE;
+
+-- create user blog and aggregator feed article relationship --
+
+CREATE TABLE model_user_blog_feed_article
+(
+    user_blog_id INTEGER UNSIGNED NOT NULL,
+    aggregator_feed_article_id INTEGER UNSIGNED NOT NULL,
+    was_read TINYINT(1) NOT NULL DEFAULT 0,
+    CONSTRAINT m_ubfa_un UNIQUE (user_blog_id, aggregator_feed_article_id),
+    CONSTRAINT m_ubfa_m_ub_fk FOREIGN KEY (user_blog_id) 
+        REFERENCES model_user_blog (user_blog_id) ON DELETE CASCADE,
+    CONSTRAINT m_ubfa_m_afa_fk FOREIGN KEY (aggregator_feed_article_id) 
+        REFERENCES model_aggregator_feed_article (aggregator_feed_article_id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET='utf8' COLLATE='utf8_unicode_ci';
+
+COMMIT;

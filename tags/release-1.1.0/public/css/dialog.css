@@ -1,0 +1,34 @@
+/* dialog */
+
+.b-dialog-modal
+{
+    z-index: 2501;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: black;
+}
+.b-dialog
+{
+    z-index: 2502;
+    position: absolute;
+    background-color: whitesmoke;
+    border: 5px solid lightslategray;
+    padding: 25px;
+    width: 25%;
+}
+.b-dialog-alert
+{
+    width: 240px;
+}
+.b-dialog hr
+{
+    border: 0;
+    border-top: 1px solid lightslategray;
+}
+.b-dialog-buttons
+{
+    float: right;
+}

@@ -1,0 +1,31 @@
+#welcome-ct
+{
+    padding: 20px 80px 20px 80px;
+}
+#welcome-ct h1
+{
+    padding-bottom: 25px;
+}
+
+div.inputleft
+{
+    float: left;
+    width: 350px;
+    text-align: left;
+}
+div.inputright
+{
+    float: right;
+    width: 350px;
+    text-align: left;
+}
+div.inputclear
+{
+    clear: both;
+}
+
+#signin-button
+{
+    width: 200px;
+    height: 30px;
+}

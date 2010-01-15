@@ -1,0 +1,101 @@
+*
+{
+	padding: 0;
+	margin: 0;
+}
+body
+{
+	text-align: center;
+	font-family: "Trebuchet MS", Verdana, Geneva, Arial, Helvetica, sans-serif;
+}
+img
+{
+	border: 0;
+}
+a
+{
+    text-decoration: none;
+    color: #2780b1;
+}
+a:hover
+{
+    color: #164a66;
+}
+
+#mainct
+{
+    text-align: left;
+    margin: 25px;
+}
+h1
+{
+    font-size: 1.5em;
+    margin-bottom: 15px;
+}
+#msg
+{
+    width: 650px;
+}
+
+/* form */
+
+div.form-row
+{
+	height: 60px;
+	font-weight: bold;
+	line-height: 30px;
+}
+div.form-bot
+{
+    margin: 10px 0px 10px 0px;
+    <?php if($this->browser_is_ie) : ?>
+    margin-right: 5px;
+    <?php endif ?>
+}
+input.intxt
+{
+	border: 1px solid #C6C6C6;
+	height: 25px;
+	line-height: 23px;
+	padding: 0px 2px 0px 2px;
+	font-size: 1em;
+	color: #464646;
+	font-weight: bold;
+}
+textarea.intxa
+{
+	border: 1px solid #C6C6C6;
+	padding: 0px 2px 0px 2px;
+	font-size: 1em;
+	color: #464646;
+	font-weight: bold;
+}
+select.insel
+{
+	border: 1px solid #C6C6C6;
+	height: 25px;
+	line-height: 23px;
+	padding: 0px 2px 0px 2px;
+	font-size: 1em;
+	color: #464646;
+	font-weight: bold;
+}
+button, input.button-ie
+{
+	height: 20px;
+    font-size: 0.7em;
+	line-height: 20px;
+	font-weight: bold;
+	padding: 0px 5px 0px 5px;
+    border: 0;
+	background-image: url('/image/index/btn-bg.png?v=1253527293');
+	background-repeat: repeat-x;
+	background-position: 0px 0px;
+	background-color: #FF6600;
+	-moz-border-radius: 9px;
+	-webkit-border-radius: 9px;
+    cursor: pointer;
+    cursor: hand;
+}
+
+

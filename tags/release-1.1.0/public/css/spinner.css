@@ -1,0 +1,28 @@
+/* spinner */
+
+.b-spinner
+{
+    z-index: 8001;
+    position: absolute;
+    width: 95px;
+    padding: 5px 10px 5px 10px;
+    margin-top: 8px;
+    font-size: 0.8em;
+    color: black;
+    background-color: #FFCC00;
+	-moz-border-radius: 3px;
+	-webkit-border-radius: 3px;
+}
+.b-spinner-image
+{
+    float: left;
+    padding-top: 6px;
+}
+.b-spinner-message
+{
+    float: right;
+    line-height: 24px;
+    width: 70px;
+    white-space: nowrap;
+    overflow: hidden;
+}
