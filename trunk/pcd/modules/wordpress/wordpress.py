@@ -44,13 +44,13 @@ class PCDModule:
     def isItMe(self):
         try:
             # a wordpress site will have this special page
-            return urllib.urlopen(urlparse.urljoin(self._admin_url, 'xmlrpc.php')).read() == 'XML-RPC server accepts POST requests only.'
+            return urllib.urlopen(urlparse.urljoin(self._admin_url+'/', 'xmlrpc.php')).read() == 'XML-RPC server accepts POST requests only.'
         except:
             return False
 
     def authenticate(self):
         try:
-            self.api = pyblog.WordPress(urlparse.urljoin(self._admin_url, 'xmlrpc.php'), self._username, self._password)
+            self.api = pyblog.WordPress(urlparse.urljoin(self._admin_url+'/', 'xmlrpc.php'), self._username, self._password)
             self.api.get_recent_posts()
         except (pyblog.BlogError, pyblog.xmlrpclib.ProtocolError):
             self._authenticated = False
