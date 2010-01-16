@@ -388,13 +388,23 @@ class UserBlogFeed extends B_Model
                                                 $older=null, 
                                                 $limit=25)
     {
-        $sql = "SELECT a.feed_title AS feed_title, a.hash AS feed, 
+        /* note: ORDER BY for this query is done with a SUBSELECT
+                 for a better performance (original query was using filesort and
+                 were very slow) */
+        $sql = "SELECT feed_title, feed, article, article_title, article_link,
+                article_link, article_date, article_author, article_content,
+                publication_status, entry, wr FROM (";
+        $sql.= "SELECT a.feed_title AS feed_title, a.hash AS feed, 
                        b.article_md5 AS article, b.article_title AS article_title, 
                        b.article_link AS article_link, b.created_at AS article_date, 
                        b.article_author AS article_author, b.article_content AS article_content,
                        c.publication_status AS publication_status,
                        c.hash AS entry,
-                       d.was_read AS wr
+                       d.was_read AS wr,
+
+                       b.article_date AS b_art_dt,
+                       b.aggregator_feed_article_id AS b_agg_faid 
+
                 FROM model_user_blog_feed AS a
                 LEFT JOIN model_aggregator_feed_article AS b
                     ON (a.aggregator_feed_id = b.aggregator_feed_id)
@@ -410,9 +420,10 @@ class UserBlogFeed extends B_Model
         $sql.= "AND a.hash = ? AND a.user_blog_id = (
                     SELECT user_blog_id
                     FROM model_user_blog
-                    WHERE hash = ? AND user_profile_id = ?) 
-                ORDER BY b.created_at DESC, b.article_date DESC, b.aggregator_feed_article_id DESC
-                LIMIT " . intval($limit);
+                    WHERE hash = ? AND user_profile_id = ?) ";
+//              ORDER BY b.created_at DESC, b.article_date DESC, b.aggregator_feed_article_id DESC
+        $sql.= "LIMIT " . intval($limit);
+        $sql.= ") AS t ORDER BY article_date DESC, b_art_dt DESC, b_agg_faid DESC";
 
         $args = array();
         if($older) $args[] = date("Y-m-d H:i:s", $older);
@@ -432,13 +443,23 @@ class UserBlogFeed extends B_Model
                                            $older=null, 
                                            $limit=25)
     {
-        $sql = "SELECT a.feed_title AS feed_title, a.hash AS feed, 
+        /* note: ORDER BY for this query is done with a SUBSELECT
+                 for a better performance (original query was using filesort and
+                 were very slow) */
+        $sql = "SELECT feed_title, feed, article, article_title, article_link,
+                article_link, article_date, article_author, article_content,
+                publication_status, entry, wr FROM (";
+        $sql.= "SELECT a.feed_title AS feed_title, a.hash AS feed, 
                        b.article_md5 AS article, b.article_title AS article_title, 
                        b.article_link AS article_link, b.created_at AS article_date, 
                        b.article_author AS article_author, b.article_content AS article_content,
                        c.publication_status AS publication_status,
                        c.hash AS entry,
-                       d.was_read AS wr
+                       d.was_read AS wr,
+
+                       b.article_date AS b_art_dt,
+                       b.aggregator_feed_article_id AS b_agg_faid 
+
                 FROM model_user_blog_feed AS a
                 LEFT JOIN model_aggregator_feed_article AS b
                     ON (a.aggregator_feed_id = b.aggregator_feed_id)
@@ -460,9 +481,10 @@ class UserBlogFeed extends B_Model
         $sql.= "AND a.user_blog_id = (
                     SELECT user_blog_id
                     FROM model_user_blog
-                    WHERE hash = ? AND user_profile_id = ?) 
-                ORDER BY b.created_at DESC, b.article_date DESC, b.aggregator_feed_article_id DESC
-                LIMIT " . intval($limit);
+                    WHERE hash = ? AND user_profile_id = ?) "; 
+//              ORDER BY b.created_at DESC, b.article_date DESC, b.aggregator_feed_article_id DESC
+        $sql.= "LIMIT " . intval($limit);
+        $sql.= ") AS t ORDER BY article_date DESC, b_art_dt DESC, b_agg_faid DESC";
 
         $args = array();
         $args[] = $tag;
@@ -488,13 +510,23 @@ class UserBlogFeed extends B_Model
                                            $older=null, 
                                            $limit=self::ARTICLES_MAX)
     {
-        $sql = "SELECT a.feed_title AS feed_title, a.hash AS feed, 
+        /* note: ORDER BY for this query is done with a SUBSELECT
+                 for a better performance (original query was using filesort and
+                 were very slow) */
+        $sql = "SELECT feed_title, feed, article, article_title, article_link,
+                article_link, article_date, article_author, article_content,
+                publication_status, entry, wr FROM (";
+        $sql.= "SELECT a.feed_title AS feed_title, a.hash AS feed, 
                        b.article_md5 AS article, b.article_title AS article_title, 
                        b.article_link AS article_link, b.created_at AS article_date, 
                        b.article_author AS article_author, b.article_content AS article_content,
                        c.publication_status AS publication_status,
                        c.hash AS entry,
-                       d.was_read AS wr
+                       d.was_read AS wr,
+
+                       b.article_date AS b_art_dt,
+                       b.aggregator_feed_article_id AS b_agg_faid 
+
                 FROM model_user_blog_feed AS a 
                 LEFT JOIN model_aggregator_feed_article AS b 
                     ON (a.aggregator_feed_id = b.aggregator_feed_id) 
@@ -510,9 +542,10 @@ class UserBlogFeed extends B_Model
         $sql.= "AND a.user_blog_id = (
                     SELECT user_blog_id
                     FROM model_user_blog
-                    WHERE hash = ? AND user_profile_id = ?) 
-                ORDER BY b.created_at DESC, b.article_date DESC, b.aggregator_feed_article_id DESC
-                LIMIT " . intval($limit);
+                    WHERE hash = ? AND user_profile_id = ?) "; 
+//              ORDER BY b.created_at DESC, b.article_date DESC, b.aggregator_feed_article_id DESC
+        $sql.= "LIMIT " . intval($limit);
+        $sql.= ") AS t ORDER BY article_date DESC, b_art_dt DESC, b_agg_faid DESC";
 
         $args = array();
         if($older) $args[] = date("Y-m-d H:i:s", $older);
