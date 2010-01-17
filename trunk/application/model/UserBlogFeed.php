@@ -371,6 +371,34 @@ class UserBlogFeed extends B_Model
         return $r['total'];
     }
 
+
+    const FIND_ARTICLES_TOP = "SELECT 
+        a.feed_title AS feed_title, a.hash AS feed, 
+        b.article_md5 AS article, b.article_title AS article_title,
+        b.article_link AS article_link, b.created_at AS article_date,
+        b.article_author AS article_author, b.article_content AS article_content,
+        c.publication_status AS publication_status,
+        c.hash AS entry,
+        d.was_read AS wr
+
+        FROM model_aggregator_feed_article AS x
+
+        LEFT JOIN model_aggregator_feed_article AS b
+            ON (b.aggregator_feed_article_id = x.aggregator_feed_article_id)
+        LEFT JOIN model_user_blog_feed AS a
+            ON (b.aggregator_feed_id = a.aggregator_feed_id)
+            AND (? = a.user_blog_id)
+
+        LEFT JOIN model_user_blog_entry AS c
+            ON (b.aggregator_feed_article_id = c.aggregator_feed_article_id) 
+            AND (a.user_blog_id = c.user_blog_id)
+            AND (c.deleted = 0)
+        LEFT JOIN model_user_blog_feed_article AS d
+            ON (a.user_blog_id = d.user_blog_id)
+            AND (b.aggregator_feed_article_id = d.aggregator_feed_article_id) ";
+
+    const FIND_ARTICLES_BOT = "ORDER BY x.aggregator_feed_article_id DESC LIMIT %d";
+
     /**
      * Find feed articles for a user blog feed
      *
@@ -388,48 +416,24 @@ class UserBlogFeed extends B_Model
                                                 $older=null, 
                                                 $limit=25)
     {
-        /* note: ORDER BY for this query is done with a SUBSELECT
-                 for a better performance (original query was using filesort and
-                 were very slow) */
-        $sql = "SELECT feed_title, feed, article, article_title, article_link,
-                article_link, article_date, article_author, article_content,
-                publication_status, entry, wr FROM (";
-        $sql.= "SELECT a.feed_title AS feed_title, a.hash AS feed, 
-                       b.article_md5 AS article, b.article_title AS article_title, 
-                       b.article_link AS article_link, b.created_at AS article_date, 
-                       b.article_author AS article_author, b.article_content AS article_content,
-                       c.publication_status AS publication_status,
-                       c.hash AS entry,
-                       d.was_read AS wr,
+        $blog_id = null;
+        if(is_object(($blog = UserBlog::getByUserAndHash($user_id, $blog_hash))))
+        {
+            $blog_id = $blog->user_blog_id;
+        }
+        $feed_id = null;
+        if(is_object(($feed = self::getByBlogAndFeedHash($user_id, $blog_hash, $feed_hash))))
+        {
+            $feed_id = $feed->aggregator_feed_id;
+        }
 
-                       b.article_date AS b_art_dt,
-                       b.aggregator_feed_article_id AS b_agg_faid 
+        $sql = self::FIND_ARTICLES_TOP;
+        $sql.= "WHERE x.aggregator_feed_id = ? ";
+        if($older) $sql.= "AND x.created_at < ? ";
+        $sql.= sprintf(self::FIND_ARTICLES_BOT, $limit);
 
-                FROM model_user_blog_feed AS a
-                LEFT JOIN model_aggregator_feed_article AS b
-                    ON (a.aggregator_feed_id = b.aggregator_feed_id)
-                LEFT JOIN model_user_blog_entry AS c
-                    ON (b.aggregator_feed_article_id = c.aggregator_feed_article_id) 
-                    AND (a.user_blog_id = c.user_blog_id)
-                    AND (c.deleted = 0)
-                LEFT JOIN model_user_blog_feed_article AS d
-                    ON (a.user_blog_id = d.user_blog_id)
-                    AND (b.aggregator_feed_article_id = d.aggregator_feed_article_id)
-                WHERE a.visible = 1 AND a.deleted = 0 ";
-        if($older) $sql.= "AND b.updated_at < ? ";
-        $sql.= "AND a.hash = ? AND a.user_blog_id = (
-                    SELECT user_blog_id
-                    FROM model_user_blog
-                    WHERE hash = ? AND user_profile_id = ?) ";
-//              ORDER BY b.created_at DESC, b.article_date DESC, b.aggregator_feed_article_id DESC
-        $sql.= "LIMIT " . intval($limit);
-        $sql.= ") AS t ORDER BY article_date DESC, b_art_dt DESC, b_agg_faid DESC";
-
-        $args = array();
+        $args = array($blog_id, $feed_id);
         if($older) $args[] = date("Y-m-d H:i:s", $older);
-        $args[] = $feed_hash;
-        $args[] = $blog_hash;
-        $args[] = $user_id;
 
         return self::select($sql, $args, PDO::FETCH_ASSOC);
     }
@@ -443,54 +447,29 @@ class UserBlogFeed extends B_Model
                                            $older=null, 
                                            $limit=25)
     {
-        /* note: ORDER BY for this query is done with a SUBSELECT
-                 for a better performance (original query was using filesort and
-                 were very slow) */
-        $sql = "SELECT feed_title, feed, article, article_title, article_link,
-                article_link, article_date, article_author, article_content,
-                publication_status, entry, wr FROM (";
-        $sql.= "SELECT a.feed_title AS feed_title, a.hash AS feed, 
-                       b.article_md5 AS article, b.article_title AS article_title, 
-                       b.article_link AS article_link, b.created_at AS article_date, 
-                       b.article_author AS article_author, b.article_content AS article_content,
-                       c.publication_status AS publication_status,
-                       c.hash AS entry,
-                       d.was_read AS wr,
+        $blog_id = null;
+        if(is_object(($blog = UserBlog::getByUserAndHash($user_id, $blog_hash))))
+        {
+            $blog_id = $blog->user_blog_id;
+        }
 
-                       b.article_date AS b_art_dt,
-                       b.aggregator_feed_article_id AS b_agg_faid 
+        $sql = self::FIND_ARTICLES_TOP;
+        $sql.= "WHERE x.aggregator_feed_id IN (
+                    SELECT r.aggregator_feed_id
+                    FROM model_user_blog_feed AS r
+                    INNER JOIN model_user_blog_tag AS s
+                        ON (r.user_blog_id = s.user_blog_id)
+                        AND (s.name = ?)
+                    INNER JOIN model_user_blog_feed_tag AS t
+                        ON (r.user_blog_feed_id = t.user_blog_feed_id)
+                        AND (s.user_blog_tag_id = t.user_blog_tag_id)
+                    WHERE r.user_blog_id = ? 
+                    AND r.deleted = 0) ";
+        if($older) $sql.= "AND x.created_at < ? ";
+        $sql.= sprintf(self::FIND_ARTICLES_BOT, $limit);
 
-                FROM model_user_blog_feed AS a
-                LEFT JOIN model_aggregator_feed_article AS b
-                    ON (a.aggregator_feed_id = b.aggregator_feed_id)
-                LEFT JOIN model_user_blog_entry AS c
-                    ON (b.aggregator_feed_article_id = c.aggregator_feed_article_id) 
-                    AND (a.user_blog_id = c.user_blog_id)
-                    AND (c.deleted = 0)
-                LEFT JOIN model_user_blog_feed_article AS d
-                    ON (a.user_blog_id = d.user_blog_id)
-                    AND (b.aggregator_feed_article_id = d.aggregator_feed_article_id)
-                INNER JOIN model_user_blog_tag AS e
-                    ON (a.user_blog_id = e.user_blog_id)
-                    AND (e.name = ?)
-                INNER JOIN model_user_blog_feed_tag AS f
-                    ON (a.user_blog_feed_id = f.user_blog_feed_id)
-                    AND (e.user_blog_tag_id = f.user_blog_tag_id)
-                WHERE a.deleted = 0 "; // a.visible doesnt matter
-        if($older) $sql.= "AND b.updated_at < ? ";
-        $sql.= "AND a.user_blog_id = (
-                    SELECT user_blog_id
-                    FROM model_user_blog
-                    WHERE hash = ? AND user_profile_id = ?) "; 
-//              ORDER BY b.created_at DESC, b.article_date DESC, b.aggregator_feed_article_id DESC
-        $sql.= "LIMIT " . intval($limit);
-        $sql.= ") AS t ORDER BY article_date DESC, b_art_dt DESC, b_agg_faid DESC";
-
-        $args = array();
-        $args[] = $tag;
+        $args = array($blog_id, $tag, $blog_id);
         if($older) $args[] = date("Y-m-d H:i:s", $older);
-        $args[] = $blog_hash;
-        $args[] = $user_id;
 
         return self::select($sql, $args, PDO::FETCH_ASSOC);
     }
@@ -510,47 +489,24 @@ class UserBlogFeed extends B_Model
                                            $older=null, 
                                            $limit=self::ARTICLES_MAX)
     {
-        /* note: ORDER BY for this query is done with a SUBSELECT
-                 for a better performance (original query was using filesort and
-                 were very slow) */
-        $sql = "SELECT feed_title, feed, article, article_title, article_link,
-                article_link, article_date, article_author, article_content,
-                publication_status, entry, wr FROM (";
-        $sql.= "SELECT a.feed_title AS feed_title, a.hash AS feed, 
-                       b.article_md5 AS article, b.article_title AS article_title, 
-                       b.article_link AS article_link, b.created_at AS article_date, 
-                       b.article_author AS article_author, b.article_content AS article_content,
-                       c.publication_status AS publication_status,
-                       c.hash AS entry,
-                       d.was_read AS wr,
+        $blog_id = null;
+        if(is_object(($blog = UserBlog::getByUserAndHash($user_id, $blog_hash))))
+        {
+            $blog_id = $blog->user_blog_id;
+        }
 
-                       b.article_date AS b_art_dt,
-                       b.aggregator_feed_article_id AS b_agg_faid 
+        $sql = self::FIND_ARTICLES_TOP;
+        $sql.= "WHERE x.aggregator_feed_id IN (
+                    SELECT aggregator_feed_id
+                    FROM model_user_blog_feed
+                    WHERE user_blog_id = ?
+                    AND visible = 1 
+                    AND deleted = 0) ";
+        if($older) $sql.= "AND x.created_at < ? ";
+        $sql.= sprintf(self::FIND_ARTICLES_BOT, $limit);
 
-                FROM model_user_blog_feed AS a 
-                LEFT JOIN model_aggregator_feed_article AS b 
-                    ON (a.aggregator_feed_id = b.aggregator_feed_id) 
-                LEFT JOIN model_user_blog_entry AS c
-                    ON (b.aggregator_feed_article_id = c.aggregator_feed_article_id) 
-                    AND (a.user_blog_id = c.user_blog_id)
-                    AND (c.deleted = 0)
-                LEFT JOIN model_user_blog_feed_article AS d
-                    ON (a.user_blog_id = d.user_blog_id)
-                    AND (b.aggregator_feed_article_id = d.aggregator_feed_article_id)
-                WHERE a.visible = 1 AND a.deleted = 0 ";
-        if($older) $sql.= "AND b.updated_at < ? ";
-        $sql.= "AND a.user_blog_id = (
-                    SELECT user_blog_id
-                    FROM model_user_blog
-                    WHERE hash = ? AND user_profile_id = ?) "; 
-//              ORDER BY b.created_at DESC, b.article_date DESC, b.aggregator_feed_article_id DESC
-        $sql.= "LIMIT " . intval($limit);
-        $sql.= ") AS t ORDER BY article_date DESC, b_art_dt DESC, b_agg_faid DESC";
-
-        $args = array();
+        $args = array($blog_id, $blog_id);
         if($older) $args[] = date("Y-m-d H:i:s", $older);
-        $args[] = $blog_hash;
-        $args[] = $user_id;
 
         return self::select($sql, $args, PDO::FETCH_ASSOC);
     }
