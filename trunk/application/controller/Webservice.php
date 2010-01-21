@@ -10,12 +10,13 @@
 class C_Webservice extends B_Controller
 {
     /**
-     * Before action
+     * Configure controller
      */
-    public function before()
+    public function configure($action_name)
     {
-        $this->view()->setLayout(null);
-        $this->view()->setTemplate(null);
+        $this->hasView(false);
+        $this->hasSession(false);
+        $this->hasTranslation(false);
     }
 
     /**

@@ -10,6 +10,16 @@
 class C_Blog extends B_Controller
 {
     /**
+     * Configure controller
+     */
+    public function configure($action_name)
+    {
+        $this->hasView(false);
+        $this->hasSession(false);
+        $this->hasTranslation(false);
+    }
+
+    /**
      * Default action
      *
      * @return void

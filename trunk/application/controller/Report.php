@@ -9,6 +9,14 @@
 
 class C_Report extends B_Controller
 {
+    /* configure controller */
+
+    public function configure($action_name)
+    {
+        $this->hasSession(false);
+        $this->hasTranslation(false);
+    }
+
     public function before()
     {
         $this->view()->setLayout('admin');

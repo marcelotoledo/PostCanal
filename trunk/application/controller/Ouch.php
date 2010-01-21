@@ -9,6 +9,13 @@
 
 class C_Ouch extends B_Controller
 {
+    /* configure controller */
+
+    public function configure($action_name)
+    {
+        $this->hasSession(false);
+    }
+
     /**
      * Default action
      *

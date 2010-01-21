@@ -11,6 +11,14 @@
 class C_Dashboard extends B_Controller
 {
     /**
+     * Configure controller
+     */
+    public function configure($action_name)
+    {
+        $this->hasTranslation(false);
+    }
+
+    /**
      * Before action
      */
     public function before()

@@ -17,6 +17,31 @@ class B_Controller
      */
     public $view;
 
+
+    /**
+     * Controller loading
+     */
+    private $has_view = true;
+    private $has_session = true;
+    private $has_translation = true;
+
+    public function hasView($b=null)
+    {
+        if(is_bool($b)) $this->has_view = $b;
+        return $this->has_view;
+    }
+
+    public function hasSession($b=null)
+    {
+        if(is_bool($b)) $this->has_session = $b;
+        return $this->has_session;
+    }
+
+    public function hasTranslation($b=null)
+    {
+        if(is_bool($b)) $this->has_translation = $b;
+        return $this->has_translation;
+    }
  
     /**
      * Access to data
@@ -28,6 +53,13 @@ class B_Controller
     {
         if($name == "view") return $this->view;
         else                return B_Registry::get($name . '/object');
+    }
+
+    /**
+     * Configure
+     */
+    public function configure($action_name)
+    {
     }
 
     /**

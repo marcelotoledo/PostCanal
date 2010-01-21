@@ -23,6 +23,14 @@ class C_Site extends B_Controller
 
 
     /**
+     * Configure controller
+     */
+    public function configure($action_name)
+    {
+        if($action_name!='index') $this->hasTranslation(false);
+    }
+
+    /**
      * Before action
      */
     public function before()

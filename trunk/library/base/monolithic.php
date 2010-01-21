@@ -73,6 +73,8 @@ class B_Bootstrap
                 $action_name = $this->default_action;
             }
 
+            $controller->configure($action_name);
+
             if($controller->check($action_name) == false)
             {
                 $has_error = true;
@@ -83,54 +85,64 @@ class B_Bootstrap
             {
                 /* initialize view */
 
-                $view = new B_View();
-                $layout = strtolower($controller_name);
-                $view->setLayout($layout);
-                $template = ucfirst($controller_name) . "/" . $action_name;
-                $view->setTemplate($template);
-                $controller->view = $view;
+                if($controller->hasView())
+                {
+                    $view = new B_View();
+                    $layout = strtolower($controller_name);
+                    $view->setLayout($layout);
+                    $template = ucfirst($controller_name) . "/" . $action_name;
+                    $view->setTemplate($template);
+                    $controller->view = $view;
+                }
 
                 /* initialize session */
 
-                $session_name = B_Registry::get('session/name');
                 $session = null;
 
-                try
+                if($controller->hasSession())
                 {
-                    $session = new B_Session($session_name);
-                }
-                catch(Exception $e)
-                {
-                    $message = $e->getMessage();
-                    $response->setStatus(B_Response::STATUS_ERROR);
-                    $has_error = true;
-                    $session = null;
-                }
+                    $session_name = B_Registry::get('session/name');
 
-                B_Registry::set('session/object', $session);
+                    try
+                    {
+                        $session = new B_Session($session_name);
+                    }
+                    catch(Exception $e)
+                    {
+                        $message = $e->getMessage();
+                        $response->setStatus(B_Response::STATUS_ERROR);
+                        $has_error = true;
+                        $session = null;
+                    }
+
+                    B_Registry::set('session/object', $session);
+                }
 
                 /* initialize translation */
 
-                $culture = $session ? $session->getCulture() : 'en_US';
-                $translation = new B_Translation($culture);
-                B_Registry::set('translation/object', $translation);
-
-                /* translation load */
-
-                $this->translation_load[] = 'application';
-                $this->translation_load[] = $controller_name;
-                $this->translation_load[] = $controller_name . "/" . $action_name;
-
-                try
+                if($controller->hasTranslation())
                 {
-                    $translation->load($this->translation_load);
-                }
-                catch(Exception $e)
-                {
-                    $message = $e->getMessage();
-                    $response->setStatus(B_Response::STATUS_ERROR);
-                    $has_error = true;
-                    $session = null;
+                    $culture = $session ? $session->getCulture() : 'en_US';
+                    $translation = new B_Translation($culture);
+                    B_Registry::set('translation/object', $translation);
+
+                    /* translation load */
+
+                    $this->translation_load[] = 'application';
+                    $this->translation_load[] = $controller_name;
+                    $this->translation_load[] = $controller_name . "/" . $action_name;
+
+                    try
+                    {
+                        $translation->load($this->translation_load);
+                    }
+                    catch(Exception $e)
+                    {
+                        $message = $e->getMessage();
+                        $response->setStatus(B_Response::STATUS_ERROR);
+                        $has_error = true;
+                        $session = null;
+                    }
                 }
             }
 
@@ -273,6 +285,31 @@ class B_Controller
      */
     public $view;
 
+
+    /**
+     * Controller loading
+     */
+    private $has_view = true;
+    private $has_session = true;
+    private $has_translation = true;
+
+    public function hasView($b=null)
+    {
+        if(is_bool($b)) $this->has_view = $b;
+        return $this->has_view;
+    }
+
+    public function hasSession($b=null)
+    {
+        if(is_bool($b)) $this->has_session = $b;
+        return $this->has_session;
+    }
+
+    public function hasTranslation($b=null)
+    {
+        if(is_bool($b)) $this->has_translation = $b;
+        return $this->has_translation;
+    }
  
     /**
      * Access to data
@@ -284,6 +321,13 @@ class B_Controller
     {
         if($name == "view") return $this->view;
         else                return B_Registry::get($name . '/object');
+    }
+
+    /**
+     * Configure
+     */
+    public function configure($action_name)
+    {
     }
 
     /**

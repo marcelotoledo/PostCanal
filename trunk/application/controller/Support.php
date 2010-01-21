@@ -15,6 +15,13 @@ class C_Support extends B_Controller
     const EMAIL_MESSAGE_MAX_SIZE = 80000; // 80kB
 
 
+    /* configure controller */
+
+    public function configure($action_name)
+    {
+        $this->hasSession(false);
+    }
+
     public function before()
     {
         $this->view()->setLayout('index');
