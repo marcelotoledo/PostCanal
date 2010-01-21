@@ -178,11 +178,12 @@ function unread_touch(feed, signal)
             
             if(_u.length>0)
             {
-                var _y = parseInt(_u.text().replace(/[^0-9]/g, ''));
-                _y>1 ? _u.text('('+(_y+signal)+')') : _u.text('');
+                var _y = parseInt(_u.text().replace(/[^0-9]/g, ''))+signal;
+                if(isNaN(_y) || _y<0) { return false; }
+                _y>0 ? _u.text('('+(_y)+')') : _u.text('');
                 _u = $(this).find('span.chunr');
-                _i = parseInt(_u.text().replace(/[^0-9]/g, ''));
-                _i>1 ? _u.text('('+(_i+signal)+')') : _u.text('');
+                _i = parseInt(_u.text().replace(/[^0-9]/g, ''))+signal;
+                _i>0 ? _u.text('('+(_i)+')') : _u.text('');
             }
         });
     }
@@ -202,11 +203,11 @@ function unread_update(feed, j)
             {
                 var _y = parseInt(_u.text().replace(/[^0-9]/g, ''));
                 if(isNaN(_y)) { _y=0; }
-                j>1 ? _u.text('('+j+')') : _u.text('');
+                j>0 ? _u.text('('+j+')') : _u.text('');
                 _u = $(this).find('span.chunr');
                 _i = parseInt(_u.text().replace(/[^0-9]/g, ''));
                 _i = isNaN(_i) ? (_y + j) : (_i - _y + j);
-                _i>1 ? _u.text('('+_i+')') : _u.text('');
+                _i>0 ? _u.text('('+_i+')') : _u.text('');
             }
         });
     }
@@ -485,14 +486,17 @@ function article_focus()
         if(my_feed.type=='writing') { return true; }
         if(my_article.current.hasClass('art-wr')) { return true; }
 
-        var _data = { blog    : my_blog.current ,
-                      article : my_article.current.attr('article'),
+        var _a = my_article.current.attr('article');
+        var _f = my_article.data[_a].feed;
+        var _data = { blog    : my_blog.current,
+                      feed    : _f,
+                      article : _a,
                       wr      : true };
 
         $.ajax({ type: 'POST', url: '/rw/wr', dataType: "xml", data: _data });
 
         my_article.current.addClass('art-wr').find('span.arttt').addClass('arttt-wr');
-        unread_touch(my_article.data[_data.article].feed, -1);
+        unread_touch(_f, -1);
     }
 }
 

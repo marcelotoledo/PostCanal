@@ -120,6 +120,7 @@ class C_Feed extends B_Controller
                 if(strlen($blog_feed->feed_title)==0) $blog_feed->feed_title = $url;
 
                 $blog_feed->feed_description = $feed->feed_description;
+                $blog_feed->article_initial_count = $feed->article_total_count;
                 $blog_feed->save();
             }
         }

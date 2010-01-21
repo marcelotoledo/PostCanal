@@ -301,6 +301,9 @@ class AggregatorFeedArticle extends B_Model
             }
         }
 
+        $feed->article_total_count += $inserted;
+        $feed->save();
+
         self::commit();
 
         $_t = $inserted + $updated;
