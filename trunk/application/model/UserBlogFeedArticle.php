@@ -112,6 +112,6 @@ class UserBlogFeedArticle extends B_Model
     {
         $blog = UserBlog::getByUserAndHash($user, $blog);
         $feed = UserBlogFeed::getByBlogAndHash($blog->user_blog_id, $feed);
-        return self::execute('REPLACE INTO ' . self::$table_name . ' (user_blog_feed_id, aggregator_feed_article_id, was_read) VALUES (?, (SELECT aggregator_feed_article_id FROM model_aggregator_feed_article WHERE article_md5 = ?), ?)', array($feed->user_blog_feed_id, $article, ($wr ? 1 : 0)));
+        return self::execute('REPLACE INTO ' . self::$table_name . ' (user_blog_feed_id, aggregator_feed_article_id, was_read) VALUES (?, (SELECT aggregator_feed_article_id FROM model_aggregator_feed_article WHERE article_md5 = ? LIMIT 1), ?)', array($feed->user_blog_feed_id, $article, ($wr ? 1 : 0)));
     }
 }
