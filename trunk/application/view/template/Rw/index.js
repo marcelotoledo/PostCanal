@@ -507,6 +507,7 @@ function article_unread(a)
     if(my_article.objects[a].hasClass('art-wr')==false) { return true; }
 
     var _data = { blog    : my_blog.current ,
+                  feed    : my_article.data[a].feed,
                   article : a,
                   wr      : false };
 
