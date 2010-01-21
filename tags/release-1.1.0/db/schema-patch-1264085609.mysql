@@ -1,0 +1,80 @@
+-- insert article total count column in aggregator feed table --
+
+ALTER TABLE model_aggregator_feed ADD COLUMN article_total_count INTEGER UNSIGNED NOT NULL DEFAULT 0 AFTER feed_status;
+
+-- update article total count values in aggregator feed table --
+
+CREATE TEMPORARY TABLE temp_article_total_count (aggregator_feed_id INTEGER UNSIGNED, article_total_count INTEGER UNSIGNED);
+
+INSERT INTO temp_article_total_count
+SELECT f.aggregator_feed_id AS aggregator_feed_id, 
+    COUNT(a.aggregator_feed_article_id) AS article_total_count 
+FROM model_aggregator_feed AS f
+LEFT JOIN model_aggregator_feed_article AS a
+    ON (a.aggregator_feed_id = f.aggregator_feed_id)
+GROUP BY f.aggregator_feed_id;
+
+UPDATE model_aggregator_feed, temp_article_total_count
+SET model_aggregator_feed.article_total_count = temp_article_total_count.article_total_count
+WHERE model_aggregator_feed.aggregator_feed_id = temp_article_total_count.aggregator_feed_id;
+
+DROP TEMPORARY TABLE temp_article_total_count;
+
+
+-- insert article initial count column in blog feed table --
+
+ALTER TABLE model_user_blog_feed ADD COLUMN article_initial_count INTEGER UNSIGNED NOT NULL DEFAULT 0 AFTER ordering;
+
+-- update article initial count values in blog feed table --
+
+CREATE TEMPORARY TABLE temp_article_initial_count (user_blog_feed_id INTEGER UNSIGNED, article_initial_count INTEGER UNSIGNED);
+
+INSERT INTO temp_article_initial_count
+SELECT f.user_blog_feed_id AS user_blog_feed_id,
+    COUNT(a.aggregator_feed_article_id) AS article_initial_count
+FROM model_user_blog_feed AS f
+LEFT JOIN model_aggregator_feed_article AS a
+    ON (a.aggregator_feed_id = f.aggregator_feed_id)
+LEFT JOIN model_user_blog AS b
+    ON (b.user_blog_id = f.user_blog_id)
+WHERE a.created_at < f.created_at
+AND f.visible = 1
+AND f.deleted = 0
+GROUP BY f.user_blog_feed_id;
+
+DROP TEMPORARY TABLE temp_article_initial_count;
+
+
+-- update user blog feed article table to support new algorithm --
+
+CREATE TEMPORARY TABLE temp_model_user_blog_feed_article (user_blog_feed_id INTEGER UNSIGNED NOT NULL, aggregator_feed_article_id INTEGER UNSIGNED NOT NULL, was_read TINYINT(1) NOT NULL DEFAULT 0);
+
+INSERT INTO temp_model_user_blog_feed_article
+SELECT bf.user_blog_feed_id AS user_blog_feed_id, 
+    wr.aggregator_feed_article_id AS aggregator_feed_article_id,
+    wr.was_read AS was_read
+FROM model_user_blog_feed_article AS wr
+LEFT JOIN model_aggregator_feed_article AS aa
+    ON (aa.aggregator_feed_article_id = wr.aggregator_feed_article_id)
+LEFT JOIN model_user_blog_feed AS bf
+    ON (bf.user_blog_id = wr.user_blog_id)
+    AND (bf.aggregator_feed_id = aa.aggregator_feed_id);
+
+DROP TABLE model_user_blog_feed_article;
+
+CREATE TABLE model_user_blog_feed_article
+(
+    user_blog_feed_id INTEGER UNSIGNED NOT NULL,
+    aggregator_feed_article_id INTEGER UNSIGNED NOT NULL,
+    was_read TINYINT(1) NOT NULL DEFAULT 0,
+    CONSTRAINT m_ubfa_un UNIQUE (user_blog_feed_id, aggregator_feed_article_id),
+    CONSTRAINT m_ubfa_m_ubf_fk FOREIGN KEY (user_blog_feed_id) 
+        REFERENCES model_user_blog_feed (user_blog_feed_id) ON DELETE CASCADE,
+    CONSTRAINT m_ubfa_m_afa_fk FOREIGN KEY (aggregator_feed_article_id) 
+        REFERENCES model_aggregator_feed_article (aggregator_feed_article_id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET='utf8' COLLATE='utf8_unicode_ci';
+
+INSERT INTO model_user_blog_feed_article
+SELECT * FROM temp_model_user_blog_feed_article;
+
+DROP TEMPORARY TABLE temp_model_user_blog_feed_article;
