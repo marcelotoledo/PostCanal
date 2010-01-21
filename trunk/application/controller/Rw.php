@@ -51,8 +51,9 @@ class C_Rw extends B_Controller
         $this->response()->setXML(true);
         $u = $this->session()->user_profile_id;
         $b = $this->request()->blog;
+        $f = $this->request()->feed;
         $a = $this->request()->article;
         $w =($this->request()->wr=='true');
-        UserBlogFeedArticle::setArticleReadAttr($u, $b, $a, $w);
+        UserBlogFeedArticle::setArticleReadAttr($u, $b, $f, $a, $w);
     }
 }

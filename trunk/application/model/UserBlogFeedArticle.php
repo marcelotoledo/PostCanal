@@ -23,7 +23,7 @@ class UserBlogFeedArticle extends B_Model
      * @var array
      */
     protected static $table_structure = array (
-		'user_blog_id' => array ('type' => 'integer','size' => 0,'required' => true),
+		'user_blog_feed_id' => array ('type' => 'integer','size' => 0,'required' => true),
 		'aggregator_feed_article_id' => array ('type' => 'integer','size' => 0,'required' => true),
 		'was_read' => array ('type' => 'boolean','size' => 0,'required' => false));
 
@@ -108,8 +108,10 @@ class UserBlogFeedArticle extends B_Model
 
     // -------------------------------------------------------------------------
 
-    public static function setArticleReadAttr($user, $blog, $article, $wr=true)
+    public static function setArticleReadAttr($user, $blog, $feed, $article, $wr=true)
     {
-        return self::execute('REPLACE INTO ' . self::$table_name . ' (user_blog_id, aggregator_feed_article_id, was_read) VALUES ((SELECT user_blog_id FROM model_user_blog WHERE user_profile_id = ? AND hash = ?), (SELECT aggregator_feed_article_id FROM model_aggregator_feed_article WHERE article_md5 = ?), ?)', array($user, $blog, $article, ($wr ? 1 : 0)));
+        $blog = UserBlog::getByUserAndHash($user, $blog);
+        $feed = UserBlogFeed::getByBlogAndHash($blog->user_blog_id, $feed);
+        return self::execute('REPLACE INTO ' . self::$table_name . ' (user_blog_feed_id, aggregator_feed_article_id, was_read) VALUES (?, (SELECT aggregator_feed_article_id FROM model_aggregator_feed_article WHERE article_md5 = ?), ?)', array($feed->user_blog_feed_id, $article, ($wr ? 1 : 0)));
     }
 }

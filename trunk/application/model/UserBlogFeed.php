@@ -30,6 +30,7 @@ class UserBlogFeed extends B_Model
 		'feed_title' => array ('type' => 'string','size' => 100,'required' => true),
 		'feed_description' => array ('type' => 'string','size' => 0,'required' => true),
 		'ordering' => array ('type' => 'integer','size' => 0,'required' => false),
+        'article_initial_count' => array('type' => 'integer','size' => 0,'required' => false),
 		'created_at' => array ('type' => 'date','size' => 0,'required' => false),
 		'updated_at' => array ('type' => 'date','size' => 0,'required' => false),
 		'visible' => array ('type' => 'boolean','size' => 0,'required' => false),
@@ -306,44 +307,37 @@ class UserBlogFeed extends B_Model
         $blog = UserBlog::getByUserAndHash($user_id, $blog_hash);
         $blog_id = is_object($blog) ? $blog->user_blog_id : 0;
 
-        $args = Array();
-        $args[] = $blog_id; // 1
-        $args[] = $blog_id; // 2
-        $sql = "SELECT d.hash AS feed, COUNT(a.aggregator_feed_article_id) AS unread
-                FROM model_aggregator_feed_article AS a 
-                LEFT JOIN model_user_blog_feed AS d 
-                    ON (a.aggregator_feed_id = d.aggregator_feed_id) 
-                LEFT JOIN model_user_blog AS c 
-                    ON (d.user_blog_id = c.user_blog_id) ";
+        $args = Array($blog_id);
+        $sql = "SELECT bf.hash AS feed, (af.article_total_count - bf.article_initial_count - COUNT(wr.aggregator_feed_article_id)) AS unread
+                FROM model_user_blog_feed AS bf
+                LEFT JOIN model_aggregator_feed AS af
+                    ON (af.aggregator_feed_id = bf.aggregator_feed_id)
+                LEFT JOIN model_user_blog_feed_article AS wr
+                    ON (wr.user_blog_feed_id = bf.user_blog_feed_id) ";
         if($tag)
         {
-            $sql.= "LEFT JOIN model_user_blog_feed_tag AS t
-                        ON (d.user_blog_feed_id = t.user_blog_feed_id) ";
+            $sql.= "LEFT JOIN model_user_blog_feed_tag AS ft
+                        ON (ft.user_blog_feed_id = bf.user_blog_feed_id) ";
         }
-        $sql.= "WHERE a.created_at >= c.created_at
-                AND a.aggregator_feed_article_id NOT IN
-                (
-                    SELECT aggregator_feed_article_id
-                    FROM model_user_blog_feed_article
-                    WHERE user_blog_id = ?
-                    AND was_read = 1
-                )
-                AND c.user_blog_id = ? ";
+        $sql.= "WHERE bf.user_blog_id = ? 
+                AND wr.was_read = 1 
+                AND bf.visible = 1
+                AND bf.deleted = 0
+                AND (af.article_total_count - bf.article_initial_count) > 0 ";
         if($feed_hash)
         { 
             $args[] = $feed_hash;
-            $sql.= "AND d.hash = ? "; 
+            $sql.= "AND bf.hash = ? "; 
         }
         if($tag)
         {
             $args[] = $tag;
-            $sql.= "AND t.user_blog_tag_id = (
+            $sql.= "AND ft.user_blog_tag_id = (
                         SELECT user_blog_tag_id 
                         FROM model_user_blog_tag 
                         WHERE name = ?) ";
         }
-        $sql.= "AND d.visible = 1 AND d.deleted = 0
-                GROUP BY d.hash";
+        $sql.= "GROUP BY bf.hash";
 
         return self::select($sql, $args, PDO::FETCH_ASSOC);
     }
@@ -394,7 +388,7 @@ class UserBlogFeed extends B_Model
             AND (a.user_blog_id = c.user_blog_id)
             AND (c.deleted = 0)
         LEFT JOIN model_user_blog_feed_article AS d
-            ON (a.user_blog_id = d.user_blog_id)
+            ON (a.user_blog_feed_id = d.user_blog_feed_id)
             AND (b.aggregator_feed_article_id = d.aggregator_feed_article_id) ";
 
     const FIND_ARTICLES_BOT = "ORDER BY x.aggregator_feed_article_id DESC LIMIT %d";

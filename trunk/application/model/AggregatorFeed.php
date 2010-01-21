@@ -31,6 +31,7 @@ class AggregatorFeed extends B_Model
 		'feed_description' => array ('type' => 'string','size' => 0,'required' => true),
 		'feed_update_time' => array ('type' => 'integer','size' => 0,'required' => false),
 		'feed_status' => array ('type' => 'string','size' => 3,'required' => false),
+        'article_total_count' => array('type' => 'integer','size' => 0,'required' => false),
 		'created_at' => array ('type' => 'date','size' => 0,'required' => false),
 		'updated_at' => array ('type' => 'date','size' => 0,'required' => false),
 		'enabled' => array ('type' => 'boolean','size' => 0,'required' => false),
