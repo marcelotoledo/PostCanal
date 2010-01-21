@@ -42,6 +42,10 @@ AND f.visible = 1
 AND f.deleted = 0
 GROUP BY f.user_blog_feed_id;
 
+UPDATE model_user_blog_feed, temp_article_initial_count
+SET model_user_blog_feed.article_initial_count = temp_article_initial_count.article_initial_count
+WHERE model_user_blog_feed.user_blog_feed_id = temp_article_initial_count.user_blog_feed_id;
+
 DROP TEMPORARY TABLE temp_article_initial_count;
 
 
@@ -56,7 +60,7 @@ SELECT bf.user_blog_feed_id AS user_blog_feed_id,
 FROM model_user_blog_feed_article AS wr
 LEFT JOIN model_aggregator_feed_article AS aa
     ON (aa.aggregator_feed_article_id = wr.aggregator_feed_article_id)
-LEFT JOIN model_user_blog_feed AS bf
+INNER JOIN model_user_blog_feed AS bf
     ON (bf.user_blog_id = wr.user_blog_id)
     AND (bf.aggregator_feed_id = aa.aggregator_feed_id);
 
