@@ -1,5 +1,36 @@
 POSTCANAL DEPLOYMENT
 
+- Fazer checkout da versao X.X.X
+  svn co svn+ssh://rafael@devel.postcanal.com/var/svn/postcanal/tags/release-X.X.X postcanal.com-X.X.0
+
+- Copiar arquivos de configuração
+  cd postcanal.com-X.X.0
+  cd config
+  cp /home/postcanal/postcanal.com/config/environment.xml .
+
+- Incluir as configurações adicionais a partir do diff
+  diff environment.xml.example environment.xml > environment.xml.diff
+
+- Copiar arquivo de .htaccess
+  cd ..
+  cd public
+  cp /home/postcanal/postcanal.com/public/.htaccess .htaccess
+
+- Incluir as configurações adicionais a partir do diff
+  diff .htaccess.example .htaccess > .htaccess.diff
+
+- Copiar bootstrap
+  cd ..
+  cd application
+  cp bootstrap.php bootstrap.php.old
+  cp /home/postcanal/postcanal.com/application/bootstrap.php bootstrap.php
+
+- Incluir as modificações do bootstrap
+  diff bootstrap.php bootstrap.php.old > .htaccess.diff
+
+  ---------------------------------------------------------
+
+
 - Alterar o config/environment.xml
   e atualizar o atributo application/maintenance para true
 
@@ -8,6 +39,8 @@ POSTCANAL DEPLOYMENT
   os usuários em sessão:
 
   UPDATE base_session SET active=0;
+  (ERROR 1206 (HY000): The total number of locks exceeds the lock table size)
+  (talvez necessita criar novos indices)
 
 - Parar o PCD
 

@@ -2,24 +2,9 @@ START TRANSACTION;
 
 -- drop --
 
-DROP TABLE IF EXISTS model_user_blog_entry CASCADE;
-DROP TABLE IF EXISTS model_user_blog_feed_article CASCADE;
-DROP TABLE IF EXISTS model_user_blog_feed_tag CASCADE;
-DROP TABLE IF EXISTS model_user_blog_tag CASCADE;
-DROP TABLE IF EXISTS model_user_blog_feed CASCADE;
-DROP TABLE IF EXISTS model_user_blog CASCADE;
-DROP TABLE IF EXISTS model_user_dashboard_setting CASCADE;
-DROP TABLE IF EXISTS model_user_profile CASCADE;
-DROP TABLE IF EXISTS model_user_profile_invitation CASCADE;
-DROP TABLE IF EXISTS model_aggregator_feed_article CASCADE;
-DROP TABLE IF EXISTS model_aggregator_feed_discover CASCADE;
-DROP TABLE IF EXISTS model_aggregator_feed CASCADE;
-DROP TABLE IF EXISTS model_blog_type CASCADE;
-DROP TABLE IF EXISTS application_mailer_relay CASCADE;
-DROP TABLE IF EXISTS application_report CASCADE;
-DROP TABLE IF EXISTS base_translation CASCADE;
-DROP TABLE IF EXISTS base_session CASCADE;
-DROP TABLE IF EXISTS base_log CASCADE;
+DROP DATABASE IF EXISTS postcanal;
+CREATE DATABASE postcanal;
+USE postcanal;
 
 -- base --
 
