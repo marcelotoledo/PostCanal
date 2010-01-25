@@ -3,11 +3,13 @@ BT = "./base_translation.php"
 
 default:
 	@echo ""
-	@echo "options are: schema|translation|patch"
+	@echo "options are: schema|data|translation|patch"
 	@echo ""
 schema:
 	$(DB) schema.mysql
 	@sleep 2s
+data:
+	$(DB) data.mysql
 translation:
 	$(BT)
 	$(DB) base_translation.mysql

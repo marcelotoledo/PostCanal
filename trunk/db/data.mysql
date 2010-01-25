@@ -1,0 +1,2 @@
+INSERT INTO model_user_profile (hash, login_email_local, login_email_domain, login_password_md5, register_confirmation, local_territory, local_culture, local_timezone) VALUES ('bBcCdDfF', 'rafael', 'castilho.biz', MD5('castilho'), 1, 'BR', 'en_US', 'America/Sao_Paulo');
+INSERT INTO model_user_profile_invitation (invitation_email_local, invitation_email_domain, name, enabled) VALUES ('rafael.ifusp', 'gmail.com', 'Rafael Castilho', 1);
