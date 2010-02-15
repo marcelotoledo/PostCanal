@@ -30,6 +30,8 @@ class B_Log
                                   $priority=E_NOTICE,
                                   $data=array())
     {
+        if((B_Registry::get('log/enabled')=='true')==false) return false;
+
         $columns = array('message', 'priority', 'created_at');
         $values = array($message, $priority, date('Y-m-d H:i:s'));
 
@@ -45,5 +47,7 @@ class B_Log
                           "(" . implode(", ", $columns) . ") VALUES " .
                           "(?" . str_repeat(", ?", count($columns) - 1) . ")",
                           $values);
+
+        return true;
     }
 }

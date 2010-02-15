@@ -12,6 +12,9 @@
             <db>postcanal</db>
         </default>
     </database>
+    <log>
+        <enabled>false</enabled>
+    </log>
     <session>
         <name>postcanal</name>
         <expiration>43200</expiration>
