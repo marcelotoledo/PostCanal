@@ -1,0 +1,442 @@
+-- MySQL dump 10.13  Distrib 5.1.37, for debian-linux-gnu (i486)
+--
+-- Host: localhost    Database: postcanal
+-- ------------------------------------------------------
+-- Server version	5.1.37-1ubuntu5-log
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!40101 SET NAMES utf8 */;
+/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
+/*!40103 SET TIME_ZONE='+00:00' */;
+/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
+/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
+/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
+/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+
+--
+-- Table structure for table `application_mailer_relay`
+--
+
+DROP TABLE IF EXISTS `application_mailer_relay`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `application_mailer_relay` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `recipient_email_local` varchar(64) COLLATE utf8_unicode_ci NOT NULL,
+  `recipient_email_domain` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  `identifier` varchar(100) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `identifier_md5` varchar(32) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT '1970-01-01 06:00:00',
+  PRIMARY KEY (`id`),
+  KEY `a_mry_idx` (`created_at`,`recipient_email_local`(8),`recipient_email_domain`(4),`identifier_md5`(6))
+) ENGINE=InnoDB AUTO_INCREMENT=45 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `application_report`
+--
+
+DROP TABLE IF EXISTS `application_report`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `application_report` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(200) COLLATE utf8_unicode_ci NOT NULL,
+  `db` varchar(200) COLLATE utf8_unicode_ci NOT NULL DEFAULT 'default',
+  `query` text COLLATE utf8_unicode_ci NOT NULL,
+  `enabled` tinyint(1) NOT NULL DEFAULT '1',
+  `created_at` timestamp NOT NULL DEFAULT '1970-01-01 06:00:00',
+  `updated_at` timestamp NOT NULL DEFAULT '1970-01-01 06:00:00',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `base_log`
+--
+
+DROP TABLE IF EXISTS `base_log`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `base_log` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `priority` int(10) unsigned NOT NULL DEFAULT '0',
+  `message` text COLLATE utf8_unicode_ci NOT NULL,
+  `data_method` varchar(100) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
+  `data_controller` varchar(100) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
+  `data_action` varchar(100) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
+  `data_user_profile_id` int(10) unsigned NOT NULL DEFAULT '0',
+  `created_at` timestamp NOT NULL DEFAULT '1970-01-01 06:00:00',
+  PRIMARY KEY (`id`),
+  KEY `b_log_idx` (`priority`)
+) ENGINE=InnoDB AUTO_INCREMENT=475736 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `base_session`
+--
+
+DROP TABLE IF EXISTS `base_session`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `base_session` (
+  `id` varchar(255) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
+  `session_expires` int(10) unsigned NOT NULL DEFAULT '0',
+  `session_data` text COLLATE utf8_unicode_ci,
+  `active` tinyint(1) NOT NULL DEFAULT '0',
+  KEY `b_ses_idx` (`id`(6),`session_expires`,`active`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `base_translation`
+--
+
+DROP TABLE IF EXISTS `base_translation`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `base_translation` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `template` varchar(200) COLLATE utf8_unicode_ci NOT NULL,
+  `culture` varchar(20) COLLATE utf8_unicode_ci NOT NULL,
+  `name` varchar(100) COLLATE utf8_unicode_ci NOT NULL,
+  `value` text COLLATE utf8_unicode_ci NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `b_trn_idx` (`template`(4),`culture`(4))
+) ENGINE=InnoDB AUTO_INCREMENT=265 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `model_aggregator_feed`
+--
+
+DROP TABLE IF EXISTS `model_aggregator_feed`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `model_aggregator_feed` (
+  `aggregator_feed_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `feed_url` text COLLATE utf8_unicode_ci NOT NULL,
+  `feed_url_md5` varchar(32) COLLATE utf8_unicode_ci NOT NULL,
+  `feed_link` text COLLATE utf8_unicode_ci NOT NULL,
+  `feed_title` varchar(100) COLLATE utf8_unicode_ci NOT NULL,
+  `feed_description` text COLLATE utf8_unicode_ci NOT NULL,
+  `feed_update_time` int(10) unsigned NOT NULL DEFAULT '0',
+  `feed_status` varchar(3) COLLATE utf8_unicode_ci NOT NULL DEFAULT '200',
+  `article_total_count` int(10) unsigned NOT NULL DEFAULT '0',
+  `created_at` timestamp NOT NULL DEFAULT '1970-01-01 06:00:00',
+  `updated_at` timestamp NOT NULL DEFAULT '1970-01-01 06:00:00',
+  `enabled` tinyint(1) NOT NULL DEFAULT '1',
+  `updateable` tinyint(1) NOT NULL DEFAULT '1',
+  PRIMARY KEY (`aggregator_feed_id`),
+  KEY `m_agf_idx` (`feed_url_md5`(6),`feed_update_time`,`updated_at`,`enabled`,`updateable`)
+) ENGINE=InnoDB AUTO_INCREMENT=248 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `model_aggregator_feed_article`
+--
+
+DROP TABLE IF EXISTS `model_aggregator_feed_article`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `model_aggregator_feed_article` (
+  `aggregator_feed_article_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `aggregator_feed_id` int(10) unsigned NOT NULL,
+  `article_md5` varchar(32) COLLATE utf8_unicode_ci NOT NULL,
+  `article_date` timestamp NOT NULL DEFAULT '1970-01-01 06:00:00',
+  `article_link` text COLLATE utf8_unicode_ci NOT NULL,
+  `article_title` text COLLATE utf8_unicode_ci NOT NULL,
+  `article_author` varchar(200) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
+  `article_content` text COLLATE utf8_unicode_ci NOT NULL,
+  `keywords` text COLLATE utf8_unicode_ci NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT '1970-01-01 06:00:00',
+  `updated_at` timestamp NOT NULL DEFAULT '1970-01-01 06:00:00',
+  PRIMARY KEY (`aggregator_feed_article_id`),
+  KEY `m_afa_m_agf_fk` (`aggregator_feed_id`),
+  KEY `m_afa_idx` (`article_md5`(6),`created_at`,`article_date`),
+  CONSTRAINT `m_afa_m_agf_fk` FOREIGN KEY (`aggregator_feed_id`) REFERENCES `model_aggregator_feed` (`aggregator_feed_id`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=322560 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `model_aggregator_feed_discover`
+--
+
+DROP TABLE IF EXISTS `model_aggregator_feed_discover`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `model_aggregator_feed_discover` (
+  `aggregator_feed_discover_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `url` text COLLATE utf8_unicode_ci NOT NULL,
+  `url_md5` varchar(32) COLLATE utf8_unicode_ci NOT NULL,
+  `feed_url` text COLLATE utf8_unicode_ci NOT NULL,
+  `feed_url_md5` varchar(32) COLLATE utf8_unicode_ci NOT NULL,
+  `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`aggregator_feed_discover_id`),
+  UNIQUE KEY `m_afd_un` (`url_md5`,`feed_url_md5`),
+  KEY `m_afd_idx` (`url_md5`(6),`feed_url_md5`(6),`updated_at`)
+) ENGINE=InnoDB AUTO_INCREMENT=295 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `model_blog_type`
+--
+
+DROP TABLE IF EXISTS `model_blog_type`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `model_blog_type` (
+  `blog_type_id` smallint(5) unsigned NOT NULL AUTO_INCREMENT,
+  `type_name` varchar(50) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
+  `type_label` varchar(50) COLLATE utf8_unicode_ci NOT NULL,
+  `version_name` varchar(50) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
+  `version_label` varchar(50) COLLATE utf8_unicode_ci NOT NULL,
+  `maintenance` tinyint(1) NOT NULL DEFAULT '0',
+  `enabled` tinyint(1) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`blog_type_id`),
+  UNIQUE KEY `m_btp_un` (`type_name`,`version_name`),
+  KEY `m_btp_idx` (`type_name`(4),`version_name`(4))
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `model_user_blog`
+--
+
+DROP TABLE IF EXISTS `model_user_blog`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `model_user_blog` (
+  `user_blog_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `user_profile_id` int(10) unsigned NOT NULL,
+  `blog_type_id` smallint(5) unsigned NOT NULL,
+  `blog_type_revision` smallint(5) unsigned NOT NULL DEFAULT '0',
+  `hash` varchar(8) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
+  `name` varchar(200) COLLATE utf8_unicode_ci NOT NULL,
+  `blog_url` text COLLATE utf8_unicode_ci NOT NULL,
+  `blog_url_md5` varchar(32) COLLATE utf8_unicode_ci NOT NULL,
+  `blog_manager_url` text COLLATE utf8_unicode_ci NOT NULL,
+  `blog_username` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `blog_password` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `oauth_enabled` tinyint(1) NOT NULL DEFAULT '0',
+  `enqueueing_auto` tinyint(1) NOT NULL DEFAULT '0',
+  `enqueueing_auto_updated_at` timestamp NOT NULL DEFAULT '1970-01-01 06:00:00',
+  `publication_auto` tinyint(1) NOT NULL DEFAULT '0',
+  `publication_interval` int(10) unsigned NOT NULL DEFAULT '0',
+  `keywords` text COLLATE utf8_unicode_ci NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT '1970-01-01 06:00:00',
+  `updated_at` timestamp NOT NULL DEFAULT '1970-01-01 06:00:00',
+  `enabled` tinyint(1) NOT NULL DEFAULT '1',
+  `deleted` tinyint(1) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`user_blog_id`),
+  UNIQUE KEY `m_ubg_uh` (`user_profile_id`,`hash`),
+  KEY `m_ubl_m_btp_fk` (`blog_type_id`),
+  KEY `m_ubg_idx` (`hash`(4),`blog_url_md5`(4),`enqueueing_auto`,`enqueueing_auto_updated_at`,`enabled`,`deleted`),
+  KEY `m_ubg_oae_idx` (`oauth_enabled`),
+  CONSTRAINT `m_ubl_m_btp_fk` FOREIGN KEY (`blog_type_id`) REFERENCES `model_blog_type` (`blog_type_id`),
+  CONSTRAINT `m_ubl_m_upf_fk` FOREIGN KEY (`user_profile_id`) REFERENCES `model_user_profile` (`user_profile_id`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=49 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `model_user_blog_entry`
+--
+
+DROP TABLE IF EXISTS `model_user_blog_entry`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `model_user_blog_entry` (
+  `user_blog_entry_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `aggregator_feed_article_id` int(10) unsigned NOT NULL,
+  `user_blog_id` int(10) unsigned NOT NULL,
+  `hash` varchar(8) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
+  `entry_title` text NOT NULL,
+  `entry_content` text NOT NULL,
+  `keywords` text NOT NULL,
+  `publication_status` enum('idle','waiting','working','published','unauthorized','overquota','unreachable','failed') NOT NULL DEFAULT 'idle',
+  `publication_date` timestamp NOT NULL DEFAULT '1970-01-01 06:00:00',
+  `ordering` smallint(5) unsigned NOT NULL DEFAULT '1',
+  `created_at` timestamp NOT NULL DEFAULT '1970-01-01 06:00:00',
+  `updated_at` timestamp NOT NULL DEFAULT '1970-01-01 06:00:00',
+  `suggested` tinyint(1) NOT NULL DEFAULT '0',
+  `deleted` tinyint(1) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`user_blog_entry_id`),
+  UNIQUE KEY `m_bge_uh` (`user_blog_id`,`hash`),
+  KEY `m_bge_idx` (`hash`(4),`publication_status`,`publication_date`,`ordering`,`updated_at`,`suggested`,`deleted`),
+  KEY `m_bge_m_afa_fk` (`aggregator_feed_article_id`),
+  CONSTRAINT `m_bge_m_afa_fk` FOREIGN KEY (`aggregator_feed_article_id`) REFERENCES `model_aggregator_feed_article` (`aggregator_feed_article_id`) ON DELETE CASCADE,
+  CONSTRAINT `m_bge_m_ubg_fk` FOREIGN KEY (`user_blog_id`) REFERENCES `model_user_blog` (`user_blog_id`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=7447 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `model_user_blog_feed`
+--
+
+DROP TABLE IF EXISTS `model_user_blog_feed`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `model_user_blog_feed` (
+  `user_blog_feed_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `user_blog_id` int(10) unsigned NOT NULL,
+  `aggregator_feed_id` int(10) unsigned NOT NULL,
+  `hash` varchar(8) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
+  `feed_title` varchar(100) COLLATE utf8_unicode_ci NOT NULL,
+  `feed_description` text COLLATE utf8_unicode_ci NOT NULL,
+  `ordering` smallint(5) unsigned NOT NULL DEFAULT '1',
+  `article_initial_count` int(10) unsigned NOT NULL DEFAULT '0',
+  `created_at` timestamp NOT NULL DEFAULT '1970-01-01 06:00:00',
+  `updated_at` timestamp NOT NULL DEFAULT '1970-01-01 06:00:00',
+  `visible` tinyint(1) NOT NULL DEFAULT '1',
+  `deleted` tinyint(1) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`user_blog_feed_id`),
+  UNIQUE KEY `m_ubf_uh` (`user_blog_id`,`hash`),
+  KEY `m_ubf_m_agf_fk` (`aggregator_feed_id`),
+  KEY `m_ubf_idx` (`hash`(4),`ordering`,`visible`,`deleted`),
+  CONSTRAINT `m_ubf_m_agf_fk` FOREIGN KEY (`aggregator_feed_id`) REFERENCES `model_aggregator_feed` (`aggregator_feed_id`),
+  CONSTRAINT `m_ubf_m_ubg_fk` FOREIGN KEY (`user_blog_id`) REFERENCES `model_user_blog` (`user_blog_id`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=295 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `model_user_blog_feed_article`
+--
+
+DROP TABLE IF EXISTS `model_user_blog_feed_article`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `model_user_blog_feed_article` (
+  `user_blog_feed_id` int(10) unsigned NOT NULL,
+  `aggregator_feed_article_id` int(10) unsigned NOT NULL,
+  `was_read` tinyint(1) NOT NULL DEFAULT '0',
+  UNIQUE KEY `m_ubfa_un` (`user_blog_feed_id`,`aggregator_feed_article_id`),
+  KEY `m_ubfa_m_afa_fk` (`aggregator_feed_article_id`),
+  CONSTRAINT `m_ubfa_m_ubf_fk` FOREIGN KEY (`user_blog_feed_id`) REFERENCES `model_user_blog_feed` (`user_blog_feed_id`) ON DELETE CASCADE,
+  CONSTRAINT `m_ubfa_m_afa_fk` FOREIGN KEY (`aggregator_feed_article_id`) REFERENCES `model_aggregator_feed_article` (`aggregator_feed_article_id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `model_user_blog_feed_tag`
+--
+
+DROP TABLE IF EXISTS `model_user_blog_feed_tag`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `model_user_blog_feed_tag` (
+  `user_blog_feed_id` int(10) unsigned NOT NULL,
+  `user_blog_tag_id` int(10) unsigned NOT NULL,
+  UNIQUE KEY `m_ubft_un` (`user_blog_feed_id`,`user_blog_tag_id`),
+  KEY `m_ubft_m_ubt_fk` (`user_blog_tag_id`),
+  CONSTRAINT `m_ubft_m_ubf_fk` FOREIGN KEY (`user_blog_feed_id`) REFERENCES `model_user_blog_feed` (`user_blog_feed_id`) ON DELETE CASCADE,
+  CONSTRAINT `m_ubft_m_ubt_fk` FOREIGN KEY (`user_blog_tag_id`) REFERENCES `model_user_blog_tag` (`user_blog_tag_id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `model_user_blog_tag`
+--
+
+DROP TABLE IF EXISTS `model_user_blog_tag`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `model_user_blog_tag` (
+  `user_blog_tag_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `user_blog_id` int(10) unsigned NOT NULL,
+  `name` varchar(50) COLLATE utf8_unicode_ci NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT '1970-01-01 06:00:00',
+  PRIMARY KEY (`user_blog_tag_id`),
+  KEY `m_ubt_m_ub_fk` (`user_blog_id`),
+  KEY `m_ubt_idx` (`name`(4)),
+  CONSTRAINT `m_ubt_m_ub_fk` FOREIGN KEY (`user_blog_id`) REFERENCES `model_user_blog` (`user_blog_id`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `model_user_dashboard_setting`
+--
+
+DROP TABLE IF EXISTS `model_user_dashboard_setting`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `model_user_dashboard_setting` (
+  `user_dashboard_setting_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `user_profile_id` int(10) unsigned NOT NULL,
+  `context` varchar(100) COLLATE utf8_bin NOT NULL DEFAULT '',
+  `name` varchar(100) COLLATE utf8_bin NOT NULL,
+  `value` varchar(200) COLLATE utf8_bin NOT NULL DEFAULT '',
+  PRIMARY KEY (`user_dashboard_setting_id`),
+  UNIQUE KEY `m_bds_un` (`user_profile_id`,`context`,`name`),
+  KEY `m_uds_idx` (`context`(4),`name`(8)),
+  CONSTRAINT `m_uds_m_upf_fk` FOREIGN KEY (`user_profile_id`) REFERENCES `model_user_profile` (`user_profile_id`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=377 DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `model_user_profile`
+--
+
+DROP TABLE IF EXISTS `model_user_profile`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `model_user_profile` (
+  `user_profile_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `hash` varchar(8) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
+  `login_email_local` varchar(64) COLLATE utf8_unicode_ci NOT NULL,
+  `login_email_domain` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  `login_password_md5` varchar(32) COLLATE utf8_unicode_ci NOT NULL,
+  `name` varchar(100) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
+  `register_confirmation` tinyint(1) NOT NULL DEFAULT '0',
+  `update_email_to` text COLLATE utf8_unicode_ci NOT NULL,
+  `register_message_time` timestamp NOT NULL DEFAULT '1970-01-01 06:00:00',
+  `register_confirmation_time` timestamp NOT NULL DEFAULT '1970-01-01 06:00:00',
+  `last_login_time` timestamp NOT NULL DEFAULT '1970-01-01 06:00:00',
+  `recovery_message_time` timestamp NOT NULL DEFAULT '1970-01-01 06:00:00',
+  `recovery_allowed` tinyint(1) NOT NULL DEFAULT '0',
+  `update_email_message_time` timestamp NOT NULL DEFAULT '1970-01-01 06:00:00',
+  `local_territory` varchar(2) COLLATE utf8_unicode_ci NOT NULL DEFAULT 'US',
+  `local_culture` varchar(8) COLLATE utf8_unicode_ci NOT NULL DEFAULT 'en_US',
+  `local_timezone` varchar(50) COLLATE utf8_unicode_ci NOT NULL DEFAULT 'UTC',
+  `quota_blog` smallint(6) NOT NULL DEFAULT '0',
+  `quota_feed` smallint(6) NOT NULL DEFAULT '0',
+  `quota_publication_period` smallint(6) NOT NULL DEFAULT '0',
+  `created_at` timestamp NOT NULL DEFAULT '1970-01-01 06:00:00',
+  `updated_at` timestamp NOT NULL DEFAULT '1970-01-01 06:00:00',
+  `enabled` tinyint(1) NOT NULL DEFAULT '1',
+  PRIMARY KEY (`user_profile_id`),
+  UNIQUE KEY `m_upf_uh` (`hash`),
+  KEY `m_upf_idx` (`hash`(4),`login_email_local`(8),`login_email_domain`(4),`login_password_md5`(6),`enabled`)
+) ENGINE=InnoDB AUTO_INCREMENT=32 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `model_user_profile_invitation`
+--
+
+DROP TABLE IF EXISTS `model_user_profile_invitation`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `model_user_profile_invitation` (
+  `user_profile_invitation_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `invitation_email_local` varchar(64) COLLATE utf8_unicode_ci NOT NULL,
+  `invitation_email_domain` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  `name` varchar(100) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
+  `created_at` timestamp NOT NULL DEFAULT '1970-01-01 06:00:00',
+  `enabled` tinyint(1) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`user_profile_invitation_id`),
+  KEY `m_upi_idx` (`invitation_email_local`(8),`invitation_email_domain`(4),`enabled`)
+) ENGINE=InnoDB AUTO_INCREMENT=58 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
+
+/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
+/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
+/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
+
+-- Dump completed on 2010-02-16 10:00:53

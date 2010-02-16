@@ -25,4 +25,7 @@ patch-release-1-1-0:
 patch-release-1-1-0-1:
 	$(DB) schema-patch-1264085609.mysql
 	@echo "release-1-1-0-1" > $(CV)
-patch: patch-release-1-1-0-1
+patch-release-1-2-0:
+	$(DB) schema-patch-1266321757.mysql
+	@echo "release-1-2-0" > $(CV)
+patch: patch-release-1-2-0
