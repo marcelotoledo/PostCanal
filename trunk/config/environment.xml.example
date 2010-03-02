@@ -88,9 +88,9 @@
         <maintenance>false</maintenance>
         <profile>
             <!-- default values for profile quota -->
-            <quotaBlog>999</quotaBlog>
-            <quotaFeed>999</quotaFeed>
-            <quotaPublicationPeriod>60</quotaPublicationPeriod>
+            <quotaBlog>3</quotaBlog>
+            <quotaFeed>50</quotaFeed>
+            <quotaPublicationPeriod>0</quotaPublicationPeriod>
             <invitationOnly>true</invitationOnly>
         </profile>
         <feed>

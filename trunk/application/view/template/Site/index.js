@@ -6,6 +6,22 @@ function add_message(m)
     my_template.new_blog_message.show();
 }
 
+function check_quota()
+{
+    var q = parseInt(<?php echo $this->session()->user_profile_quota_blog; ?>);
+
+    if(my_template.blog_list_area.find('div.blog').length >= q && q > 0)
+    {
+        my_template.blog_quota_reached.show();
+        my_template.new_blog_button.attr('disabled','disabled');
+    }
+    else
+    {
+        my_template.blog_quota_reached.hide();
+        my_template.new_blog_button.attr('disabled','');
+    }
+}
+
 function toggle_blog_add()
 {
     if(my_template.new_blog_form.toggle().css('display')=='block')
@@ -116,6 +132,7 @@ function blog_add_callback(d)
             my_template.blog_list_ref[_b].item.find('div.wordpress-remote-publishing').show();
         }
            
+        check_quota();
     }
     if(_status=="<?php echo C_Site::ADD_STATUS_OVERQUOTA ?>")
     {
@@ -171,6 +188,8 @@ function blog_list_callback(d)
     {
         blog_populate($(this));
     })
+
+    check_quota();
 }
 
 function blog_list()
@@ -233,6 +252,7 @@ function blog_delete_confirm_hide(b)
 function blog_delete_callback(d)
 {
     blog_remove_from_list(d.find('result').text());
+    check_quota();
 }
 
 function blog_delete(b)
@@ -307,6 +327,7 @@ $(document).ready(function()
         new_blog_submit    : $("#addsubmit"),
         new_blog_cancel    : $("#addcancel"),
         new_blog_message   : $("#addmessage"),
+        blog_quota_reached : $("#maxreached"),
         blog_list_area     : $("#bloglistarea"),
         blog_item_blank    : $("#blogitemblank"),
         blog_delete_blank  : $("#blogdeleteblank"),

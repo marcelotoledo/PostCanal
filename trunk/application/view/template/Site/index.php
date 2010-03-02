@@ -1,6 +1,7 @@
 <div id="tplbar" class="midct">
     <div id="tplbartt">Manage your Sites</div>
     <button id="addnewblogbtn">ADD NEW SITE</button>
+    <small id="maxreached" style="display:none">&nbsp;(you have reached the maximum of <?php echo $this->session()->user_profile_quota_blog; ?> sites allowed in free plan)</small>
     <div id="tplbarclr"></div>
 </div>
 
