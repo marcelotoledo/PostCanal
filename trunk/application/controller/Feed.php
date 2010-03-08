@@ -66,6 +66,13 @@ class C_Feed extends B_Controller
     public function A_discover()
     {
         $this->response()->setXML(true);
+
+        /* check quota */
+
+        $oq = $this->checkQuota();
+        $this->view()->overquota = $oq;
+        if($oq) return false;
+
         $this->view()->results = AggregatorFeed::discover($this->request()->url);
     }
 
@@ -170,9 +177,10 @@ class C_Feed extends B_Controller
     protected function checkQuota()
     {
         $user_id = $this->session()->user_profile_id;
-        $quota = $this->session()->user_profile_quota_feed;
+        $blog    = $this->request()->blog;
+        $quota   = $this->session()->user_profile_quota_feed;
 
-        return ($quota > 0 && UserBlogFeed::total($user_id) >= $quota);
+        return ($quota > 0 && UserBlogFeed::total($user_id, $blog) >= $quota);
     }
 
     public function A_add()

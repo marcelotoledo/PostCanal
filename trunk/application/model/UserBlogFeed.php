@@ -664,18 +664,17 @@ class UserBlogFeed extends B_Model
     /**
      * Select total registered feeds
      */
-    public static function total($user_id)
+    public static function total($user_id, $blog)
     {
         $q = current(self::select("SELECT COUNT(DISTINCT(aggregator_feed_id)) AS total
                                    FROM " . self::$table_name . 
-                                 " WHERE deleted=0
-                                   AND user_blog_id IN (
+                                 " WHERE deleted=0 AND visible=1
+                                   AND user_blog_id = (
                                         SELECT user_blog_id
                                         FROM model_user_blog
-                                        WHERE user_profile_id=?
-                                        AND deleted=0
+                                        WHERE user_profile_id = ? AND hash = ?
                                    )",
-        array($user_id), PDO::FETCH_OBJ));
+        array($user_id, $blog), PDO::FETCH_OBJ));
 
         return is_object($q) ? $q->total : 0;
     }

@@ -49,7 +49,11 @@
         <p>Title</p><p><input type="text" name="entrytitle" value="" class="intxt intxt-full"></p>
     </div>
     <div class="form-row">
-        <p>Content</p><p><textarea name="entrybody" id="entrybody" class="intxa intxa-full"></textarea></p>
+        <p>Content</p>
+        <div id="textarea-editor"><textarea name="entrybody" id="entrybody" class="intxa intxa-full"></textarea></div>
+    </div>
+    <div class="form-row" id="original-link">
+        <table><tr><td>Please include a link to the original post in content&nbsp;</td><td style="padding-top:2px;"><input type="checkbox" id="original-link-check" onclick="toggle_original_link()"></td></tr></table>
     </div>
     <div class="form-bot" id="editform-bot">
         <button type="button" name="editformsave">SAVE</button>
@@ -70,3 +74,4 @@
 </div>
 </div>
 </div>
+<div id="tmpckcontent" style="display:none"></div>

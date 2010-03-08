@@ -16,6 +16,31 @@ var my_queue =
 
 var entry_check_update_interval = 10000;
 
+
+function has_original_link(content)
+{
+    var tmpck = $('#tmpckcontent');
+    tmpck.html(content);
+    return (tmpck.find('div.postcanal-original-link').length > 0);
+}
+
+function toggle_original_link()
+{
+    var tmpck = $('#tmpckcontent');
+    tmpck.html(CKEDITOR.instances.entrybody.getData());
+    tmpck.find('div.postcanal-original-link').remove();
+
+    if($('#original-link-check').attr('checked'))
+    {
+        var url = my_queue.current.find('div.artlnk').find('a').attr('href');
+        tmpck.append("<div class='postcanal-original-link'>Source: <a href=\"" + url + "\" target=\"_blank\">" + url + "</a></div>");
+    }
+
+    CKEDITOR.instances.entrybody.setData(tmpck.html());
+    tmpck.html('');
+}
+
+
 function entry_published_separator()
 {
     if($("#pubsep").length==0)
@@ -345,7 +370,7 @@ function queue_editor_init()
     CKEDITOR.replace('entrybody', 
     { 
         toolbar : [ [ 'Source', '-', 'Bold', 'Italic' ] ],
-        height: ($(window).height() - 350),
+        height: ($(window).height() - 370),
         toolbarCanCollapse : false,
         resize_enabled : false,
         contentsCss : '/css/ck_content.css'
@@ -367,7 +392,10 @@ function entry_edit(e)
 
         my_template.edit_form.find('div.form-bot').css('top', _rect.H - 55); // position hack
         my_template.edit_form.find("input[name='entrytitle']").val(my_queue.data[e].title).focus();
+        my_template.original_link.css('top', _rect.H - 82);
         CKEDITOR.instances.entrybody.setData(my_queue.data[e].content)
+
+        $('#original-link-check').attr('checked',(has_original_link(my_queue.data[e].content) ? 'checked': ''));
     }
 }
 
@@ -583,6 +611,7 @@ $(document).ready(function()
         entry_blank        : $("#entryblank"),
         content_blank      : $("#contentblank"),
         edit_form          : $("#editform"),
+        original_link      : $("#original-link"),
         confirmation_form  : $("#confirmationform"),
         confirmation_send  : $("#confirmationsend"),
         confirmation_ccel  : $("#confirmationcancel"),

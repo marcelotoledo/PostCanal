@@ -1,7 +1,8 @@
 <div id="tplbar" class="midct">
     <div id="tplbartt">Manage Feeds</div>
     <button id="addnewfeedbtn">ADD NEW FEED</button>
-    <button id="importfeedbtn">IMPORT FEEDS</button>
+    <button id="importfeedbtn" style="margin-right:10px;">IMPORT FEEDS</button>
+    <small id="maxreached" style="display:none;line-height:18px;position:relative;top:5px;">(you have reached the maximum of <?php echo $this->session()->user_profile_quota_feed; ?> feeds<br/>available in free plan)</small>
     <div id="tplbarclr"></div>
 </div>
 

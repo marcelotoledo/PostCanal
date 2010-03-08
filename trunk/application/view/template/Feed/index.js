@@ -8,6 +8,24 @@ function add_message(m)
     (m=='') ? my_template.new_feed_message.hide() : my_template.new_feed_message.show();
 }
 
+function check_quota()
+{
+    var q = parseInt(<?php echo $this->session()->user_profile_quota_feed; ?>);
+
+    if(my_template.feed_list_area.find('div.feed').length >= q && q > 0)
+    {
+        my_template.feed_quota_reached.show();
+        my_template.new_feed_button.attr('disabled','disabled');
+        my_template.import_feed_button.attr('disabled','disabled');
+    }
+    else
+    {
+        my_template.feed_quota_reached.hide();
+        my_template.new_feed_button.attr('disabled','');
+        my_template.import_feed_button.attr('disabled','');
+    }
+}
+
 function feed_add_show()
 {
     add_message('');
@@ -35,6 +53,7 @@ function feed_add_reset()
 {
     feed_add_hide();
     my_template.new_feed_button.show();
+    my_template.import_feed_button.show();
 }
 
 function feed_add_toggle()
@@ -211,6 +230,8 @@ function feed_add_callback(d)
         $("#nofeedmsg1").hide(100);
         $("#nofeedmsg2").show(100);
     }
+
+    check_quota();
 }
 
 function feed_add(u)
@@ -238,6 +259,8 @@ function feed_list_callback(d)
     {
         feed_populate($(this), true);
     })
+
+    check_quota();
 }
 
 function feed_list()
@@ -302,6 +325,7 @@ function feed_delete_confirm_hide(b)
 function feed_delete_callback(d)
 {
     feed_remove_from_list(d.find('result').text());
+    check_quota();
 }
 
 function feed_delete(f)
@@ -381,7 +405,12 @@ function feed_sortable_init()
 
 function on_blog_change()
 {
+    $("#nofeedmsg0").hide();
+    $("#nofeedmsg1").hide();
+    $("#nofeedmsg2").hide();
     feed_add_hide();
+    my_template.new_feed_button.show();
+    my_template.import_feed_button.show();
     feed_list(); 
 }
 
@@ -394,6 +423,7 @@ $(document).ready(function()
         new_feed_submit      : $("#addsubmit"),
         new_feed_cancel      : $("#addcancel"),
         new_feed_message     : $("#addmessage"),
+        feed_quota_reached   : $("#maxreached"),
         import_feed_button   : $("#importfeedbtn"),
         import_feed_form     : $("#importfeedform"),
         import_feed_submit   : $("#importsubmit"),
