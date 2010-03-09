@@ -94,7 +94,7 @@ $this->browser_is_opera = (strpos($this->browser, 'opera')>0);
         <div class="menuitm toprowimg sepbrd sepbrd-ebd-r">&nbsp;</div>
         <?php else : ?>
         <div class="menuitm"><a class="menulnk" href="/tour">Tour</a></div>
-        <?php if($this->request()->getController()=='plans') : ?>
+        <?php if($this->request()->getController()=='support') : ?>
         <div class="menuitm toprowimg sepbrd sepbrd-ebd-l">&nbsp;</div>
         <?php else : ?>
         <div class="menuitm toprowimg sepbrd sepbrd-dbd">&nbsp;</div>

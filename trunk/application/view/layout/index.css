@@ -147,7 +147,7 @@ div.signuparw-dbd { background-position: -186px   0px; background-color: #081C26
     margin-left: -120px;
     <?php else : ?>
     margin-top: 58px; 
-    margin-left: 670px;
+    margin-left: 668px;
     <?php endif ?>
 }
 
