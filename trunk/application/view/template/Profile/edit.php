@@ -77,15 +77,15 @@
     <table id="quotatable">
         <tr>
             <th>Sites</th>
-            <td><?php echo $this->blog_total ?> / <?php echo $this->session()->user_profile_quota_blog ?></td>
+            <td><?#php echo $this->blog_total ?> / <?#php echo $this->session()->user_profile_quota_blog ?></td>
         </tr>
         <tr>
-            <th><?php echo $this->translation()->feed ?></th>
-            <td><?php echo $this->feed_total ?> / <?php echo $this->session()->user_profile_quota_feed ?></td>
+            <th><?#php echo $this->translation()->feed ?></th>
+            <td><?#php echo $this->feed_total ?> / <?#php echo $this->session()->user_profile_quota_feed ?></td>
         </tr>
         <tr>
-            <th><?php echo $this->translation()->publication_period ?></th>
-            <td><?php echo $this->publication_period_total ?> / <?php echo $this->session()->user_profile_quota_publication_period ?> (<?php echo $this->publication_period ?>)</td>
+            <th><?#php echo $this->translation()->publication_period ?></th>
+            <td><?#php echo $this->publication_period_total ?> / <?#php echo $this->session()->user_profile_quota_publication_period ?> (<?#php echo $this->publication_period ?>)</td>
         </tr>
     </table>
 </div>
