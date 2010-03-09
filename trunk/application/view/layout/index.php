@@ -102,6 +102,7 @@ $this->browser_is_opera = (strpos($this->browser, 'opera')>0);
         <?php endif ?>
 
         <!-- plans -->
+        <!--
         <?php if($this->request()->getController()=='plans') : ?>
         <div class="menuitm menuitm-ebd">Plans <span style="font-family:sans-serif;font-weight:normal">&amp;</span> Prices</div>
         <div class="menuitm toprowimg sepbrd sepbrd-ebd-r">&nbsp;</div>
@@ -113,6 +114,7 @@ $this->browser_is_opera = (strpos($this->browser, 'opera')>0);
         <div class="menuitm toprowimg sepbrd sepbrd-dbd">&nbsp;</div>
         <?php endif ?>
         <?php endif ?>
+        -->
 
         <!-- support -->
         <?php if($this->request()->getController()=='support') : ?>
