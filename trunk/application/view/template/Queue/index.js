@@ -749,7 +749,14 @@ $(document).ready(function()
         var _pt = $(this).parent().parent();
         var _st = _pt.attr('status')
 
-        entry_now(_pt.attr('entry'));
+        if(my_queue.publication==1)
+        {
+            entry_now(_pt.attr('entry'));
+        }
+        else
+        {
+            alert('Publication is paused. Publication must be active to publish this item now.');
+        }
 
         $(this).blur();
         return false;

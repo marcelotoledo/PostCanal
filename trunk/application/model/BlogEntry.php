@@ -325,6 +325,8 @@ class BlogEntry extends B_Model
      */
     public static function findAwaitingPublication($limit=1)
     {
+        self::updateWorkingPublicationTimeout();
+
         $sql = "SELECT 
                     a.user_blog_entry_id AS id, 
                     d.article_link       AS article_link,
@@ -350,7 +352,6 @@ class BlogEntry extends B_Model
                     a.ordering ASC
                 LIMIT " . intval($limit);
 
-        self::updateWorkingPublicationTimeout();
         self::transaction();
 
         $total_res = 0;
