@@ -422,3 +422,9 @@ div.ui-sortable-helper /* fix wrong IE margin in sortable */
     margin-left: -250px;
 }
 <?php endif ?>
+
+img.img-icon
+{
+    cursor: pointer;
+    cursor: hand;
+}

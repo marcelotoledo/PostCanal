@@ -49,6 +49,12 @@ function entry_published_separator()
     }
 }
 
+function entry_popup_status(e)
+{
+    alert(e.attr('title'));
+    return false;
+}
+
 function entry_set_status(e, s)
 {
     if(typeof e == 'string' && e.length > 0)
@@ -61,6 +67,9 @@ function entry_set_status(e, s)
         e.attr('status', s);
         var _e = e.attr('entry');
 
+        e.removeClass('ety-fail');
+        e.find('div.etylab').find('nobr.warning').remove();
+
         if(s=='<?php echo BlogEntry::STATUS_WORKING ?>')
         {
             e.find('div.etydte').text('publishing...');
@@ -68,7 +77,8 @@ function entry_set_status(e, s)
         if(s=='<?php echo BlogEntry::STATUS_FAILED ?>')
         {
             e.addClass('ety-fail');
-            e.find('div.etylab').append('<nobr><img src="/image/warning.png"/></nobr>');
+            e.find('div.etylab').append('<nobr class="warning"><img src="/image/warning.png"/ title="This entry could not be published. Check the username and password of this Site and try again. In turn, the publishing may have failed for other reasons, so we will keep an eye and perform the necessary support." class="img-icon" onclick="entry_popup_status($(this));">&nbsp;</nobr>');
+            e.find('div.etynow').show();
         }
         if(s=='<?php echo BlogEntry::STATUS_PUBLISHED ?>')
         {
@@ -192,7 +202,7 @@ function entry_updater()
            (my_queue.data[_e].status=='<?php echo BlogEntry::STATUS_WAITING ?>' || 
             my_queue.data[_e].status=='<?php echo BlogEntry::STATUS_WORKING ?>'))
         {
-            $(this).find('div.etynow').remove();
+            $(this).find('div.etynow').hide();
             _d.text('publishing...');
             entry_check_add(_e);
             return true;
