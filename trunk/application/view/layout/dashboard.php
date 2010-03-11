@@ -85,7 +85,7 @@
                 <?php endif ?>
             </div>
             <div class="menubotfmt" id="menubotright">
-                <a href="#">Upgrade</a>
+                <!--<a href="#">Upgrade</a>-->
             </div>
             <div id="menubotclr"></div>
         </div>
