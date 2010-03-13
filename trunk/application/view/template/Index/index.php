@@ -78,7 +78,7 @@
 
     <div class="rgtct-hrd">
         <div id="notmember">Not a member?</div>
-        <div id="learnmore"><a href="/signup">Learn More!</a></div>
+        <div id="learnmore"><a href="/tour">Learn More!</a></div>
     </div>
 </div>
 <div id="midclear"></div>

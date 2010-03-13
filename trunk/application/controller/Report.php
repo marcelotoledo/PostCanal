@@ -19,6 +19,7 @@ class C_Report extends B_Controller
 
     public function before()
     {
+        error_reporting(E_ALL);
         $this->view()->setLayout('admin');
 
         /* http auth */

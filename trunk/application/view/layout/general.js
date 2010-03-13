@@ -40,7 +40,7 @@ function spinner_init(offset)
     $.b_spinner
     ({
         image: "/image/ajax-loader.gif?v=1253527980",
-        message: "... <?php echo $this->translation()->loading ?>",
+        message: "... loading",
         offset : offset
     });
 }
